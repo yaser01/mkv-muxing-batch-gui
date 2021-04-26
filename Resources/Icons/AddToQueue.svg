@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:cc="http://creativecommons.org/ns#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns="http://www.w3.org/2000/svg"
+        height="22px"
+        version="1.1"
+        viewBox="0 0 22 22"
+        width="22px"
+        id="svg12"
+        sodipodi:docname="AddToQueue.svg"
+        inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)">
+    <metadata
+            id="metadata16">
+        <rdf:RDF>
+            <cc:Work
+                    rdf:about="">
+                <dc:format>image/svg+xml</dc:format>
+                <dc:type
+                        rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <sodipodi:namedview
+            pagecolor="#ffffff"
+            bordercolor="#666666"
+            borderopacity="1"
+            objecttolerance="10"
+            gridtolerance="10"
+            guidetolerance="10"
+            inkscape:pageopacity="0"
+            inkscape:pageshadow="2"
+            inkscape:window-width="1366"
+            inkscape:window-height="705"
+            id="namedview14"
+            showgrid="false"
+            inkscape:zoom="8.6459875"
+            inkscape:cx="6.7552373"
+            inkscape:cy="8.9419357"
+            inkscape:window-x="-8"
+            inkscape:window-y="-8"
+            inkscape:window-maximized="1"
+            inkscape:current-layer="queue"/>
+    <title
+            id="title2"/>
+    <desc
+            id="desc4"/>
+    <defs
+            id="defs6"/>
+    <g
+            fill="none"
+            fill-rule="evenodd"
+            id="Page-1"
+            stroke="none"
+            stroke-width="1">
+        <g
+                fill="#000000"
+                id="Icons-AV"
+                transform="translate(-209.000000, -84.000000)">
+            <g
+                    id="queue"
+                    transform="translate(209.000000, 84.000000)">
+                <path
+                        d="M 20,0 H 6 C 4.9,0 4,0.9 4,2 v 14 c 0,1.1 0.9,2 2,2 h 14 c 1.1,0 2,-0.9 2,-2 V 2 C 22,0.9 21.1,0 20,0 Z m -2,10 h -4 v 4 H 12 V 10 H 8 V 8 h 4 V 4 h 2 v 4 h 4 z"
+                        id="Shape"
+                        sodipodi:nodetypes="sssssssssccccccccccccc"
+                        style="fill:#000000;fill-opacity:1"/>
+                <path
+                        d="M 18.148915,21.472561 4.6718765,21.514779 C 1.8616381,21.511479 -0.41564352,19.349752 -0.41911928,16.68211 V 4.0063991 c 0,-1.1976868 1.89256348,-1.1976868 1.89256348,0 V 16.68211 c 0.00347,1.675446 1.4334265,3.032844 3.1984323,3.036138 l 13.4770385,-0.08443 c 1.262397,-0.008 1.262416,1.834793 0,1.838749 z"
+                        id="path32"
+                        style="fill:#000000;fill-opacity:1;stroke-width:0.614641"
+                        sodipodi:nodetypes="sccssccss"/>
+            </g>
+        </g>
+    </g>
+</svg>
