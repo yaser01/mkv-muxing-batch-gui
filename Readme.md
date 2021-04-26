@@ -2,6 +2,9 @@
 
 App to muxing /merge/ videos with [subtitles,chapters,attachments] with many options.<br>
 
+### App Preview
+https://user-images.githubusercontent.com/52576632/116090926-0944f800-a6ad-11eb-8fc4-4732588ca00e.mp4
+
 ### Subtitles Options
 >1. Add new subtitle to each video file
 >1. Subtitles names **don't have to match** videos names
