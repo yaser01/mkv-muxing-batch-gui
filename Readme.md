@@ -44,7 +44,7 @@ https://user-images.githubusercontent.com/52576632/116090926-0944f800-a6ad-11eb-
 [XML]
 
 ## 💾 Downloads
-[![Github All Releases](https://img.shields.io/github/downloads/yaser01/mkv-muxing-batch-gui/total.svg?color=4DC71F)]()
+[![Github All Releases](https://img.shields.io/github/downloads/yaser01/mkv-muxing-batch-gui/total.svg?color=4DC71F&label=Downloads&logo=github")](https://github.com/yaser01/mkv-muxing-batch-gui/releases/latest)
 
 MKV Muxing Batch GUI works on Windows 7/8/8.1/10 32-bit/64-bit
 
