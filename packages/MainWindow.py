@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
     def __init__(self, args, parent=None):
         super().__init__(parent=parent)
         self.resize(int(width_factor * 1055), int(height_factor * 635))
-        self.setWindowTitle("MKV Muxing Batch GUI v1.04")
+        self.setWindowTitle("MKV Muxing Batch GUI v1.05")
         self.setWindowIcon(GlobalFiles.AppIcon)
         self.tabs = TabsManager()
         self.tabs_frame = QFrame()
