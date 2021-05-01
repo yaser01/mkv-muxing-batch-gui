@@ -1,9 +1,9 @@
 import time
-
+import traceback
 from PySide2.QtCore import QObject, QThread, Signal
 
 from packages.Startup import GlobalFiles
-from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.GlobalSetting import GlobalSetting, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvmergeJob import GetJsonForMkvmergeJob
 from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvpropeditJob import GetJsonForMkvpropeditJob
 from packages.Tabs.MuxSetting.Widgets.MuxingParams import MuxingParams
@@ -61,10 +61,13 @@ class StartMuxingWorker(QObject):
         self.read_log_mkvpropedit_thread.start()
 
     def run(self):
-        if self.current_job == len(self.data):
-            self.stop_all_threads()
-            self.finished_all_jobs_signal.emit()
-        self.next_job()
+        try:
+            if self.current_job == len(self.data):
+                self.stop_all_threads()
+                self.finished_all_jobs_signal.emit()
+            self.next_job()
+        except Exception as e:
+            write_to_log_file(traceback.format_exc())
 
     def stop_all_threads(self):
         self.read_log_mkvmerge_worker.stop = True
@@ -215,14 +218,14 @@ class StartMuxingWorker(QObject):
 
     def add_header_info_to_log_file(self):
 
-        with open(GlobalFiles.LogFilePath, "a+", encoding="UTF-8") as log_file:
+        with open(GlobalFiles.MuxingLogFilePath, "a+", encoding="UTF-8") as log_file:
             t = get_time()
             log_file.write(
                 "\n[" + t + "] Start Muxing: ********* " + str(
                     self.data[self.current_job].video_name) + " *********\n\n")
 
     def add_footer_info_to_log_file(self):
-        with open(GlobalFiles.LogFilePath, "a+", encoding="UTF-8") as log_file:
+        with open(GlobalFiles.MuxingLogFilePath, "a+", encoding="UTF-8") as log_file:
             t = get_time()
             log_file.write(
                 "\n[" + t + "] Finish Muxing: ********* " + self.data[self.current_job].video_name + " *********\n")

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+from datetime import datetime
 from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
@@ -43,7 +44,18 @@ def run_application():
     sys.exit(app.exec_())
 
 
+def logger_exception(exception_type, exception_value, exception_trace_back):
+    with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
+        log_file.write(str(datetime.utcnow()) + ' ' + str(exception_type) + "\n" + str(exception_value) + "\n" + str(
+            exception_trace_back) + '\n')
+
+
+def setup_logger():
+    sys.excepthook = logger_exception
+
+
 if __name__ == "__main__":
+    setup_logger()
     create_application()
     setup_application_font()
     create_window()

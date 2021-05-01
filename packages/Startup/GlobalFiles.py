@@ -76,7 +76,7 @@ try:
     AppIcon = QIcon(QPixmap(AppIconPath))
 
     AppLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "app_log.txt")
-    LogFilePath = os.path.join(os.path.abspath(TempFolderPath), "app_log.txt")
+    MuxingLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "muxing_log_file.txt")
     mkvpropeditJsonJobFilePath = os.path.join(os.path.abspath(TempFolderPath), "mkvpropeditJob.json")
     mkvmergeJsonJobFilePath = os.path.join(os.path.abspath(TempFolderPath), "MkvmergeJob.json")
     mkvmergeJsonInfoFilePath = os.path.join(os.path.abspath(TempFolderPath), "MkvmergeInfo.json")

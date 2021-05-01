@@ -8,7 +8,7 @@ from packages.Startup import GlobalFiles
 
 
 def click_show_log_file():
-    webbrowser.open(GlobalFiles.LogFilePath)
+    webbrowser.open(GlobalFiles.MuxingLogFilePath)
 
 
 class ErrorDialog(QDialog):
