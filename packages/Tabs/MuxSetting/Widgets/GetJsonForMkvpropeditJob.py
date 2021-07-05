@@ -69,11 +69,11 @@ class GetJsonForMkvpropeditJob:
 
     def generate_info_file(self):
         info_file_path = GlobalFiles.mkvmergeJsonInfoFilePath
-        with open(info_file_path, 'w+') as info_file:
+        with open(info_file_path, 'w+', encoding="UTF-8") as info_file:
             command = add_double_quotation(GlobalFiles.MKVMERGE_PATH) + " -J " + add_double_quotation(
                 self.job.video_name_absolute)
             subprocess.run(command, shell=True, stdout=info_file)
-        with open(info_file_path, 'r') as info_file:
+        with open(info_file_path, 'r', encoding="UTF-8") as info_file:
             self.json_info = json.load(info_file)
         self.number_of_old_attachments = len(self.json_info["attachments"])
         self.tracks_json_info = self.json_info["tracks"]
@@ -375,5 +375,5 @@ class GetJsonForMkvpropeditJob:
 
     def generate_mkvpropedit_json_file(self):
         job_file_path = GlobalFiles.mkvpropeditJsonJobFilePath
-        with open(job_file_path, 'w+', encoding="utf-8") as job_file:
+        with open(job_file_path, 'w+', encoding="UTF-8") as job_file:
             job_file.write(self.final_command)

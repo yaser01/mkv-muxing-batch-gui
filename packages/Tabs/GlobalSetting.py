@@ -1,10 +1,12 @@
 # Here we have everything that must be shared between all tabs
+from datetime import datetime
 import os
 import re
 from pathlib import Path
 
 from PySide2.QtWidgets import QWidget
 
+from packages.Startup import GlobalFiles
 from packages.Startup.DefaultOptions import Default_Subtitle_Language
 
 
@@ -31,6 +33,11 @@ def get_files_names_absolute_list(files_names, folder_path):
 
 def get_file_name_absolute_path(file_name, folder_path):
     return os.path.join(Path(folder_path), file_name)
+
+
+def write_to_log_file(exception):
+    with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
+        log_file.write(str(datetime.utcnow()) + ' ' + str(exception) + '\n')
 
 
 class GlobalSetting(QWidget):

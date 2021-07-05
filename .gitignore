@@ -1,0 +1,8 @@
+/Lib/
+/Include/
+/Scripts/
+/venv/
+/pyvenv.cfg
+/.idea/
+/MkvEnv/
+/MkvEnv32/

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+import signal
 import sys
+from datetime import datetime
+
+import psutil
 from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
@@ -40,10 +44,30 @@ def create_window():
 
 
 def run_application():
-    sys.exit(app.exec_())
+    app_execute = app.exec_()
+    kill_all_children()
+    sys.exit(app_execute)
+
+
+def kill_all_children():
+    current_process = psutil.Process()
+    children = current_process.children(recursive=True)
+    for child in children:
+        child.send_signal(signal.SIGTERM)
+
+
+def logger_exception(exception_type, exception_value, exception_trace_back):
+    with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
+        log_file.write(str(datetime.utcnow()) + ' ' + str(exception_type) + "\n" + str(exception_value) + "\n" + str(
+            exception_trace_back) + '\n')
+
+
+def setup_logger():
+    sys.excepthook = logger_exception
 
 
 if __name__ == "__main__":
+    setup_logger()
     create_application()
     setup_application_font()
     create_window()

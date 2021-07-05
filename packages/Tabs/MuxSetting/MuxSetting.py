@@ -1,6 +1,7 @@
+import os
 import time
-from datetime import datetime
 from os import makedirs
+from pathlib import Path
 from shutil import copy2
 
 from PySide2.QtCore import Signal
@@ -8,9 +9,9 @@ from PySide2.QtGui import QPaintEvent, QResizeEvent
 from PySide2.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
-    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, )
+    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
 
-from packages.Tabs.GlobalSetting import *
+from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
 from packages.Tabs.MuxSetting.Widgets.ControlQueueButton import ControlQueueButton
 from packages.Tabs.MuxSetting.Widgets.JobQueueLayout import JobQueueLayout
@@ -26,9 +27,6 @@ from packages.Widgets.InvalidPathDialog import *
 
 
 # noinspection PyAttributeOutsideInit
-def write_to_log_file(e):
-    with open(GlobalFiles.AppLogFilePath, 'a+') as log_file:
-        log_file.write(str(datetime.utcnow()) + ' ' + str(e) + '\n')
 
 
 def get_time():
@@ -38,9 +36,9 @@ def get_time():
 
 def change_global_LogFilePath():
     t = get_time()
-    log_file_name = "log_file_" + t + ".txt"
-    GlobalFiles.LogFilePath = get_file_name_absolute_path(file_name=log_file_name,
-                                                          folder_path=GlobalFiles.MergeLogsFolderPath)
+    log_file_name = "muxing_log_file_" + t + ".txt"
+    GlobalFiles.MuxingLogFilePath = get_file_name_absolute_path(file_name=log_file_name,
+                                                                folder_path=GlobalFiles.MergeLogsFolderPath)
 
 
 # noinspection PyAttributeOutsideInit
@@ -65,7 +63,7 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
 def check_if_want_to_keep_log_file():
     if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
         try:
-            copy2(GlobalFiles.LogFilePath, GlobalSetting.VIDEO_SOURCE_PATH)
+            copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.VIDEO_SOURCE_PATH)
         except Exception as e:
             write_to_log_file(e)
             error_dialog = ErrorDialog(window_title="Permission Denied",
@@ -531,4 +529,4 @@ class MuxSettingTab(QWidget):
 
     def setup_log_file(self):
         if self.control_queue_button.state == "START":
-            open(GlobalFiles.LogFilePath, 'w+').close()
+            open(GlobalFiles.MuxingLogFilePath, 'w+').close()
