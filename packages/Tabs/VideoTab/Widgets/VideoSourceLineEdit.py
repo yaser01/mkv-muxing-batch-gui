@@ -39,9 +39,12 @@ class VideoSourceLineEdit(QLineEdit):
                     if self.is_there_old_files:
                         reload_dialog = ReloadVideoFilesDialog()
                         reload_dialog.execute()
+                        print(reload_dialog.result)
+                        print(self.current_folder_path)
                         if reload_dialog.result == "Yes":
                             self.setText(new_path)
                         else:
+                            new_path = self.current_folder_path
                             self.setText(self.current_folder_path)
                     else:
                         self.setText(new_path)

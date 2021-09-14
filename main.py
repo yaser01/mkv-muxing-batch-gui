@@ -8,12 +8,13 @@ from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
 from packages.Startup.MainApplication import MainApplication
+from packages.MainWindow import MainWindow
+from packages.Widgets.WarningDialog import WarningDialog
 import ctypes
 
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
 # noinspection PyAttributeOutsideInit
-from packages.MainWindow import MainWindow
-from packages.Widgets.WarningDialog import WarningDialog
+
 
 window: MainWindow
 app: QApplication

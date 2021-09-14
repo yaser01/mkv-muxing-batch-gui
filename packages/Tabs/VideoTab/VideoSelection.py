@@ -152,6 +152,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_source_button.clicked_signal.connect(self.update_folder_path)
         self.video_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.video_extensions_comboBox.close_list.connect(self.check_extension_changes)
+        self.table.drop_folder_signal.connect(self.update_folder_path)
         self.tab_clicked_signal.connect(self.tab_clicked)
 
     def tab_clicked(self):

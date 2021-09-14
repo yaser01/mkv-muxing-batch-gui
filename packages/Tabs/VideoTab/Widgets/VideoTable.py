@@ -1,4 +1,7 @@
+import os
+
 import PySide2
+from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
 
@@ -7,10 +10,14 @@ from packages.Widgets.TableWidget import TableWidget
 
 
 class VideoTable(TableWidget):
+    drop_folder_signal = Signal(str)
+    drop_files_signal = Signal(list)
+
     def __init__(self):
         super().__init__()
         self.setColumnCount(2)
         self.setRowCount(0)
+        self.setAcceptDrops(True)
         self.disable_table_bold_column()
         self.disable_table_edit()
         self.force_select_whole_row()
@@ -18,6 +25,45 @@ class VideoTable(TableWidget):
         self.make_column_expand_as_possible(column_index=0)
         self.set_row_height(new_height=screen_size.height() // 27)
         self.setup_columns()
+
+    def dragEnterEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        files_counter = 0
+        folder_counter = 0
+        for url in urls:
+            path_to_test = url.path()[1:]
+            if os.path.isfile(path_to_test):
+                files_counter += 1
+            else:
+                folder_counter += 1
+        if urls and (folder_counter == 1 and files_counter == 0) or (folder_counter == 0 and files_counter != 0):
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        files_counter = 0
+        folder_counter = 0
+        for url in urls:
+            path_to_test = url.path()[1:]
+            if os.path.isfile(path_to_test):
+                files_counter += 1
+            else:
+                folder_counter += 1
+        if urls and (folder_counter == 1 and files_counter == 0) or (folder_counter == 0 and files_counter != 0):
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        path_to_test = urls[0].path()[1:]
+        if not os.path.isfile(path_to_test):
+            self.drop_folder_signal.emit(path_to_test)
 
     def disable_table_bold_column(self):
         self.horizontalHeader().setHighlightSections(False)

@@ -42,6 +42,7 @@ class ChapterSourceLineEdit(QLineEdit):
                         if reload_dialog.result == "Yes":
                             self.setText(new_path)
                         else:
+                            new_path = self.current_folder_path
                             self.setText(self.current_folder_path)
                     else:
                         self.setText(new_path)
