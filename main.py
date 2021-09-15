@@ -63,6 +63,7 @@ def logger_exception(exception_type, exception_value, exception_trace_back):
             exception_trace_back) + '\n')
 
 
+
 def setup_logger():
     sys.excepthook = logger_exception
 

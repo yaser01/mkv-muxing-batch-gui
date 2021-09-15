@@ -42,7 +42,7 @@ def write_to_log_file(exception):
 
 class GlobalSetting(QWidget):
     LAST_DIRECTORY_PATH = ""
-    VIDEO_SOURCE_PATH = ""
+    VIDEO_SOURCE_PATHS = []
     VIDEO_FILES_LIST = []
     VIDEO_FILES_SIZE_LIST = []
     VIDEO_FILES_ABSOLUTE_PATH_LIST = []

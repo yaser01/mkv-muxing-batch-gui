@@ -11,7 +11,7 @@ from packages.Tabs.ChapterTab.Widgets.ChapterSourceLineEdit import ChapterSource
 from packages.Tabs.ChapterTab.Widgets.MatchChapterLayout import MatchChapterLayout
 from packages.Tabs.GlobalSetting import *
 from packages.Widgets.InvalidPathDialog import *
-from packages.Widgets.ReloadFilesDialog import *
+from packages.Widgets.YesNoDialog import *
 
 
 # noinspection PyAttributeOutsideInit

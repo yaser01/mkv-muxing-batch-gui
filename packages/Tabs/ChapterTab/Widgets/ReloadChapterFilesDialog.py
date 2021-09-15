@@ -1,7 +1,7 @@
-from packages.Widgets.ReloadFilesDialog import ReloadFilesDialog
+from packages.Widgets.YesNoDialog import YesNoDialog
 
 
-class ReloadChapterFilesDialog(ReloadFilesDialog):
+class ReloadChapterFilesDialog(YesNoDialog):
     def __init__(self):
         super().__init__()
         self.message.setText(

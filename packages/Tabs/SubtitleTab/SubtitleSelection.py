@@ -16,7 +16,7 @@ from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceButton import SubtitleSourc
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceLineEdit import SubtitleSourceLineEdit
 from packages.Tabs.SubtitleTab.Widgets.SubtitleTrackNameLineEdit import SubtitleTrackNameLineEdit
 from packages.Widgets.InvalidPathDialog import *
-from packages.Widgets.ReloadFilesDialog import *
+from packages.Widgets.YesNoDialog import *
 
 
 # noinspection PyAttributeOutsideInit

@@ -63,12 +63,12 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
 def check_if_want_to_keep_log_file():
     if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
         try:
-            copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.VIDEO_SOURCE_PATH)
+            copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
         except Exception as e:
             write_to_log_file(e)
             error_dialog = ErrorDialog(window_title="Permission Denied",
                                        info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
-                                                    "permissions on Source folder")
+                                                    "permissions on Destination folder")
             error_dialog.execute()
 
 
@@ -282,9 +282,9 @@ class MuxSettingTab(QWidget):
                                                             dir=GlobalSetting.LAST_DIRECTORY_PATH, )
         if temp_folder_path == "" or temp_folder_path.isspace():
             return
-        elif Path(temp_folder_path) == Path(GlobalSetting.VIDEO_SOURCE_PATH):
+        elif Path(temp_folder_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
-                error_message="Source and destination videos can't be in the same folder")
+                error_message="Some Source and destination videos are in the same folder")
             invalid_dialog.execute()
             return
         else:
@@ -331,9 +331,9 @@ class MuxSettingTab(QWidget):
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
-        if Path(temp_destination_path) == Path(GlobalSetting.VIDEO_SOURCE_PATH):
+        if Path(temp_destination_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
-                error_message="Source and destination videos can't be in the same folder")
+                error_message="Some Source and destination videos are in the same folder")
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
