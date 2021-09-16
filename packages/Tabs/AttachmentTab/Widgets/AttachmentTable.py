@@ -11,6 +11,7 @@ from packages.Widgets.TableWidget import TableWidget
 class AttachmentTable(TableWidget):
     update_unchecked_attachment_signal = Signal(str)
     update_checked_attachment_signal = Signal(str)
+    drop_folder_and_files_signal = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -29,6 +30,31 @@ class AttachmentTable(TableWidget):
         self.set_row_height(new_height=screen_size.height() // 27)
         self.setup_columns()
         self.itemChanged.connect(self.update_checked_attachments_state)
+
+    def dragEnterEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if urls:
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if urls:
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        paths_to_add = []
+        for url in urls:
+            current_path = url.path()[1:]
+            paths_to_add.append(current_path)
+        self.drop_folder_and_files_signal.emit(paths_to_add)
 
     def disable_table_bold_column(self):
         self.horizontalHeader().setHighlightSections(False)
@@ -66,14 +92,18 @@ class AttachmentTable(TableWidget):
         super().resizeEvent(event)
         self.resize_2nd_column()
 
-    def show_files_list(self, files_names_list, files_size_list):
+    def show_files_list(self, files_names_list, files_names_checked_list, files_size_list):
         self.checking_row_updates = False
         self.setRowCount(len(files_names_list))
         self.set_row_height(new_height=screen_size.height() // 27)
         for i in range(len(files_names_list)):
             self.set_row_number(row_number=i + 1, row_index=i)
-            self.set_row_file_name(file_name=files_names_list[i], row_index=i)
+            self.set_row_file_name(file_name=files_names_list[i], row_index=i, is_checked=files_names_checked_list[i])
             self.set_row_file_size(file_size=files_size_list[i], row_index=i)
+            if files_names_checked_list[i]:
+                self.update_row_text_color(row_index=i, color_string="#000000")
+            else:
+                self.update_row_text_color(row_index=i, color_string="#787878")
         self.show()
         self.checking_row_updates = True
 
@@ -86,9 +116,12 @@ class AttachmentTable(TableWidget):
         file_size_item = QTableWidgetItem(file_size)
         self.setItem(row_index, self.column_ids["Size"], file_size_item)
 
-    def set_row_file_name(self, file_name, row_index):
+    def set_row_file_name(self, file_name, row_index, is_checked=True):
         file_name_item = QTableWidgetItem(" " + file_name)
-        file_name_item.setCheckState(Qt.Checked)
+        if is_checked:
+            file_name_item.setCheckState(Qt.Checked)
+        else:
+            file_name_item.setCheckState(Qt.Unchecked)
         self.setItem(row_index, self.column_ids["Name"], file_name_item)
 
     def clear_table(self):

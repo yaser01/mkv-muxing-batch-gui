@@ -133,6 +133,10 @@ class SubtitleSelectionSetting(GlobalSetting):
                 self.files_names_list = []
                 current_extensions = self.subtitle_extensions_comboBox.currentData()
                 for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
+                    if os.path.isdir(file_absolute_path) == 0:
+                        continue
+                    if os.path.getsize(file_absolute_path) == 0:
+                        continue
                     temp_file_name = os.path.basename(file_absolute_path)
                     for j in range(len(current_extensions)):
                         temp_file_extension_start_index = temp_file_name.rfind(".")
@@ -319,6 +323,8 @@ class SubtitleSelectionSetting(GlobalSetting):
         current_extensions = self.subtitle_extensions_comboBox.currentData()
         for path in paths_list:
             if os.path.isfile(path):
+                if os.path.getsize(path) == 0:
+                    continue
                 temp_file_name = os.path.basename(path)
                 for j in range(len(current_extensions)):
                     temp_file_extension_start_index = temp_file_name.rfind(".")
