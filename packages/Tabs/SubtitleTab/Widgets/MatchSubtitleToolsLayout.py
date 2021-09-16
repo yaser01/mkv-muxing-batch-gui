@@ -2,11 +2,70 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QVBoxLayout, QShortcut
 
+from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleBottomButton import MoveSubtitleBottomButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleDownButton import MoveSubtitleDownButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleToButton import MoveSubtitleToButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleTopButton import MoveSubtitleTopButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleUpButton import MoveSubtitleUpButton
+
+
+def update_global_subtitle_files_list_order_to_top(index_to_move):
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_LIST[0]
+    GlobalSetting.SUBTITLE_FILES_LIST[0] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move] = \
+        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[0]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[0] = temp_for_swap
+
+
+def update_global_subtitle_files_list_order_to_up(index_to_move):
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_LIST[index_to_move - 1]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_to_move - 1] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[
+        index_to_move - 1]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move - 1] = temp_for_swap
+
+
+def update_global_subtitle_files_list_order_to_position(list_of_old_and_new_index):
+    old_index = list_of_old_and_new_index[0]
+    new_index = list_of_old_and_new_index[1]
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[old_index]
+    GlobalSetting.SUBTITLE_FILES_LIST[old_index] = GlobalSetting.SUBTITLE_FILES_LIST[new_index]
+    GlobalSetting.SUBTITLE_FILES_LIST[new_index] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[old_index]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[old_index] = \
+        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[new_index]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[new_index] = temp_for_swap
+
+
+def update_global_subtitle_files_list_order_to_down(index_to_move):
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_LIST[index_to_move + 1]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_to_move + 1] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[
+        index_to_move + 1]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move + 1] = temp_for_swap
+
+
+def update_global_subtitle_files_list_order_to_bottom(index_to_move):
+    index_last_file = len(GlobalSetting.SUBTITLE_FILES_LIST) - 1
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_LIST[index_last_file]
+    GlobalSetting.SUBTITLE_FILES_LIST[index_last_file] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[
+        index_last_file]
+    GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[index_last_file] = temp_for_swap
 
 
 class MatchSubtitleToolsLayout(QVBoxLayout):
@@ -30,6 +89,15 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_up_button.selected_row_after_swap.connect(self.change_selected_subtitle_row)
         self.move_subtitle_top_button.swap_happened_signal.connect(self.refresh_subtitle_table)
         self.move_subtitle_top_button.selected_row_after_swap.connect(self.change_selected_subtitle_row)
+        self.move_subtitle_top_button.move_subtitle_to_top_signal.connect(
+            update_global_subtitle_files_list_order_to_top)
+        self.move_subtitle_up_button.move_subtitle_to_up_signal.connect(update_global_subtitle_files_list_order_to_up)
+        self.move_subtitle_to_button.move_subtitle_to_position_signal.connect(
+            update_global_subtitle_files_list_order_to_position)
+        self.move_subtitle_down_button.move_subtitle_to_down_signal.connect(
+            update_global_subtitle_files_list_order_to_down)
+        self.move_subtitle_bottom_button.move_subtitle_to_bottom_signal.connect(
+            update_global_subtitle_files_list_order_to_bottom)
         self.move_subtitle_down_button.swap_happened_signal.connect(self.refresh_subtitle_table)
         self.move_subtitle_down_button.selected_row_after_swap.connect(self.change_selected_subtitle_row)
         self.move_subtitle_bottom_button.swap_happened_signal.connect(self.refresh_subtitle_table)
@@ -83,6 +151,7 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.refresh_subtitle_table_signal.emit()
 
     def change_selected_subtitle_row(self, new_selected_index):
+        new_selected_index = min(new_selected_index, len(GlobalSetting.SUBTITLE_FILES_LIST) - 1)
         self.selected_subtitle_row_signal.emit(new_selected_index)
 
     def disable_editable_widgets(self):

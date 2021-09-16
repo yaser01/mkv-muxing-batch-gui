@@ -1,3 +1,4 @@
+from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QHeaderView, QTableWidgetItem, QAbstractItemView
 
@@ -8,6 +9,8 @@ from packages.Widgets.TableWidget import TableWidget
 
 
 class SubtitleMatchingTable(TableFixedHeaderWidget):
+    drop_folder_and_files_signal = Signal(list)
+
     def __init__(self):
         super().__init__(primarytable=TableWidget(), headername="Subtitle Name")
         self.current_files_list = []
@@ -17,7 +20,12 @@ class SubtitleMatchingTable(TableFixedHeaderWidget):
         self.table.horizontalHeader().setHighlightSections(False)
         self.table.verticalScrollBar().setSingleStep(1)
         self.table.setRowCount(0)
+        self.table.setAcceptDrops(True)
         self.table.verticalHeader().setDefaultSectionSize(screen_size.height() // 27)
+        self.table.drop_folder_and_files_signal.connect(self.drop_files)
+
+    def drop_files(self, paths_list):
+        self.drop_folder_and_files_signal.emit(paths_list)
 
     def clear_table(self):
         self.table.setRowCount(0)

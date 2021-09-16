@@ -105,9 +105,6 @@ class VideoSelectionSetting(GlobalSetting):
             return
         try:
             self.folder_path = folder_path
-            self.files_names_absolute_list_with_dropped_files = \
-                get_files_names_absolute_list(sort_names_like_windows(
-                    names_list=os.listdir(folder_path)), self.folder_path)
             self.files_names_list = self.get_files_list(self.folder_path)
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
             self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
@@ -205,9 +202,6 @@ class VideoSelectionSetting(GlobalSetting):
                 GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST.append(self.files_names_absolute_list[i])
                 if os.path.dirname(self.files_names_absolute_list[i]) not in GlobalSetting.VIDEO_SOURCE_PATHS:
                     GlobalSetting.VIDEO_SOURCE_PATHS.append(os.path.dirname(self.files_names_absolute_list[i]))
-        print("*****")
-        print(GlobalSetting.VIDEO_FILES_LIST)
-        print(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST)
 
     def update_checked_video(self, video_index):
         self.files_names_checked_list[video_index] = True
@@ -294,17 +288,20 @@ class VideoSelectionSetting(GlobalSetting):
                            "skipped:"
             for file_name in duplicate_files_list:
                 info_message += "\n" + file_name
-            warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message)
-            warning_dialog.execute()
+            warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
+                                           parent=self.window())
+            warning_dialog.execute_wth_no_block()
 
     def disable_editable_widgets(self):
         self.video_extensions_comboBox.setEnabled(False)
         self.video_source_lineEdit.setEnabled(False)
         self.video_source_button.setEnabled(False)
         self.video_clear_button.setEnabled(False)
+        self.table.setAcceptDrops(False)
 
     def enable_editable_widgets(self):
         self.video_extensions_comboBox.setEnabled(True)
         self.video_source_lineEdit.setEnabled(True)
         self.video_source_button.setEnabled(True)
         self.video_clear_button.setEnabled(True)
+        self.table.setAcceptDrops(True)

@@ -1,33 +1,33 @@
+from pathlib import Path
+
 from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton
+from PySide2.QtWidgets import QPushButton, QFileDialog
 
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.ChapterTab.Widgets.ClearChapterFilesDialog import ClearChapterFilesDialog
 
 
-class MoveChapterBottomButton(QPushButton):
-    swap_happened_signal = Signal()
-    selected_row_after_swap = Signal(int)
-    move_chapter_to_bottom_signal = Signal(int)
+class ChapterClearButton(QPushButton):
+    clear_files_signal = Signal()
+
     def __init__(self):
         super().__init__()
-        self.current_index = -1
-        self.max_index = -1
-        self.hint_when_enabled = ""
-        self.setIcon(GlobalFiles.BottomIcon)
-        self.setup_tool_tip_hint()
-        self.clicked.connect(self.clicked_button)
+        self.setIcon(GlobalFiles.NoMarkIcon)
+        self.hint_when_enabled = "Clear Files"
+        self.setToolTip(self.hint_when_enabled)
+        self.is_there_old_files = False
+        self.clicked.connect(self.open_clear_files_dialog)
 
-    def clicked_button(self):
-        current_index = self.current_index
-        if current_index != self.max_index and current_index != -1:
-            self.move_chapter_to_bottom_signal.emit(current_index)
-            self.swap_happened_signal.emit()
-            self.selected_row_after_swap.emit(20000)
+    def set_is_there_old_file(self, new_state):
+        self.is_there_old_files = new_state
 
-    def setup_tool_tip_hint(self):
-        self.setToolTip("Move Chapter To Bottom (Ctrl+PageDown)")
-        self.setToolTipDuration(3000)
+    def open_clear_files_dialog(self):
+        if self.is_there_old_files:
+            clear_files_dialog = ClearChapterFilesDialog()
+            clear_files_dialog.execute()
+            if clear_files_dialog.result == "Yes":
+                self.clear_files_signal.emit()
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

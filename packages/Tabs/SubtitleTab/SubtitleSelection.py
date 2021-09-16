@@ -7,6 +7,7 @@ from PySide2.QtWidgets import (
 from packages.Startup.DefaultOptions import Default_Subtitle_Extension
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleLayout import MatchSubtitleLayout
+from packages.Tabs.SubtitleTab.Widgets.SubtitleClearButton import SubtitleClearButton
 from packages.Tabs.SubtitleTab.Widgets.SubtitleDelayDoubleSpinBox import SubtitleDelayDoubleSpinBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleExtensionsCheckableComboBox import SubtitleExtensionsCheckableComboBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleLanguageComboBox import SubtitleLanguageComboBox
@@ -16,6 +17,7 @@ from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceButton import SubtitleSourc
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceLineEdit import SubtitleSourceLineEdit
 from packages.Tabs.SubtitleTab.Widgets.SubtitleTrackNameLineEdit import SubtitleTrackNameLineEdit
 from packages.Widgets.InvalidPathDialog import *
+from packages.Widgets.WarningDialog import WarningDialog
 from packages.Widgets.YesNoDialog import *
 
 
@@ -38,6 +40,7 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_delay_label = QLabel("Subtitle Delay:")
         self.subtitle_source_lineEdit = SubtitleSourceLineEdit()
         self.subtitle_source_button = SubtitleSourceButton()
+        self.subtitle_clear_button = SubtitleClearButton()
         self.subtitle_extensions_comboBox = SubtitleExtensionsCheckableComboBox()
         self.subtitle_language_comboBox = SubtitleLanguageComboBox()
         self.subtitle_track_name_lineEdit = SubtitleTrackNameLineEdit()
@@ -66,11 +69,16 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_match_layout.sync_subtitle_files_with_global_files_after_swap_signal.connect(
             self.sync_subtitle_files_with_global_files)
         self.tab_clicked_signal.connect(self.tab_clicked)
+        self.subtitle_match_layout.subtitle_table.drop_folder_and_files_signal.connect(
+            self.update_files_with_drag_and_drop)
+        self.subtitle_clear_button.clear_files_signal.connect(self.clear_files)
 
     def create_properties(self):
         self.folder_path = ""
+        self.drag_and_dropped_text = "[Drag & Drop Files]"
         self.files_names_list = []
         self.files_names_absolute_list = []
+        self.files_names_absolute_list_with_dropped_files = []
         self.current_subtitle_extensions = [Default_Subtitle_Extension]
 
     def setup_layouts(self):
@@ -98,9 +106,10 @@ class SubtitleSelectionSetting(GlobalSetting):
     def setup_main_layout(self):
         self.main_layout.addWidget(self.subtitle_source_label, 0, 0)
         self.main_layout.addWidget(self.subtitle_source_lineEdit, 0, 1, 1, 1)
-        self.main_layout.addWidget(self.subtitle_source_button, 0, 2)
+        self.main_layout.addWidget(self.subtitle_clear_button, 0, 2, 1, 1)
+        self.main_layout.addWidget(self.subtitle_source_button, 0, 3)
         self.main_layout.addWidget(self.subtitle_extension_label, 1, 0)
-        self.main_layout.addLayout(self.subtitle_options_layout, 1, 1, 1, 2)
+        self.main_layout.addLayout(self.subtitle_options_layout, 1, 1, 1, 3)
         self.main_layout.addWidget(self.subtitle_match_groupBox, 2, 0, 1, -1)
 
     def setup_subtitle_main_groupBox(self):
@@ -119,12 +128,34 @@ class SubtitleSelectionSetting(GlobalSetting):
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
             self.folder_path = ""
-            self.subtitle_source_lineEdit.setText("")
+            if self.subtitle_source_lineEdit.text() == self.drag_and_dropped_text:
+                new_files_absolute_path_list = []
+                self.files_names_list = []
+                current_extensions = self.subtitle_extensions_comboBox.currentData()
+                for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
+                    temp_file_name = os.path.basename(file_absolute_path)
+                    for j in range(len(current_extensions)):
+                        temp_file_extension_start_index = temp_file_name.rfind(".")
+                        if temp_file_extension_start_index == -1:
+                            continue
+                        temp_file_extension = temp_file_name[temp_file_extension_start_index + 1:]
+                        if temp_file_extension.lower() == current_extensions[j].lower():
+                            new_files_absolute_path_list.append(file_absolute_path)
+                            self.files_names_list.append(os.path.basename(file_absolute_path))
+                            break
+                self.subtitle_source_lineEdit.stop_check_path = True
+                self.subtitle_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.folder_path = ""
+                self.files_names_absolute_list = new_files_absolute_path_list.copy()
+                self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
+            else:
+                self.subtitle_source_lineEdit.setText("")
             return
         try:
             self.folder_path = folder_path
             self.files_names_list = self.get_files_list(self.folder_path)
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
+            self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
         except Exception as e:
             invalid_path_dialog = InvalidPathDialog()
             invalid_path_dialog.execute()
@@ -165,9 +196,18 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.subtitle_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)
         self.subtitle_extensions_comboBox.set_is_there_old_file(len(self.files_names_list) > 0)
+        self.subtitle_clear_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.subtitle_source_lineEdit.set_current_folder_path(self.folder_path)
         self.subtitle_extensions_comboBox.set_current_folder_path(self.folder_path)
         self.subtitle_extensions_comboBox.set_current_files_list(self.files_names_list)
+
+    def clear_files(self):
+        self.folder_path = ""
+        self.files_names_list = []
+        self.files_names_absolute_list = []
+        self.files_names_absolute_list_with_dropped_files = []
+        self.subtitle_source_lineEdit.setText("")
+        self.show_subtitle_files_list()
 
     def change_global_subtitle_list(self):
         GlobalSetting.SUBTITLE_FILES_LIST = self.files_names_list
@@ -216,7 +256,7 @@ class SubtitleSelectionSetting(GlobalSetting):
             self.show_video_files_list()
 
     def change_global_last_path_directory(self):
-        if self.folder_path != "" and not self.folder_path.isspace():
+        if self.folder_path != "" and not self.folder_path.isspace() and self.subtitle_source_lineEdit.text() != self.drag_and_dropped_text:
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def tab_clicked(self):
@@ -244,6 +284,7 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_set_default_checkBox.setEnabled(False)
         self.subtitle_set_forced_checkBox.setEnabled(False)
         self.subtitle_main_groupBox.setCheckable(False)
+        self.subtitle_clear_button.setEnabled(False)
         self.subtitle_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -255,6 +296,7 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_delay_spin.setEnabled(True)
         self.subtitle_set_default_checkBox.setEnabled(True)
         self.subtitle_set_forced_checkBox.setEnabled(True)
+        self.subtitle_clear_button.setEnabled(True)
         if GlobalSetting.SUBTITLE_ENABLED:
             self.subtitle_main_groupBox.setCheckable(True)
         else:
@@ -265,8 +307,49 @@ class SubtitleSelectionSetting(GlobalSetting):
 
     def sync_subtitle_files_with_global_files(self):
         self.files_names_list = GlobalSetting.SUBTITLE_FILES_LIST
-        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST = get_files_names_absolute_list(self.files_names_list,
-                                                                                        self.folder_path)
         self.files_names_absolute_list = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST
-
         self.update_other_classes_variables()
+
+    def update_files_with_drag_and_drop(self, paths_list):
+        duplicate_flag = False
+        not_duplicate_files_absolute_path_list = []
+        not_duplicate_files_list = []
+        duplicate_files_list = []
+        new_files_absolute_path_list = []
+        current_extensions = self.subtitle_extensions_comboBox.currentData()
+        for path in paths_list:
+            if os.path.isfile(path):
+                temp_file_name = os.path.basename(path)
+                for j in range(len(current_extensions)):
+                    temp_file_extension_start_index = temp_file_name.rfind(".")
+                    if temp_file_extension_start_index == -1:
+                        continue
+                    temp_file_extension = temp_file_name[temp_file_extension_start_index + 1:]
+                    if temp_file_extension.lower() == current_extensions[j].lower():
+                        new_files_absolute_path_list.append(path)
+                        break
+            else:
+                new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
+
+        for new_file_name in new_files_absolute_path_list:
+            if os.path.basename(new_file_name) in self.files_names_list:
+                duplicate_flag = True
+                duplicate_files_list.append(os.path.basename(new_file_name))
+            else:
+                not_duplicate_files_absolute_path_list.append(new_file_name)
+                not_duplicate_files_list.append(os.path.basename(new_file_name))
+                self.files_names_list.append(os.path.basename(new_file_name))
+        self.subtitle_source_lineEdit.stop_check_path = True
+        self.subtitle_source_lineEdit.setText(self.drag_and_dropped_text)
+        self.folder_path = ""
+        self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_absolute_path_list)
+        self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
+        self.show_subtitle_files_list()
+        if duplicate_flag:
+            info_message = "One or more files have the same name with the old files will be " \
+                           "skipped:"
+            for file_name in duplicate_files_list:
+                info_message += "\n" + file_name
+            warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
+                                           parent=self.window())
+            warning_dialog.execute_wth_no_block()
