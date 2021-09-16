@@ -15,7 +15,11 @@ from packages.Tabs.MuxSetting.Widgets.StartMuxingProcessWorker import StartMuxin
 
 def check_if_mkvpropedit_good():
     if len(
-            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST) > 0 or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED == True or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED == True or not GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
+            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST) > 0 or \
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED == True or \
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED == True or \
+            not GlobalSetting.VIDEO_SOURCE_MKV_ONLY or \
+            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return False
     else:
         return True

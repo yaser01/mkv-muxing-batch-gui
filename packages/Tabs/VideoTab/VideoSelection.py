@@ -5,6 +5,7 @@ from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
 from packages.Tabs.VideoTab.Widgets.VideoClearButton import VideoClearButton
+from packages.Tabs.VideoTab.Widgets.VideoDefaultDurationFPSComboBox import VideoDefaultDurationFPSComboBox
 from packages.Tabs.VideoTab.Widgets.VideoExtensionsCheckableComboBox import VideoExtensionsCheckableComboBox
 from packages.Tabs.VideoTab.Widgets.VideoSourceButton import VideoSourceButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceLineEdit import VideoSourceLineEdit
@@ -43,6 +44,8 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_source_button = VideoSourceButton()
         self.video_clear_button = VideoClearButton()
         self.video_extensions_label = QLabel()
+        self.video_default_duration_fps_label = QLabel()
+        self.video_default_duration_fps_comboBox = VideoDefaultDurationFPSComboBox()
         self.video_extensions_comboBox = VideoExtensionsCheckableComboBox()
         self.table = VideoTable()
         self.main_layout = QGridLayout()
@@ -61,6 +64,7 @@ class VideoSelectionSetting(GlobalSetting):
     def setup_widgets(self):
         self.setup_video_source_label()
         self.setup_video_extensions_label()
+        self.setup_video_default_duration_fps_label()
         self.setup_layouts()
 
     def setup_layouts(self):
@@ -180,13 +184,18 @@ class VideoSelectionSetting(GlobalSetting):
     def setup_video_extensions_label(self):
         self.video_extensions_label.setText("Video Extension:")
 
+    def setup_video_default_duration_fps_label(self):
+        self.video_default_duration_fps_label.setText("Default Duration/FPS:")
+
     def setup_main_layout(self):
         self.main_layout.addWidget(self.video_source_label, 0, 0)
-        self.main_layout.addWidget(self.video_source_lineEdit, 0, 1)
-        self.main_layout.addWidget(self.video_clear_button, 0, 2)
-        self.main_layout.addWidget(self.video_source_button, 0, 3)
+        self.main_layout.addWidget(self.video_source_lineEdit, 0, 1, 1, 80)
+        self.main_layout.addWidget(self.video_clear_button, 0, 81)
+        self.main_layout.addWidget(self.video_source_button, 0, 82)
         self.main_layout.addWidget(self.video_extensions_label, 1, 0)
         self.main_layout.addWidget(self.video_extensions_comboBox, 1, 1)
+        self.main_layout.addWidget(self.video_default_duration_fps_label, 1, 2)
+        self.main_layout.addWidget(self.video_default_duration_fps_comboBox, 1, 3)
         self.main_layout.addWidget(self.table, 2, 0, 1, -1)
 
     def change_global_last_path_directory(self):
@@ -302,6 +311,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_source_lineEdit.setEnabled(False)
         self.video_source_button.setEnabled(False)
         self.video_clear_button.setEnabled(False)
+        self.video_default_duration_fps_comboBox.setEnabled(False)
         self.table.setAcceptDrops(False)
 
     def enable_editable_widgets(self):
@@ -309,4 +319,5 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_source_lineEdit.setEnabled(True)
         self.video_source_button.setEnabled(True)
         self.video_clear_button.setEnabled(True)
+        self.video_default_duration_fps_comboBox.setEnabled(True)
         self.table.setAcceptDrops(True)

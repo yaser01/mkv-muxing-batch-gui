@@ -55,6 +55,7 @@ class GetJsonForMkvmergeJob:
         self.change_default_forced_audio_track_setting_source_video_command = ""
         self.specify_subtitle_track_source_video_command = ""
         self.specify_audio_track_source_video_command = ""
+        self.video_default_duration_fps_command = ""
         self.final_command = ""
         self.json_info = ""
         self.tracks_json_info = ""
@@ -76,6 +77,7 @@ class GetJsonForMkvmergeJob:
         self.setup_ui_language()
         self.setup_output_video_command()
         self.setup_input_video_command()
+        self.setup_video_default_duration_fps_command()
         self.setup_final_command()
 
     def generate_info_file(self):
@@ -122,8 +124,12 @@ class GetJsonForMkvmergeJob:
                 self.chapter_attach_command = add_json_line("--chapters") + \
                                               add_json_line(fix_windows_backslash_path(self.job.chapter_name_absolute))
 
-    def setup_subtitle_options(self):
+    def setup_video_default_duration_fps_command(self):
+        if GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
+            self.video_default_duration_fps_command = add_json_line("--default-duration") + add_json_line(
+                "0:" + GlobalSetting.VIDEO_DEFAULT_DURATION_FPS)
 
+    def setup_subtitle_options(self):
         if GlobalSetting.SUBTITLE_ENABLED:
             subtitle_command_list = []
             if self.job.subtitle_found:
@@ -374,6 +380,7 @@ class GetJsonForMkvmergeJob:
         self.final_command += self.change_default_forced_subtitle_track_setting_source_video_command
         self.final_command += self.change_default_forced_audio_track_setting_source_video_command
 
+        self.final_command += self.video_default_duration_fps_command
         self.final_command += self.input_video_command
         self.final_command += self.subtitle_append_command
         self.final_command += self.attachments_attach_command

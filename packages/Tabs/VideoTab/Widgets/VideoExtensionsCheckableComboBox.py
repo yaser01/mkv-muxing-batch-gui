@@ -49,6 +49,7 @@ class VideoExtensionsCheckableComboBox(QComboBox):
         self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
         self.lineEdit().installEventFilter(self)
+        self.setMinimumWidth(screen_size.width() // 10)
         self.setMaximumWidth(screen_size.width() // 8)
         self.setMaxVisibleItems(6)
         self.addItems(AllVideosExtensions)
