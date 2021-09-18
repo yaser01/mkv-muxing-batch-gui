@@ -52,6 +52,7 @@ ISO_639_2_LANGUAGES = {
     "Malayalam": "mal",
     "Marathi": "mar",
     "Nepali": "nep",
+    "Norway": "nno",
     "No linguistic content": "zxx",
     "Oriya": "ori",
     "Panjabi": "pan",
@@ -83,7 +84,9 @@ ISO_639_2_LANGUAGES = {
 }
 AllVideosExtensions = ['AVI', 'MKV', 'MP4', 'M4V', 'MOV', 'MPEG', 'OGG', 'OGM', 'H264', 'H265', "WEBM", 'WMV']
 AllSubtitlesExtensions = ['ASS', 'SRT', 'SSA', 'SUP', 'PGS']
+AllAudiosExtensions = ['AAC', 'AC3', 'FLAC', 'MKA', 'M4A', 'MP3', 'WAV', 'OGG']
 AllSubtitlesLanguages = list(ISO_639_2_LANGUAGES.keys())
+AllAudiosLanguages = list(ISO_639_2_LANGUAGES.keys())
 AllChapterExtensions = ['XML']
 AllSubtitlesTracks = ["---Tracks---"]
 AllSubtitlesTracks.extend(tracks_list)
@@ -91,4 +94,4 @@ AllSubtitlesTracks.append("---Languages---")
 AllSubtitlesTracks.extend(list(ISO_639_2_LANGUAGES.keys()))
 AllAudiosTracks = AllSubtitlesTracks
 AllVideoDefaultDurationFPSLanguages = ['Default', '24p', '25p', '30p', '48p', '50i', '50p', '60i', '60p', '24000/1001p',
-                                      '30000/1001p', '48000/1001p', '60000/1001i', '60000/1001p']
+                                       '30000/1001p', '48000/1001p', '60000/1001i', '60000/1001p']

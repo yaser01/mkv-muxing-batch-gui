@@ -5,24 +5,24 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QLineEdit
 
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.VideoTab.Widgets.ReloadVideoFilesDialog import ReloadVideoFilesDialog
+from packages.Tabs.AudioTab.Widgets.ReloadAudioFilesDialog import ReloadAudioFilesDialog
 from packages.Widgets.InvalidPathDialog import InvalidPathDialog
 
 
-class VideoSourceLineEdit(QLineEdit):
+class AudioSourceLineEdit(QLineEdit):
     edit_finished_signal = Signal(str)
     set_is_drag_and_drop_signal = Signal(bool)
 
     def __init__(self):
         super().__init__()
-        self.setPlaceholderText("Enter Video Folder Path")
-        self.setText("")
+        self.setPlaceholderText("Enter Audio Folder Path")
         self.setClearButtonEnabled(True)
+        self.setText("")
         self.stop_check_path = False
         self.is_there_old_files = False
+        self.is_drag_and_drop = False
         self.current_folder_path = ""
         self.hint_when_enabled = ""
-        self.is_drag_and_drop = False
         self.editingFinished.connect(self.check_new_path)
 
     def set_is_drag_and_drop(self, new_state):
@@ -42,7 +42,7 @@ class VideoSourceLineEdit(QLineEdit):
                 if Path(new_path) != Path(self.current_folder_path):
                     new_path = str(Path(new_path))
                     if self.is_there_old_files:
-                        reload_dialog = ReloadVideoFilesDialog()
+                        reload_dialog = ReloadAudioFilesDialog()
                         reload_dialog.execute()
                         if reload_dialog.result == "Yes":
                             self.is_drag_and_drop = False

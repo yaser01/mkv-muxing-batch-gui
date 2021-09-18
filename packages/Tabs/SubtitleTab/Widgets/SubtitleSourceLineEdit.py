@@ -11,6 +11,7 @@ from packages.Widgets.InvalidPathDialog import InvalidPathDialog
 
 class SubtitleSourceLineEdit(QLineEdit):
     edit_finished_signal = Signal(str)
+    set_is_drag_and_drop_signal = Signal(bool)
 
     def __init__(self):
         super().__init__()
@@ -19,9 +20,13 @@ class SubtitleSourceLineEdit(QLineEdit):
         self.setText("")
         self.stop_check_path = False
         self.is_there_old_files = False
+        self.is_drag_and_drop = False
         self.current_folder_path = ""
         self.hint_when_enabled = ""
         self.editingFinished.connect(self.check_new_path)
+
+    def set_is_drag_and_drop(self, new_state):
+        self.is_drag_and_drop = new_state
 
     def set_is_there_old_file(self, new_state):
         self.is_there_old_files = new_state
@@ -40,16 +45,20 @@ class SubtitleSourceLineEdit(QLineEdit):
                         reload_dialog = ReloadSubtitleFilesDialog()
                         reload_dialog.execute()
                         if reload_dialog.result == "Yes":
+                            self.is_drag_and_drop = False
+                            self.set_is_drag_and_drop_signal.emit(False)
                             self.setText(new_path)
                         else:
                             new_path = self.current_folder_path
                             self.setText(self.current_folder_path)
                     else:
+                        self.is_drag_and_drop = False
+                        self.set_is_drag_and_drop_signal.emit(False)
                         self.setText(new_path)
                 else:
                     self.setText(self.current_folder_path)
             else:
-                if new_path == "" or new_path.isspace():
+                if new_path == "" or new_path.isspace() or self.is_drag_and_drop:
                     self.setText(self.current_folder_path)
                 else:
                     invalid_path_dialog = InvalidPathDialog()

@@ -7,7 +7,7 @@ from pathlib import Path
 from PySide2.QtWidgets import QWidget
 
 from packages.Startup import GlobalFiles
-from packages.Startup.DefaultOptions import Default_Subtitle_Language
+from packages.Startup.DefaultOptions import Default_Subtitle_Language, Default_Audio_Language
 
 
 def sort_names_like_windows(names_list):
@@ -48,6 +48,7 @@ class GlobalSetting(QWidget):
     VIDEO_FILES_ABSOLUTE_PATH_LIST = []
     VIDEO_SOURCE_MKV_ONLY = []
     VIDEO_DEFAULT_DURATION_FPS = ""
+
     SUBTITLE_ENABLED = True
     SUBTITLE_FILES_LIST = []
     SUBTITLE_FILES_ABSOLUTE_PATH_LIST = []
@@ -58,6 +59,17 @@ class GlobalSetting(QWidget):
     SUBTITLE_SET_DEFAULT_DISABLED = False
     SUBTITLE_SET_FORCED_DISABLED = False
     SUBTITLE_LANGUAGE = Default_Subtitle_Language
+
+    AUDIO_ENABLED = True
+    AUDIO_FILES_LIST = []
+    AUDIO_FILES_ABSOLUTE_PATH_LIST = []
+    AUDIO_TRACK_NAME = ""
+    AUDIO_DELAY = 0.0
+    AUDIO_SET_DEFAULT = False
+    AUDIO_SET_FORCED = False
+    AUDIO_SET_DEFAULT_DISABLED = False
+    AUDIO_SET_FORCED_DISABLED = False
+    AUDIO_LANGUAGE = Default_Audio_Language
 
     ATTACHMENT_ENABLED = False
     ATTACHMENT_FILES_LIST = []

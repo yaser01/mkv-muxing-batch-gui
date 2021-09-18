@@ -53,6 +53,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_layout = QGridLayout()
         self.folder_path = ""
         self.drag_and_dropped_text = "[Drag & Drop Files]"
+        self.is_drag_and_drop = False
         self.files_names_list = []
         self.files_checked_list = []
         self.files_names_absolute_list = []
@@ -79,6 +80,11 @@ class AttachmentSelectionSetting(GlobalSetting):
 
             self.update_total_size()
             self.show_files_list()
+        else:
+            if self.is_drag_and_drop:
+                self.attachment_source_lineEdit.stop_check_path = True
+                self.attachment_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.attachment_source_lineEdit.stop_check_path = False
 
     def update_total_size(self):
         self.attachment_total_size_value_label.update_total_size(self.files_names_absolute_list,self.files_checked_list)
@@ -86,25 +92,30 @@ class AttachmentSelectionSetting(GlobalSetting):
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
             self.folder_path = ""
-            if self.attachment_source_lineEdit.text() == self.drag_and_dropped_text:
+            if self.is_drag_and_drop:
                 new_files_absolute_path_list = []
                 self.files_names_list = []
                 for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
+                    if os.path.isdir(file_absolute_path):
+                        continue
                     if os.path.getsize(file_absolute_path) == 0:
                         continue
                     new_files_absolute_path_list.append(file_absolute_path)
                     self.files_names_list.append(os.path.basename(file_absolute_path))
                 self.attachment_source_lineEdit.stop_check_path = True
                 self.attachment_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.is_drag_and_drop = True
                 self.folder_path = ""
                 self.files_names_absolute_list = new_files_absolute_path_list.copy()
                 self.files_size_list = get_files_size_with_absolute_path_list(new_files_absolute_path_list)
                 self.files_checked_list = ([True] * len(new_files_absolute_path_list))
+                self.attachment_source_lineEdit.stop_check_path = False
                 self.update_total_size()
             else:
                 self.attachment_source_lineEdit.setText("")
             return
         try:
+            self.is_drag_and_drop = False
             self.folder_path = folder_path
             self.files_names_list = self.get_files_list(self.folder_path)
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
@@ -136,6 +147,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.change_global_last_path_directory()
         self.change_global_attachment_list()
         self.attachment_source_lineEdit.set_current_folder_path(self.folder_path)
+        self.attachment_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
         self.attachment_clear_button.set_is_there_old_file(len(self.files_names_list) > 0)
 
     def setup_main_layout(self):
@@ -155,12 +167,13 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.files_names_absolute_list = []
         self.files_size_list = []
         self.attachment_source_lineEdit.setText("")
+        self.is_drag_and_drop = False
         self.files_checked_list = []
         self.update_total_size()
         self.show_files_list()
 
     def change_global_last_path_directory(self):
-        if self.folder_path != "" and not self.folder_path.isspace() and self.attachment_source_lineEdit.text() != self.drag_and_dropped_text:
+        if self.folder_path != "" and not self.folder_path.isspace() and not self.is_drag_and_drop:
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def change_global_attachment_list(self):
@@ -178,6 +191,7 @@ class AttachmentSelectionSetting(GlobalSetting):
     def connect_signals(self):
         self.attachment_source_button.clicked_signal.connect(self.update_folder_path)
         self.attachment_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        self.attachment_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.attachment_main_groupBox.toggled.connect(self.activate_tab)
         self.tab_clicked_signal.connect(self.tab_clicked)
         self.table.update_checked_attachment_signal.connect(self.update_checked_attachment)
@@ -238,6 +252,8 @@ class AttachmentSelectionSetting(GlobalSetting):
             self.files_names_absolute_list = []
             self.files_size_list = []
             self.files_checked_list = []
+            self.is_drag_and_drop = False
+            self.attachment_source_lineEdit.set_is_drag_and_drop(False)
             GlobalSetting.ATTACHMENT_FILES_LIST = []
             GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST = []
             GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST = []
@@ -260,7 +276,7 @@ class AttachmentSelectionSetting(GlobalSetting):
                 new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
 
         for new_file_name in new_files_absolute_path_list:
-            if os.path.basename(new_file_name) in self.files_names_list:
+            if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
                 duplicate_flag = True
                 duplicate_files_list.append(os.path.basename(new_file_name))
             else:
@@ -269,12 +285,14 @@ class AttachmentSelectionSetting(GlobalSetting):
                 self.files_names_list.append(os.path.basename(new_file_name))
         self.attachment_source_lineEdit.stop_check_path = True
         self.attachment_source_lineEdit.setText(self.drag_and_dropped_text)
+        self.is_drag_and_drop = True
         self.folder_path = ""
         self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
         self.files_size_list.extend(get_files_size_with_absolute_path_list(not_duplicate_files_absolute_path_list))
         self.files_checked_list.extend([True] * len(not_duplicate_files_absolute_path_list))
         self.update_total_size()
         self.show_files_list()
+        self.attachment_source_lineEdit.stop_check_path = False
         if duplicate_flag:
             info_message = "One or more files have the same name with the old files will be " \
                            "skipped:"
@@ -283,3 +301,7 @@ class AttachmentSelectionSetting(GlobalSetting):
             warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
+
+
+    def update_is_drag_and_drop(self, new_state):
+        self.is_drag_and_drop = new_state

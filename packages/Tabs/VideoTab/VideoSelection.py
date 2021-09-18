@@ -58,6 +58,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_checked_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.current_video_extensions = [Default_Video_Extension]
+        self.is_drag_and_drop = False
         self.setup_widgets()
         self.connect_signals()
 
@@ -76,16 +77,22 @@ class VideoSelectionSetting(GlobalSetting):
             self.video_source_lineEdit.setText(new_path)
             self.update_files_lists(new_path)
             self.show_files_list()
+        else:
+            if self.is_drag_and_drop:
+                self.video_source_lineEdit.stop_check_path = True
+                self.video_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.video_source_lineEdit.stop_check_path = False
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
             self.folder_path = ""
-            if self.video_source_lineEdit.text() == self.drag_and_dropped_text:
+            if self.is_drag_and_drop:
                 new_files_absolute_path_list = []
                 self.files_names_list = []
+                self.folders_paths = []
                 current_extensions = self.video_extensions_comboBox.currentData()
                 for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
-                    if os.path.isdir(file_absolute_path) == 0:
+                    if os.path.isdir(file_absolute_path):
                         continue
                     if os.path.getsize(file_absolute_path) == 0:
                         continue
@@ -103,15 +110,18 @@ class VideoSelectionSetting(GlobalSetting):
                             break
                 self.video_source_lineEdit.stop_check_path = True
                 self.video_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.is_drag_and_drop = True
                 self.folder_path = ""
                 self.files_names_absolute_list = new_files_absolute_path_list.copy()
                 self.files_size_list = get_files_size_with_absolute_path_list(new_files_absolute_path_list)
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.files_names_checked_list = ([True] * len(new_files_absolute_path_list))
+                self.video_source_lineEdit.stop_check_path = False
             else:
                 self.video_source_lineEdit.setText("")
             return
         try:
+            self.is_drag_and_drop = False
             self.folder_path = folder_path
             self.files_names_list = self.get_files_list(self.folder_path)
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
@@ -160,6 +170,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_extensions_comboBox.set_is_there_old_file(len(self.files_names_list) > 0)
         self.video_clear_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.video_source_lineEdit.set_current_folder_path(self.folder_path)
+        self.video_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
         self.video_extensions_comboBox.set_current_folder_path(self.folder_path)
         self.video_extensions_comboBox.set_current_files_list(self.files_names_list)
 
@@ -175,6 +186,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_absolute_list = []
         self.files_size_list = []
         self.video_source_lineEdit.setText("")
+        self.is_drag_and_drop = False
         self.files_names_checked_list = []
         self.show_files_list()
 
@@ -199,7 +211,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.main_layout.addWidget(self.table, 2, 0, 1, -1)
 
     def change_global_last_path_directory(self):
-        if self.folder_path != "" and not self.folder_path.isspace() and self.video_source_lineEdit.text() != self.drag_and_dropped_text:
+        if self.folder_path != "" and not self.folder_path.isspace() and not self.is_drag_and_drop:
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def change_global_video_list(self):
@@ -241,6 +253,7 @@ class VideoSelectionSetting(GlobalSetting):
     def connect_signals(self):
         self.video_source_button.clicked_signal.connect(self.update_folder_path)
         self.video_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        self.video_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.video_clear_button.clear_files_signal.connect(self.clear_files)
         self.video_extensions_comboBox.close_list.connect(self.check_extension_changes)
         self.table.drop_folder_and_files_signal.connect(self.update_files_with_drag_and_drop)
@@ -282,7 +295,7 @@ class VideoSelectionSetting(GlobalSetting):
                 new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
 
         for new_file_name in new_files_absolute_path_list:
-            if os.path.basename(new_file_name) in self.files_names_list:
+            if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
                 duplicate_flag = True
                 duplicate_files_list.append(os.path.basename(new_file_name))
             else:
@@ -291,12 +304,14 @@ class VideoSelectionSetting(GlobalSetting):
                 self.files_names_list.append(os.path.basename(new_file_name))
         self.video_source_lineEdit.stop_check_path = True
         self.video_source_lineEdit.setText(self.drag_and_dropped_text)
+        self.is_drag_and_drop = True
         self.folder_path = ""
         self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_absolute_path_list)
         self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
         self.files_size_list.extend(get_files_size_with_absolute_path_list(not_duplicate_files_absolute_path_list))
         self.files_names_checked_list.extend([True] * len(not_duplicate_files_absolute_path_list))
         self.show_files_list()
+        self.video_source_lineEdit.stop_check_path = False
         if duplicate_flag:
             info_message = "One or more files have the same name with the old files will be " \
                            "skipped:"
@@ -321,3 +336,6 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_clear_button.setEnabled(True)
         self.video_default_duration_fps_comboBox.setEnabled(True)
         self.table.setAcceptDrops(True)
+
+    def update_is_drag_and_drop(self, new_state):
+        self.is_drag_and_drop = new_state

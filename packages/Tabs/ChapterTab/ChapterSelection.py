@@ -52,6 +52,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_main_groupBox.toggled.connect(self.activate_tab)
         self.chapter_source_button.clicked_signal.connect(self.update_folder_path)
         self.chapter_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        self.chapter_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.chapter_extensions_comboBox.close_list.connect(self.check_extension_changes)
         self.chapter_match_layout.sync_chapter_files_with_global_files_after_swap_signal.connect(
             self.sync_chapter_files_with_global_files)
@@ -67,6 +68,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.current_chapter_extensions = [Default_Chapter_Extension]
+        self.is_drag_and_drop = False
 
     def setup_layouts(self):
         self.setup_chapter_options_layout()
@@ -99,16 +101,21 @@ class ChapterSelectionSetting(GlobalSetting):
             self.chapter_source_lineEdit.setText(new_path)
             self.update_files_lists(new_path)
             self.show_chapter_files_list()
+        else:
+            if self.is_drag_and_drop:
+                self.chapter_source_lineEdit.stop_check_path = True
+                self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.chapter_source_lineEdit.stop_check_path = False
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
             self.folder_path = ""
-            if self.chapter_source_lineEdit.text() == self.drag_and_dropped_text:
+            if self.is_drag_and_drop:
                 new_files_absolute_path_list = []
                 self.files_names_list = []
                 current_extensions = self.chapter_extensions_comboBox.currentData()
                 for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
-                    if os.path.isdir(file_absolute_path) == 0:
+                    if os.path.isdir(file_absolute_path):
                         continue
                     if os.path.getsize(file_absolute_path) == 0:
                         continue
@@ -124,13 +131,16 @@ class ChapterSelectionSetting(GlobalSetting):
                             break
                 self.chapter_source_lineEdit.stop_check_path = True
                 self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
+                self.is_drag_and_drop = True
                 self.folder_path = ""
                 self.files_names_absolute_list = new_files_absolute_path_list.copy()
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
+                self.chapter_source_lineEdit.stop_check_path = False
             else:
                 self.chapter_source_lineEdit.setText("")
             return
         try:
+            self.is_drag_and_drop = False
             self.folder_path = folder_path
             self.files_names_list = self.get_files_list(self.folder_path)
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
@@ -177,6 +187,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_extensions_comboBox.set_is_there_old_file(len(self.files_names_list) > 0)
         self.chapter_clear_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.chapter_source_lineEdit.set_current_folder_path(self.folder_path)
+        self.chapter_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
         self.chapter_extensions_comboBox.set_current_folder_path(self.folder_path)
         self.chapter_extensions_comboBox.set_current_files_list(self.files_names_list)
 
@@ -186,6 +197,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.chapter_source_lineEdit.setText("")
+        self.is_drag_and_drop = False
         self.show_chapter_files_list()
 
     def change_global_chapter_list(self):
@@ -207,6 +219,8 @@ class ChapterSelectionSetting(GlobalSetting):
             self.files_names_absolute_list = []
             self.current_chapter_extensions = [Default_Chapter_Extension]
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
+            self.is_drag_and_drop = False
+            self.subtitle_source_lineEdit.set_is_drag_and_drop(False)
             GlobalSetting.CHAPTER_FILES_LIST = []
             GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST = []
             GlobalSetting.CHAPTER_TRACK_NAME = ""
@@ -231,7 +245,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.show_video_files_list()
 
     def change_global_last_path_directory(self):
-        if self.folder_path != "" and not self.folder_path.isspace() and self.chapter_source_lineEdit.text() != self.drag_and_dropped_text:
+        if self.folder_path != "" and not self.folder_path.isspace() and not self.is_drag_and_drop:
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def tab_clicked(self):
@@ -293,7 +307,7 @@ class ChapterSelectionSetting(GlobalSetting):
                 new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
 
         for new_file_name in new_files_absolute_path_list:
-            if os.path.basename(new_file_name) in self.files_names_list:
+            if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
                 duplicate_flag = True
                 duplicate_files_list.append(os.path.basename(new_file_name))
             else:
@@ -302,10 +316,12 @@ class ChapterSelectionSetting(GlobalSetting):
                 self.files_names_list.append(os.path.basename(new_file_name))
         self.chapter_source_lineEdit.stop_check_path = True
         self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
+        self.is_drag_and_drop = True
         self.folder_path = ""
         self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_absolute_path_list)
         self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
         self.show_chapter_files_list()
+        self.chapter_source_lineEdit.stop_check_path = False
         if duplicate_flag:
             info_message = "One or more files have the same name with the old files will be " \
                            "skipped:"
@@ -314,3 +330,6 @@ class ChapterSelectionSetting(GlobalSetting):
             warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
+
+    def update_is_drag_and_drop(self, new_state):
+        self.is_drag_and_drop = new_state
