@@ -3,6 +3,8 @@ from PySide2.QtCore import Qt, Signal
 from PySide2.QtGui import QPalette
 from PySide2.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
 
+from packages.Tabs.GlobalSetting import sort_names_like_windows
+
 
 class TableWidget(QTableWidget):
     drop_folder_and_files_signal = Signal(list)
@@ -66,4 +68,4 @@ class TableWidget(QTableWidget):
         for url in urls:
             current_path = url.path()[1:]
             paths_to_add.append(current_path)
-        self.drop_folder_and_files_signal.emit(paths_to_add)
+        self.drop_folder_and_files_signal.emit(sort_names_like_windows(paths_to_add))

@@ -41,9 +41,16 @@ def change_global_LogFilePath():
                                                                 folder_path=GlobalFiles.MergeLogsFolderPath)
 
 
+def check_is_there_subtitle_to_mux():
+    for i in GlobalSetting.SUBTITLE_FILES_LIST.keys():
+        if len(GlobalSetting.SUBTITLE_FILES_LIST[i]) > 0:
+            return True
+    return False
+
+
 # noinspection PyAttributeOutsideInit
 def check_if_at_least_one_muxing_setting_has_been_selected():
-    if len(GlobalSetting.SUBTITLE_FILES_LIST) > 0 or \
+    if check_is_there_subtitle_to_mux or \
             len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
             len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or \
             GlobalSetting.ATTACHMENT_DISCARD_OLD or \

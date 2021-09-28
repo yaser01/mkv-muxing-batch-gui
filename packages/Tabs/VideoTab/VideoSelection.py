@@ -292,7 +292,7 @@ class VideoSelectionSetting(GlobalSetting):
             else:
                 if os.path.dirname(path) not in self.folders_paths:
                     self.folders_paths.append(os.path.dirname(path))
-                new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
+                new_files_absolute_path_list.extend(sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
@@ -328,6 +328,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_clear_button.setEnabled(False)
         self.video_default_duration_fps_comboBox.setEnabled(False)
         self.table.setAcceptDrops(False)
+        self.table.disable_selection()
 
     def enable_editable_widgets(self):
         self.video_extensions_comboBox.setEnabled(True)
@@ -336,6 +337,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_clear_button.setEnabled(True)
         self.video_default_duration_fps_comboBox.setEnabled(True)
         self.table.setAcceptDrops(True)
+        self.table.enable_selection()
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state

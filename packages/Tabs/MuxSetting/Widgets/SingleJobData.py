@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from packages.Startup.DefaultOptions import Default_Subtitle_Language
 
 
@@ -10,13 +12,24 @@ class SingleJobData:
         self.video_name_absolute = ""
 
         self.subtitle_found = False
-        self.subtitle_name = ""
-        self.subtitle_name_absolute = ""
-        self.subtitle_language = Default_Subtitle_Language
-        self.subtitle_track_name = ""
-        self.subtitle_delay = 0.0
-        self.subtitle_set_default = False
-        self.subtitle_set_forced = False
+        self.subtitle_name = []
+        self.subtitle_name_absolute = []
+        self.subtitle_language = []
+        self.subtitle_track_name = []
+        self.subtitle_delay = []
+        self.subtitle_set_default = []
+        self.subtitle_set_forced = []
+        self.subtitle_set_at_top = []
+
+        self.audio_found = False
+        self.audio_name = []
+        self.audio_name_absolute = []
+        self.audio_language = []
+        self.audio_track_name = []
+        self.audio_delay = []
+        self.audio_set_default = []
+        self.audio_set_forced = []
+        self.audio_set_at_top = []
 
         self.chapter_found = False
         self.chapter_name = ""

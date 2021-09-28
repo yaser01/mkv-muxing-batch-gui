@@ -11,10 +11,12 @@ from packages.Tabs.SubtitleTab.Widgets.SubtitleClearButton import SubtitleClearB
 from packages.Tabs.SubtitleTab.Widgets.SubtitleDelayDoubleSpinBox import SubtitleDelayDoubleSpinBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleExtensionsCheckableComboBox import SubtitleExtensionsCheckableComboBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleLanguageComboBox import SubtitleLanguageComboBox
+from packages.Tabs.SubtitleTab.Widgets.SubtitleMuxAtTop import SubtitleMuxAtTop
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSetDefaultCheckBox import SubtitleSetDefaultCheckBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSetForcedCheckBox import SubtitleSetForcedCheckBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceButton import SubtitleSourceButton
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceLineEdit import SubtitleSourceLineEdit
+from packages.Tabs.SubtitleTab.Widgets.SubtitleTabComboBox import SubtitleTabComboBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleTrackNameLineEdit import SubtitleTrackNameLineEdit
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
@@ -22,13 +24,16 @@ from packages.Widgets.YesNoDialog import *
 
 
 # noinspection PyAttributeOutsideInit
-class SubtitleSelectionSetting(GlobalSetting):
+class SubtitleSelectionSetting(QGroupBox):
     tab_clicked_signal = Signal()
-    activation_signal = Signal(bool)
 
-    def __init__(self):
+    is_there_old_files_signal = Signal(bool)
+
+    def __init__(self, tab_index):
         super().__init__()
+        self.tab_index = tab_index
         self.create_properties()
+        self.create_global_properties()
         self.create_widgets()
         self.setup_widgets()
         self.connect_signals()
@@ -37,22 +42,26 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_source_label = QLabel("Subtitle Source Folder:")
         self.subtitle_language_label = QLabel("Language:")
         self.subtitle_extension_label = QLabel("Subtitle Extension:")
-        self.subtitle_delay_label = QLabel("Subtitle Delay:")
+        self.subtitle_delay_label = QLabel("Delay:")
+        # self.subtitle_tab_comboBox = SubtitleTabComboBox()
         self.subtitle_source_lineEdit = SubtitleSourceLineEdit()
         self.subtitle_source_button = SubtitleSourceButton()
         self.subtitle_clear_button = SubtitleClearButton()
         self.subtitle_extensions_comboBox = SubtitleExtensionsCheckableComboBox()
-        self.subtitle_language_comboBox = SubtitleLanguageComboBox()
-        self.subtitle_track_name_lineEdit = SubtitleTrackNameLineEdit()
-        self.subtitle_delay_spin = SubtitleDelayDoubleSpinBox()
-        self.subtitle_set_forced_checkBox = SubtitleSetForcedCheckBox()
-        self.subtitle_set_default_checkBox = SubtitleSetDefaultCheckBox()
-        self.subtitle_match_layout = MatchSubtitleLayout(parent=self)
+        self.subtitle_language_comboBox = SubtitleLanguageComboBox(self.tab_index)
+        self.subtitle_track_name_lineEdit = SubtitleTrackNameLineEdit(self.tab_index)
+        self.subtitle_delay_spin = SubtitleDelayDoubleSpinBox(self.tab_index)
+        self.subtitle_set_forced_checkBox = SubtitleSetForcedCheckBox(self.tab_index)
+        self.subtitle_set_default_checkBox = SubtitleSetDefaultCheckBox(self.tab_index)
+        self.subtitle_mux_at_top_checkBox = SubtitleMuxAtTop(self.tab_index)
+        self.subtitle_match_layout = MatchSubtitleLayout(parent=self, tab_index=self.tab_index)
         self.subtitle_options_layout = QHBoxLayout()
         self.subtitle_set_default_forced_layout = QHBoxLayout()
-        self.MainLayout = QVBoxLayout()
+        # self.MainLayout = QVBoxLayout()
         self.main_layout = QGridLayout()
-        self.subtitle_main_groupBox = QGroupBox()
+        self.setObjectName("main_groupBox")
+        self.setStyleSheet(
+            "QGroupBox#main_groupBox {subcontrol-origin: margin;left: 3px;padding: 3px 0px 3px 0px;}")
         self.subtitle_match_groupBox = QGroupBox("Subtitle Matching")
         self.subtitle_match_groupBox.setLayout(self.subtitle_match_layout)
 
@@ -62,7 +71,7 @@ class SubtitleSelectionSetting(GlobalSetting):
 
     # noinspection PyUnresolvedReferences
     def connect_signals(self):
-        self.subtitle_main_groupBox.toggled.connect(self.activate_tab)
+        # self.subtitle_main_groupBox.toggled.connect(self.activate_tab)
         self.subtitle_source_button.clicked_signal.connect(self.update_folder_path)
         self.subtitle_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.subtitle_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
@@ -73,6 +82,17 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_match_layout.subtitle_table.drop_folder_and_files_signal.connect(
             self.update_files_with_drag_and_drop)
         self.subtitle_clear_button.clear_files_signal.connect(self.clear_files)
+
+    def create_global_properties(self):
+        GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index] = []
+        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index] = []
+        GlobalSetting.SUBTITLE_TRACK_NAME[self.tab_index] = ""
+        GlobalSetting.SUBTITLE_DELAY[self.tab_index] = 0.0
+        GlobalSetting.SUBTITLE_TAB_ENABLED[self.tab_index] = False
+        GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = False
+        GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = False
+        GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = False
+        GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = Default_Subtitle_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -87,12 +107,14 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.setup_subtitle_check_default_forced_layout()
         self.setup_subtitle_options_layout()
         self.setup_main_layout()
-        self.setLayout(self.MainLayout)
-        self.MainLayout.addWidget(self.subtitle_main_groupBox)
+        # self.setLayout(self.MainLayout)
+        # self.MainLayout.addWidget(self.subtitle_tab_comboBox)
+        # self.MainLayout.addWidget(self.subtitle_main_groupBox)
 
     def setup_subtitle_check_default_forced_layout(self):
         self.subtitle_set_default_forced_layout.addWidget(self.subtitle_set_default_checkBox)
         self.subtitle_set_default_forced_layout.addWidget(self.subtitle_set_forced_checkBox)
+        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_mux_at_top_checkBox)
 
     def setup_subtitle_options_layout(self):
         self.subtitle_options_layout.addWidget(self.subtitle_extensions_comboBox)
@@ -106,6 +128,7 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_options_layout.addStretch()
 
     def setup_main_layout(self):
+        pass
         self.main_layout.addWidget(self.subtitle_source_label, 0, 0)
         self.main_layout.addWidget(self.subtitle_source_lineEdit, 0, 1, 1, 1)
         self.main_layout.addWidget(self.subtitle_clear_button, 0, 2, 1, 1)
@@ -115,11 +138,10 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.main_layout.addWidget(self.subtitle_match_groupBox, 2, 0, 1, -1)
 
     def setup_subtitle_main_groupBox(self):
-        self.subtitle_main_groupBox.setParent(self)
-        self.subtitle_main_groupBox.setLayout(self.main_layout)
-        self.subtitle_main_groupBox.setTitle("Subtitles")
-        self.subtitle_main_groupBox.setCheckable(True)
-        self.subtitle_main_groupBox.setChecked(True)
+        self.setLayout(self.main_layout)
+        # self.subtitle_main_groupBox.setTitle("Subtitles")
+        # self.subtitle_main_groupBox.setCheckable(True)
+        # self.subtitle_main_groupBox.setChecked(True)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
@@ -215,6 +237,7 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
         self.subtitle_extensions_comboBox.set_current_folder_path(self.folder_path)
         self.subtitle_extensions_comboBox.set_current_files_list(self.files_names_list)
+        self.is_there_old_files_signal.emit(len(self.files_names_list) > 0)
 
     def clear_files(self):
         self.folder_path = ""
@@ -226,12 +249,12 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.show_subtitle_files_list()
 
     def change_global_subtitle_list(self):
-        GlobalSetting.SUBTITLE_FILES_LIST = self.files_names_list
-        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST = self.files_names_absolute_list
+        GlobalSetting.SUBTITLE_TAB_ENABLED[self.tab_index] = len(self.files_names_list) > 0
+        GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index] = self.files_names_list
+        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index] = self.files_names_absolute_list
 
     def show_video_files_list(self):
-        if self.subtitle_main_groupBox.isChecked():
-            self.subtitle_match_layout.show_video_files()
+        self.subtitle_match_layout.show_video_files()
 
     def activate_tab(self, on):
         if on:
@@ -250,15 +273,15 @@ class SubtitleSelectionSetting(GlobalSetting):
             self.is_drag_and_drop = False
             self.subtitle_source_lineEdit.set_is_drag_and_drop(False)
             self.subtitle_delay_spin.setValue(0)
-            GlobalSetting.SUBTITLE_FILES_LIST = []
-            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST = []
-            GlobalSetting.SUBTITLE_TRACK_NAME = ""
-            GlobalSetting.SUBTITLE_DELAY = 0.0
-            GlobalSetting.SUBTITLE_SET_DEFAULT = False
-            GlobalSetting.SUBTITLE_SET_FORCED = False
-            GlobalSetting.SUBTITLE_LANGUAGE = ""
-        self.activation_signal.emit(on)
-        GlobalSetting.SUBTITLE_ENABLED = on
+            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index] = []
+            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index] = []
+            GlobalSetting.SUBTITLE_TRACK_NAME[self.tab_index] = ""
+            GlobalSetting.SUBTITLE_DELAY[self.tab_index] = 0.0
+            GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = False
+            GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = False
+            GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = False
+            GlobalSetting.SUBTITLE_TAB_ENABLED[self.tab_index] = False
+            GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = ""
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == Qt.RightButton:
@@ -270,17 +293,15 @@ class SubtitleSelectionSetting(GlobalSetting):
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)
-        if self.subtitle_main_groupBox.isChecked():
-            self.show_video_files_list()
+        self.show_video_files_list()
 
     def change_global_last_path_directory(self):
         if self.folder_path != "" and not self.folder_path.isspace() and not self.is_drag_and_drop:
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def tab_clicked(self):
-        if self.subtitle_main_groupBox.isChecked():
-            self.show_subtitle_files_list()
-            self.show_video_files_list()
+        self.show_subtitle_files_list()
+        self.show_video_files_list()
         if not GlobalSetting.JOB_QUEUE_EMPTY:
             self.update_subtitle_set_default_forced_state()
             self.disable_editable_widgets()
@@ -301,8 +322,9 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_delay_spin.setEnabled(False)
         self.subtitle_set_default_checkBox.setEnabled(False)
         self.subtitle_set_forced_checkBox.setEnabled(False)
-        self.subtitle_main_groupBox.setCheckable(False)
+        self.setCheckable(False)
         self.subtitle_clear_button.setEnabled(False)
+        self.subtitle_mux_at_top_checkBox.setEnabled(False)
         self.subtitle_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -315,17 +337,12 @@ class SubtitleSelectionSetting(GlobalSetting):
         self.subtitle_set_default_checkBox.setEnabled(True)
         self.subtitle_set_forced_checkBox.setEnabled(True)
         self.subtitle_clear_button.setEnabled(True)
-        if GlobalSetting.SUBTITLE_ENABLED:
-            self.subtitle_main_groupBox.setCheckable(True)
-        else:
-            self.subtitle_main_groupBox.setCheckable(True)
-            GlobalSetting.SUBTITLE_ENABLED = False
-            self.subtitle_main_groupBox.setChecked(GlobalSetting.SUBTITLE_ENABLED)
+        self.subtitle_mux_at_top_checkBox.setEnabled(True)
         self.subtitle_match_layout.enable_editable_widgets()
 
     def sync_subtitle_files_with_global_files(self):
-        self.files_names_list = GlobalSetting.SUBTITLE_FILES_LIST
-        self.files_names_absolute_list = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST
+        self.files_names_list = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index]
+        self.files_names_absolute_list = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index]
         self.update_other_classes_variables()
 
     def update_files_with_drag_and_drop(self, paths_list):
@@ -349,7 +366,8 @@ class SubtitleSelectionSetting(GlobalSetting):
                         new_files_absolute_path_list.append(path)
                         break
             else:
-                new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
+                new_files_absolute_path_list.extend(
+                    sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):

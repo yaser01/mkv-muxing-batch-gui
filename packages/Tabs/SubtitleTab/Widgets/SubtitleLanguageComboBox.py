@@ -7,8 +7,9 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class SubtitleLanguageComboBox(QComboBox):
-    def __init__(self):
+    def __init__(self,tab_index):
         super().__init__()
+        self.tab_index=tab_index
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
         self.addItems(AllSubtitlesLanguages)
@@ -18,7 +19,7 @@ class SubtitleLanguageComboBox(QComboBox):
         self.currentTextChanged.connect(self.change_global_subtitle_language)
 
     def change_global_subtitle_language(self):
-        GlobalSetting.SUBTITLE_LANGUAGE = self.currentText()
+        GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = self.currentText()
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

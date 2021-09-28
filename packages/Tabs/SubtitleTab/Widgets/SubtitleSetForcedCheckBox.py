@@ -5,18 +5,27 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class SubtitleSetForcedCheckBox(QCheckBox):
-    def __init__(self):
+    def __init__(self,tab_index):
         super().__init__()
+        self.tab_index=tab_index
         self.hint_when_enabled = ""
         self.setText("Set Forced")
         self.stateChanged.connect(self.change_global_subtitle_set_forced)
 
     def change_global_subtitle_set_forced(self):
-        GlobalSetting.SUBTITLE_SET_FORCED = self.checkState() == Qt.Checked
+        GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = self.checkState() == Qt.Checked
+        if self.checkState() == Qt.Checked:
+            for i in GlobalSetting.SUBTITLE_SET_FORCED.keys():
+                print(i)
+                print(self.tab_index)
+                if i != self.tab_index:
+                    GlobalSetting.SUBTITLE_SET_FORCED[i] = False
 
     def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_FORCED))
+        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index]))
         self.setDisabled(bool(GlobalSetting.SUBTITLE_SET_FORCED_DISABLED))
+
+
         if self.isEnabled():
             self.setToolTip("<nobr>set the new subtitle to be the forced subtitle track when "
                             "play")

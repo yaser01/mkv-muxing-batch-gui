@@ -5,18 +5,26 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class AudioSetForcedCheckBox(QCheckBox):
-    def __init__(self):
+    def __init__(self, tab_index):
         super().__init__()
+        self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setText("Set Forced")
         self.stateChanged.connect(self.change_global_audio_set_forced)
 
     def change_global_audio_set_forced(self):
-        GlobalSetting.AUDIO_SET_FORCED = self.checkState() == Qt.Checked
+        GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = self.checkState() == Qt.Checked
+        if self.checkState() == Qt.Checked:
+            for i in GlobalSetting.AUDIO_SET_FORCED.keys():
+                print(i)
+                print(self.tab_index)
+                if i != self.tab_index:
+                    GlobalSetting.AUDIO_SET_FORCED[i] = False
 
     def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.AUDIO_SET_FORCED))
+        self.setChecked(bool(GlobalSetting.AUDIO_SET_FORCED[self.tab_index]))
         self.setDisabled(bool(GlobalSetting.AUDIO_SET_FORCED_DISABLED))
+
         if self.isEnabled():
             self.setToolTip("<nobr>set the new audio to be the forced audio track when "
                             "play")

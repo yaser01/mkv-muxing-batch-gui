@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 from PySide2.QtWidgets import QWidget
-
+from collections import defaultdict
 from packages.Startup import GlobalFiles
 from packages.Startup.DefaultOptions import Default_Subtitle_Language, Default_Audio_Language
 
@@ -49,27 +49,31 @@ class GlobalSetting(QWidget):
     VIDEO_SOURCE_MKV_ONLY = []
     VIDEO_DEFAULT_DURATION_FPS = ""
 
-    SUBTITLE_ENABLED = True
-    SUBTITLE_FILES_LIST = []
-    SUBTITLE_FILES_ABSOLUTE_PATH_LIST = []
-    SUBTITLE_TRACK_NAME = ""
-    SUBTITLE_DELAY = 0.0
-    SUBTITLE_SET_DEFAULT = False
-    SUBTITLE_SET_FORCED = False
+    SUBTITLE_ENABLED = False
+    SUBTITLE_TAB_ENABLED = defaultdict(bool)
+    SUBTITLE_FILES_LIST = defaultdict(list)
+    SUBTITLE_FILES_ABSOLUTE_PATH_LIST = defaultdict(list)
+    SUBTITLE_TRACK_NAME = defaultdict(str)
+    SUBTITLE_DELAY = defaultdict(float)
+    SUBTITLE_SET_DEFAULT = defaultdict(bool)
+    SUBTITLE_SET_FORCED = defaultdict(bool)
+    SUBTITLE_SET_AT_TOP = defaultdict(bool)
     SUBTITLE_SET_DEFAULT_DISABLED = False
     SUBTITLE_SET_FORCED_DISABLED = False
-    SUBTITLE_LANGUAGE = Default_Subtitle_Language
+    SUBTITLE_LANGUAGE = defaultdict(str)
 
-    AUDIO_ENABLED = True
-    AUDIO_FILES_LIST = []
-    AUDIO_FILES_ABSOLUTE_PATH_LIST = []
-    AUDIO_TRACK_NAME = ""
-    AUDIO_DELAY = 0.0
-    AUDIO_SET_DEFAULT = False
-    AUDIO_SET_FORCED = False
+    AUDIO_ENABLED = False
+    AUDIO_TAB_ENABLED = defaultdict(bool)
+    AUDIO_FILES_LIST = defaultdict(list)
+    AUDIO_FILES_ABSOLUTE_PATH_LIST = defaultdict(list)
+    AUDIO_TRACK_NAME = defaultdict(str)
+    AUDIO_DELAY = defaultdict(float)
+    AUDIO_SET_DEFAULT = defaultdict(bool)
+    AUDIO_SET_FORCED = defaultdict(bool)
+    AUDIO_SET_AT_TOP = defaultdict(bool)
     AUDIO_SET_DEFAULT_DISABLED = False
     AUDIO_SET_FORCED_DISABLED = False
-    AUDIO_LANGUAGE = Default_Audio_Language
+    AUDIO_LANGUAGE = defaultdict(str)
 
     ATTACHMENT_ENABLED = False
     ATTACHMENT_FILES_LIST = []

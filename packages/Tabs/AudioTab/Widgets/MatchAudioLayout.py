@@ -10,11 +10,12 @@ from packages.Tabs.AudioTab.Widgets.VideoMatchingTable import VideoMatchingTable
 class MatchAudioLayout(QHBoxLayout):
     sync_audio_files_with_global_files_after_swap_signal = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, tab_index, parent=None):
         super().__init__()
+        self.tab_index = tab_index
         self.video_table = VideoMatchingTable()
-        self.audio_table = AudioMatchingTable()
-        self.match_tools_layout = MatchAudioToolsLayout(parent=parent)
+        self.audio_table = AudioMatchingTable(self.tab_index)
+        self.match_tools_layout = MatchAudioToolsLayout(parent=parent,tab_index=self.tab_index)
         self.setup_layout()
         self.sync_slideBar_check = False
         self.connect_signals()
@@ -68,7 +69,7 @@ class MatchAudioLayout(QHBoxLayout):
 
     def send_selection_to_tools_layout(self):
         selected_row = -1
-        max_index = len(GlobalSetting.AUDIO_FILES_LIST) - 1
+        max_index = len(GlobalSetting.AUDIO_FILES_LIST[self.tab_index]) - 1
         list_of_selected_rows = self.audio_table.table.selectionModel().selectedRows()
         if len(list_of_selected_rows) > 0:
             selected_row = list_of_selected_rows[0].row()

@@ -5,8 +5,9 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class AudioDelayDoubleSpinBox(QDoubleSpinBox):
-    def __init__(self):
+    def __init__(self,tab_index):
         super().__init__()
+        self.tab_index=tab_index
         self.hint_when_enabled = ""
         self.setValue(0)
         self.setDecimals(3)
@@ -18,7 +19,7 @@ class AudioDelayDoubleSpinBox(QDoubleSpinBox):
         self.editingFinished.connect(self.change_global_audio_delay)
 
     def change_global_audio_delay(self):
-        GlobalSetting.AUDIO_DELAY = round(self.value(), 5)
+        GlobalSetting.AUDIO_DELAY[self.tab_index] = round(self.value(), 5)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

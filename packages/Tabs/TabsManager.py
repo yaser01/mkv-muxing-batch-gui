@@ -3,9 +3,10 @@ from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QTabWidget
 from packages.Tabs.AttachmentTab.AttachmentSelection import AttachmentSelectionSetting
 from packages.Tabs.AudioTab.AudioSelection import AudioSelectionSetting
+from packages.Tabs.AudioTab.AudioTabManager import AudioTabManager
 from packages.Tabs.ChapterTab.ChapterSelection import ChapterSelectionSetting
 from packages.Tabs.MuxSetting.MuxSetting import MuxSettingTab
-from packages.Tabs.SubtitleTab.SubtitleSelection import SubtitleSelectionSetting
+from packages.Tabs.SubtitleTab.SubtitleTabManager import SubtitleTabManager
 from packages.Tabs.VideoTab.VideoSelection import VideoSelectionSetting
 
 
@@ -18,8 +19,8 @@ class TabsManager(QTabWidget):
     def __init__(self):
         super().__init__()
         self.video_tab = VideoSelectionSetting()
-        self.subtitle_tab = SubtitleSelectionSetting()
-        self.audio_tab = AudioSelectionSetting()
+        self.subtitle_tab = SubtitleTabManager()
+        self.audio_tab = AudioTabManager()
         self.attachment_tab = AttachmentSelectionSetting()
         self.chapter_tab = ChapterSelectionSetting()
         self.mux_setting_tab = MuxSettingTab()
@@ -36,7 +37,6 @@ class TabsManager(QTabWidget):
         self.set_tab_color(tab_index=self.tabs_ids["Attachment"], color_string="#BABABA")
         self.set_tab_color(tab_index=self.tabs_ids["Chapter"], color_string="#BABABA")
         self.connect_signals()
-
 
     def add_tabs(self):
         self.addTab(self.video_tab, "Videos")

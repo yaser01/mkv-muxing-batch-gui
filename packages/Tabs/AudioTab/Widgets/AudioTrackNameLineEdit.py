@@ -5,8 +5,9 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class AudioTrackNameLineEdit(QLineEdit):
-    def __init__(self):
+    def __init__(self,tab_index):
         super().__init__()
+        self.tab_index=tab_index
         self.hint_when_enabled = ""
         self.setPlaceholderText("Audio Track Name")
         self.setMinimumWidth(screen_size.width() // 10)
@@ -16,7 +17,7 @@ class AudioTrackNameLineEdit(QLineEdit):
         self.textEdited.connect(self.change_global_audio_track_name)
 
     def change_global_audio_track_name(self):
-        GlobalSetting.AUDIO_TRACK_NAME = self.text()
+        GlobalSetting.AUDIO_TRACK_NAME[self.tab_index] = self.text()
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

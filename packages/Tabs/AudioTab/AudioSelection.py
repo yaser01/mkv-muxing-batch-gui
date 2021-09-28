@@ -11,10 +11,12 @@ from packages.Tabs.AudioTab.Widgets.AudioClearButton import AudioClearButton
 from packages.Tabs.AudioTab.Widgets.AudioDelayDoubleSpinBox import AudioDelayDoubleSpinBox
 from packages.Tabs.AudioTab.Widgets.AudioExtensionsCheckableComboBox import AudioExtensionsCheckableComboBox
 from packages.Tabs.AudioTab.Widgets.AudioLanguageComboBox import AudioLanguageComboBox
+from packages.Tabs.AudioTab.Widgets.AudioMuxAtTop import AudioMuxAtTop
 from packages.Tabs.AudioTab.Widgets.AudioSetDefaultCheckBox import AudioSetDefaultCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSetForcedCheckBox import AudioSetForcedCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSourceButton import AudioSourceButton
 from packages.Tabs.AudioTab.Widgets.AudioSourceLineEdit import AudioSourceLineEdit
+from packages.Tabs.AudioTab.Widgets.AudioTabComboBox import AudioTabComboBox
 from packages.Tabs.AudioTab.Widgets.AudioTrackNameLineEdit import AudioTrackNameLineEdit
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
@@ -22,13 +24,16 @@ from packages.Widgets.YesNoDialog import *
 
 
 # noinspection PyAttributeOutsideInit
-class AudioSelectionSetting(GlobalSetting):
+class AudioSelectionSetting(QGroupBox):
     tab_clicked_signal = Signal()
-    activation_signal = Signal(bool)
 
-    def __init__(self):
+    is_there_old_files_signal = Signal(bool)
+
+    def __init__(self, tab_index):
         super().__init__()
+        self.tab_index = tab_index
         self.create_properties()
+        self.create_global_properties()
         self.create_widgets()
         self.setup_widgets()
         self.connect_signals()
@@ -37,22 +42,26 @@ class AudioSelectionSetting(GlobalSetting):
         self.audio_source_label = QLabel("Audio Source Folder:")
         self.audio_language_label = QLabel("Language:")
         self.audio_extension_label = QLabel("Audio Extension:")
-        self.audio_delay_label = QLabel("Audio Delay:")
+        self.audio_delay_label = QLabel("Delay:")
+        # self.audio_tab_comboBox = AudioTabComboBox()
         self.audio_source_lineEdit = AudioSourceLineEdit()
         self.audio_source_button = AudioSourceButton()
         self.audio_clear_button = AudioClearButton()
         self.audio_extensions_comboBox = AudioExtensionsCheckableComboBox()
-        self.audio_language_comboBox = AudioLanguageComboBox()
-        self.audio_track_name_lineEdit = AudioTrackNameLineEdit()
-        self.audio_delay_spin = AudioDelayDoubleSpinBox()
-        self.audio_set_forced_checkBox = AudioSetForcedCheckBox()
-        self.audio_set_default_checkBox = AudioSetDefaultCheckBox()
-        self.audio_match_layout = MatchAudioLayout(parent=self)
+        self.audio_language_comboBox = AudioLanguageComboBox(self.tab_index)
+        self.audio_track_name_lineEdit = AudioTrackNameLineEdit(self.tab_index)
+        self.audio_delay_spin = AudioDelayDoubleSpinBox(self.tab_index)
+        self.audio_set_forced_checkBox = AudioSetForcedCheckBox(self.tab_index)
+        self.audio_set_default_checkBox = AudioSetDefaultCheckBox(self.tab_index)
+        self.audio_mux_at_top_checkBox = AudioMuxAtTop(self.tab_index)
+        self.audio_match_layout = MatchAudioLayout(parent=self, tab_index=self.tab_index)
         self.audio_options_layout = QHBoxLayout()
         self.audio_set_default_forced_layout = QHBoxLayout()
-        self.MainLayout = QVBoxLayout()
+        # self.MainLayout = QVBoxLayout()
         self.main_layout = QGridLayout()
-        self.audio_main_groupBox = QGroupBox()
+        self.setObjectName("main_groupBox")
+        self.setStyleSheet(
+            "QGroupBox#main_groupBox {subcontrol-origin: margin;left: 3px;padding: 3px 0px 3px 0px;}")
         self.audio_match_groupBox = QGroupBox("Audio Matching")
         self.audio_match_groupBox.setLayout(self.audio_match_layout)
 
@@ -62,7 +71,7 @@ class AudioSelectionSetting(GlobalSetting):
 
     # noinspection PyUnresolvedReferences
     def connect_signals(self):
-        self.audio_main_groupBox.toggled.connect(self.activate_tab)
+        # self.audio_main_groupBox.toggled.connect(self.activate_tab)
         self.audio_source_button.clicked_signal.connect(self.update_folder_path)
         self.audio_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.audio_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
@@ -73,6 +82,17 @@ class AudioSelectionSetting(GlobalSetting):
         self.audio_match_layout.audio_table.drop_folder_and_files_signal.connect(
             self.update_files_with_drag_and_drop)
         self.audio_clear_button.clear_files_signal.connect(self.clear_files)
+
+    def create_global_properties(self):
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index] = []
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index] = []
+        GlobalSetting.AUDIO_TRACK_NAME[self.tab_index] = ""
+        GlobalSetting.AUDIO_DELAY[self.tab_index] = 0.0
+        GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = False
+        GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
+        GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
+        GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
+        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = Default_Audio_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -87,12 +107,14 @@ class AudioSelectionSetting(GlobalSetting):
         self.setup_audio_check_default_forced_layout()
         self.setup_audio_options_layout()
         self.setup_main_layout()
-        self.setLayout(self.MainLayout)
-        self.MainLayout.addWidget(self.audio_main_groupBox)
+        # self.setLayout(self.MainLayout)
+        # self.MainLayout.addWidget(self.audio_tab_comboBox)
+        # self.MainLayout.addWidget(self.audio_main_groupBox)
 
     def setup_audio_check_default_forced_layout(self):
         self.audio_set_default_forced_layout.addWidget(self.audio_set_default_checkBox)
         self.audio_set_default_forced_layout.addWidget(self.audio_set_forced_checkBox)
+        self.audio_set_default_forced_layout.addWidget(self.audio_mux_at_top_checkBox)
 
     def setup_audio_options_layout(self):
         self.audio_options_layout.addWidget(self.audio_extensions_comboBox)
@@ -106,6 +128,7 @@ class AudioSelectionSetting(GlobalSetting):
         self.audio_options_layout.addStretch()
 
     def setup_main_layout(self):
+        pass
         self.main_layout.addWidget(self.audio_source_label, 0, 0)
         self.main_layout.addWidget(self.audio_source_lineEdit, 0, 1, 1, 1)
         self.main_layout.addWidget(self.audio_clear_button, 0, 2, 1, 1)
@@ -115,11 +138,10 @@ class AudioSelectionSetting(GlobalSetting):
         self.main_layout.addWidget(self.audio_match_groupBox, 2, 0, 1, -1)
 
     def setup_audio_main_groupBox(self):
-        self.audio_main_groupBox.setParent(self)
-        self.audio_main_groupBox.setLayout(self.main_layout)
-        self.audio_main_groupBox.setTitle("Audios")
-        self.audio_main_groupBox.setCheckable(True)
-        self.audio_main_groupBox.setChecked(True)
+        self.setLayout(self.main_layout)
+        # self.audio_main_groupBox.setTitle("Audios")
+        # self.audio_main_groupBox.setCheckable(True)
+        # self.audio_main_groupBox.setChecked(True)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
@@ -138,7 +160,6 @@ class AudioSelectionSetting(GlobalSetting):
             if self.is_drag_and_drop:
                 new_files_absolute_path_list = []
                 self.files_names_list = []
-
                 current_extensions = self.audio_extensions_comboBox.currentData()
                 for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
                     if os.path.isdir(file_absolute_path):
@@ -161,7 +182,7 @@ class AudioSelectionSetting(GlobalSetting):
                 self.folder_path = ""
                 self.files_names_absolute_list = new_files_absolute_path_list.copy()
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
-                self.audio_source_lineEdit.stop_check_path = False
+                self.video_source_lineEdit.stop_check_path = False
             else:
                 self.audio_source_lineEdit.setText("")
             return
@@ -216,6 +237,7 @@ class AudioSelectionSetting(GlobalSetting):
         self.audio_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
         self.audio_extensions_comboBox.set_current_folder_path(self.folder_path)
         self.audio_extensions_comboBox.set_current_files_list(self.files_names_list)
+        self.is_there_old_files_signal.emit(len(self.files_names_list) > 0)
 
     def clear_files(self):
         self.folder_path = ""
@@ -227,12 +249,12 @@ class AudioSelectionSetting(GlobalSetting):
         self.show_audio_files_list()
 
     def change_global_audio_list(self):
-        GlobalSetting.AUDIO_FILES_LIST = self.files_names_list
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST = self.files_names_absolute_list
+        GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = len(self.files_names_list) > 0
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index] = self.files_names_list
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index] = self.files_names_absolute_list
 
     def show_video_files_list(self):
-        if self.audio_main_groupBox.isChecked():
-            self.audio_match_layout.show_video_files()
+        self.audio_match_layout.show_video_files()
 
     def activate_tab(self, on):
         if on:
@@ -248,18 +270,18 @@ class AudioSelectionSetting(GlobalSetting):
             self.audio_track_name_lineEdit.setText("")
             self.audio_set_forced_checkBox.setChecked(False)
             self.audio_set_default_checkBox.setChecked(False)
-            self.audio_delay_spin.setValue(0)
             self.is_drag_and_drop = False
-            self.subtitle_source_lineEdit.set_is_drag_and_drop(False)
-            GlobalSetting.AUDIO_FILES_LIST = []
-            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST = []
-            GlobalSetting.AUDIO_TRACK_NAME = ""
-            GlobalSetting.AUDIO_DELAY = 0.0
-            GlobalSetting.AUDIO_SET_DEFAULT = False
-            GlobalSetting.AUDIO_SET_FORCED = False
-            GlobalSetting.AUDIO_LANGUAGE = ""
-        self.activation_signal.emit(on)
-        GlobalSetting.AUDIO_ENABLED = on
+            self.audio_source_lineEdit.set_is_drag_and_drop(False)
+            self.audio_delay_spin.setValue(0)
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index] = []
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index] = []
+            GlobalSetting.AUDIO_TRACK_NAME[self.tab_index] = ""
+            GlobalSetting.AUDIO_DELAY[self.tab_index] = 0.0
+            GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
+            GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
+            GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
+            GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = False
+            GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = ""
 
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == Qt.RightButton:
@@ -271,17 +293,15 @@ class AudioSelectionSetting(GlobalSetting):
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)
-        if self.audio_main_groupBox.isChecked():
-            self.show_video_files_list()
+        self.show_video_files_list()
 
     def change_global_last_path_directory(self):
         if self.folder_path != "" and not self.folder_path.isspace() and not self.is_drag_and_drop:
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def tab_clicked(self):
-        if self.audio_main_groupBox.isChecked():
-            self.show_audio_files_list()
-            self.show_video_files_list()
+        self.show_audio_files_list()
+        self.show_video_files_list()
         if not GlobalSetting.JOB_QUEUE_EMPTY:
             self.update_audio_set_default_forced_state()
             self.disable_editable_widgets()
@@ -302,8 +322,9 @@ class AudioSelectionSetting(GlobalSetting):
         self.audio_delay_spin.setEnabled(False)
         self.audio_set_default_checkBox.setEnabled(False)
         self.audio_set_forced_checkBox.setEnabled(False)
-        self.audio_main_groupBox.setCheckable(False)
+        self.setCheckable(False)
         self.audio_clear_button.setEnabled(False)
+        self.audio_mux_at_top_checkBox.setEnabled(False)
         self.audio_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -316,17 +337,12 @@ class AudioSelectionSetting(GlobalSetting):
         self.audio_set_default_checkBox.setEnabled(True)
         self.audio_set_forced_checkBox.setEnabled(True)
         self.audio_clear_button.setEnabled(True)
-        if GlobalSetting.AUDIO_ENABLED:
-            self.audio_main_groupBox.setCheckable(True)
-        else:
-            self.audio_main_groupBox.setCheckable(True)
-            GlobalSetting.AUDIO_ENABLED = False
-            self.audio_main_groupBox.setChecked(GlobalSetting.AUDIO_ENABLED)
+        self.audio_mux_at_top_checkBox.setEnabled(True)
         self.audio_match_layout.enable_editable_widgets()
 
     def sync_audio_files_with_global_files(self):
-        self.files_names_list = GlobalSetting.AUDIO_FILES_LIST
-        self.files_names_absolute_list = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST
+        self.files_names_list = GlobalSetting.AUDIO_FILES_LIST[self.tab_index]
+        self.files_names_absolute_list = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index]
         self.update_other_classes_variables()
 
     def update_files_with_drag_and_drop(self, paths_list):
@@ -350,7 +366,8 @@ class AudioSelectionSetting(GlobalSetting):
                         new_files_absolute_path_list.append(path)
                         break
             else:
-                new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
+                new_files_absolute_path_list.extend(
+                    sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):

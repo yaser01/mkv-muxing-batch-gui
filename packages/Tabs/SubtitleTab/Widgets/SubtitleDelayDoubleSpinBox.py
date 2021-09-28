@@ -5,8 +5,9 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class SubtitleDelayDoubleSpinBox(QDoubleSpinBox):
-    def __init__(self):
+    def __init__(self,tab_index):
         super().__init__()
+        self.tab_index=tab_index
         self.hint_when_enabled = ""
         self.setValue(0)
         self.setDecimals(3)
@@ -18,7 +19,7 @@ class SubtitleDelayDoubleSpinBox(QDoubleSpinBox):
         self.editingFinished.connect(self.change_global_subtitle_delay)
 
     def change_global_subtitle_delay(self):
-        GlobalSetting.SUBTITLE_DELAY = round(self.value(), 5)
+        GlobalSetting.SUBTITLE_DELAY[self.tab_index] = round(self.value(), 5)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

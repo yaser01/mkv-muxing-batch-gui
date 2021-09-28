@@ -273,7 +273,7 @@ class AttachmentSelectionSetting(GlobalSetting):
                     continue
                 new_files_absolute_path_list.append(path)
             else:
-                new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
+                new_files_absolute_path_list.extend(sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):

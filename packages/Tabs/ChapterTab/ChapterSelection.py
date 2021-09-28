@@ -220,7 +220,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.current_chapter_extensions = [Default_Chapter_Extension]
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
             self.is_drag_and_drop = False
-            self.subtitle_source_lineEdit.set_is_drag_and_drop(False)
+            self.chapter_source_lineEdit.set_is_drag_and_drop(False)
             GlobalSetting.CHAPTER_FILES_LIST = []
             GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST = []
             GlobalSetting.CHAPTER_TRACK_NAME = ""
@@ -304,7 +304,7 @@ class ChapterSelectionSetting(GlobalSetting):
                         new_files_absolute_path_list.append(path)
                         break
             else:
-                new_files_absolute_path_list.extend(get_files_names_absolute_list(self.get_files_list(path), path))
+                new_files_absolute_path_list.extend(sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):

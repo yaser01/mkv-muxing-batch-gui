@@ -1,25 +1,27 @@
-from PySide2.QtWidgets import QComboBox
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QCheckBox
 
-from packages.Startup.DefaultOptions import Default_Audio_Language
-from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Startup.PreDefined import AllAudiosLanguages
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
-class AudioLanguageComboBox(QComboBox):
-    def __init__(self,tab_index):
+class SubtitleMuxAtTop(QCheckBox):
+    def __init__(self, tab_index):
         super().__init__()
-        self.tab_index=tab_index
-        self.hint_when_enabled = ""
-        self.setMinimumWidth(screen_size.width() // 13)
-        self.addItems(AllAudiosLanguages)
-        self.setCurrentIndex(AllAudiosLanguages.index(Default_Audio_Language))
-        self.setMaxVisibleItems(8)
-        self.setStyleSheet("QComboBox { combobox-popup: 0; }")
-        self.currentTextChanged.connect(self.change_global_audio_language)
+        self.tab_index = tab_index
+        self.hint_when_enabled = "<nobr>checking this will lead to make this the <b>*</b>First subtitle  in the " \
+                                 "output file <br>Only check it if you really know what you are doing <br><b>*</b>[" \
+                                 "Respecting other subtitles with the same option] "
+        self.setText("Mux At Top")
+        self.setToolTip(self.hint_when_enabled)
+        self.stateChanged.connect(self.change_global_subtitle_set_at_top)
 
-    def change_global_audio_language(self):
-        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = self.currentText()
+    def change_global_subtitle_set_at_top(self):
+        GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = self.checkState() == Qt.Checked
+
+    def update_check_state(self):
+        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index]))
+        self.setToolTip(self.hint_when_enabled)
+        self.setToolTipDuration(12000)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

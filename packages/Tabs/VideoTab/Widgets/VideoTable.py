@@ -4,7 +4,7 @@ import PySide2
 from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt, QColor
 from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
-from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.GlobalSetting import GlobalSetting, sort_names_like_windows
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Widgets.TableWidget import TableWidget
 
@@ -56,7 +56,8 @@ class VideoTable(TableWidget):
         for url in urls:
             current_path = url.path()[1:]
             paths_to_add.append(current_path)
-        self.drop_folder_and_files_signal.emit(paths_to_add)
+
+        self.drop_folder_and_files_signal.emit(sort_names_like_windows(paths_to_add))
 
     def disable_table_bold_column(self):
         self.horizontalHeader().setHighlightSections(False)
@@ -143,3 +144,11 @@ class VideoTable(TableWidget):
 
     def update_selected_row(self, row_index):
         self.selectRow(row_index)
+
+    def disable_selection(self):
+        for i in reversed(range(self.rowCount())):
+            self.item(i, self.column_ids["Name"]).setFlags(~Qt.ItemIsUserCheckable)
+
+    def enable_selection(self):
+        for i in reversed(range(self.rowCount())):
+            self.item(i, self.column_ids["Name"]).setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)

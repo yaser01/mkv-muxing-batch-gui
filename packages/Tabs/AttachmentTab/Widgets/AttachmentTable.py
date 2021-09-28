@@ -4,7 +4,7 @@ from PySide2.QtGui import Qt, QColor
 from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
 
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.GlobalSetting import GlobalSetting, sort_names_like_windows
 from packages.Widgets.TableWidget import TableWidget
 
 
@@ -54,7 +54,7 @@ class AttachmentTable(TableWidget):
         for url in urls:
             current_path = url.path()[1:]
             paths_to_add.append(current_path)
-        self.drop_folder_and_files_signal.emit(paths_to_add)
+        self.drop_folder_and_files_signal.emit(sort_names_like_windows(paths_to_add))
 
     def disable_table_bold_column(self):
         self.horizontalHeader().setHighlightSections(False)

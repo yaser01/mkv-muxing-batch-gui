@@ -10,70 +10,13 @@ from packages.Tabs.AudioTab.Widgets.MoveAudioTopButton import MoveAudioTopButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioUpButton import MoveAudioUpButton
 
 
-def update_global_audio_files_list_order_to_top(index_to_move):
-    temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_LIST[0]
-    GlobalSetting.AUDIO_FILES_LIST[0] = temp_for_swap
-
-    temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move] = \
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[0]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[0] = temp_for_swap
-
-
-def update_global_audio_files_list_order_to_up(index_to_move):
-    temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_LIST[index_to_move - 1]
-    GlobalSetting.AUDIO_FILES_LIST[index_to_move - 1] = temp_for_swap
-
-    temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[
-        index_to_move - 1]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move - 1] = temp_for_swap
-
-
-def update_global_audio_files_list_order_to_position(list_of_old_and_new_index):
-    old_index = list_of_old_and_new_index[0]
-    new_index = list_of_old_and_new_index[1]
-    temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[old_index]
-    GlobalSetting.AUDIO_FILES_LIST[old_index] = GlobalSetting.AUDIO_FILES_LIST[new_index]
-    GlobalSetting.AUDIO_FILES_LIST[new_index] = temp_for_swap
-
-    temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[old_index]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[old_index] = \
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[new_index]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[new_index] = temp_for_swap
-
-
-def update_global_audio_files_list_order_to_down(index_to_move):
-    temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_LIST[index_to_move + 1]
-    GlobalSetting.AUDIO_FILES_LIST[index_to_move + 1] = temp_for_swap
-
-    temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[
-        index_to_move + 1]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move + 1] = temp_for_swap
-
-
-def update_global_audio_files_list_order_to_bottom(index_to_move):
-    index_last_file = len(GlobalSetting.AUDIO_FILES_LIST) - 1
-    temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_LIST[index_last_file]
-    GlobalSetting.AUDIO_FILES_LIST[index_last_file] = temp_for_swap
-
-    temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[
-        index_last_file]
-    GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[index_last_file] = temp_for_swap
-
-
 class MatchAudioToolsLayout(QVBoxLayout):
     refresh_audio_table_signal = Signal()
     selected_audio_row_signal = Signal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, tab_index, parent=None):
         super().__init__()
+        self.tab_index = tab_index
         self.audio_tab = parent
         self.move_audio_up_button = MoveAudioUpButton()
         self.move_audio_top_button = MoveAudioTopButton()
@@ -90,14 +33,14 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_top_button.swap_happened_signal.connect(self.refresh_audio_table)
         self.move_audio_top_button.selected_row_after_swap.connect(self.change_selected_audio_row)
         self.move_audio_top_button.move_audio_to_top_signal.connect(
-            update_global_audio_files_list_order_to_top)
-        self.move_audio_up_button.move_audio_to_up_signal.connect(update_global_audio_files_list_order_to_up)
+            self.update_global_audio_files_list_order_to_top)
+        self.move_audio_up_button.move_audio_to_up_signal.connect(self.update_global_audio_files_list_order_to_up)
         self.move_audio_to_button.move_audio_to_position_signal.connect(
-            update_global_audio_files_list_order_to_position)
+            self.update_global_audio_files_list_order_to_position)
         self.move_audio_down_button.move_audio_to_down_signal.connect(
-            update_global_audio_files_list_order_to_down)
+            self.update_global_audio_files_list_order_to_down)
         self.move_audio_bottom_button.move_audio_to_bottom_signal.connect(
-            update_global_audio_files_list_order_to_bottom)
+            self.update_global_audio_files_list_order_to_bottom)
         self.move_audio_down_button.swap_happened_signal.connect(self.refresh_audio_table)
         self.move_audio_down_button.selected_row_after_swap.connect(self.change_selected_audio_row)
         self.move_audio_bottom_button.swap_happened_signal.connect(self.refresh_audio_table)
@@ -151,7 +94,7 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.refresh_audio_table_signal.emit()
 
     def change_selected_audio_row(self, new_selected_index):
-        new_selected_index = min(new_selected_index, len(GlobalSetting.AUDIO_FILES_LIST) - 1)
+        new_selected_index = min(new_selected_index, len(GlobalSetting.AUDIO_FILES_LIST[self.tab_index]) - 1)
         self.selected_audio_row_signal.emit(new_selected_index)
 
     def disable_editable_widgets(self):
@@ -179,3 +122,64 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_down_shortcut.setEnabled(True)
         self.move_audio_bottom_shortcut.setEnabled(True)
         self.move_audio_to_shortcut.setEnabled(True)
+
+    def update_global_audio_files_list_order_to_top(self, index_to_move):
+        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][0]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][0] = temp_for_swap
+
+        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][0]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][0] = temp_for_swap
+
+    def update_global_audio_files_list_order_to_up(self, index_to_move):
+        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move - 1]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move - 1] = temp_for_swap
+
+        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                index_to_move - 1]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move - 1] = temp_for_swap
+
+    def update_global_audio_files_list_order_to_position(self, list_of_old_and_new_index):
+        old_index = list_of_old_and_new_index[0]
+        new_index = list_of_old_and_new_index[1]
+        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][old_index]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][old_index] = \
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][new_index]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][new_index] = temp_for_swap
+
+        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][old_index]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][old_index] = \
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][new_index]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][new_index] = temp_for_swap
+
+    def update_global_audio_files_list_order_to_down(self, index_to_move):
+        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move + 1]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
+
+        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                index_to_move + 1]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
+
+    def update_global_audio_files_list_order_to_bottom(self, index_to_move):
+        index_last_file = len(GlobalSetting.AUDIO_FILES_LIST[self.tab_index]) - 1
+        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_last_file]
+        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_last_file] = temp_for_swap
+
+        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                index_last_file]
+        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_last_file] = temp_for_swap

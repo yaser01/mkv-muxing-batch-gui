@@ -1,25 +1,36 @@
-from PySide2.QtWidgets import QComboBox
+from pathlib import Path
 
-from packages.Startup.DefaultOptions import Default_Audio_Language
-from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Startup.PreDefined import AllAudiosLanguages
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QPushButton, QFileDialog
+
+from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.AudioTab.Widgets.ClearAudioFilesDialog import ClearAudioFilesDialog
+from packages.Tabs.AudioTab.Widgets.ClearAudioTabDialog import ClearAudioTabDialog
 
 
-class AudioLanguageComboBox(QComboBox):
-    def __init__(self,tab_index):
+class AudioTabDeleteButton(QPushButton):
+    remove_tab_signal = Signal()
+
+    def __init__(self):
         super().__init__()
-        self.tab_index=tab_index
-        self.hint_when_enabled = ""
-        self.setMinimumWidth(screen_size.width() // 13)
-        self.addItems(AllAudiosLanguages)
-        self.setCurrentIndex(AllAudiosLanguages.index(Default_Audio_Language))
-        self.setMaxVisibleItems(8)
-        self.setStyleSheet("QComboBox { combobox-popup: 0; }")
-        self.currentTextChanged.connect(self.change_global_audio_language)
+        self.setIcon(GlobalFiles.TrashIcon)
+        self.hint_when_enabled = "Remove Tab"
+        self.setToolTip(self.hint_when_enabled)
+        self.clicked.connect(self.open_delete_tab_dialog)
+        self.is_there_old_files = False
 
-    def change_global_audio_language(self):
-        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = self.currentText()
+    def set_is_there_old_file(self, new_state):
+        self.is_there_old_files = new_state
+
+    def open_delete_tab_dialog(self):
+        if self.is_there_old_files:
+            clear_files_dialog = ClearAudioTabDialog()
+            clear_files_dialog.execute()
+            if clear_files_dialog.result == "Yes":
+                self.remove_tab_signal.emit()
+        else:
+            self.remove_tab_signal.emit()
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
