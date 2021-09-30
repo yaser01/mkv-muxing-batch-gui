@@ -4,9 +4,11 @@ from packages.Startup.DefaultOptions import Default_Video_Extension
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
+from packages.Tabs.VideoTab.Widgets.LoadingVideosInfoDialog import LoadingVideosInfoDialog
 from packages.Tabs.VideoTab.Widgets.VideoClearButton import VideoClearButton
 from packages.Tabs.VideoTab.Widgets.VideoDefaultDurationFPSComboBox import VideoDefaultDurationFPSComboBox
 from packages.Tabs.VideoTab.Widgets.VideoExtensionsCheckableComboBox import VideoExtensionsCheckableComboBox
+from packages.Tabs.VideoTab.Widgets.VideoInfoButton import VideoInfoButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceButton import VideoSourceButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceLineEdit import VideoSourceLineEdit
 from packages.Tabs.VideoTab.Widgets.VideoTable import VideoTable
@@ -34,6 +36,11 @@ def get_files_size_with_absolute_path_list(files_name_absolute_path):
     return files_size_list
 
 
+def show_loading_dialog(new_videos_list):
+    loading_videos_info_dialog = LoadingVideosInfoDialog(new_videos_list)
+    loading_videos_info_dialog.execute()
+
+
 class VideoSelectionSetting(GlobalSetting):
     tab_clicked_signal = Signal()
 
@@ -47,6 +54,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_default_duration_fps_label = QLabel()
         self.video_default_duration_fps_comboBox = VideoDefaultDurationFPSComboBox()
         self.video_extensions_comboBox = VideoExtensionsCheckableComboBox()
+        self.video_info_button = VideoInfoButton()
         self.table = VideoTable()
         self.main_layout = QGridLayout()
         self.folder_path = ""
@@ -116,6 +124,8 @@ class VideoSelectionSetting(GlobalSetting):
                 self.files_size_list = get_files_size_with_absolute_path_list(new_files_absolute_path_list)
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.files_names_checked_list = ([True] * len(new_files_absolute_path_list))
+                if len(new_files_absolute_path_list) > 0:
+                    show_loading_dialog(new_files_absolute_path_list)
                 self.video_source_lineEdit.stop_check_path = False
             else:
                 self.video_source_lineEdit.setText("")
@@ -128,6 +138,8 @@ class VideoSelectionSetting(GlobalSetting):
             self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
             self.files_size_list = get_files_size_list(files_list=self.files_names_list, folder_path=self.folder_path)
             self.files_names_checked_list = ([True] * len(self.files_names_absolute_list))
+            if len(self.files_names_absolute_list) > 0:
+                show_loading_dialog(self.files_names_absolute_list)
         except Exception as e:
             invalid_path_dialog = InvalidPathDialog()
             invalid_path_dialog.execute()
@@ -208,6 +220,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.main_layout.addWidget(self.video_extensions_comboBox, 1, 1)
         self.main_layout.addWidget(self.video_default_duration_fps_label, 1, 2)
         self.main_layout.addWidget(self.video_default_duration_fps_comboBox, 1, 3)
+        self.main_layout.addWidget(self.video_info_button, 1, 4, 1, -1, alignment=Qt.AlignRight)
         self.main_layout.addWidget(self.table, 2, 0, 1, -1)
 
     def change_global_last_path_directory(self):
@@ -292,7 +305,8 @@ class VideoSelectionSetting(GlobalSetting):
             else:
                 if os.path.dirname(path) not in self.folders_paths:
                     self.folders_paths.append(os.path.dirname(path))
-                new_files_absolute_path_list.extend(sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
+                new_files_absolute_path_list.extend(
+                    sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
@@ -311,6 +325,8 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_size_list.extend(get_files_size_with_absolute_path_list(not_duplicate_files_absolute_path_list))
         self.files_names_checked_list.extend([True] * len(not_duplicate_files_absolute_path_list))
         self.show_files_list()
+        if len(not_duplicate_files_absolute_path_list) > 0:
+            show_loading_dialog(not_duplicate_files_absolute_path_list)
         self.video_source_lineEdit.stop_check_path = False
         if duplicate_flag:
             info_message = "One or more files have the same name with the old files will be " \

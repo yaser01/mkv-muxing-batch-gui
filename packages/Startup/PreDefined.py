@@ -82,6 +82,7 @@ ISO_639_2_LANGUAGES = {
     "Yoruba": "yor",
     "Zulu": "zul",
 }
+ISO_639_2_SYMBOLS = {v: k for k, v in ISO_639_2_LANGUAGES.items()}
 AllVideosExtensions = ['AVI', 'MKV', 'MP4', 'M4V', 'MOV', 'MPEG', 'OGG', 'OGM', 'H264', 'H265', "WEBM", 'WMV']
 AllSubtitlesExtensions = ['ASS', 'SRT', 'SSA', 'SUP', 'PGS']
 AllAudiosExtensions = ['AAC', 'AC3', 'FLAC', 'MKA', 'M4A', 'MP3', 'WAV', 'OGG']

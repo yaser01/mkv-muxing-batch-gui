@@ -9,8 +9,9 @@ from PySide2.QtGui import QPaintEvent, QResizeEvent
 from PySide2.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
-    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
+    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, QCompleter, )
 
+from packages.Startup.PreDefined import AllSubtitlesTracks
 from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
 from packages.Tabs.MuxSetting.Widgets.ControlQueueButton import ControlQueueButton
@@ -115,6 +116,8 @@ class MuxSettingTab(QWidget):
         self.clear_job_queue_button.clicked.connect(self.clear_job_queue_button_clicked)
 
         self.only_keep_those_audios_multi_choose_comboBox.closeList.connect(self.only_keep_those_audios_close_list)
+        self.only_keep_those_audios_multi_choose_comboBox.audio_tracks_changed_signal.connect(self.make_this_audio_default_comboBox.addItems)
+        self.only_keep_those_subtitles_multi_choose_comboBox.subtitle_tracks_changed_signal.connect(self.make_this_subtitle_default_comboBox.addItems)
 
         self.only_keep_those_subtitles_multi_choose_comboBox.closeList.connect(
             self.only_keep_those_subtitles_close_list)
@@ -368,7 +371,11 @@ class MuxSettingTab(QWidget):
     def tab_clicked(self):
         self.job_queue_layout.show_necessary_table_columns()
         self.setup_enable_options_for_mkv_only_options()
+        self.setup_tracks_to_be_chosen_mkv_only_options()
 
+    def setup_tracks_to_be_chosen_mkv_only_options(self):
+        self.only_keep_those_subtitles_multi_choose_comboBox.refresh_tracks()
+        self.only_keep_those_audios_multi_choose_comboBox.refresh_tracks()
     def setup_enable_options_for_mkv_only_options(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
             if GlobalSetting.VIDEO_SOURCE_MKV_ONLY:

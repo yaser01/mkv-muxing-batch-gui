@@ -23,6 +23,7 @@ class TracksCheckableComboBox(QComboBox):
         super().__init__()
         # Make the combo editable to set a custom text, but readonly
         self.hint = ""
+        self.current_list = []
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
@@ -175,12 +176,15 @@ class TracksCheckableComboBox(QComboBox):
             self.model().appendRow(item)
 
     def addItems(self, texts, datalist=None):
+        self.clear()
         for i, text in enumerate(texts):
             try:
                 data = datalist[i]
             except (TypeError, IndexError):
                 data = None
             self.addItem(text, data)
+        self.current_list = texts.copy()
+        self.lineEdit().setText(self.empty_selection_string)
 
     def currentData(self):
         # Return the list of selected items data
