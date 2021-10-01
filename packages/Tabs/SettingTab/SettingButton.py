@@ -2,7 +2,7 @@ from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QPushButton
 
 from packages.Startup.GlobalFiles import SettingIcon
-from packages.Widgets.SettingDialog import SettingDialog
+from packages.Tabs.SettingTab.SettingDialog import SettingDialog
 
 
 class SettingButton(QPushButton):

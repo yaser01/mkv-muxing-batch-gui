@@ -1,8 +1,8 @@
 from PySide2.QtWidgets import QHBoxLayout, QLabel
 
-from packages.Tabs.SettingTab.ClearSourceButton import ClearSourceButton
-from packages.Tabs.SettingTab.DefaultDirectoryLineEdit import DefaultDirectoryLineEdit
-from packages.Tabs.SettingTab.DefaultDirectorySourceButton import DefaultDirectorySourceButton
+from packages.Tabs.SettingTab.Widgets.ClearSourceButton import ClearSourceButton
+from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLineEdit import DefaultDirectoryLineEdit
+from packages.Tabs.SettingTab.Widgets.DefaultDirectorySourceButton import DefaultDirectorySourceButton
 
 
 class DefaultDirectoryLayout(QHBoxLayout):

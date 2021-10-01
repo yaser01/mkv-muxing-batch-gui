@@ -1,11 +1,11 @@
-from PySide2 import QtGui, QtCore
+from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QHBoxLayout, \
-    QDialog, QSpinBox, QGridLayout, QLabel, QPushButton, QAbstractSpinBox
+    QDialog, QGridLayout, QLabel, QPushButton
 
 from packages.Startup.GlobalFiles import SettingIcon
-from packages.Startup.InitializeScreenResolution import screen_size, height_factor
-from packages.Tabs.SettingTab.SettingTabWidget import SettingTabWidget
+from packages.Startup.InitializeScreenResolution import screen_size
+from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
 
 class SettingDialog(QDialog):
@@ -13,9 +13,7 @@ class SettingDialog(QDialog):
         super().__init__(parent)
         self.setWindowIcon(SettingIcon)
         self.setWindowTitle("Options")
-        self.setMinimumWidth(screen_size.width() // 1.7)
-        self.setMinimumHeight(int(height_factor * 635 * 0.71))
-        self.setMaximumHeight(int(height_factor * 635 * 0.71))
+        self.setMinimumWidth(screen_size.width() // 1.9)
         self.message = QLabel()
         self.extra_message = QLabel()
         self.yes_button = QPushButton("OK")
@@ -58,7 +56,7 @@ class SettingDialog(QDialog):
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)
-
+        self.setFixedHeight(self.size().height())
     def disable_question_mark_window(self):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
 

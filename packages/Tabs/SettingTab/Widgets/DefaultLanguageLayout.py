@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QHBoxLayout, QLabel
-from packages.Tabs.SettingTab.LanguagesComboBox import LanguagesComboBox
+from packages.Tabs.SettingTab.Widgets.LanguagesComboBox import LanguagesComboBox
 
 
 class DefaultLanguageLayout(QHBoxLayout):

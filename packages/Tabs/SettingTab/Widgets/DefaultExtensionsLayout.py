@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QHBoxLayout, QLabel
 
-from packages.Tabs.SettingTab.ExtensionsCheckableComboBox import ExtensionsCheckableComboBox
+from packages.Tabs.SettingTab.Widgets.ExtensionsCheckableComboBox import ExtensionsCheckableComboBox
 
 
 class DefaultExtensionsLayout(QHBoxLayout):

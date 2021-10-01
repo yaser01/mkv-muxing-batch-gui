@@ -2,13 +2,12 @@ from PySide2.QtCore import Signal, Qt
 from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QTabWidget
 from packages.Tabs.AttachmentTab.AttachmentSelection import AttachmentSelectionSetting
-from packages.Tabs.AudioTab.AudioSelection import AudioSelectionSetting
 from packages.Tabs.AudioTab.AudioTabManager import AudioTabManager
 from packages.Tabs.ChapterTab.ChapterSelection import ChapterSelectionSetting
 from packages.Tabs.MuxSetting.MuxSetting import MuxSettingTab
 from packages.Tabs.SubtitleTab.SubtitleTabManager import SubtitleTabManager
 from packages.Tabs.VideoTab.VideoSelection import VideoSelectionSetting
-from packages.Widgets.SettingButton import SettingButton
+from packages.Tabs.SettingTab.SettingButton import SettingButton
 
 
 class TabsManager(QTabWidget):

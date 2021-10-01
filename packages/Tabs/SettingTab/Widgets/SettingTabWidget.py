@@ -1,16 +1,13 @@
-from PySide2.QtWidgets import QWidget, QGroupBox, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QStyleFactory, \
+from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
     QGridLayout
 
 from packages.Startup.DefaultOptions import Default_Video_Extensions, Default_Subtitle_Extensions, \
     Default_Audio_Extensions, Default_Chapter_Extensions, Default_Subtitle_Language, Default_Audio_Language
 from packages.Startup.PreDefined import AllVideosExtensions, AllSubtitlesExtensions, AllAudiosExtensions, \
     AllChapterExtensions, AllSubtitlesLanguages, AllAudiosLanguages
-from packages.Tabs.SettingTab.ClearSourceButton import ClearSourceButton
-from packages.Tabs.SettingTab.DefaultDirectoryLineEdit import DefaultDirectoryLineEdit
-from packages.Tabs.SettingTab.DefaultDirectorySourceButton import DefaultDirectorySourceButton
-from packages.Tabs.SettingTab.DefaultDirectoryLayout import DefaultDirectoryLayout
-from packages.Tabs.SettingTab.DefaultExtensionsLayout import DefaultExtensionsLayout
-from packages.Tabs.SettingTab.DefaultLanguageLayout import DefaultLanguageLayout
+from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLayout import DefaultDirectoryLayout
+from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExtensionsLayout
+from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
 
 
 class SettingTabWidget(QWidget):
