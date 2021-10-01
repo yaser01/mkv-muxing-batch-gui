@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import Default_Chapter_Extension
+from packages.Startup.DefaultOptions import Default_Chapter_Extensions
 from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import ChapterExtensionsCheckableComboBox
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceButton import ChapterSourceButton
 from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
@@ -67,7 +67,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_chapter_extensions = [Default_Chapter_Extension]
+        self.current_chapter_extensions = Default_Chapter_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -217,7 +217,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_chapter_extensions = [Default_Chapter_Extension]
+            self.current_chapter_extensions = Default_Chapter_Extensions
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
             self.is_drag_and_drop = False
             self.chapter_source_lineEdit.set_is_drag_and_drop(False)

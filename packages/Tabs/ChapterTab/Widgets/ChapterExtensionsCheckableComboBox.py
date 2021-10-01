@@ -5,7 +5,7 @@ from PySide2.QtCore import Qt, QEvent
 from PySide2.QtGui import QFontMetrics
 from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
 
-from packages.Startup.DefaultOptions import Default_Chapter_Extension
+from packages.Startup.DefaultOptions import Default_Chapter_Extensions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllChapterExtensions
 from packages.Tabs.ChapterTab.Widgets.ReloadChapterFilesDialog import ReloadChapterFilesDialog
@@ -30,7 +30,7 @@ class ChapterExtensionsCheckableComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.current_folder_path = ""
         self.current_files_list = ""
-        self.current_extensions = [Default_Chapter_Extension]
+        self.current_extensions = Default_Chapter_Extensions
         self.is_there_old_files = False
         self.closeOnLineEditClick = False
         # Use custom delegate
@@ -177,7 +177,7 @@ class ChapterExtensionsCheckableComboBox(QComboBox):
                 count += 1
         if count == 0:
             for i in range(self.model().rowCount()):
-                if self.model().item(i).text() == Default_Chapter_Extension:
+                if self.model().item(i).text() in Default_Chapter_Extensions:
                     self.model().item(i).setCheckState(Qt.Checked)
         self.updateText()
 

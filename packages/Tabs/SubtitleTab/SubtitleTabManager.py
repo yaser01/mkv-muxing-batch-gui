@@ -56,13 +56,6 @@ class SubtitleTabManager(GlobalSetting):
             self.subtitle_tab_delete_button.show()
         self.subtitle_tab_delete_button.set_is_there_old_file(len(GlobalSetting.SUBTITLE_FILES_LIST[real_index]) > 0)
         self.current_subtitle_tab.tab_clicked_signal.emit()
-        print(GlobalSetting.SUBTITLE_FILES_LIST)
-        print(GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST)
-        print(GlobalSetting.SUBTITLE_TRACK_NAME)
-        print(GlobalSetting.SUBTITLE_DELAY)
-        print(GlobalSetting.SUBTITLE_SET_DEFAULT)
-        print(GlobalSetting.SUBTITLE_SET_FORCED)
-        print(GlobalSetting.SUBTITLE_LANGUAGE)
 
     def create_new_tab(self):
         self.subtitle_tabs.append(SubtitleSelectionSetting(self.current_index_counter))

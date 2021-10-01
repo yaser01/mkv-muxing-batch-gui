@@ -59,6 +59,7 @@ try:
     FolderIconPath = os.path.join(os.path.abspath(IconFolderPath), 'SelectFolder.svg')
     SpinnerIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Spinner.gif')
     GoodJobIconPath = os.path.join(os.path.abspath(IconFolderPath), 'GoodJob.png')
+    SettingIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Setting.svg')
     AppIconPath = os.path.join(os.path.abspath(IconFolderPath), 'App.ico')
     OkIcon = QIcon(QPixmap(OkIconPath))
     ErrorIcon = QIcon(QPixmap(ErrorIconPath))
@@ -84,6 +85,7 @@ try:
     UpIcon = QIcon(QPixmap(UpIconPath))
     BottomIcon = QIcon(QPixmap(BottomIconPath))
     SelectFolderIcon = QIcon(QPixmap(FolderIconPath))
+    SettingIcon = QIcon(QPixmap(SettingIconPath))
     AppIcon = QIcon(QPixmap(AppIconPath))
 
     AppLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "app_log.txt")

@@ -1,6 +1,6 @@
-Default_Video_Extension = "MKV"
-Default_Subtitle_Extension = "ASS"
+Default_Video_Extensions = ["MKV"]
+Default_Subtitle_Extensions = ["ASS"]
 Default_Subtitle_Language = "English"
-Default_Chapter_Extension = "XML"
-Default_Audio_Extension = "AAC"
+Default_Chapter_Extensions = ["XML"]
+Default_Audio_Extensions = ["AAC"]
 Default_Audio_Language = "English"

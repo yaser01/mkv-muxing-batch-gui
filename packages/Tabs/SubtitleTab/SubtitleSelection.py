@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Extension
+from packages.Startup.DefaultOptions import Default_Subtitle_Extensions
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleLayout import MatchSubtitleLayout
 from packages.Tabs.SubtitleTab.Widgets.SubtitleClearButton import SubtitleClearButton
@@ -43,7 +43,6 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_language_label = QLabel("Language:")
         self.subtitle_extension_label = QLabel("Subtitle Extension:")
         self.subtitle_delay_label = QLabel("Delay:")
-        # self.subtitle_tab_comboBox = SubtitleTabComboBox()
         self.subtitle_source_lineEdit = SubtitleSourceLineEdit()
         self.subtitle_source_button = SubtitleSourceButton()
         self.subtitle_clear_button = SubtitleClearButton()
@@ -100,7 +99,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_subtitle_extensions = [Default_Subtitle_Extension]
+        self.current_subtitle_extensions =Default_Subtitle_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -265,7 +264,7 @@ class SubtitleSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_subtitle_extensions = [Default_Subtitle_Extension]
+            self.current_subtitle_extensions = Default_Subtitle_Extensions
             self.subtitle_extensions_comboBox.setData(self.current_subtitle_extensions)
             self.subtitle_track_name_lineEdit.setText("")
             self.subtitle_set_forced_checkBox.setChecked(False)

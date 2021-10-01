@@ -1,6 +1,6 @@
 from PySide2.QtCore import Signal
 
-from packages.Startup.DefaultOptions import Default_Video_Extension
+from packages.Startup.DefaultOptions import Default_Video_Extensions
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
@@ -65,7 +65,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_size_list = []
         self.files_names_checked_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_video_extensions = [Default_Video_Extension]
+        self.current_video_extensions = Default_Video_Extensions
         self.is_drag_and_drop = False
         self.setup_widgets()
         self.connect_signals()

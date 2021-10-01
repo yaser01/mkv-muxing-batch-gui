@@ -5,7 +5,7 @@ from PySide2.QtCore import Qt, QEvent
 from PySide2.QtGui import QFontMetrics
 from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Extension
+from packages.Startup.DefaultOptions import Default_Subtitle_Extensions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllSubtitlesExtensions
 from packages.Tabs.GlobalSetting import GlobalSetting, get_files_names_absolute_list, sort_names_like_windows
@@ -30,7 +30,7 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.current_folder_path = ""
         self.current_files_list = ""
-        self.current_extensions = [Default_Subtitle_Extension]
+        self.current_extensions = Default_Subtitle_Extensions
         self.is_there_old_files = False
         self.closeOnLineEditClick = False
         # Use custom delegate
@@ -177,7 +177,7 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
                 count += 1
         if count == 0:
             for i in range(self.model().rowCount()):
-                if self.model().item(i).text() == Default_Subtitle_Extension:
+                if self.model().item(i).text() in Default_Subtitle_Extensions:
                     self.model().item(i).setCheckState(Qt.Checked)
         self.updateText()
 

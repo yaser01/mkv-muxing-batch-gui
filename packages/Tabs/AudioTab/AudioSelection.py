@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import Default_Audio_Extension
+from packages.Startup.DefaultOptions import Default_Audio_Extensions
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.AudioTab.Widgets.MatchAudioLayout import MatchAudioLayout
 from packages.Tabs.AudioTab.Widgets.AudioClearButton import AudioClearButton
@@ -100,7 +100,7 @@ class AudioSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_audio_extensions = [Default_Audio_Extension]
+        self.current_audio_extensions = Default_Audio_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -265,7 +265,7 @@ class AudioSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_audio_extensions = [Default_Audio_Extension]
+            self.current_audio_extensions = Default_Audio_Extensions
             self.audio_extensions_comboBox.setData(self.current_audio_extensions)
             self.audio_track_name_lineEdit.setText("")
             self.audio_set_forced_checkBox.setChecked(False)

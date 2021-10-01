@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, Qt
 from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QTabWidget
 from packages.Tabs.AttachmentTab.AttachmentSelection import AttachmentSelectionSetting
@@ -8,6 +8,7 @@ from packages.Tabs.ChapterTab.ChapterSelection import ChapterSelectionSetting
 from packages.Tabs.MuxSetting.MuxSetting import MuxSettingTab
 from packages.Tabs.SubtitleTab.SubtitleTabManager import SubtitleTabManager
 from packages.Tabs.VideoTab.VideoSelection import VideoSelectionSetting
+from packages.Widgets.SettingButton import SettingButton
 
 
 class TabsManager(QTabWidget):
@@ -28,22 +29,25 @@ class TabsManager(QTabWidget):
             "Video": 0,
             "Subtitle": 1,
             "Audio": 2,
-            "Attachment": 3,
-            "Chapter": 4,
+            "Chapter": 3,
+            "Attachment": 4,
             "Mux Setting": 5,
         }
         self.add_tabs()
         self.set_tab_color(tab_index=self.tabs_ids["Audio"], color_string="#BABABA")
         self.set_tab_color(tab_index=self.tabs_ids["Attachment"], color_string="#BABABA")
         self.set_tab_color(tab_index=self.tabs_ids["Chapter"], color_string="#BABABA")
+        self.setting_button = SettingButton()
+        self.setCornerWidget(self.setting_button, Qt.TopRightCorner)
+        self.setStyleSheet("QTabWidget::right-corner{bottom: 2px;}")
         self.connect_signals()
 
     def add_tabs(self):
         self.addTab(self.video_tab, "Videos")
         self.addTab(self.subtitle_tab, "Subtitles")
         self.addTab(self.audio_tab, "Audios")
-        self.addTab(self.attachment_tab, "Attachments")
         self.addTab(self.chapter_tab, "Chapters")
+        self.addTab(self.attachment_tab, "Attachments")
         self.addTab(self.mux_setting_tab, "Mux Setting")
 
     def set_tab_color(self, tab_index, color_string):
