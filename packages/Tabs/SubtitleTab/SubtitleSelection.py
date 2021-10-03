@@ -181,7 +181,7 @@ class SubtitleSelectionSetting(QGroupBox):
                 self.folder_path = ""
                 self.files_names_absolute_list = new_files_absolute_path_list.copy()
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
-                self.video_source_lineEdit.stop_check_path = False
+                self.subtitle_source_lineEdit.stop_check_path = False
             else:
                 self.subtitle_source_lineEdit.setText("")
             return

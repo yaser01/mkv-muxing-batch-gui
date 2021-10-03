@@ -199,6 +199,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.folders_paths = []
         self.files_names_absolute_list = []
+        self.files_names_absolute_list_with_dropped_files=[]
         self.files_size_list = []
         self.video_source_lineEdit.setText("")
         self.is_drag_and_drop = False

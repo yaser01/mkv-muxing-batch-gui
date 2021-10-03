@@ -17,6 +17,8 @@ class VideoInfoDialog(QDialog):
         self.setLayout(self.main_layout)
         self.setMinimumWidth(screen_size.width() // 2)
         self.setMinimumHeight(screen_size.height() // 2)
+        self.setContentsMargins(screen_size.width() // 500, screen_size.width() // 500, screen_size.width() // 500,
+                                screen_size.width() // 500)
         self.disable_question_mark_window()
 
     def disable_question_mark_window(self):
