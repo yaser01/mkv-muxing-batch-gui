@@ -165,6 +165,7 @@ class TracksCheckableComboBox(QComboBox):
         if text.find("Tracks") == -1 and text.find("Languages") == -1:
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             item.setData(Qt.Unchecked, Qt.CheckStateRole)
+            item.setData(text, Qt.ToolTipRole)
             self.model().appendRow(item)
         else:
             # bigger_font=self.lineEdit().font()

@@ -1,3 +1,4 @@
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QComboBox
 
 from packages.Startup.DefaultOptions import DefaultOptions
@@ -47,3 +48,8 @@ class AudioLanguageComboBox(QComboBox):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def addItems(self, texts):
+        super().addItems(texts)
+        for i in range(len(texts)):
+            self.setItemData(i, texts[i], Qt.ToolTipRole)

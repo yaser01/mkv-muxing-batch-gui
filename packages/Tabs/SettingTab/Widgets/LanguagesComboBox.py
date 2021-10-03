@@ -1,3 +1,4 @@
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QComboBox
 from packages.Startup.InitializeScreenResolution import screen_size
 
@@ -10,3 +11,8 @@ class LanguagesComboBox(QComboBox):
         self.setCurrentIndex(items_list.index(default_item))
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
+
+    def addItems(self, texts):
+        super().addItems(texts)
+        for i in range(len(texts)):
+            self.setItemData(i, texts[i], Qt.ToolTipRole)

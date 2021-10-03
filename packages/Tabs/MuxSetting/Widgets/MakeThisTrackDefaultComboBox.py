@@ -63,6 +63,9 @@ class MakeThisTrackDefaultComboBox(QComboBox):
     def addItems(self, texts):
         self.clear()
         super().addItems(texts)
+        for i in range(len(texts)):
+            if texts[i] != "---Languages---" and texts[i] != "---Tracks---":
+                self.setItemData(i, texts[i], Qt.ToolTipRole)
         self.current_list = texts.copy()
         self.setCurrentIndex(-1)
         self.disable_track_text_from_being_selected()
