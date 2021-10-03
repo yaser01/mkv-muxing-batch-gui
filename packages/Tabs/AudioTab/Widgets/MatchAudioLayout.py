@@ -15,7 +15,7 @@ class MatchAudioLayout(QHBoxLayout):
         self.tab_index = tab_index
         self.video_table = VideoMatchingTable()
         self.audio_table = AudioMatchingTable(self.tab_index)
-        self.match_tools_layout = MatchAudioToolsLayout(parent=parent,tab_index=self.tab_index)
+        self.match_tools_layout = MatchAudioToolsLayout(parent=parent, tab_index=self.tab_index)
         self.setup_layout()
         self.sync_slideBar_check = False
         self.connect_signals()

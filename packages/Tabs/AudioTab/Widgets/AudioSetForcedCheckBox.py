@@ -16,8 +16,6 @@ class AudioSetForcedCheckBox(QCheckBox):
         GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = self.checkState() == Qt.Checked
         if self.checkState() == Qt.Checked:
             for i in GlobalSetting.AUDIO_SET_FORCED.keys():
-                print(i)
-                print(self.tab_index)
                 if i != self.tab_index:
                     GlobalSetting.AUDIO_SET_FORCED[i] = False
 

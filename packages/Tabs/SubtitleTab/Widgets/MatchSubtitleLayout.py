@@ -15,7 +15,7 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.tab_index = tab_index
         self.video_table = VideoMatchingTable()
         self.subtitle_table = SubtitleMatchingTable(self.tab_index)
-        self.match_tools_layout = MatchSubtitleToolsLayout(parent=parent,tab_index=self.tab_index)
+        self.match_tools_layout = MatchSubtitleToolsLayout(parent=parent, tab_index=self.tab_index)
         self.setup_layout()
         self.sync_slideBar_check = False
         self.connect_signals()

@@ -37,7 +37,7 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
         super().__init__()
         self.addItems(AllSubtitlesTracks)
         self.setMinimumWidth(screen_size.width() // 12)
-        self.setMaximumWidth(screen_size.width() // 6)
+        self.setMaximumWidth(screen_size.width() // 4)
         self.setDisabled(True)
         self.empty_selection_hint_string = "Discard All subtitle tracks from the source file<br>this option will lead to " \
                                            "output video with NO old subtitles<br>[the new subtitle file will exists] "

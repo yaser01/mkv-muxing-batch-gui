@@ -111,4 +111,3 @@ class TabsManager(QTabWidget):
         self.chapter_tab.set_default_directory()
         self.attachment_tab.set_default_directory()
         self.mux_setting_tab.set_default_directory()
-

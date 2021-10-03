@@ -1,4 +1,4 @@
-from PySide2 import  QtGui
+from PySide2 import QtGui
 from PySide2.QtCore import Qt, QEvent
 from PySide2.QtGui import QFontMetrics
 from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
@@ -14,7 +14,7 @@ class ExtensionsCheckableComboBox(QComboBox):
             size.setHeight(int(s))
             return size
 
-    def __init__(self, items_list,default_items_list):
+    def __init__(self, items_list, default_items_list):
         super().__init__()
         self.hint = ""
         self.hint_when_enabled = ""

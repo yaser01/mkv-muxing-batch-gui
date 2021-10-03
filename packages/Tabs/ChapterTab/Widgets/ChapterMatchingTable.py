@@ -10,6 +10,7 @@ from packages.Widgets.TableWidget import TableWidget
 
 class ChapterMatchingTable(TableFixedHeaderWidget):
     drop_folder_and_files_signal = Signal(list)
+
     def __init__(self):
         super().__init__(primarytable=TableWidget(), headername="Chapter Name")
         self.current_files_list = []

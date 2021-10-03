@@ -56,13 +56,6 @@ class AudioTabManager(GlobalSetting):
             self.audio_tab_delete_button.show()
         self.audio_tab_delete_button.set_is_there_old_file(len(GlobalSetting.AUDIO_FILES_LIST[real_index]) > 0)
         self.current_audio_tab.tab_clicked_signal.emit()
-        print(GlobalSetting.AUDIO_FILES_LIST)
-        print(GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST)
-        print(GlobalSetting.AUDIO_TRACK_NAME)
-        print(GlobalSetting.AUDIO_DELAY)
-        print(GlobalSetting.AUDIO_SET_DEFAULT)
-        print(GlobalSetting.AUDIO_SET_FORCED)
-        print(GlobalSetting.AUDIO_LANGUAGE)
 
     def create_new_tab(self):
         self.audio_tabs.append(AudioSelectionSetting(self.current_index_counter))

@@ -61,7 +61,7 @@ def check_is_there_audio_to_mux():
 def check_if_at_least_one_muxing_setting_has_been_selected():
     if check_is_there_subtitle_to_mux() or check_is_there_audio_to_mux() or len(
             GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or len(
-            GlobalSetting.CHAPTER_FILES_LIST) > 0 or GlobalSetting.ATTACHMENT_DISCARD_OLD or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "":
+        GlobalSetting.CHAPTER_FILES_LIST) > 0 or GlobalSetting.ATTACHMENT_DISCARD_OLD or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "":
         return True
     else:
         no_setting_to_apply_dialog = InfoDialog(window_title="No Setting Selected",
@@ -211,8 +211,8 @@ class MuxSettingTab(QWidget):
         self.mux_tools_layout_second_row.addWidget(self.only_keep_those_subtitles_multi_choose_comboBox, 2)
         self.mux_tools_layout_second_row.addWidget(self.make_this_subtitle_default_checkBox, 1)
         self.mux_tools_layout_second_row.addWidget(self.make_this_subtitle_default_comboBox, 2)
-        self.mux_tools_layout_second_row.addWidget(self.control_queue_button, 1)
-        self.mux_tools_layout_second_row.addWidget(self.clear_job_queue_button, 1)
+        self.mux_tools_layout_second_row.addWidget(self.control_queue_button, 0)
+        self.mux_tools_layout_second_row.addWidget(self.clear_job_queue_button, 0)
 
     def setup_clear_job_queue_button(self):
         self.clear_job_queue_button.setText("Clear All")
@@ -295,8 +295,6 @@ class MuxSettingTab(QWidget):
     def open_select_destination_folder_dialog(self):
         temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Destination Folder",
                                                             dir=GlobalSetting.LAST_DIRECTORY_PATH, )
-        print(GlobalSetting.VIDEO_SOURCE_PATHS)
-        print(Path(temp_folder_path))
         if temp_folder_path == "" or temp_folder_path.isspace():
             return
         elif Path(temp_folder_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
@@ -348,9 +346,6 @@ class MuxSettingTab(QWidget):
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
-        print("**")
-        print(GlobalSetting.VIDEO_SOURCE_PATHS)
-        print(Path(temp_destination_path))
         if Path(temp_destination_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
                 error_message="Some Source and destination videos are in the same folder")

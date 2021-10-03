@@ -75,7 +75,6 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
                             GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_SEMI_ENABLED = False
                             GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED = True
                         elif confirm_dialog.result == "No":
-                            print("ENTER HERE")
                             self.stop_check = True
                             self.disable_combo_box.emit(False)
                             self.setCheckState(Qt.PartiallyChecked)
@@ -88,7 +87,6 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
                             GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED = False
                             self.stop_check = False
                         else:
-                            print("ENTER HERE")
                             self.stop_check = True
                             self.setCheckState(Qt.Unchecked)
                             self.disable_combo_box.emit(True)
@@ -111,7 +109,7 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
                         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_SEMI_ENABLED = False
                         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED = True
                 else:
-                    if audio_to_be_default!=-1:
+                    if audio_to_be_default != -1:
                         confirm_dialog = ConfirmCheckMakeThisTrackDefault(track_type="audio")
                         confirm_dialog.execute()
                         if confirm_dialog.result == "Yes":

@@ -12,7 +12,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.current_list = []
         self.addItems(AllAudiosTracks)
         self.setMinimumWidth(screen_size.width() // 12)
-        self.setMaximumWidth(screen_size.width() // 6)
+        self.setMaximumWidth(screen_size.width() // 4)
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.setCurrentIndex(-1)
@@ -67,4 +67,3 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.setCurrentIndex(-1)
         self.disable_track_text_from_being_selected()
         self.disable_language_text_from_being_selected()
-

@@ -34,7 +34,8 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_top_button.selected_row_after_swap.connect(self.change_selected_subtitle_row)
         self.move_subtitle_top_button.move_subtitle_to_top_signal.connect(
             self.update_global_subtitle_files_list_order_to_top)
-        self.move_subtitle_up_button.move_subtitle_to_up_signal.connect(self.update_global_subtitle_files_list_order_to_up)
+        self.move_subtitle_up_button.move_subtitle_to_up_signal.connect(
+            self.update_global_subtitle_files_list_order_to_up)
         self.move_subtitle_to_button.move_subtitle_to_position_signal.connect(
             self.update_global_subtitle_files_list_order_to_position)
         self.move_subtitle_down_button.move_subtitle_to_down_signal.connect(

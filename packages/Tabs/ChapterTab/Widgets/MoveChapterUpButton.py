@@ -9,6 +9,7 @@ class MoveChapterUpButton(QPushButton):
     swap_happened_signal = Signal()
     selected_row_after_swap = Signal(int)
     move_chapter_to_up_signal = Signal(int)
+
     def __init__(self):
         super().__init__()
         self.current_index = -1

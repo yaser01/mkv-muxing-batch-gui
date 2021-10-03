@@ -60,6 +60,7 @@ resources_folder = os.path.join(os.path.abspath(script_folder), Path('Resources'
 FontFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Fonts'))
 IconFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Icons'))
 ToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
+LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
 TempFolderPath = create_temp_folder_path()
 MergeLogsFolderPath = os.path.join(os.path.abspath(TempFolderPath), Path('Logs'))
 MediaInfoFolderPath = os.path.join(os.path.abspath(TempFolderPath), Path('MediaInfo'))
@@ -131,7 +132,7 @@ try:
     TelegramIcon = QIcon(QPixmap(TelegramIconPath))
     TwitterIcon = QIcon(QPixmap(TwitterIconPath))
     AppIcon = QIcon(QPixmap(AppIconPath))
-
+    LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
     AppLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "app_log.txt")
     MuxingLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "muxing_log_file.txt")
     mkvpropeditJsonJobFilePath = os.path.join(os.path.abspath(TempFolderPath), "mkvpropeditJob.json")
@@ -140,6 +141,7 @@ try:
     SettingJsonInfoFilePath = os.path.join(os.path.abspath(TempFolderPath), "setting.json")
     MKVPROPEDIT_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvpropedit")
     MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
+
     read_setting_file()
 except Exception as e:
     missing_files_message = MissingFilesMessage(error_message=str(e))

@@ -36,7 +36,6 @@ class TableFixedHeaderWidget(QTableWidget):
         self.tableLayout.setContentsMargins(0, 0, 0, 0)
         self.tableLayout.setSpacing(0)
 
-
     def takeupdate(self):
         # make sure that new header place exactly on old header [Width Checker]
         if self.table.verticalScrollBar().isVisible() and self.table.isEnabled():

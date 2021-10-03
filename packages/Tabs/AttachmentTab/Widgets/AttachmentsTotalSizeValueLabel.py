@@ -12,7 +12,7 @@ class AttachmentsTotalSizeValueLabel(QLabel):
         self.total_size_bytes = 0
         self.total_size_readable = "0.0 B"
 
-    def update_total_size(self, files_names_absolute_list,files_checked_list):
+    def update_total_size(self, files_names_absolute_list, files_checked_list):
         total_size_bytes = 0
         for i in range(len(files_names_absolute_list)):
             if files_checked_list[i]:

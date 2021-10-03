@@ -53,7 +53,7 @@ class SubtitleInfoDialog(QDialog):
         for i in range(len(self.current_subtitle_name)):
             width_to_be_fixed = max(width_to_be_fixed, self.subtitle_name_value.fontMetrics().boundingRect(
                 self.current_subtitle_name[i]).width())
-        self.subtitle_name_value.setFixedWidth(width_to_be_fixed+10)
+        self.subtitle_name_value.setFixedWidth(width_to_be_fixed + 10)
         self.subtitle_delay_label = QLabel("Subtitle Delay:")
         self.subtitle_delay_spin = QDoubleSpinBox()
         self.setup_subtitle_delay_spin()
@@ -93,14 +93,14 @@ class SubtitleInfoDialog(QDialog):
         self.subtitle_editable_setting_layout = QFormLayout()
         self.subtitle_editable_setting_layout.addRow(self.subtitle_name_label, self.subtitle_name_value)
         self.subtitle_editable_setting_layout.addRow(self.subtitle_track_name_label,
-                                                      self.subtitle_track_name_lineEdit)
+                                                     self.subtitle_track_name_lineEdit)
         self.subtitle_editable_setting_layout.addRow(self.subtitle_language_label,
-                                                      self.subtitle_language_comboBox)
+                                                     self.subtitle_language_comboBox)
         self.subtitle_editable_setting_layout.addRow(self.subtitle_delay_label, self.subtitle_delay_spin)
         self.subtitle_editable_setting_layout.addRow(self.subtitle_set_default_label,
-                                                      self.subtitle_set_default_checkBox)
+                                                     self.subtitle_set_default_checkBox)
         self.subtitle_editable_setting_layout.addRow(self.subtitle_set_forced_label,
-                                                      self.subtitle_set_forced_checkBox)
+                                                     self.subtitle_set_forced_checkBox)
         self.subtitle_setting_layout.addWidget(self.subtitle_tab_comboBox, 0, 0)
         self.subtitle_setting_layout.addLayout(self.subtitle_editable_setting_layout, 1, 0, 5, 2)
         self.subtitle_setting_layout.addWidget(self.messageIcon, 1, 3, 5, -1)

@@ -14,4 +14,3 @@ class DefaultOptions(QWidget):
     Default_Audio_Directory = ""
     Default_Attachment_Directory = ""
     Default_Destination_Directory = ""
-

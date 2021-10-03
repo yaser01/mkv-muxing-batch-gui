@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
     def __init__(self, args, parent=None):
         super().__init__(parent=parent)
         self.resize(int(width_factor * 1055), int(height_factor * 635))
-        self.setWindowTitle("MKV Muxing Batch GUI v"+str(Version))
+        self.setWindowTitle("MKV Muxing Batch GUI v" + str(Version))
         self.setWindowIcon(GlobalFiles.AppIcon)
         self.tabs = TabsManager()
         self.tabs_frame = QFrame()
@@ -40,7 +40,6 @@ class MainWindow(QMainWindow):
         self.tabs.set_default_directories()
         self.task_bar_progress = TaskBarProgress(window_handle=self.windowHandle())
         self.connect_signals()
-
 
     def connect_signals(self):
         self.tabs.currentChanged.connect(self.update_minimum_size)

@@ -11,9 +11,9 @@ from packages.Widgets.TableWidget import TableWidget
 class SubtitleMatchingTable(TableFixedHeaderWidget):
     drop_folder_and_files_signal = Signal(list)
 
-    def __init__(self,tab_index):
+    def __init__(self, tab_index):
         super().__init__(primarytable=TableWidget(), headername="Subtitle Name")
-        self.tab_index=tab_index
+        self.tab_index = tab_index
         self.current_files_list = []
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)

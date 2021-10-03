@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import  QComboBox
+from PySide2.QtWidgets import QComboBox
 from packages.Startup.InitializeScreenResolution import screen_size
 
 

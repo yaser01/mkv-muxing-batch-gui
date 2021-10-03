@@ -186,8 +186,6 @@ class AttachmentSelectionSetting(GlobalSetting):
                 GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST.append(True)
             else:
                 GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST.append(False)
-        print(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)
-        print(GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST)
 
     def connect_signals(self):
         self.attachment_source_button.clicked_signal.connect(self.update_folder_path)
@@ -205,15 +203,11 @@ class AttachmentSelectionSetting(GlobalSetting):
         index = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST.index(attachment_file_name_absolute)
         self.files_checked_list[index] = True
         self.attachment_total_size_value_label.attachment_checked(attachment_file_name_absolute)
-        print(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)
-        print(GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST)
 
     def update_unchecked_attachment(self, attachment_file_name_absolute):
         index = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST.index(attachment_file_name_absolute)
         self.files_checked_list[index] = False
         self.attachment_total_size_value_label.attachment_unchecked(attachment_file_name_absolute)
-        print(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)
-        print(GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST)
 
     def tab_clicked(self):
         if not GlobalSetting.JOB_QUEUE_EMPTY:

@@ -28,9 +28,9 @@ class AboutDialog(QDialog):
                                         "warranty of design and fitness for a particular purpose")
         self.app_warranty_label.setAlignment(Qt.AlignCenter)
         self.app_bug_report_label = QLabel(
-            "you can report issues on the "+GitHubIssuesUrlTag)
+            "you can report issues on the " + GitHubIssuesUrlTag)
         self.app_bug_report_label.setOpenExternalLinks(True)
-        self.app_bug_report_issue_link_label=QLabel("please visit the " + GitHubIssuesUrlTag)
+        self.app_bug_report_issue_link_label = QLabel("please visit the " + GitHubIssuesUrlTag)
         self.app_bug_report_issue_link_label.setOpenExternalLinks(True)
         self.app_follow_me_label = QLabel("Contact me on:")
         self.app_bug_report_label.setOpenExternalLinks(True)
@@ -49,10 +49,10 @@ class AboutDialog(QDialog):
         self.main_layout.addWidget(self.app_name_label, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_current_version, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_link_github_label, alignment=Qt.AlignCenter)
-        #self.main_layout.addWidget(self.app_licence_label, alignment=Qt.AlignCenter)
-        #self.main_layout.addWidget(self.app_warranty_label, alignment=Qt.AlignCenter)
+        # self.main_layout.addWidget(self.app_licence_label, alignment=Qt.AlignCenter)
+        # self.main_layout.addWidget(self.app_warranty_label, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_bug_report_label, alignment=Qt.AlignCenter)
-        #self.main_layout.addWidget(self.app_bug_report_issue_link_label, alignment=Qt.AlignCenter)
+        # self.main_layout.addWidget(self.app_bug_report_issue_link_label, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_follow_me_label, alignment=Qt.AlignCenter)
         self.main_layout.addLayout(self.social_media_layout)
         self.main_layout.addWidget(self.ok_button, alignment=Qt.AlignCenter)
@@ -82,7 +82,7 @@ class AboutDialog(QDialog):
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)
-        self.setFixedSize(QSize(self.size().width()+30,self.size().height()))
+        self.setFixedSize(QSize(self.size().width() + 30, self.size().height()))
 
     def execute(self):
         self.exec_()

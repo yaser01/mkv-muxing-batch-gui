@@ -32,11 +32,12 @@ def convert_string_integer_to_two_digit_string(value):
 
 class AudioTracksCheckableComboBox(TracksCheckableComboBox):
     audio_tracks_changed_signal = Signal(list)
+
     def __init__(self):
         super().__init__()
         self.addItems(AllAudiosTracks)
         self.setMinimumWidth(screen_size.width() // 12)
-        self.setMaximumWidth(screen_size.width() // 6)
+        self.setMaximumWidth(screen_size.width() // 4)
         self.setDisabled(True)
         self.empty_selection_hint_string = "Discard All audio tracks from the source file<br>this option will lead to " \
                                            "output video with NO audios "

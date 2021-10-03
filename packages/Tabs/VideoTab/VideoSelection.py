@@ -81,8 +81,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.setLayout(self.main_layout)
 
     def update_folder_path(self, new_path: str):
-        print("####")
-        print(new_path)
+
         if new_path != "":
             self.video_source_lineEdit.setText(new_path)
             self.update_files_lists(new_path)
