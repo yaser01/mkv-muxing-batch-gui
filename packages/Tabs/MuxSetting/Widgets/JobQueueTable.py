@@ -4,7 +4,7 @@ from PySide2.QtCore import QThread, Signal
 from PySide2.QtGui import Qt, QFontMetrics
 from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Language, Default_Audio_Language
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, get_readable_filesize
 from packages.Tabs.MuxSetting.Widgets.ConfirmUsingMkvpropedit import ConfirmUsingMkvpropedit
@@ -39,7 +39,7 @@ def generate_tool_tip_for_chapter_file(chapter_full_path="C:/Test", chapter_name
 
 
 def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test",
-                                     audio_delay=0.0, audio_language=Default_Audio_Language,
+                                     audio_delay=0.0, audio_language=DefaultOptions.Default_Audio_Language,
                                      audio_track_name="Test",
                                      audio_set_default=False, audio_set_forced=False,
                                      show_full_path=False):
@@ -65,7 +65,7 @@ def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test
 
 
 def generate_tool_tip_for_subtitle_file(subtitle_full_path="C:/Test", subtitle_name="Test",
-                                        subtitle_delay=0.0, subtitle_language=Default_Subtitle_Language,
+                                        subtitle_delay=0.0, subtitle_language=DefaultOptions.Default_Subtitle_Language,
                                         subtitle_track_name="Test",
                                         subtitle_set_default=False, subtitle_set_forced=False,
                                         show_full_path=False):

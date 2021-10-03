@@ -6,11 +6,11 @@ from packages.Tabs.SettingTab.Widgets.DefaultDirectorySourceButton import Defaul
 
 
 class DefaultDirectoryLayout(QHBoxLayout):
-    def __init__(self, label_name):
+    def __init__(self, label_name, default_directory):
         super().__init__()
         self.all_labels_list = []
         self.label = QLabel(label_name)
-        self.lineEdit = DefaultDirectoryLineEdit()
+        self.lineEdit = DefaultDirectoryLineEdit(default_directory)
         self.source_button = DefaultDirectorySourceButton()
         self.clear_source_button = ClearSourceButton()
         self.setup_all_labels_list()
@@ -24,6 +24,7 @@ class DefaultDirectoryLayout(QHBoxLayout):
         self.all_labels_list.append("Audios Directory: ")
         self.all_labels_list.append("Attachments Directory: ")
         self.all_labels_list.append("Chapters Directory: ")
+        self.all_labels_list.append("Destination Directory: ")
 
     def setup_label_width(self):
         width_to_be_fixed = 0

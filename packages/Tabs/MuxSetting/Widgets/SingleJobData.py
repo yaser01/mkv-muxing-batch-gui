@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Language
+from packages.Startup.DefaultOptions import DefaultOptions
 
 
 class SingleJobData:

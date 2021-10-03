@@ -20,7 +20,6 @@ class ExtensionsCheckableComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.items_list = items_list
         self.default_items_list = default_items_list
-        self.current_extensions = self.default_items_list
         self.closeOnLineEditClick = False
         # Use custom delegate
         self.setItemDelegate(ExtensionsCheckableComboBox.Delegate())

@@ -103,3 +103,12 @@ class TabsManager(QTabWidget):
             self.chapter_tab.tab_clicked_signal.emit()
         elif index == self.tabs_ids["Mux Setting"]:
             self.mux_setting_tab.tab_clicked_signal.emit()
+
+    def set_default_directories(self):
+        self.video_tab.set_default_directory()
+        self.subtitle_tab.set_default_directory()
+        self.audio_tab.set_default_directory()
+        self.chapter_tab.set_default_directory()
+        self.attachment_tab.set_default_directory()
+        self.mux_setting_tab.set_default_directory()
+

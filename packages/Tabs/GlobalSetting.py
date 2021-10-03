@@ -7,7 +7,7 @@ from pathlib import Path
 from PySide2.QtWidgets import QWidget
 from collections import defaultdict
 from packages.Startup import GlobalFiles
-from packages.Startup.DefaultOptions import Default_Subtitle_Language, Default_Audio_Language
+from packages.Startup.DefaultOptions import DefaultOptions
 
 
 def sort_names_like_windows(names_list):

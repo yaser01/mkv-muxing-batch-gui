@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QComboBox
 
-from packages.Startup.DefaultOptions import Default_Audio_Language
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosLanguages
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -13,7 +13,7 @@ class AudioLanguageComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
         self.addItems(AllAudiosLanguages)
-        self.setCurrentIndex(AllAudiosLanguages.index(Default_Audio_Language))
+        self.setCurrentIndex(AllAudiosLanguages.index(DefaultOptions.Default_Audio_Language))
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.currentTextChanged.connect(self.change_global_audio_language)

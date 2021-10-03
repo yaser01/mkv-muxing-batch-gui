@@ -67,3 +67,4 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.setCurrentIndex(-1)
         self.disable_track_text_from_being_selected()
         self.disable_language_text_from_being_selected()
+

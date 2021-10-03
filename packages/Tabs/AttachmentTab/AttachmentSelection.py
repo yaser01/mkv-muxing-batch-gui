@@ -87,7 +87,8 @@ class AttachmentSelectionSetting(GlobalSetting):
                 self.attachment_source_lineEdit.stop_check_path = False
 
     def update_total_size(self):
-        self.attachment_total_size_value_label.update_total_size(self.files_names_absolute_list,self.files_checked_list)
+        self.attachment_total_size_value_label.update_total_size(self.files_names_absolute_list,
+                                                                 self.files_checked_list)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -273,7 +274,8 @@ class AttachmentSelectionSetting(GlobalSetting):
                     continue
                 new_files_absolute_path_list.append(path)
             else:
-                new_files_absolute_path_list.extend(sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
+                new_files_absolute_path_list.extend(
+                    sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
@@ -302,6 +304,9 @@ class AttachmentSelectionSetting(GlobalSetting):
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
 
-
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
+
+    def set_default_directory(self):
+        self.attachment_source_lineEdit.setText(DefaultOptions.Default_Attachment_Directory)
+        self.attachment_source_lineEdit.check_new_path()

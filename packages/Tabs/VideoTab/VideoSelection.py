@@ -1,6 +1,6 @@
 from PySide2.QtCore import Signal
 
-from packages.Startup.DefaultOptions import Default_Video_Extensions
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
@@ -65,7 +65,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_size_list = []
         self.files_names_checked_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_video_extensions = Default_Video_Extensions
+        self.current_video_extensions = DefaultOptions.Default_Video_Extensions
         self.is_drag_and_drop = False
         self.setup_widgets()
         self.connect_signals()
@@ -81,6 +81,8 @@ class VideoSelectionSetting(GlobalSetting):
         self.setLayout(self.main_layout)
 
     def update_folder_path(self, new_path: str):
+        print("####")
+        print(new_path)
         if new_path != "":
             self.video_source_lineEdit.setText(new_path)
             self.update_files_lists(new_path)
@@ -114,7 +116,7 @@ class VideoSelectionSetting(GlobalSetting):
                             new_files_absolute_path_list.append(file_absolute_path)
                             self.files_names_list.append(os.path.basename(file_absolute_path))
                             if os.path.dirname(file_absolute_path) not in self.folders_paths:
-                                self.folders_paths.append(os.path.dirname(file_absolute_path))
+                                self.folders_paths.append(Path(os.path.dirname(file_absolute_path)))
                             break
                 self.video_source_lineEdit.stop_check_path = True
                 self.video_source_lineEdit.setText(self.drag_and_dropped_text)
@@ -133,6 +135,7 @@ class VideoSelectionSetting(GlobalSetting):
         try:
             self.is_drag_and_drop = False
             self.folder_path = folder_path
+            self.folders_paths = [Path(folder_path)]
             self.files_names_list = self.get_files_list(self.folder_path)
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
             self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
@@ -195,6 +198,7 @@ class VideoSelectionSetting(GlobalSetting):
     def clear_files(self):
         self.folder_path = ""
         self.files_names_list = []
+        self.folders_paths = []
         self.files_names_absolute_list = []
         self.files_size_list = []
         self.video_source_lineEdit.setText("")
@@ -237,8 +241,8 @@ class VideoSelectionSetting(GlobalSetting):
                 GlobalSetting.VIDEO_FILES_LIST.append(self.files_names_list[i])
                 GlobalSetting.VIDEO_FILES_SIZE_LIST.append(self.files_size_list[i])
                 GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST.append(self.files_names_absolute_list[i])
-                if os.path.dirname(self.files_names_absolute_list[i]) not in GlobalSetting.VIDEO_SOURCE_PATHS:
-                    GlobalSetting.VIDEO_SOURCE_PATHS.append(os.path.dirname(self.files_names_absolute_list[i]))
+                if Path(os.path.dirname(self.files_names_absolute_list[i])) not in GlobalSetting.VIDEO_SOURCE_PATHS:
+                    GlobalSetting.VIDEO_SOURCE_PATHS.append(Path(os.path.dirname(self.files_names_absolute_list[i])))
 
     def update_checked_video(self, video_index):
         self.files_names_checked_list[video_index] = True
@@ -299,12 +303,10 @@ class VideoSelectionSetting(GlobalSetting):
                     temp_file_extension = temp_file_name[temp_file_extension_start_index + 1:]
                     if temp_file_extension.lower() == current_extensions[j].lower():
                         new_files_absolute_path_list.append(path)
-                        if os.path.dirname(path) not in self.folders_paths:
-                            self.folders_paths.append(os.path.dirname(path))
                         break
             else:
                 if os.path.dirname(path) not in self.folders_paths:
-                    self.folders_paths.append(os.path.dirname(path))
+                    self.folders_paths.append(Path(os.path.dirname(path)))
                 new_files_absolute_path_list.extend(
                     sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
@@ -316,6 +318,8 @@ class VideoSelectionSetting(GlobalSetting):
                 not_duplicate_files_absolute_path_list.append(new_file_name)
                 not_duplicate_files_list.append(os.path.basename(new_file_name))
                 self.files_names_list.append(os.path.basename(new_file_name))
+                if os.path.dirname(new_file_name) not in self.folders_paths:
+                    self.folders_paths.append(Path(os.path.dirname(new_file_name)))
         self.video_source_lineEdit.stop_check_path = True
         self.video_source_lineEdit.setText(self.drag_and_dropped_text)
         self.is_drag_and_drop = True
@@ -338,6 +342,7 @@ class VideoSelectionSetting(GlobalSetting):
             warning_dialog.execute_wth_no_block()
 
     def disable_editable_widgets(self):
+        self.video_source_lineEdit_disconnect_edit_finished_signal()
         self.video_extensions_comboBox.setEnabled(False)
         self.video_source_lineEdit.setEnabled(False)
         self.video_source_button.setEnabled(False)
@@ -346,7 +351,20 @@ class VideoSelectionSetting(GlobalSetting):
         self.table.setAcceptDrops(False)
         self.table.disable_selection()
 
+    def video_source_lineEdit_disconnect_edit_finished_signal(self):
+        try:
+            self.video_source_lineEdit.edit_finished_signal.disconnect()
+        except Exception as e:
+            pass
+
+    def video_source_lineEdit_connect_edit_finished_signal(self):
+        try:
+            self.video_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        except Exception as e:
+            pass
+
     def enable_editable_widgets(self):
+        self.video_source_lineEdit_connect_edit_finished_signal()
         self.video_extensions_comboBox.setEnabled(True)
         self.video_source_lineEdit.setEnabled(True)
         self.video_source_button.setEnabled(True)
@@ -357,3 +375,7 @@ class VideoSelectionSetting(GlobalSetting):
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
+
+    def set_default_directory(self):
+        self.video_source_lineEdit.setText(DefaultOptions.Default_Video_Directory)
+        self.video_source_lineEdit.check_new_path()

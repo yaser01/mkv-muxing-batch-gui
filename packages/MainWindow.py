@@ -3,7 +3,9 @@ from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QMainWindow, QFrame, QVBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
+from packages.Startup.Version import Version
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.TabsManager import TabsManager
 from packages.Widgets.CloseDialog import CloseDialog
@@ -26,7 +28,7 @@ class MainWindow(QMainWindow):
     def __init__(self, args, parent=None):
         super().__init__(parent=parent)
         self.resize(int(width_factor * 1055), int(height_factor * 635))
-        self.setWindowTitle("MKV Muxing Batch GUI v1.05")
+        self.setWindowTitle("MKV Muxing Batch GUI v"+str(Version))
         self.setWindowIcon(GlobalFiles.AppIcon)
         self.tabs = TabsManager()
         self.tabs_frame = QFrame()
@@ -35,8 +37,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs_frame)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.show_window()
+        self.tabs.set_default_directories()
         self.task_bar_progress = TaskBarProgress(window_handle=self.windowHandle())
         self.connect_signals()
+
 
     def connect_signals(self):
         self.tabs.currentChanged.connect(self.update_minimum_size)

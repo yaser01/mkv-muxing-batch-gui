@@ -88,3 +88,5 @@ class AudioTracksCheckableComboBox(TracksCheckableComboBox):
         if new_list != self.current_list:
             self.addItems(new_list)
             self.audio_tracks_changed_signal.emit(new_list)
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS = []

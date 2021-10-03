@@ -5,7 +5,7 @@ from PySide2.QtCore import Qt, QEvent
 from PySide2.QtGui import QFontMetrics
 from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
 
-from packages.Startup.DefaultOptions import Default_Audio_Extensions
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosExtensions
 from packages.Tabs.GlobalSetting import GlobalSetting, get_files_names_absolute_list, sort_names_like_windows
@@ -30,7 +30,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.current_folder_path = ""
         self.current_files_list = ""
-        self.current_extensions = Default_Audio_Extensions
+        self.current_extensions = DefaultOptions.Default_Audio_Extensions
         self.is_there_old_files = False
         self.closeOnLineEditClick = False
         # Use custom delegate
@@ -51,11 +51,13 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         self.lineEdit().installEventFilter(self)
         self.setMinimumWidth(screen_size.width() // 14)
         self.addItems(AllAudiosExtensions)
-        self.make_first_element_default_checked()
+        self.make_default_extensions_checked()
 
-    def make_first_element_default_checked(self):
-        first_element = self.model().item(0)
-        first_element.setCheckState(Qt.Checked)
+    def make_default_extensions_checked(self):
+        for i in range(self.model().rowCount()):
+            if self.model().item(i).text() in DefaultOptions.Default_Audio_Extensions:
+                self.model().item(i).setCheckState(Qt.Checked)
+        self.updateText()
 
     def set_is_there_old_file(self, new_state):
         self.is_there_old_files = new_state
@@ -177,7 +179,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
                 count += 1
         if count == 0:
             for i in range(self.model().rowCount()):
-                if self.model().item(i).text() in Default_Audio_Extensions:
+                if self.model().item(i).text() in DefaultOptions.Default_Audio_Extensions:
                     self.model().item(i).setCheckState(Qt.Checked)
         self.updateText()
 

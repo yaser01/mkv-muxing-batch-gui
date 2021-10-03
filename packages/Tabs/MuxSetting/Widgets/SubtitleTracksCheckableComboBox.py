@@ -89,3 +89,5 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
         if new_list != self.current_list:
             self.addItems(new_list)
             self.subtitle_tracks_changed_signal.emit(new_list)
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS = []

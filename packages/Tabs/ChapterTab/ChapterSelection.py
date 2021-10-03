@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import Default_Chapter_Extensions
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import ChapterExtensionsCheckableComboBox
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceButton import ChapterSourceButton
 from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
@@ -67,7 +67,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_chapter_extensions = Default_Chapter_Extensions
+        self.current_chapter_extensions = DefaultOptions.Default_Chapter_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -217,7 +217,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_chapter_extensions = Default_Chapter_Extensions
+            self.current_chapter_extensions = DefaultOptions.Default_Chapter_Extensions
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
             self.is_drag_and_drop = False
             self.chapter_source_lineEdit.set_is_drag_and_drop(False)
@@ -304,7 +304,8 @@ class ChapterSelectionSetting(GlobalSetting):
                         new_files_absolute_path_list.append(path)
                         break
             else:
-                new_files_absolute_path_list.extend(sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
+                new_files_absolute_path_list.extend(
+                    sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
 
         for new_file_name in new_files_absolute_path_list:
             if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
@@ -333,3 +334,7 @@ class ChapterSelectionSetting(GlobalSetting):
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
+
+    def set_default_directory(self):
+        self.chapter_source_lineEdit.setText(DefaultOptions.Default_Chapter_Directory)
+        self.chapter_source_lineEdit.check_new_path()

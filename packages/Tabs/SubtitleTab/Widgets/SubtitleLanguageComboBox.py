@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QComboBox
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Language
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllSubtitlesLanguages
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -13,7 +13,7 @@ class SubtitleLanguageComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
         self.addItems(AllSubtitlesLanguages)
-        self.setCurrentIndex(AllSubtitlesLanguages.index(Default_Subtitle_Language))
+        self.setCurrentIndex(AllSubtitlesLanguages.index(DefaultOptions.Default_Subtitle_Language))
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.currentTextChanged.connect(self.change_global_subtitle_language)

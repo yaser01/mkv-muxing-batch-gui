@@ -114,3 +114,7 @@ class SubtitleTabManager(GlobalSetting):
         else:
             self.subtitle_tab_delete_button.setEnabled(True)
             self.subtitle_tab_comboBox.show_new_tab_option()
+
+    def set_default_directory(self):
+        for subtitle_tab in self.subtitle_tabs:
+            subtitle_tab.set_default_directory()

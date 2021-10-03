@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import Default_Audio_Extensions
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.AudioTab.Widgets.MatchAudioLayout import MatchAudioLayout
 from packages.Tabs.AudioTab.Widgets.AudioClearButton import AudioClearButton
@@ -92,7 +92,7 @@ class AudioSelectionSetting(QGroupBox):
         GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
         GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
-        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = Default_Audio_Language
+        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = DefaultOptions.Default_Audio_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -100,7 +100,7 @@ class AudioSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_audio_extensions = Default_Audio_Extensions
+        self.current_audio_extensions = DefaultOptions.Default_Audio_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -265,7 +265,7 @@ class AudioSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_audio_extensions = Default_Audio_Extensions
+            self.current_audio_extensions = DefaultOptions.Default_Audio_Extensions
             self.audio_extensions_comboBox.setData(self.current_audio_extensions)
             self.audio_track_name_lineEdit.setText("")
             self.audio_set_forced_checkBox.setChecked(False)
@@ -396,3 +396,7 @@ class AudioSelectionSetting(QGroupBox):
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
+
+    def set_default_directory(self):
+        self.audio_source_lineEdit.setText(DefaultOptions.Default_Audio_Directory)
+        self.audio_source_lineEdit.check_new_path()

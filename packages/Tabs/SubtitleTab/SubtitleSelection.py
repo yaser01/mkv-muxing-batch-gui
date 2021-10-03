@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Extensions
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleLayout import MatchSubtitleLayout
 from packages.Tabs.SubtitleTab.Widgets.SubtitleClearButton import SubtitleClearButton
@@ -91,7 +91,7 @@ class SubtitleSelectionSetting(QGroupBox):
         GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = False
         GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = False
-        GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = Default_Subtitle_Language
+        GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = DefaultOptions.Default_Subtitle_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -99,7 +99,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_subtitle_extensions =Default_Subtitle_Extensions
+        self.current_subtitle_extensions = DefaultOptions.Default_Subtitle_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -264,7 +264,7 @@ class SubtitleSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_subtitle_extensions = Default_Subtitle_Extensions
+            self.current_subtitle_extensions = DefaultOptions.Default_Subtitle_Extensions
             self.subtitle_extensions_comboBox.setData(self.current_subtitle_extensions)
             self.subtitle_track_name_lineEdit.setText("")
             self.subtitle_set_forced_checkBox.setChecked(False)
@@ -395,3 +395,7 @@ class SubtitleSelectionSetting(QGroupBox):
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
+
+    def set_default_directory(self):
+        self.subtitle_source_lineEdit.setText(DefaultOptions.Default_Subtitle_Directory)
+        self.subtitle_source_lineEdit.check_new_path()

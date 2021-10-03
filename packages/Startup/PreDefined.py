@@ -96,3 +96,6 @@ AllSubtitlesTracks.extend(list(ISO_639_2_LANGUAGES.keys()))
 AllAudiosTracks = AllSubtitlesTracks
 AllVideoDefaultDurationFPSLanguages = ['Default', '24p', '25p', '30p', '48p', '50i', '50p', '60i', '60p', '24000/1001p',
                                        '30000/1001p', '48000/1001p', '60000/1001i', '60000/1001p']
+GitHubRepoUrlTag = "<a href=\"https://github.com/yaser01/mkv-muxing-batch-gui\">Our Home Page</a> "
+GPLV2UrlTag = "<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a>"
+GitHubIssuesUrlTag = "<a href=\"https://github.com/yaser01/mkv-muxing-batch-gui/issues\">issues page</a>"

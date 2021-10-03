@@ -11,6 +11,7 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, QCompleter, )
 
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.PreDefined import AllSubtitlesTracks
 from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
@@ -49,16 +50,18 @@ def check_is_there_subtitle_to_mux():
     return False
 
 
+def check_is_there_audio_to_mux():
+    for i in GlobalSetting.AUDIO_FILES_LIST.keys():
+        if len(GlobalSetting.AUDIO_FILES_LIST[i]) > 0:
+            return True
+    return False
+
+
 # noinspection PyAttributeOutsideInit
 def check_if_at_least_one_muxing_setting_has_been_selected():
-    if check_is_there_subtitle_to_mux or \
-            len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
-            len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or \
-            GlobalSetting.ATTACHMENT_DISCARD_OLD or \
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
-            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or \
-            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "":
+    if check_is_there_subtitle_to_mux() or check_is_there_audio_to_mux() or len(
+            GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or len(
+            GlobalSetting.CHAPTER_FILES_LIST) > 0 or GlobalSetting.ATTACHMENT_DISCARD_OLD or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "":
         return True
     else:
         no_setting_to_apply_dialog = InfoDialog(window_title="No Setting Selected",
@@ -116,8 +119,10 @@ class MuxSettingTab(QWidget):
         self.clear_job_queue_button.clicked.connect(self.clear_job_queue_button_clicked)
 
         self.only_keep_those_audios_multi_choose_comboBox.closeList.connect(self.only_keep_those_audios_close_list)
-        self.only_keep_those_audios_multi_choose_comboBox.audio_tracks_changed_signal.connect(self.make_this_audio_default_comboBox.addItems)
-        self.only_keep_those_subtitles_multi_choose_comboBox.subtitle_tracks_changed_signal.connect(self.make_this_subtitle_default_comboBox.addItems)
+        self.only_keep_those_audios_multi_choose_comboBox.audio_tracks_changed_signal.connect(
+            self.make_this_audio_default_comboBox.addItems)
+        self.only_keep_those_subtitles_multi_choose_comboBox.subtitle_tracks_changed_signal.connect(
+            self.make_this_subtitle_default_comboBox.addItems)
 
         self.only_keep_those_subtitles_multi_choose_comboBox.closeList.connect(
             self.only_keep_those_subtitles_close_list)
@@ -290,6 +295,8 @@ class MuxSettingTab(QWidget):
     def open_select_destination_folder_dialog(self):
         temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Destination Folder",
                                                             dir=GlobalSetting.LAST_DIRECTORY_PATH, )
+        print(GlobalSetting.VIDEO_SOURCE_PATHS)
+        print(Path(temp_folder_path))
         if temp_folder_path == "" or temp_folder_path.isspace():
             return
         elif Path(temp_folder_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
@@ -341,6 +348,9 @@ class MuxSettingTab(QWidget):
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
+        print("**")
+        print(GlobalSetting.VIDEO_SOURCE_PATHS)
+        print(Path(temp_destination_path))
         if Path(temp_destination_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
                 error_message="Some Source and destination videos are in the same folder")
@@ -376,6 +386,7 @@ class MuxSettingTab(QWidget):
     def setup_tracks_to_be_chosen_mkv_only_options(self):
         self.only_keep_those_subtitles_multi_choose_comboBox.refresh_tracks()
         self.only_keep_those_audios_multi_choose_comboBox.refresh_tracks()
+
     def setup_enable_options_for_mkv_only_options(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
             if GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
@@ -470,6 +481,7 @@ class MuxSettingTab(QWidget):
             self.make_this_audio_default_comboBox.setCurrentIndex(-1)
 
     def make_this_audio_default_comboBox_text_changed(self):
+        print(self.make_this_audio_default_comboBox.currentText())
         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = str(
             self.make_this_audio_default_comboBox.currentText())
 
@@ -544,3 +556,6 @@ class MuxSettingTab(QWidget):
     def setup_log_file(self):
         if self.control_queue_button.state == "START":
             open(GlobalFiles.MuxingLogFilePath, 'w+').close()
+
+    def set_default_directory(self):
+        self.destination_path_lineEdit.setText(DefaultOptions.Default_Destination_Directory)

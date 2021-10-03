@@ -121,3 +121,7 @@ class AudioTabManager(GlobalSetting):
         else:
             self.audio_tab_delete_button.setEnabled(True)
             self.audio_tab_comboBox.show_new_tab_option()
+
+    def set_default_directory(self):
+        for audio_tab in self.audio_tabs:
+            audio_tab.set_default_directory()
