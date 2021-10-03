@@ -1,6 +1,9 @@
 import os
+import shutil
 import sys
 import json
+from os import listdir
+from os.path import isfile, join
 from pathlib import Path
 from PySide2.QtGui import QPixmap, QIcon
 import tempfile
@@ -16,6 +19,27 @@ def create_temp_folder_path():
     my_temp_folder_path = os.path.join(os.path.abspath(temp_folder_path), Path('MKV Muxing Batch GUI'))
     os.makedirs(my_temp_folder_path, exist_ok=True)
     return my_temp_folder_path
+
+
+def get_file_name_absolute_path(file_name, folder_path):
+    return os.path.join(Path(folder_path), file_name)
+
+
+def get_files_names_absolute_list(files_names, folder_path):
+    result = []
+    for i in range(len(files_names)):
+        result.append(get_file_name_absolute_path(file_name=files_names[i], folder_path=folder_path))
+    return result
+
+
+def delete_old_media_files():
+    only_media_info_files = get_files_names_absolute_list(files_names=listdir(MediaInfoFolderPath),
+                                                          folder_path=MediaInfoFolderPath)
+    for file_name in only_media_info_files:
+        try:
+            os.remove(file_name)
+        except Exception as e:
+            pass
 
 
 def read_setting_file():
@@ -66,6 +90,7 @@ MergeLogsFolderPath = os.path.join(os.path.abspath(TempFolderPath), Path('Logs')
 MediaInfoFolderPath = os.path.join(os.path.abspath(TempFolderPath), Path('MediaInfo'))
 os.makedirs(MergeLogsFolderPath, exist_ok=True)
 os.makedirs(MediaInfoFolderPath, exist_ok=True)
+delete_old_media_files()
 try:
     MyFontPath = os.path.join(os.path.abspath(FontFolderPath), 'OpenSans.ttf')
     WarningCheckBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'WarningCheckBig.png')
