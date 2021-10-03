@@ -476,7 +476,6 @@ class MuxSettingTab(QWidget):
             self.make_this_audio_default_comboBox.setCurrentIndex(-1)
 
     def make_this_audio_default_comboBox_text_changed(self):
-        print(self.make_this_audio_default_comboBox.currentText())
         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = str(
             self.make_this_audio_default_comboBox.currentText())
 
