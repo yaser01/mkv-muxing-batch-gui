@@ -69,7 +69,7 @@ def setup_logger():
 
 
 if __name__ == "__main__":
-    #setup_logger()
+    setup_logger()
     create_application()
     setup_application_font()
     create_window()
