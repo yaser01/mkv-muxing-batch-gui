@@ -59,9 +59,16 @@ def check_is_there_audio_to_mux():
 
 # noinspection PyAttributeOutsideInit
 def check_if_at_least_one_muxing_setting_has_been_selected():
-    if check_is_there_subtitle_to_mux() or check_is_there_audio_to_mux() or len(
-            GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or len(
-        GlobalSetting.CHAPTER_FILES_LIST) > 0 or GlobalSetting.ATTACHMENT_DISCARD_OLD or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "":
+    if check_is_there_subtitle_to_mux() or\
+            check_is_there_audio_to_mux() or\
+            len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or\
+            len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or\
+            GlobalSetting.ATTACHMENT_DISCARD_OLD or\
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or\
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or\
+            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or\
+            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "" or\
+            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
         no_setting_to_apply_dialog = InfoDialog(window_title="No Setting Selected",
