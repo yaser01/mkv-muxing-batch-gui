@@ -21,7 +21,7 @@ ISO_639_2_LANGUAGES = {}
 
 def generate_languages_tracks():
     global ISO_639_2_LANGUAGES
-    with open(LanguagesFilePath, "r+", encoding="UTF-8") as setting_file:
+    with open(LanguagesFilePath, "r", encoding="UTF-8") as setting_file:
         ISO_639_2_LANGUAGES = json.load(setting_file)
 
 
