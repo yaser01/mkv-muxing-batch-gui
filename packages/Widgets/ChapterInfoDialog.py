@@ -20,9 +20,9 @@ class ChapterInfoDialog(QDialog):
         self.buttons_layout.addWidget(self.yes_button, stretch=3)
         self.buttons_layout.addWidget(QLabel(""), stretch=4)
         self.chapter_setting_layout = QGridLayout()
-        self.chapter_changeble_setting_layout = QFormLayout()
-        self.chapter_changeble_setting_layout.addRow(self.chapter_name_label, self.chapter_name_value)
-        self.chapter_setting_layout.addLayout(self.chapter_changeble_setting_layout, 1, 0, 4, 2)
+        self.chapter_editable_setting_layout = QFormLayout()
+        self.chapter_editable_setting_layout.addRow(self.chapter_name_label, self.chapter_name_value)
+        self.chapter_setting_layout.addLayout(self.chapter_editable_setting_layout, 1, 0, 4, 2)
         self.chapter_setting_layout.addWidget(self.messageIcon, 0, 3, 5, -1)
 
         self.main_layout = QGridLayout()

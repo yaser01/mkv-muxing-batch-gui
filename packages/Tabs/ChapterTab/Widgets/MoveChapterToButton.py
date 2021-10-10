@@ -8,6 +8,7 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 class MoveChapterToButton(QPushButton):
     swap_happened_signal = Signal()
     selected_row_after_swap = Signal(int)
+    move_chapter_to_position_signal = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -25,9 +26,7 @@ class MoveChapterToButton(QPushButton):
             move_chapter_to_dialog.execute()
             if move_chapter_to_dialog.result == "Yes":
                 new_index = move_chapter_to_dialog.position - 1
-                temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[current_index]
-                GlobalSetting.CHAPTER_FILES_LIST[current_index] = GlobalSetting.CHAPTER_FILES_LIST[new_index]
-                GlobalSetting.CHAPTER_FILES_LIST[new_index] = temp_for_swap
+                self.move_chapter_to_position_signal.emit([current_index, new_index])
                 self.swap_happened_signal.emit()
                 self.selected_row_after_swap.emit(new_index)
 

@@ -7,6 +7,65 @@ from packages.Tabs.ChapterTab.Widgets.MoveChapterDownButton import MoveChapterDo
 from packages.Tabs.ChapterTab.Widgets.MoveChapterToButton import MoveChapterToButton
 from packages.Tabs.ChapterTab.Widgets.MoveChapterTopButton import MoveChapterTopButton
 from packages.Tabs.ChapterTab.Widgets.MoveChapterUpButton import MoveChapterUpButton
+from packages.Tabs.GlobalSetting import GlobalSetting
+
+
+def update_global_chapter_files_list_order_to_top(index_to_move):
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[0]
+    GlobalSetting.CHAPTER_FILES_LIST[0] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = \
+        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[0]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[0] = temp_for_swap
+
+
+def update_global_chapter_files_list_order_to_up(index_to_move):
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[index_to_move - 1]
+    GlobalSetting.CHAPTER_FILES_LIST[index_to_move - 1] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[
+        index_to_move - 1]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move - 1] = temp_for_swap
+
+
+def update_global_chapter_files_list_order_to_position(list_of_old_and_new_index):
+    old_index = list_of_old_and_new_index[0]
+    new_index = list_of_old_and_new_index[1]
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[old_index]
+    GlobalSetting.CHAPTER_FILES_LIST[old_index] = GlobalSetting.CHAPTER_FILES_LIST[new_index]
+    GlobalSetting.CHAPTER_FILES_LIST[new_index] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[old_index]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[old_index] = \
+        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[new_index]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[new_index] = temp_for_swap
+
+
+def update_global_chapter_files_list_order_to_down(index_to_move):
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[index_to_move + 1]
+    GlobalSetting.CHAPTER_FILES_LIST[index_to_move + 1] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[
+        index_to_move + 1]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move + 1] = temp_for_swap
+
+
+def update_global_chapter_files_list_order_to_bottom(index_to_move):
+    index_last_file = len(GlobalSetting.CHAPTER_FILES_LIST) - 1
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[index_last_file]
+    GlobalSetting.CHAPTER_FILES_LIST[index_last_file] = temp_for_swap
+
+    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[
+        index_last_file]
+    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_last_file] = temp_for_swap
 
 
 class MatchChapterToolsLayout(QVBoxLayout):
@@ -36,6 +95,15 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.move_chapter_bottom_button.selected_row_after_swap.connect(self.change_selected_chapter_row)
         self.move_chapter_to_button.swap_happened_signal.connect(self.refresh_chapter_table)
         self.move_chapter_to_button.selected_row_after_swap.connect(self.change_selected_chapter_row)
+        self.move_chapter_top_button.move_chapter_to_top_signal.connect(
+            update_global_chapter_files_list_order_to_top)
+        self.move_chapter_up_button.move_chapter_to_up_signal.connect(update_global_chapter_files_list_order_to_up)
+        self.move_chapter_to_button.move_chapter_to_position_signal.connect(
+            update_global_chapter_files_list_order_to_position)
+        self.move_chapter_down_button.move_chapter_to_down_signal.connect(
+            update_global_chapter_files_list_order_to_down)
+        self.move_chapter_bottom_button.move_chapter_to_bottom_signal.connect(
+            update_global_chapter_files_list_order_to_bottom)
 
     def setup_layout(self):
         self.addStretch()
@@ -83,6 +151,7 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.refresh_chapter_table_signal.emit()
 
     def change_selected_chapter_row(self, new_selected_index):
+        new_selected_index = min(new_selected_index, len(GlobalSetting.CHAPTER_FILES_LIST) - 1)
         self.selected_chapter_row_signal.emit(new_selected_index)
 
     def disable_editable_widgets(self):

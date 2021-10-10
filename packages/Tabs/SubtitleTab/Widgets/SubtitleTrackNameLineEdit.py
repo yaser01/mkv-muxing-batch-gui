@@ -5,8 +5,9 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class SubtitleTrackNameLineEdit(QLineEdit):
-    def __init__(self):
+    def __init__(self, tab_index):
         super().__init__()
+        self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setPlaceholderText("Subtitle Track Name")
         self.setMinimumWidth(screen_size.width() // 10)
@@ -16,7 +17,7 @@ class SubtitleTrackNameLineEdit(QLineEdit):
         self.textEdited.connect(self.change_global_subtitle_track_name)
 
     def change_global_subtitle_track_name(self):
-        GlobalSetting.SUBTITLE_TRACK_NAME = self.text()
+        GlobalSetting.SUBTITLE_TRACK_NAME[self.tab_index] = self.text()
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

@@ -96,7 +96,9 @@ class MatchChapterLayout(QHBoxLayout):
         self.chapter_table.clear_selection()
 
     def disable_editable_widgets(self):
+        self.chapter_table.table.setAcceptDrops(False)
         self.match_tools_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
+        self.chapter_table.table.setAcceptDrops(True)
         self.match_tools_layout.enable_editable_widgets()

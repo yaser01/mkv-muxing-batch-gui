@@ -9,9 +9,10 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 class MakeThisTrackDefaultComboBox(QComboBox):
     def __init__(self):
         super().__init__()
+        self.current_list = []
         self.addItems(AllAudiosTracks)
         self.setMinimumWidth(screen_size.width() // 12)
-        self.setMaximumWidth(screen_size.width() // 6)
+        self.setMaximumWidth(screen_size.width() // 4)
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.setCurrentIndex(-1)
@@ -19,19 +20,17 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.disable_language_text_from_being_selected()
         self.hint_when_enabled = ""
         self.setDisabled(True)
-        self.model().item(11).setEnabled(False)
-        self.model().item(11).setTextAlignment(Qt.AlignCenter)
 
     def disable_track_text_from_being_selected(self):
-        for i in range(len(AllAudiosTracks)):
-            if AllAudiosTracks[i] == "---Tracks---":
+        for i in range(self.count()):
+            if self.itemText(i) == "---Tracks---":
                 self.model().item(i).setEnabled(False)
                 self.model().item(i).setTextAlignment(Qt.AlignCenter)
                 break
 
     def disable_language_text_from_being_selected(self):
-        for i in range(len(AllAudiosTracks)):
-            if AllAudiosTracks[i] == "---Languages---":
+        for i in range(self.count()):
+            if self.itemText(i) == "---Languages---":
                 self.model().item(i).setEnabled(False)
                 self.model().item(i).setTextAlignment(Qt.AlignCenter)
                 break
@@ -60,3 +59,14 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def addItems(self, texts):
+        self.clear()
+        super().addItems(texts)
+        for i in range(len(texts)):
+            if texts[i] != "---Languages---" and texts[i] != "---Tracks---":
+                self.setItemData(i, texts[i], Qt.ToolTipRole)
+        self.current_list = texts.copy()
+        self.setCurrentIndex(-1)
+        self.disable_track_text_from_being_selected()
+        self.disable_language_text_from_being_selected()

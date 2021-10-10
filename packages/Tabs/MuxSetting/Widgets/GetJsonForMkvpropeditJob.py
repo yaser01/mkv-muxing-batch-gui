@@ -5,7 +5,7 @@ from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
-from packages.Tabs.MuxSetting.Widgets.SingleTrackData import SingleTrackData
+from packages.Widgets.SingleTrackData import SingleTrackData
 
 
 def add_two_spaces():

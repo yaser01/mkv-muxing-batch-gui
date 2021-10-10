@@ -65,7 +65,6 @@ class ReadFromMkvmergeLogWorker(QObject):
 
                 else:
                     QThread.msleep(50)
-                    # print("LOG :"+str(self.wait))
             self.all_finished.emit()
         except Exception as e:
             write_to_log_file(traceback.format_exc())

@@ -10,11 +10,12 @@ from packages.Tabs.SubtitleTab.Widgets.VideoMatchingTable import VideoMatchingTa
 class MatchSubtitleLayout(QHBoxLayout):
     sync_subtitle_files_with_global_files_after_swap_signal = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, tab_index, parent=None):
         super().__init__()
+        self.tab_index = tab_index
         self.video_table = VideoMatchingTable()
-        self.subtitle_table = SubtitleMatchingTable()
-        self.match_tools_layout = MatchSubtitleToolsLayout(parent=parent)
+        self.subtitle_table = SubtitleMatchingTable(self.tab_index)
+        self.match_tools_layout = MatchSubtitleToolsLayout(parent=parent, tab_index=self.tab_index)
         self.setup_layout()
         self.sync_slideBar_check = False
         self.connect_signals()
@@ -68,7 +69,7 @@ class MatchSubtitleLayout(QHBoxLayout):
 
     def send_selection_to_tools_layout(self):
         selected_row = -1
-        max_index = len(GlobalSetting.SUBTITLE_FILES_LIST) - 1
+        max_index = len(GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index]) - 1
         list_of_selected_rows = self.subtitle_table.table.selectionModel().selectedRows()
         if len(list_of_selected_rows) > 0:
             selected_row = list_of_selected_rows[0].row()
@@ -96,7 +97,9 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.subtitle_table.clear_selection()
 
     def disable_editable_widgets(self):
+        self.subtitle_table.table.setAcceptDrops(False)
         self.match_tools_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
+        self.subtitle_table.table.setAcceptDrops(True)
         self.match_tools_layout.enable_editable_widgets()

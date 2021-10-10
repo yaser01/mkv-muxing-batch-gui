@@ -1,0 +1,60 @@
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QCheckBox
+
+from packages.Tabs.GlobalSetting import GlobalSetting
+
+
+class AudioSetDefaultCheckBox(QCheckBox):
+    def __init__(self, tab_index):
+        super().__init__()
+        self.tab_index = tab_index
+        self.hint_when_enabled = ""
+        self.setText("Set Default")
+        self.stateChanged.connect(self.change_global_audio_set_default)
+
+    def change_global_audio_set_default(self):
+        GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = self.checkState() == Qt.Checked
+        if self.checkState() == Qt.Checked:
+            for i in GlobalSetting.AUDIO_SET_DEFAULT.keys():
+                if i != self.tab_index:
+                    GlobalSetting.AUDIO_SET_DEFAULT[i] = False
+
+    def update_check_state(self):
+        self.setChecked(bool(GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index]))
+        self.setDisabled(bool(GlobalSetting.AUDIO_SET_DEFAULT_DISABLED))
+
+        if self.isEnabled():
+            self.setToolTip("<nobr>set the new audio to be the default audio track "
+                            "when play")
+            self.setToolTipDuration(12000)
+        else:
+            self.setToolTip(
+                "<nobr>set the new audio to be the default audio track when play<br><b>Disabled</b> because "
+                "option "
+                "<b>make this audio default</b> is enabled on mux setting tab ")
+            self.setToolTipDuration(12000)
+
+    def setEnabled(self, new_state: bool):
+        super().setEnabled(new_state)
+        if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
+            if self.hint_when_enabled != "":
+                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+            else:
+                self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
+        else:
+            self.setToolTip(self.hint_when_enabled)
+
+    def setDisabled(self, new_state: bool):
+        super().setDisabled(new_state)
+        if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
+            if self.hint_when_enabled != "":
+                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+            else:
+                self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
+        else:
+            self.setToolTip(self.hint_when_enabled)
+
+    def setToolTip(self, new_tool_tip: str):
+        if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
+            self.hint_when_enabled = new_tool_tip
+        super().setToolTip(new_tool_tip)

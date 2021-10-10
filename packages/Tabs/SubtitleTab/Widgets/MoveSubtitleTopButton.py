@@ -8,6 +8,7 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 class MoveSubtitleTopButton(QPushButton):
     swap_happened_signal = Signal()
     selected_row_after_swap = Signal(int)
+    move_subtitle_to_top_signal = Signal(int)
 
     def __init__(self):
         super().__init__()
@@ -21,9 +22,7 @@ class MoveSubtitleTopButton(QPushButton):
     def clicked_button(self):
         current_index = self.current_index
         if current_index != 0 and current_index != -1:
-            temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[current_index]
-            GlobalSetting.SUBTITLE_FILES_LIST[current_index] = GlobalSetting.SUBTITLE_FILES_LIST[0]
-            GlobalSetting.SUBTITLE_FILES_LIST[0] = temp_for_swap
+            self.move_subtitle_to_top_signal.emit(current_index)
             self.swap_happened_signal.emit()
             self.selected_row_after_swap.emit(0)
 

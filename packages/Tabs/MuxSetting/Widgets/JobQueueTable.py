@@ -4,7 +4,7 @@ from PySide2.QtCore import QThread, Signal
 from PySide2.QtGui import Qt, QFontMetrics
 from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
 
-from packages.Startup.DefaultOptions import Default_Subtitle_Language
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, get_readable_filesize
 from packages.Tabs.MuxSetting.Widgets.ConfirmUsingMkvpropedit import ConfirmUsingMkvpropedit
@@ -21,6 +21,7 @@ from packages.Widgets.InfoWithOptionsCell import InfoWithOptionsCell
 from packages.Widgets.OkCell import OkCell
 from packages.Widgets.OkDialog import OkDialog
 from packages.Widgets.SubtitleInfoDialog import SubtitleInfoDialog
+from packages.Widgets.AudioInfoDialog import AudioInfoDialog
 from packages.Widgets.TableWidget import TableWidget
 from packages.Widgets.WarningCell import WarningCell
 from packages.Widgets.WarningDialog import WarningDialog
@@ -37,8 +38,34 @@ def generate_tool_tip_for_chapter_file(chapter_full_path="C:/Test", chapter_name
                 "\nDouble click for more details")
 
 
+def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test",
+                                     audio_delay=0.0, audio_language=DefaultOptions.Default_Audio_Language,
+                                     audio_track_name="Test",
+                                     audio_set_default=False, audio_set_forced=False,
+                                     show_full_path=False):
+    if show_full_path:
+        return (
+                "Audio Full Path: " + str(audio_full_path) +
+                "\nAudio Name: " + str(audio_name) +
+                "\nAudio Delay: " + str(audio_delay) + "s" +
+                "\nAudio Language: " + str(audio_language) +
+                "\nAudio Track Name: " + str(audio_track_name) +
+                "\nSet Default: " + str(audio_set_default) +
+                "\nSet Forced: " + str(audio_set_forced) +
+                "\nDouble click for more details")
+    else:
+        return (
+                "Audio Name: " + str(audio_name) +
+                "\nAudio Delay: " + str(audio_delay) + "s" +
+                "\nAudio Language: " + str(audio_language) +
+                "\nAudio Track Name: " + str(audio_track_name) +
+                "\nSet Default: " + str(audio_set_default) +
+                "\nSet Forced: " + str(audio_set_forced) +
+                "\nDouble click for more details")
+
+
 def generate_tool_tip_for_subtitle_file(subtitle_full_path="C:/Test", subtitle_name="Test",
-                                        subtitle_delay=0.0, subtitle_language=Default_Subtitle_Language,
+                                        subtitle_delay=0.0, subtitle_language=DefaultOptions.Default_Subtitle_Language,
                                         subtitle_track_name="Test",
                                         subtitle_set_default=False, subtitle_set_forced=False,
                                         show_full_path=False):
@@ -91,11 +118,12 @@ class JobQueueTable(TableWidget):
         self.column_ids = {
             "Name": 0,
             "Status": 1,
-            "Subtitle": 2,
-            "Chapter": 3,
-            "Size Before": 4,
-            "Progress": 5,
-            "Size After": 6,
+            "Audio": 2,
+            "Subtitle": 3,
+            "Chapter": 4,
+            "Size Before": 5,
+            "Progress": 6,
+            "Size After": 7,
 
         }
         self.setColumnCount(len(self.column_ids))
@@ -115,7 +143,8 @@ class JobQueueTable(TableWidget):
         self.horizontal_header.setSectionResizeMode(3, QHeaderView.Interactive)
         self.horizontal_header.setSectionResizeMode(4, QHeaderView.Interactive)
         self.horizontal_header.setSectionResizeMode(5, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(6, QHeaderView.Stretch)
+        self.horizontal_header.setSectionResizeMode(6, QHeaderView.Interactive)
+        self.horizontal_header.setSectionResizeMode(7, QHeaderView.Stretch)
 
     def create_horizontal_header(self):
         self.horizontal_header = self.horizontalHeader()
@@ -128,6 +157,10 @@ class JobQueueTable(TableWidget):
         column = QTableWidgetItem("Status")
         column.setTextAlignment(Qt.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Status"], column)
+
+        column = QTableWidgetItem("Audio")
+        column.setTextAlignment(Qt.AlignCenter)
+        self.setHorizontalHeaderItem(self.column_ids["Audio"], column)
 
         column = QTableWidgetItem("Subtitle")
         column.setTextAlignment(Qt.AlignCenter)
@@ -197,30 +230,75 @@ class JobQueueTable(TableWidget):
                                WarningCell(tool_tip="No Chapter File"))
 
     def set_row_value_subtitle(self, new_job, new_row_id):
-        if len(GlobalSetting.SUBTITLE_FILES_LIST) > new_row_id:
+        subtitles_count = 0
+        for i in GlobalSetting.SUBTITLE_FILES_LIST.keys():
+            if len(GlobalSetting.SUBTITLE_FILES_LIST[i]) > new_row_id:
+                new_job.subtitle_found = True
+                new_job.subtitle_name.append(GlobalSetting.SUBTITLE_FILES_LIST[i][new_row_id])
+                new_job.subtitle_name_absolute.append(GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[i][new_row_id])
+                new_job.subtitle_delay.append(GlobalSetting.SUBTITLE_DELAY[i])
+                new_job.subtitle_language.append(GlobalSetting.SUBTITLE_LANGUAGE[i])
+                new_job.subtitle_track_name.append(GlobalSetting.SUBTITLE_TRACK_NAME[i])
+                new_job.subtitle_set_default.append(GlobalSetting.SUBTITLE_SET_DEFAULT[i])
+                new_job.subtitle_set_forced.append(GlobalSetting.SUBTITLE_SET_FORCED[i])
+                new_job.subtitle_set_at_top.append(GlobalSetting.SUBTITLE_SET_AT_TOP[i])
+
+                subtitles_count += 1
+        if subtitles_count == 1:
             new_job.subtitle_found = True
-            new_job.subtitle_name = GlobalSetting.SUBTITLE_FILES_LIST[new_row_id]
-            new_job.subtitle_name_absolute = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[new_row_id]
-            new_job.subtitle_delay = GlobalSetting.SUBTITLE_DELAY
-            new_job.subtitle_language = GlobalSetting.SUBTITLE_LANGUAGE
-            new_job.subtitle_track_name = GlobalSetting.SUBTITLE_TRACK_NAME
-            new_job.subtitle_set_default = GlobalSetting.SUBTITLE_SET_DEFAULT
-            new_job.subtitle_set_forced = GlobalSetting.SUBTITLE_SET_FORCED
             self.setCellWidget(new_row_id, self.column_ids["Subtitle"],
                                InfoWithOptionsCell(tool_tip=generate_tool_tip_for_subtitle_file(
-                                   subtitle_full_path=new_job.subtitle_name_absolute,
-                                   subtitle_name=new_job.subtitle_name,
-                                   subtitle_delay=new_job.subtitle_delay,
-                                   subtitle_language=new_job.subtitle_language,
-                                   subtitle_track_name=new_job.subtitle_track_name,
-                                   subtitle_set_default=new_job.subtitle_set_default,
-                                   subtitle_set_forced=new_job.subtitle_set_forced,
+                                   subtitle_full_path=new_job.subtitle_name_absolute[0],
+                                   subtitle_name=new_job.subtitle_name[0],
+                                   subtitle_delay=new_job.subtitle_delay[0],
+                                   subtitle_language=new_job.subtitle_language[0],
+                                   subtitle_track_name=new_job.subtitle_track_name[0],
+                                   subtitle_set_default=new_job.subtitle_set_default[0],
+                                   subtitle_set_forced=new_job.subtitle_set_forced[0],
                                    show_full_path=False)))
-
-        else:
+        elif subtitles_count == 0:
             new_job.subtitle_found = False
             self.setCellWidget(new_row_id, self.column_ids["Subtitle"],
                                WarningCell(tool_tip="No Subtitle File"))
+        else:
+            new_job.subtitle_found = True
+            self.setCellWidget(new_row_id, self.column_ids["Subtitle"],
+                               InfoWithOptionsCell(tool_tip="Multiple Subtitles\nDouble click for more details"))
+
+    def set_row_value_audio(self, new_job, new_row_id):
+        audios_count = 0
+        for i in GlobalSetting.AUDIO_FILES_LIST.keys():
+            if len(GlobalSetting.AUDIO_FILES_LIST[i]) > new_row_id:
+                new_job.audio_found = True
+                new_job.audio_name.append(GlobalSetting.AUDIO_FILES_LIST[i][new_row_id])
+                new_job.audio_name_absolute.append(GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[i][new_row_id])
+                new_job.audio_delay.append(GlobalSetting.AUDIO_DELAY[i])
+                new_job.audio_language.append(GlobalSetting.AUDIO_LANGUAGE[i])
+                new_job.audio_track_name.append(GlobalSetting.AUDIO_TRACK_NAME[i])
+                new_job.audio_set_default.append(GlobalSetting.AUDIO_SET_DEFAULT[i])
+                new_job.audio_set_forced.append(GlobalSetting.AUDIO_SET_FORCED[i])
+                new_job.audio_set_at_top.append(GlobalSetting.AUDIO_SET_AT_TOP[i])
+                audios_count += 1
+        if audios_count == 1:
+            new_job.audio_found = True
+            self.setCellWidget(new_row_id, self.column_ids["Audio"],
+                               InfoWithOptionsCell(tool_tip=generate_tool_tip_for_audio_file(
+                                   audio_full_path=new_job.audio_name_absolute[0],
+                                   audio_name=new_job.audio_name[0],
+                                   audio_delay=new_job.audio_delay[0],
+                                   audio_language=new_job.audio_language[0],
+                                   audio_track_name=new_job.audio_track_name[0],
+                                   audio_set_default=new_job.audio_set_default[0],
+                                   audio_set_forced=new_job.audio_set_forced[0],
+                                   show_full_path=False)))
+        elif audios_count == 0:
+            new_job.audio_found = False
+            self.setCellWidget(new_row_id, self.column_ids["Audio"],
+                               WarningCell(tool_tip="No Audio File"))
+        else:
+            new_job.audio_found = True
+            self.setCellWidget(new_row_id, self.column_ids["Audio"],
+                               InfoWithOptionsCell(tool_tip="Multiple Audios\nDouble click for more details"))
 
     def set_row_value_progressBar(self, new_job, new_row_id):
         new_job.progress = 0
@@ -272,18 +350,30 @@ class JobQueueTable(TableWidget):
     def cell_double_clicked(self, row_index, column_index):
         if column_index == self.column_ids["Subtitle"]:
             if self.data[row_index].subtitle_found:
+                subtitles_default_value_delay_list = []
+                subtitles_default_value_language = []
+                subtitles_default_value_track_name = []
+                subtitles_default_value_set_default = []
+                subtitles_default_value_set_forced = []
+                for i in GlobalSetting.SUBTITLE_FILES_LIST.keys():
+                    if len(GlobalSetting.SUBTITLE_FILES_LIST[i]) > row_index:
+                        subtitles_default_value_delay_list.append(GlobalSetting.SUBTITLE_DELAY[i])
+                        subtitles_default_value_language.append(GlobalSetting.SUBTITLE_LANGUAGE[i])
+                        subtitles_default_value_track_name.append(GlobalSetting.SUBTITLE_TRACK_NAME[i])
+                        subtitles_default_value_set_default.append(GlobalSetting.SUBTITLE_SET_DEFAULT[i])
+                        subtitles_default_value_set_forced.append(GlobalSetting.SUBTITLE_SET_FORCED[i])
                 subtitle_info_dialog = SubtitleInfoDialog(
-                    subtitle_name=self.data[row_index].subtitle_name,
-                    subtitle_delay=self.data[row_index].subtitle_delay,
-                    subtitle_language=self.data[row_index].subtitle_language,
-                    subtitle_track_name=self.data[row_index].subtitle_track_name,
-                    subtitle_set_default=self.data[row_index].subtitle_set_default,
-                    subtitle_set_forced=self.data[row_index].subtitle_set_forced,
-                    subtitle_default_value_delay=GlobalSetting.SUBTITLE_DELAY,
-                    subtitle_default_value_language=GlobalSetting.SUBTITLE_LANGUAGE,
-                    subtitle_default_value_track_name=GlobalSetting.SUBTITLE_TRACK_NAME,
-                    subtitle_default_value_set_default=GlobalSetting.SUBTITLE_SET_DEFAULT,
-                    subtitle_default_value_set_forced=GlobalSetting.SUBTITLE_SET_FORCED,
+                    subtitles_name=self.data[row_index].subtitle_name.copy(),
+                    subtitles_delay=self.data[row_index].subtitle_delay.copy(),
+                    subtitles_language=self.data[row_index].subtitle_language.copy(),
+                    subtitles_track_name=self.data[row_index].subtitle_track_name.copy(),
+                    subtitles_set_default=self.data[row_index].subtitle_set_default.copy(),
+                    subtitles_set_forced=self.data[row_index].subtitle_set_forced.copy(),
+                    subtitles_default_value_delay=subtitles_default_value_delay_list,
+                    subtitles_default_value_language=subtitles_default_value_language,
+                    subtitles_default_value_track_name=subtitles_default_value_track_name,
+                    subtitles_default_value_set_default=subtitles_default_value_set_default,
+                    subtitles_default_value_set_forced=subtitles_default_value_set_forced,
                     subtitle_set_default_disabled=GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED,
                     subtitle_set_forced_disabled=GlobalSetting.SUBTITLE_SET_FORCED_DISABLED,
                     disable_edit=GlobalSetting.MUXING_ON,
@@ -296,18 +386,71 @@ class JobQueueTable(TableWidget):
                     self.data[row_index].subtitle_set_default = subtitle_info_dialog.current_subtitle_set_default
                     self.data[row_index].subtitle_set_forced = subtitle_info_dialog.current_subtitle_set_forced
                     current_cell_widget = self.cellWidget(row_index, self.column_ids["Subtitle"])
-                    current_cell_widget.update_tool_tip(tool_tip=generate_tool_tip_for_subtitle_file(
-                        subtitle_full_path=GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[row_index],
-                        subtitle_name=GlobalSetting.SUBTITLE_FILES_LIST[row_index],
-                        subtitle_delay=self.data[row_index].subtitle_delay,
-                        subtitle_language=self.data[row_index].subtitle_language,
-                        subtitle_track_name=self.data[row_index].subtitle_track_name,
-                        subtitle_set_default=self.data[row_index].subtitle_set_default,
-                        subtitle_set_forced=self.data[row_index].subtitle_set_forced,
-                        show_full_path=False))
+                    if len(subtitle_info_dialog.current_subtitle_delay) == 1:
+                        current_cell_widget.update_tool_tip(tool_tip=generate_tool_tip_for_subtitle_file(
+                            subtitle_full_path=GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[0][row_index],
+                            subtitle_name=GlobalSetting.SUBTITLE_FILES_LIST[0][row_index],
+                            subtitle_delay=self.data[row_index].subtitle_delay[0],
+                            subtitle_language=self.data[row_index].subtitle_language[0],
+                            subtitle_track_name=self.data[row_index].subtitle_track_name[0],
+                            subtitle_set_default=self.data[row_index].subtitle_set_default[0],
+                            subtitle_set_forced=self.data[row_index].subtitle_set_forced[0],
+                            show_full_path=False))
 
             else:
                 warning_dialog = WarningDialog(window_title="Subtitle Info", info_message="No subtitle found!")
+                warning_dialog.execute()
+        elif column_index == self.column_ids["Audio"]:
+            if self.data[row_index].audio_found:
+                audios_default_value_delay_list = []
+                audios_default_value_language = []
+                audios_default_value_track_name = []
+                audios_default_value_set_default = []
+                audios_default_value_set_forced = []
+                for i in GlobalSetting.AUDIO_FILES_LIST.keys():
+                    if len(GlobalSetting.AUDIO_FILES_LIST[i]) > row_index:
+                        audios_default_value_delay_list.append(GlobalSetting.AUDIO_DELAY[i])
+                        audios_default_value_language.append(GlobalSetting.AUDIO_LANGUAGE[i])
+                        audios_default_value_track_name.append(GlobalSetting.AUDIO_TRACK_NAME[i])
+                        audios_default_value_set_default.append(GlobalSetting.AUDIO_SET_DEFAULT[i])
+                        audios_default_value_set_forced.append(GlobalSetting.AUDIO_SET_FORCED[i])
+                audio_info_dialog = AudioInfoDialog(
+                    audios_name=self.data[row_index].audio_name.copy(),
+                    audios_delay=self.data[row_index].audio_delay.copy(),
+                    audios_language=self.data[row_index].audio_language.copy(),
+                    audios_track_name=self.data[row_index].audio_track_name.copy(),
+                    audios_set_default=self.data[row_index].audio_set_default.copy(),
+                    audios_set_forced=self.data[row_index].audio_set_forced.copy(),
+                    audios_default_value_delay=audios_default_value_delay_list,
+                    audios_default_value_language=audios_default_value_language,
+                    audios_default_value_track_name=audios_default_value_track_name,
+                    audios_default_value_set_default=audios_default_value_set_default,
+                    audios_default_value_set_forced=audios_default_value_set_forced,
+                    audio_set_default_disabled=GlobalSetting.AUDIO_SET_DEFAULT_DISABLED,
+                    audio_set_forced_disabled=GlobalSetting.AUDIO_SET_FORCED_DISABLED,
+                    disable_edit=GlobalSetting.MUXING_ON,
+                )
+                audio_info_dialog.execute()
+                if audio_info_dialog.state == "yes":
+                    self.data[row_index].audio_delay = audio_info_dialog.current_audio_delay
+                    self.data[row_index].audio_language = audio_info_dialog.current_audio_language
+                    self.data[row_index].audio_track_name = audio_info_dialog.current_audio_track_name
+                    self.data[row_index].audio_set_default = audio_info_dialog.current_audio_set_default
+                    self.data[row_index].audio_set_forced = audio_info_dialog.current_audio_set_forced
+                    current_cell_widget = self.cellWidget(row_index, self.column_ids["Audio"])
+                    if len(audio_info_dialog.current_audio_delay) == 1:
+                        current_cell_widget.update_tool_tip(tool_tip=generate_tool_tip_for_audio_file(
+                            audio_full_path=GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[0][row_index],
+                            audio_name=GlobalSetting.AUDIO_FILES_LIST[0][row_index],
+                            audio_delay=self.data[row_index].audio_delay[0],
+                            audio_language=self.data[row_index].audio_language[0],
+                            audio_track_name=self.data[row_index].audio_track_name[0],
+                            audio_set_default=self.data[row_index].audio_set_default[0],
+                            audio_set_forced=self.data[row_index].audio_set_forced[0],
+                            show_full_path=False))
+
+            else:
+                warning_dialog = WarningDialog(window_title="Audio Info", info_message="No audio found!")
                 warning_dialog.execute()
         elif column_index == self.column_ids["Chapter"]:
             if self.data[row_index].chapter_found:
@@ -327,7 +470,11 @@ class JobQueueTable(TableWidget):
                 Ok_dialog.execute()
 
     def show_necessary_columns(self):
-        if len(GlobalSetting.SUBTITLE_FILES_LIST) == 0:
+        if not GlobalSetting.AUDIO_ENABLED:
+            self.hideColumn(self.column_ids["Audio"])
+        else:
+            self.showColumn(self.column_ids["Audio"])
+        if not GlobalSetting.SUBTITLE_ENABLED:
             self.hideColumn(self.column_ids["Subtitle"])
         else:
             self.showColumn(self.column_ids["Subtitle"])
@@ -359,6 +506,7 @@ class JobQueueTable(TableWidget):
             new_job = SingleJobData()
             self.set_row_value_id(new_row_id)
             self.set_row_value_name(new_job, new_row_id)
+            self.set_row_value_audio(new_job, new_row_id)
             self.set_row_value_subtitle(new_job, new_row_id)
             self.set_row_value_chapter(new_job, new_row_id)
             self.set_row_value_size_before_muxing(new_job, new_row_id)

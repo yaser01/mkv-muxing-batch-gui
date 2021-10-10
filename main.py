@@ -8,12 +8,13 @@ from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
 from packages.Startup.MainApplication import MainApplication
+from packages.MainWindow import MainWindow
+from packages.Widgets.WarningDialog import WarningDialog
 import ctypes
 
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
 # noinspection PyAttributeOutsideInit
-from packages.MainWindow import MainWindow
-from packages.Widgets.WarningDialog import WarningDialog
+
 
 window: MainWindow
 app: QApplication
@@ -60,6 +61,7 @@ def logger_exception(exception_type, exception_value, exception_trace_back):
     with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
         log_file.write(str(datetime.utcnow()) + ' ' + str(exception_type) + "\n" + str(exception_value) + "\n" + str(
             exception_trace_back) + '\n')
+
 
 
 def setup_logger():

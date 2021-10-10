@@ -5,20 +5,19 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
 from packages.Startup import GlobalFiles
 
 
-class ConfirmCheckMakeThisSubtitleDefaultWithUnCheckOption(QDialog):
-    def __init__(self, parent=None):
+class ConfirmCheckMakeThisTrackDefault(QDialog):
+    def __init__(self, track_type, parent=None):
         super().__init__(parent)
         self.yesButton = QPushButton("OK")
         self.noButton = QPushButton("Cancel")
-        self.thirdButton = QPushButton("Uncheck this one")
         self.setWindowTitle("Confirm Check")
         self.setWindowIcon(GlobalFiles.QuestionIcon)
-        self.message = QLabel("<nobr>Are you sure?<br>This will <b>uncheck</b> set default and set forced options "
-                              "from subtitle tab")
+        self.track_type = track_type
+        self.message = QLabel(
+            "<nobr>Are you sure?<br>This will <b>uncheck</b> set default option from " + self.track_type + " tab")
         self.messageIcon = QLabel()
 
         self.buttons_layout = QHBoxLayout()
-        self.buttons_layout.addWidget(self.thirdButton)
         self.buttons_layout.addWidget(self.yesButton)
         self.buttons_layout.addWidget(self.noButton)
 
@@ -37,13 +36,11 @@ class ConfirmCheckMakeThisSubtitleDefaultWithUnCheckOption(QDialog):
     def setup_ui(self):
         self.disable_question_mark_window()
         self.set_message_icon_info()
-        # self.increase_message_font_size(1)
         self.set_default_buttons()
 
     def signal_connect(self):
         self.yesButton.clicked.connect(self.click_yes)
         self.noButton.clicked.connect(self.click_no)
-        self.thirdButton.clicked.connect(self.click_third_button)
 
     def click_yes(self):
         self.result = "Yes"
@@ -51,10 +48,6 @@ class ConfirmCheckMakeThisSubtitleDefaultWithUnCheckOption(QDialog):
 
     def click_no(self):
         self.result = "No"
-        self.close()
-
-    def click_third_button(self):
-        self.result = "Third"
         self.close()
 
     def disable_question_mark_window(self):

@@ -5,17 +5,23 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class SubtitleSetDefaultCheckBox(QCheckBox):
-    def __init__(self):
+    def __init__(self, tab_index):
         super().__init__()
+        self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setText("Set Default")
         self.stateChanged.connect(self.change_global_subtitle_set_default)
 
     def change_global_subtitle_set_default(self):
-        GlobalSetting.SUBTITLE_SET_DEFAULT = self.checkState() == Qt.Checked
+        GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = self.checkState() == Qt.Checked
+        if self.checkState() == Qt.Checked:
+            for i in GlobalSetting.SUBTITLE_SET_DEFAULT.keys():
+
+                if i != self.tab_index:
+                    GlobalSetting.SUBTITLE_SET_DEFAULT[i] = False
 
     def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_DEFAULT))
+        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index]))
         self.setDisabled(bool(GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED))
 
         if self.isEnabled():

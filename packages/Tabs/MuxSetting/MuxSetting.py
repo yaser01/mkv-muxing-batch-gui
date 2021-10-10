@@ -9,8 +9,10 @@ from PySide2.QtGui import QPaintEvent, QResizeEvent
 from PySide2.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
-    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
+    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, QCompleter, )
 
+from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.PreDefined import AllSubtitlesTracks
 from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
 from packages.Tabs.MuxSetting.Widgets.ControlQueueButton import ControlQueueButton
@@ -41,16 +43,32 @@ def change_global_LogFilePath():
                                                                 folder_path=GlobalFiles.MergeLogsFolderPath)
 
 
+def check_is_there_subtitle_to_mux():
+    for i in GlobalSetting.SUBTITLE_FILES_LIST.keys():
+        if len(GlobalSetting.SUBTITLE_FILES_LIST[i]) > 0:
+            return True
+    return False
+
+
+def check_is_there_audio_to_mux():
+    for i in GlobalSetting.AUDIO_FILES_LIST.keys():
+        if len(GlobalSetting.AUDIO_FILES_LIST[i]) > 0:
+            return True
+    return False
+
+
 # noinspection PyAttributeOutsideInit
 def check_if_at_least_one_muxing_setting_has_been_selected():
-    if len(GlobalSetting.SUBTITLE_FILES_LIST) > 0 or \
-            len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
-            len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or \
-            GlobalSetting.ATTACHMENT_DISCARD_OLD or \
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
-            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or \
-            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "":
+    if check_is_there_subtitle_to_mux() or\
+            check_is_there_audio_to_mux() or\
+            len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or\
+            len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or\
+            GlobalSetting.ATTACHMENT_DISCARD_OLD or\
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or\
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or\
+            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or\
+            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "" or\
+            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
         no_setting_to_apply_dialog = InfoDialog(window_title="No Setting Selected",
@@ -63,12 +81,12 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
 def check_if_want_to_keep_log_file():
     if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
         try:
-            copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.VIDEO_SOURCE_PATH)
+            copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
         except Exception as e:
             write_to_log_file(e)
             error_dialog = ErrorDialog(window_title="Permission Denied",
                                        info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
-                                                    "permissions on Source folder")
+                                                    "permissions on Destination folder")
             error_dialog.execute()
 
 
@@ -108,6 +126,10 @@ class MuxSettingTab(QWidget):
         self.clear_job_queue_button.clicked.connect(self.clear_job_queue_button_clicked)
 
         self.only_keep_those_audios_multi_choose_comboBox.closeList.connect(self.only_keep_those_audios_close_list)
+        self.only_keep_those_audios_multi_choose_comboBox.audio_tracks_changed_signal.connect(
+            self.make_this_audio_default_comboBox.addItems)
+        self.only_keep_those_subtitles_multi_choose_comboBox.subtitle_tracks_changed_signal.connect(
+            self.make_this_subtitle_default_comboBox.addItems)
 
         self.only_keep_those_subtitles_multi_choose_comboBox.closeList.connect(
             self.only_keep_those_subtitles_close_list)
@@ -196,8 +218,8 @@ class MuxSettingTab(QWidget):
         self.mux_tools_layout_second_row.addWidget(self.only_keep_those_subtitles_multi_choose_comboBox, 2)
         self.mux_tools_layout_second_row.addWidget(self.make_this_subtitle_default_checkBox, 1)
         self.mux_tools_layout_second_row.addWidget(self.make_this_subtitle_default_comboBox, 2)
-        self.mux_tools_layout_second_row.addWidget(self.control_queue_button, 1)
-        self.mux_tools_layout_second_row.addWidget(self.clear_job_queue_button, 1)
+        self.mux_tools_layout_second_row.addWidget(self.control_queue_button, 0)
+        self.mux_tools_layout_second_row.addWidget(self.clear_job_queue_button, 0)
 
     def setup_clear_job_queue_button(self):
         self.clear_job_queue_button.setText("Clear All")
@@ -282,9 +304,9 @@ class MuxSettingTab(QWidget):
                                                             dir=GlobalSetting.LAST_DIRECTORY_PATH, )
         if temp_folder_path == "" or temp_folder_path.isspace():
             return
-        elif Path(temp_folder_path) == Path(GlobalSetting.VIDEO_SOURCE_PATH):
+        elif Path(temp_folder_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
-                error_message="Source and destination videos can't be in the same folder")
+                error_message="Some Source and destination videos are in the same folder")
             invalid_dialog.execute()
             return
         else:
@@ -331,9 +353,9 @@ class MuxSettingTab(QWidget):
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
-        if Path(temp_destination_path) == Path(GlobalSetting.VIDEO_SOURCE_PATH):
+        if Path(temp_destination_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
-                error_message="Source and destination videos can't be in the same folder")
+                error_message="Some Source and destination videos are in the same folder")
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
@@ -361,6 +383,11 @@ class MuxSettingTab(QWidget):
     def tab_clicked(self):
         self.job_queue_layout.show_necessary_table_columns()
         self.setup_enable_options_for_mkv_only_options()
+        self.setup_tracks_to_be_chosen_mkv_only_options()
+
+    def setup_tracks_to_be_chosen_mkv_only_options(self):
+        self.only_keep_those_subtitles_multi_choose_comboBox.refresh_tracks()
+        self.only_keep_those_audios_multi_choose_comboBox.refresh_tracks()
 
     def setup_enable_options_for_mkv_only_options(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
@@ -530,3 +557,6 @@ class MuxSettingTab(QWidget):
     def setup_log_file(self):
         if self.control_queue_button.state == "START":
             open(GlobalFiles.MuxingLogFilePath, 'w+').close()
+
+    def set_default_directory(self):
+        self.destination_path_lineEdit.setText(DefaultOptions.Default_Destination_Directory)

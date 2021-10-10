@@ -1,4 +1,5 @@
 from PySide2 import QtGui, QtCore
+from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
@@ -66,3 +67,7 @@ class WarningDialog(QDialog):
 
     def execute(self):
         self.exec_()
+
+    def execute_wth_no_block(self):
+        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.show()

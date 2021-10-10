@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
 from packages.Startup import GlobalFiles
 
 
-class ReloadFilesDialog(QDialog):
+class YesNoDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.message = QLabel()

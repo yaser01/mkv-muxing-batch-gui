@@ -1,10 +1,14 @@
 from PySide2 import QtGui
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, Signal
 from PySide2.QtGui import QPalette
 from PySide2.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
 
+from packages.Tabs.GlobalSetting import sort_names_like_windows
+
 
 class TableWidget(QTableWidget):
+    drop_folder_and_files_signal = Signal(list)
+
     def __init__(self):
         super().__init__()
 
@@ -40,3 +44,28 @@ class TableWidget(QTableWidget):
                 return c3
 
         self.setItemDelegate(StyleDelegateForQTableWidget(self))
+
+    def dragEnterEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if urls:
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        if urls:
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        data = event.mimeData()
+        urls = data.urls()
+        paths_to_add = []
+        for url in urls:
+            current_path = url.path()[1:]
+            paths_to_add.append(current_path)
+        self.drop_folder_and_files_signal.emit(sort_names_like_windows(paths_to_add))

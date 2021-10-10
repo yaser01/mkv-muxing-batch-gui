@@ -23,6 +23,7 @@ class TracksCheckableComboBox(QComboBox):
         super().__init__()
         # Make the combo editable to set a custom text, but readonly
         self.hint = ""
+        self.current_list = []
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
@@ -164,6 +165,7 @@ class TracksCheckableComboBox(QComboBox):
         if text.find("Tracks") == -1 and text.find("Languages") == -1:
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             item.setData(Qt.Unchecked, Qt.CheckStateRole)
+            item.setData(text, Qt.ToolTipRole)
             self.model().appendRow(item)
         else:
             # bigger_font=self.lineEdit().font()
@@ -175,12 +177,24 @@ class TracksCheckableComboBox(QComboBox):
             self.model().appendRow(item)
 
     def addItems(self, texts, datalist=None):
+        self.clear()
         for i, text in enumerate(texts):
             try:
                 data = datalist[i]
             except (TypeError, IndexError):
                 data = None
             self.addItem(text, data)
+        self.current_list = texts.copy()
+
+        self.show_discard_all_text()
+
+    def show_discard_all_text(self):
+        italic_font = self.lineEdit().font()
+        italic_font.setItalic(True)
+        self.lineEdit().setFont(italic_font)
+        self.lineEdit().setText(self.empty_selection_string)
+        self.hint = self.empty_selection_hint_string
+        self.setToolTip(self.hint)
 
     def currentData(self):
         # Return the list of selected items data
