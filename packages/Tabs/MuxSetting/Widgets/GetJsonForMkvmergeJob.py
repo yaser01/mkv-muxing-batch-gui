@@ -159,6 +159,7 @@ class GetJsonForMkvmergeJob:
                     if self.job.subtitle_set_default[i]:
                         subtitle_command_list.append(add_json_line("--default-track"))
                         subtitle_command_list.append(add_json_line("0:yes"))
+                        self.make_other_subtitle_not_default()
                     # add subtitle set forced
                     if self.job.subtitle_set_forced[i]:
                         subtitle_command_list.append(add_json_line("--forced-track"))
@@ -204,6 +205,7 @@ class GetJsonForMkvmergeJob:
                     if self.job.audio_set_default[i]:
                         audio_command_list.append(add_json_line("--default-track"))
                         audio_command_list.append(add_json_line("0:yes"))
+                        self.make_other_audio_not_default()
                     # add audio set forced
                     if self.job.audio_set_forced[i]:
                         audio_command_list.append(add_json_line("--forced-track"))
@@ -232,6 +234,14 @@ class GetJsonForMkvmergeJob:
             self.track_order_line += "0:" + str(audio.id) + ","
         self.track_order_line += later_audio_tracks
 
+    def make_other_subtitle_not_default(self):
+        change_default_subtitle_commands_list = []
+        for track in self.subtitles_track_json_info:
+            change_default_subtitle_commands_list.append(add_json_line("--default-track"))
+            change_default_subtitle_commands_list.append(add_json_line(track.id + ":no"))
+        self.change_default_forced_subtitle_track_setting_source_video_command += "".join(
+            change_default_subtitle_commands_list)
+
     def make_other_subtitle_not_forced(self):
         change_forced_subtitle_commands_list = []
         for track in self.subtitles_track_json_info:
@@ -247,6 +257,14 @@ class GetJsonForMkvmergeJob:
             change_forced_audio_commands_list.append(add_json_line(track.id + ":no"))
         self.change_default_forced_audio_track_setting_source_video_command += "".join(
             change_forced_audio_commands_list)
+
+    def make_other_audio_not_default(self):
+        change_default_audio_commands_list = []
+        for track in self.audios_track_json_info:
+            change_default_audio_commands_list.append(add_json_line("--default-track"))
+            change_default_audio_commands_list.append(add_json_line(track.id + ":no"))
+        self.change_default_forced_audio_track_setting_source_video_command += "".join(
+            change_default_audio_commands_list)
 
     def setup_only_keep_those_subtitles(self):
         if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED:
