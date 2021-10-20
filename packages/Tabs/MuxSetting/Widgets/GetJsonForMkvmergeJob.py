@@ -160,11 +160,17 @@ class GetJsonForMkvmergeJob:
                         subtitle_command_list.append(add_json_line("--default-track"))
                         subtitle_command_list.append(add_json_line("0:yes"))
                         self.make_other_subtitle_not_default()
+                    else:
+                        subtitle_command_list.append(add_json_line("--default-track"))
+                        subtitle_command_list.append(add_json_line("0:no"))
                     # add subtitle set forced
                     if self.job.subtitle_set_forced[i]:
                         subtitle_command_list.append(add_json_line("--forced-track"))
                         subtitle_command_list.append(add_json_line("0:yes"))
                         self.make_other_subtitle_not_forced()
+                    else:
+                        subtitle_command_list.append(add_json_line("--forced-track"))
+                        subtitle_command_list.append(add_json_line("0:no"))
                     # add subtitle delay
                     subtitle_delay_in_millisecond = int(1000 * float(self.job.subtitle_delay[i]))
                     subtitle_command_list.append(add_json_line("--sync"))
@@ -206,11 +212,17 @@ class GetJsonForMkvmergeJob:
                         audio_command_list.append(add_json_line("--default-track"))
                         audio_command_list.append(add_json_line("0:yes"))
                         self.make_other_audio_not_default()
+                    else:
+                        audio_command_list.append(add_json_line("--default-track"))
+                        audio_command_list.append(add_json_line("0:no"))
                     # add audio set forced
                     if self.job.audio_set_forced[i]:
                         audio_command_list.append(add_json_line("--forced-track"))
                         audio_command_list.append(add_json_line("0:yes"))
                         self.make_other_audio_not_forced()
+                    else:
+                        audio_command_list.append(add_json_line("--forced-track"))
+                        audio_command_list.append(add_json_line("0:no"))
                     # add audio delay
                     audio_delay_in_millisecond = int(1000 * float(self.job.audio_delay[i]))
                     audio_command_list.append(add_json_line("--sync"))

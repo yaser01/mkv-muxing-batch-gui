@@ -50,6 +50,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
         self.lineEdit().installEventFilter(self)
         self.setMinimumWidth(screen_size.width() // 14)
+        self.setMaxVisibleItems(6)
         self.addItems(AllAudiosExtensions)
         self.make_default_extensions_checked()
 
