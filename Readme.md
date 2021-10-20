@@ -71,7 +71,7 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 [ASS, SRT, SSA, SUP, PGS]
 
 **Audio**:
-[AAC, AC3, FLAC, MKA, M4A, MP3, WAV, OGG]
+[AAC, AC3, FLAC, EAC3, MKA, M4A, MP3, DTS, DTSMA, THD, WAV, OGG]
 
 **Chapter**:
 [XML]
@@ -80,7 +80,7 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 
 [![Github All Releases](https://img.shields.io/github/downloads/yaser01/mkv-muxing-batch-gui/total.svg?color=4DC71F&label=Downloads&logo=github")](https://github.com/yaser01/mkv-muxing-batch-gui/releases/latest)
 
-MKV Muxing Batch GUI works on Windows 7/8/8.1/10 32-bit/64-bit
+MKV Muxing Batch GUI works on Windows 7/8/8.1/10/11 32-bit/64-bit
 
 See the project's [releases&nbsp;page](https://github.com/yaser01/mkv-muxing-batch-gui/releases) for download links
 
