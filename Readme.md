@@ -68,10 +68,10 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 [AVI, MKV, MP4, M4V, MOV, MPEG, OGG, OGM, H264, H265, WEBM, WMV]
 
 **Subtitle**:
-[ASS, SRT, SSA, SUP, PGS]
+[ASS, SRT, SSA, SUP, PGS, MKS]
 
 **Audio**:
-[AAC, AC3, FLAC, MKA, M4A, MP3, WAV, OGG]
+[AAC, AC3, FLAC, EAC3, MKA, M4A, MP3, DTS, DTSMA, THD, WAV, OGG]
 
 **Chapter**:
 [XML]

@@ -29,8 +29,8 @@ tracks_list = generate_track_ids(10)
 generate_languages_tracks()
 ISO_639_2_SYMBOLS = {v: k for k, v in ISO_639_2_LANGUAGES.items()}
 AllVideosExtensions = ['AVI', 'MKV', 'MP4', 'M4V', 'MOV', 'MPEG', 'OGG', 'OGM', 'H264', 'H265', "WEBM", 'WMV']
-AllSubtitlesExtensions = ['ASS', 'SRT', 'SSA', 'SUP', 'PGS']
-AllAudiosExtensions = ['AAC', 'AC3', 'FLAC', 'MKA', 'M4A', 'MP3', 'WAV', 'OGG']
+AllSubtitlesExtensions = ['ASS', 'SRT', 'SSA', 'SUP', 'PGS', 'MKS']
+AllAudiosExtensions = ['AAC', 'AC3', 'FLAC', 'EAC3', 'MKA', 'M4A', 'MP3', 'DTS', 'DTSMA', 'THD', 'WAV', 'OGG']
 AllSubtitlesLanguages = list(ISO_639_2_LANGUAGES.keys())
 AllAudiosLanguages = list(ISO_639_2_LANGUAGES.keys())
 AllChapterExtensions = ['XML']

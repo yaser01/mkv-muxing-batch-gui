@@ -117,10 +117,10 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_set_default_forced_layout.addWidget(self.audio_mux_at_top_checkBox)
 
     def setup_audio_options_layout(self):
-        self.audio_options_layout.addWidget(self.audio_extensions_comboBox)
+        self.audio_options_layout.addWidget(self.audio_extensions_comboBox, 2)
         self.audio_options_layout.addWidget(self.audio_language_label)
-        self.audio_options_layout.addWidget(self.audio_language_comboBox)
-        self.audio_options_layout.addWidget(self.audio_track_name_lineEdit)
+        self.audio_options_layout.addWidget(self.audio_language_comboBox, 4)
+        self.audio_options_layout.addWidget(self.audio_track_name_lineEdit, 2)
         self.audio_options_layout.addWidget(self.audio_delay_label)
         self.audio_options_layout.addWidget(self.audio_delay_spin)
         self.audio_options_layout.addSpacing(10)
