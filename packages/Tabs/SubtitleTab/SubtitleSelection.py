@@ -116,10 +116,10 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_set_default_forced_layout.addWidget(self.subtitle_mux_at_top_checkBox)
 
     def setup_subtitle_options_layout(self):
-        self.subtitle_options_layout.addWidget(self.subtitle_extensions_comboBox)
+        self.subtitle_options_layout.addWidget(self.subtitle_extensions_comboBox, 2)
         self.subtitle_options_layout.addWidget(self.subtitle_language_label)
-        self.subtitle_options_layout.addWidget(self.subtitle_language_comboBox)
-        self.subtitle_options_layout.addWidget(self.subtitle_track_name_lineEdit)
+        self.subtitle_options_layout.addWidget(self.subtitle_language_comboBox, 4)
+        self.subtitle_options_layout.addWidget(self.subtitle_track_name_lineEdit, 2)
         self.subtitle_options_layout.addWidget(self.subtitle_delay_label)
         self.subtitle_options_layout.addWidget(self.subtitle_delay_spin)
         self.subtitle_options_layout.addSpacing(10)
