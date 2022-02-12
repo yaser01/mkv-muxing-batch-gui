@@ -144,14 +144,12 @@ class SubtitleSelectionSetting(QGroupBox):
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
-            self.subtitle_source_lineEdit.setText(new_path)
+            self.subtitle_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_subtitle_files_list()
         else:
             if self.is_drag_and_drop:
-                self.subtitle_source_lineEdit.stop_check_path = True
-                self.subtitle_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.subtitle_source_lineEdit.stop_check_path = False
+                self.subtitle_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -183,7 +181,7 @@ class SubtitleSelectionSetting(QGroupBox):
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.subtitle_source_lineEdit.stop_check_path = False
             else:
-                self.subtitle_source_lineEdit.setText("")
+                self.subtitle_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -226,7 +224,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_match_layout.show_subtitle_files()
 
     def update_other_classes_variables(self):
-        self.change_global_last_path_directory()
+        #self.change_global_last_path_directory()
         self.change_global_subtitle_list()
         self.subtitle_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.subtitle_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)
@@ -243,7 +241,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.subtitle_source_lineEdit.setText("")
+        self.subtitle_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.show_subtitle_files_list()
 
@@ -259,7 +257,7 @@ class SubtitleSelectionSetting(QGroupBox):
         if on:
             self.show_video_files_list()
         else:
-            self.subtitle_source_lineEdit.setText("")
+            self.subtitle_source_lineEdit.set_text_safe_change("")
             self.subtitle_match_layout.clear_tables()
             self.folder_path = ""
             self.files_names_list = []
@@ -287,7 +285,7 @@ class SubtitleSelectionSetting(QGroupBox):
             self.subtitle_match_layout.clear_subtitle_selection()
         if (QMouseEvent.buttons() == Qt.RightButton or QMouseEvent.buttons() == Qt.LeftButton) and (
                 self.subtitle_source_lineEdit.text() == ""):
-            self.subtitle_source_lineEdit.setText(self.folder_path)
+            self.subtitle_source_lineEdit.set_text_safe_change(self.folder_path)
         return QWidget.mousePressEvent(self, QMouseEvent)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
@@ -397,5 +395,5 @@ class SubtitleSelectionSetting(QGroupBox):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.subtitle_source_lineEdit.setText(DefaultOptions.Default_Subtitle_Directory)
+        self.subtitle_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Subtitle_Directory)
         self.subtitle_source_lineEdit.check_new_path()

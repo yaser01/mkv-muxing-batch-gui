@@ -83,14 +83,12 @@ class VideoSelectionSetting(GlobalSetting):
     def update_folder_path(self, new_path: str):
 
         if new_path != "":
-            self.video_source_lineEdit.setText(new_path)
+            self.video_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_files_list()
         else:
             if self.is_drag_and_drop:
-                self.video_source_lineEdit.stop_check_path = True
-                self.video_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.video_source_lineEdit.stop_check_path = False
+                self.video_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -129,7 +127,7 @@ class VideoSelectionSetting(GlobalSetting):
                     show_loading_dialog(new_files_absolute_path_list)
                 self.video_source_lineEdit.stop_check_path = False
             else:
-                self.video_source_lineEdit.setText("")
+                self.video_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -201,7 +199,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.files_size_list = []
-        self.video_source_lineEdit.setText("")
+        self.video_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.files_names_checked_list = []
         self.show_files_list()
@@ -377,5 +375,5 @@ class VideoSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.video_source_lineEdit.setText(DefaultOptions.Default_Video_Directory)
+        self.video_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Video_Directory)
         self.video_source_lineEdit.check_new_path()

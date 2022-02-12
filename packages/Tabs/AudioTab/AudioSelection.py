@@ -145,14 +145,12 @@ class AudioSelectionSetting(QGroupBox):
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
-            self.audio_source_lineEdit.setText(new_path)
+            self.audio_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_audio_files_list()
         else:
             if self.is_drag_and_drop:
-                self.audio_source_lineEdit.stop_check_path = True
-                self.audio_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.audio_source_lineEdit.stop_check_path = False
+                self.audio_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -184,7 +182,7 @@ class AudioSelectionSetting(QGroupBox):
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.audio_source_lineEdit.stop_check_path = False
             else:
-                self.audio_source_lineEdit.setText("")
+                self.audio_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -227,7 +225,7 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_match_layout.show_audio_files()
 
     def update_other_classes_variables(self):
-        self.change_global_last_path_directory()
+        #self.change_global_last_path_directory()
         self.change_global_audio_list()
         self.audio_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.audio_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)
@@ -244,7 +242,7 @@ class AudioSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.audio_source_lineEdit.setText("")
+        self.audio_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.show_audio_files_list()
 
@@ -260,7 +258,7 @@ class AudioSelectionSetting(QGroupBox):
         if on:
             self.show_video_files_list()
         else:
-            self.audio_source_lineEdit.setText("")
+            self.audio_source_lineEdit.set_text_safe_change("")
             self.audio_match_layout.clear_tables()
             self.folder_path = ""
             self.files_names_list = []
@@ -288,7 +286,7 @@ class AudioSelectionSetting(QGroupBox):
             self.audio_match_layout.clear_audio_selection()
         if (QMouseEvent.buttons() == Qt.RightButton or QMouseEvent.buttons() == Qt.LeftButton) and (
                 self.audio_source_lineEdit.text() == ""):
-            self.audio_source_lineEdit.setText(self.folder_path)
+            self.audio_source_lineEdit.set_text_safe_change(self.folder_path)
         return QWidget.mousePressEvent(self, QMouseEvent)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
@@ -398,5 +396,5 @@ class AudioSelectionSetting(QGroupBox):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.audio_source_lineEdit.setText(DefaultOptions.Default_Audio_Directory)
+        self.audio_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Audio_Directory)
         self.audio_source_lineEdit.check_new_path()

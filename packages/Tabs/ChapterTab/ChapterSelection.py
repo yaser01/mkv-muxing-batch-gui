@@ -98,14 +98,12 @@ class ChapterSelectionSetting(GlobalSetting):
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
-            self.chapter_source_lineEdit.setText(new_path)
+            self.chapter_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_chapter_files_list()
         else:
             if self.is_drag_and_drop:
-                self.chapter_source_lineEdit.stop_check_path = True
-                self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.chapter_source_lineEdit.stop_check_path = False
+                self.chapter_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -137,7 +135,7 @@ class ChapterSelectionSetting(GlobalSetting):
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.chapter_source_lineEdit.stop_check_path = False
             else:
-                self.chapter_source_lineEdit.setText("")
+                self.chapter_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -180,7 +178,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_match_layout.show_chapter_files()
 
     def update_other_classes_variables(self):
-        self.change_global_last_path_directory()
+        #self.change_global_last_path_directory()
         self.change_global_chapter_list()
         self.chapter_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.chapter_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)
@@ -196,7 +194,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.chapter_source_lineEdit.setText("")
+        self.chapter_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.show_chapter_files_list()
 
@@ -212,7 +210,7 @@ class ChapterSelectionSetting(GlobalSetting):
         if on:
             self.show_video_files_list()
         else:
-            self.chapter_source_lineEdit.setText("")
+            self.chapter_source_lineEdit.set_text_safe_change("")
             self.chapter_match_layout.clear_tables()
             self.folder_path = ""
             self.files_names_list = []
@@ -236,7 +234,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.chapter_match_layout.clear_chapter_selection()
         if (QMouseEvent.buttons() == Qt.RightButton or QMouseEvent.buttons() == Qt.LeftButton) and (
                 self.chapter_source_lineEdit.text() == ""):
-            self.chapter_source_lineEdit.setText(self.folder_path)
+            self.chapter_source_lineEdit.set_text_safe_change(self.folder_path)
         return QWidget.mousePressEvent(self, QMouseEvent)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
@@ -336,5 +334,5 @@ class ChapterSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.chapter_source_lineEdit.setText(DefaultOptions.Default_Chapter_Directory)
+        self.chapter_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Chapter_Directory)
         self.chapter_source_lineEdit.check_new_path()
