@@ -42,23 +42,41 @@ def delete_old_media_files():
             pass
 
 
+def get_data_from_json(json, attribute):
+    try:
+        return json[attribute]
+    except Exception as e:
+        return ""
+
+
 def read_setting_file():
     setting_file_path = Path(SettingJsonInfoFilePath)
     if setting_file_path.is_file():
         with open(setting_file_path, "r+", encoding="UTF-8") as setting_file:
             data = json.load(setting_file)
-            DefaultOptions.Default_Video_Directory = data["Default_Video_Directory"]
-            DefaultOptions.Default_Video_Extensions = data["Default_Video_Extensions"]
-            DefaultOptions.Default_Subtitle_Directory = data["Default_Subtitle_Directory"]
-            DefaultOptions.Default_Subtitle_Extensions = data["Default_Subtitle_Extensions"]
-            DefaultOptions.Default_Subtitle_Language = data["Default_Subtitle_Language"]
-            DefaultOptions.Default_Audio_Directory = data["Default_Audio_Directory"]
-            DefaultOptions.Default_Audio_Extensions = data["Default_Audio_Extensions"]
-            DefaultOptions.Default_Audio_Language = data["Default_Audio_Language"]
-            DefaultOptions.Default_Chapter_Directory = data["Default_Chapter_Directory"]
-            DefaultOptions.Default_Chapter_Extensions = data["Default_Chapter_Extensions"]
-            DefaultOptions.Default_Attachment_Directory = data["Default_Attachment_Directory"]
-            DefaultOptions.Default_Destination_Directory = data["Default_Destination_Directory"]
+            DefaultOptions.Default_Video_Directory = get_data_from_json(json=data, attribute="Default_Video_Directory")
+            DefaultOptions.Default_Video_Extensions = get_data_from_json(json=data,
+                                                                         attribute="Default_Video_Extensions")
+            DefaultOptions.Default_Subtitle_Directory = get_data_from_json(json=data,
+                                                                           attribute="Default_Subtitle_Directory")
+            DefaultOptions.Default_Subtitle_Extensions = get_data_from_json(json=data,
+                                                                            attribute="Default_Subtitle_Extensions")
+            DefaultOptions.Default_Subtitle_Language = get_data_from_json(json=data,
+                                                                          attribute="Default_Subtitle_Language")
+            DefaultOptions.Default_Audio_Directory = get_data_from_json(json=data, attribute="Default_Audio_Directory")
+            DefaultOptions.Default_Audio_Extensions = get_data_from_json(json=data,
+                                                                         attribute="Default_Audio_Extensions")
+            DefaultOptions.Default_Audio_Language = get_data_from_json(json=data, attribute="Default_Audio_Language")
+            DefaultOptions.Default_Chapter_Directory = get_data_from_json(json=data,
+                                                                          attribute="Default_Chapter_Directory")
+            DefaultOptions.Default_Chapter_Extensions = get_data_from_json(json=data,
+                                                                           attribute="Default_Chapter_Extensions")
+            DefaultOptions.Default_Attachment_Directory = get_data_from_json(json=data,
+                                                                             attribute="Default_Attachment_Directory")
+            DefaultOptions.Default_Destination_Directory = get_data_from_json(json=data,
+                                                                              attribute="Default_Destination_Directory")
+
+
 
     else:
         setting_data = {"Default_Video_Directory": DefaultOptions.Default_Video_Directory,

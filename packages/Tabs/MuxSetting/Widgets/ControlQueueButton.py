@@ -1,4 +1,6 @@
+import PySide2
 from PySide2 import QtCore
+from PySide2.QtGui import QPaintEvent
 from PySide2.QtWidgets import QPushButton
 
 from packages.Startup import GlobalFiles
@@ -14,6 +16,8 @@ class ControlQueueButton(QPushButton):
         self.state = ""
         self.set_state_add_to_queue()
         self.clicked.connect(self.button_clicked)
+        self.states = [" Add To Queue", " Start Multiplexing", " Pause Multiplexing", " Waiting Current Job", " Resume "
+                                                                                                              "Multiplexing"]
 
     def set_state_add_to_queue(self):
         self.state = "ADD"
@@ -48,6 +52,14 @@ class ControlQueueButton(QPushButton):
         self.setText(" Resume Multiplexing")
         self.setIcon(GlobalFiles.StartMultiplexingIcon)
         self.setToolTip("")
+
+    def paintEvent(self, event: QPaintEvent):
+        width = 0
+        for text in self.states:
+            width = max(width, self.fontMetrics().boundingRect(text).width())
+        width += 25
+        self.setMinimumWidth(width)
+        super().paintEvent(event)
 
     def button_clicked(self):
         if self.state == "ADD":

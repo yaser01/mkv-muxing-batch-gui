@@ -27,7 +27,7 @@ def check_if_exit_when_muxing_on():
 class MainWindow(QMainWindow):
     def __init__(self, args, parent=None):
         super().__init__(parent=parent)
-        self.resize(int(width_factor * 1100), int(height_factor * 635))
+        self.resize(int(width_factor * 1160), int(height_factor * 635))
         self.setWindowTitle("MKV Muxing Batch GUI v" + str(Version))
         self.setWindowIcon(GlobalFiles.AppIcon)
         self.tabs = TabsManager()

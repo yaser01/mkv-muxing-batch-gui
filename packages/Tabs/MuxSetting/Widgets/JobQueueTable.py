@@ -7,6 +7,7 @@ from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, get_readable_filesize
+from packages.Tabs.MuxSetting.Widgets.CRCData import CRCData
 from packages.Tabs.MuxSetting.Widgets.ConfirmUsingMkvpropedit import ConfirmUsingMkvpropedit
 from packages.Tabs.MuxSetting.Widgets.MuxingParams import MuxingParams
 from packages.Tabs.MuxSetting.Widgets.ProgreeBar import ProgressBar
@@ -90,13 +91,80 @@ def generate_tool_tip_for_subtitle_file(subtitle_full_path="C:/Test", subtitle_n
                 "\nDouble click for more details")
 
 
-def change_file_extension_to_mkv(file_name):
+def get_file_name_with_mkv_extension(file_name):
     file_extension_start_index = file_name.rfind(".")
     new_file_name_with_mkv_extension = file_name[:file_extension_start_index] + ".mkv"
     return new_file_name_with_mkv_extension
 
 
 # noinspection PyUnresolvedReferences
+
+
+def set_is_job_crc_required(new_job):
+    new_job.is_crc_calculating_required = GlobalSetting.MUX_SETTING_ADD_CRC
+    new_job.is_crc_removing_required = GlobalSetting.MUX_SETTING_REMOVE_OLD_CRC
+
+
+Valid_CRC_String = "0123456789ABCDEF"
+
+
+def get_file_name_without_crc(file_name):
+    file_name = str(file_name)
+    file_name_without_crc = file_name
+    bracket_left_index = file_name.rfind("[")
+    bracket_right_index = file_name.rfind("]")
+    if (bracket_right_index - bracket_left_index - 1) == 8:
+        valid_counter = 0
+        for i in range(bracket_left_index + 1, bracket_right_index):
+            if file_name[i] in Valid_CRC_String:
+                valid_counter += 1
+        if valid_counter == 8:
+            file_name_without_crc = file_name[:bracket_left_index] + file_name[
+                                                                     bracket_right_index + 1:]
+    extension_index = file_name_without_crc.rfind(".")
+    file_name_without_extension = file_name_without_crc[:extension_index]
+    last_valid_char = 0
+    for i in range(len(file_name_without_extension) - 1, -1, -1):
+        if file_name_without_extension[i] != " ":
+            last_valid_char = i
+            break
+    file_name_without_crc = file_name_without_crc[
+                         :last_valid_char + 1] + file_name_without_crc[extension_index:]
+    return file_name_without_crc
+
+
+def get_file_name_with_crc(file_name, crc_string):
+    file_name = str(file_name)
+    file_name_without_crc = file_name
+    bracket_left_index = file_name.rfind("[")
+    bracket_right_index = file_name.rfind("]")
+    if (bracket_right_index - bracket_left_index - 1) == 8:
+        valid_counter = 0
+        for i in range(bracket_left_index + 1, bracket_right_index):
+            if file_name[i] in Valid_CRC_String:
+                valid_counter += 1
+        if valid_counter == 8:
+            file_name_without_crc = file_name[:bracket_left_index] + file_name[
+                                                                     bracket_right_index + 1:]
+    extension_index = file_name_without_crc.rfind(".")
+    file_name_without_extension = file_name_without_crc[:extension_index]
+    last_valid_char = 0
+    for i in range(len(file_name_without_extension) - 1, -1, -1):
+        if file_name_without_extension[i] != " ":
+            last_valid_char = i
+            break
+    file_name_with_crc = file_name_without_crc[
+                         :last_valid_char + 1] + " [" + crc_string + "]" + file_name_without_crc[
+                                                                           extension_index:]
+    return file_name_with_crc
+
+
+def calculate_size_after_muxing(finished_job: SingleJobData):
+    try:
+        output_video_size_bytes = os.path.getsize(finished_job.output_video_absolute_path)
+    except:
+        output_video_size_bytes = 0
+    return output_video_size_bytes
 
 
 class JobQueueTable(TableWidget):
@@ -198,18 +266,9 @@ class JobQueueTable(TableWidget):
         self.setCellWidget(new_row_id, self.column_ids["Size Before"], QLabel(new_job.size_before_muxing))
 
     def set_row_value_size_after_muxing(self, finished_job: SingleJobData, row_index):
-        if finished_job.used_mkvpropedit:
-            output_video_name_absolute = Path(finished_job.video_name_absolute)
-        else:
-            folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)
-            output_video_name = Path(change_file_extension_to_mkv(finished_job.video_name))
-            output_video_name_absolute = os.path.join(folder_path, output_video_name)
-        try:
-            output_video_size_bytes = os.path.getsize(output_video_name_absolute)
-        except:
-            output_video_size_bytes = 0
+        output_video_size_bytes = calculate_size_after_muxing(finished_job)
         if output_video_size_bytes == 0:
-            self.delete_video_output_with_zero_size(file_path=output_video_name_absolute)
+            self.delete_video_output_with_zero_size(file_path=finished_job.output_video_absolute_path)
         size_after_muxing = " " + get_readable_filesize(output_video_size_bytes)
         self.setCellWidget(row_index, self.column_ids["Size After"], QLabel(size_after_muxing))
 
@@ -511,6 +570,7 @@ class JobQueueTable(TableWidget):
             self.set_row_value_chapter(new_job, new_row_id)
             self.set_row_value_size_before_muxing(new_job, new_row_id)
             self.set_row_value_progressBar(new_job, new_row_id)
+            set_is_job_crc_required(new_job)
             self.data.append(new_job)
         self.show()
         self.check_if_name_need_resize_column_to_fit_content()
@@ -547,6 +607,7 @@ class JobQueueTable(TableWidget):
         self.start_muxing_worker.job_succeeded_signal.connect(self.job_done_successfully)
         self.start_muxing_worker.job_failed_signal.connect(self.job_error_occurred)
         self.start_muxing_worker.pause_from_error_occurred_signal.connect(self.pause_from_error_occurred)
+        self.start_muxing_worker.crc_progress_signal.connect(self.update_crc_progress)
         self.start_muxing_thread.start()
 
     def clear_queue(self):
@@ -591,6 +652,34 @@ class JobQueueTable(TableWidget):
         else:
             self.update_muxing_progress(job_index, new_progress, params)
 
+    def update_crc_progress(self, progress):
+        self.update_status_job_widget("CRC: " + str(progress))
+
+    def get_output_file_name_absolute(self, job_index):
+        if self.data[job_index].used_mkvpropedit:
+            return Path(self.data[job_index].video_name_absolute)
+        else:
+            folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)
+            output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+            return os.path.join(folder_path, output_video_name)
+
+    def get_output_file_name_folder_path_absolute(self, job_index):
+        if self.data[job_index].used_mkvpropedit:
+            return os.path.dirname(self.data[job_index].video_name_absolute)
+
+        else:
+            return Path(GlobalSetting.DESTINATION_FOLDER_PATH)
+
+    def rename_output_file(self, ):
+        crc_string = crc_data.crc_string
+        job_index = crc_data.job_index
+        output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+        file_name_with_crc = Path(get_file_name_with_crc(output_video_name, crc_string))
+        output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
+        file_name_with_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, file_name_with_crc)
+        file_name_without_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, output_video_name)
+        os.rename(file_name_without_crc_absolute_path, file_name_with_crc_absolute_path)
+
     def update_muxing_progress(self, job_index, new_progress, params):
         self.total_progress -= self.data[job_index].progress
         self.data[job_index].progress = new_progress
@@ -605,11 +694,40 @@ class JobQueueTable(TableWidget):
         except:
             pass
 
+    def rename_output_file_if_needed(self, job_index):
+        if self.data[job_index].is_crc_calculating_required:
+            crc_string = self.data[job_index].new_crc
+            output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+            file_name_with_crc = Path(get_file_name_with_crc(output_video_name, crc_string))
+            output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
+            file_name_with_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, file_name_with_crc)
+            file_name_old_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, output_video_name)
+            os.rename(file_name_old_crc_absolute_path, file_name_with_crc_absolute_path)
+            self.data[job_index].output_video_name = file_name_with_crc
+            self.data[job_index].output_video_absolute_path = file_name_with_crc_absolute_path
+        elif self.data[job_index].is_crc_removing_required:
+            output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+            output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
+            file_name_old_absolute_path = os.path.join(output_file_name_folder_path_absolute, output_video_name)
+            file_name_without_crc = Path(get_file_name_without_crc(output_video_name))
+            file_name_without_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute,
+                                                               file_name_without_crc)
+            os.rename(file_name_old_absolute_path, file_name_without_crc_absolute_path)
+            self.data[job_index].output_video_name = file_name_without_crc
+            self.data[job_index].output_video_absolute_path = file_name_without_crc_absolute_path
+        else:
+            output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+            output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
+            file_name_absolute_path = os.path.join(output_file_name_folder_path_absolute, output_video_name)
+            self.data[job_index].output_video_name = output_video_name
+            self.data[job_index].output_video_absolute_path = file_name_absolute_path
+
     def job_done_successfully(self, job_index):
         self.data[job_index].done = True
         self.number_of_done_jobs += 1
         self.increase_number_of_done_jobs_signal.emit()
         self.set_job_status_ok(row_index=job_index)
+        self.rename_output_file_if_needed(job_index=job_index)
         self.set_row_value_size_after_muxing(self.data[job_index], job_index)
 
     def job_error_occurred(self, job_index):
@@ -618,6 +736,7 @@ class JobQueueTable(TableWidget):
         if GlobalSetting.MUX_SETTING_ABORT_ON_ERRORS:
             self.start_muxing_worker.pause = True
         self.set_job_status_bad(row_index=job_index)
+        self.rename_output_file_if_needed(job_index=job_index)
         self.set_row_value_size_after_muxing(self.data[job_index], job_index)
 
     def set_job_status_ok(self, row_index):

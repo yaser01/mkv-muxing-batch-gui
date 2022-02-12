@@ -1,9 +1,14 @@
+import os
 import time
 import traceback
+from pathlib import Path
+
 from PySide2.QtCore import QObject, QThread, Signal
 
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting, write_to_log_file
+from packages.Tabs.MuxSetting.Widgets.CRCData import CRCData
+from packages.Tabs.MuxSetting.Widgets.CalculateCRCProcessWorker import CalculateCRCProcessWorker
 from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvmergeJob import GetJsonForMkvmergeJob
 from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvpropeditJob import GetJsonForMkvpropeditJob
 from packages.Tabs.MuxSetting.Widgets.MuxingParams import MuxingParams
@@ -11,6 +16,12 @@ from packages.Tabs.MuxSetting.Widgets.ReadFromMkvmergeLogWorker import ReadFromM
 from packages.Tabs.MuxSetting.Widgets.ReadFromMkvpropeditLogWorker import ReadFromMkvpropeditLogWorker
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
 from packages.Tabs.MuxSetting.Widgets.StartMuxingProcessWorker import StartMuxingProcessWorker
+
+
+def change_file_extension_to_mkv(file_name):
+    file_extension_start_index = file_name.rfind(".")
+    new_file_name_with_mkv_extension = file_name[:file_extension_start_index] + ".mkv"
+    return new_file_name_with_mkv_extension
 
 
 def check_if_mkvpropedit_good():
@@ -44,6 +55,7 @@ class StartMuxingWorker(QObject):
     cancel_signal = Signal()
     mkvpropedit_good_signal = Signal()
     progress_signal = Signal(MuxingParams)
+    crc_progress_signal = Signal(int)
     job_succeeded_signal = Signal(int)
     job_failed_signal = Signal(int)
     job_started_signal = Signal(int)
@@ -51,6 +63,7 @@ class StartMuxingWorker(QObject):
 
     def __init__(self, data):
         super().__init__()
+        print("R1")
         self.data = data  # type:list[SingleJobData]
         self.current_job = -1
         self.finished_read_log_and_muxing = 0
@@ -64,9 +77,16 @@ class StartMuxingWorker(QObject):
         self.setup_start_muxing_process_thread()
         self.setup_read_mkvmerge_log_thread()
         self.setup_read_mkvpropedit_log_thread()
+        self.setup_calculate_crc_thread()
+        print("R2")
         self.start_muxing_process_thread.start()
+        print("R3")
         self.read_log_mkvmerge_thread.start()
+        print("R4")
         self.read_log_mkvpropedit_thread.start()
+        print("R5")
+        self.start_crc_calculating_process_thread.start()
+        print("R6")
 
     def run(self):
         try:
@@ -81,6 +101,7 @@ class StartMuxingWorker(QObject):
         self.read_log_mkvmerge_worker.stop = True
         self.read_log_mkvpropedit_worker.stop = True
         self.start_muxing_process_worker.stop = True
+        self.start_crc_calculating_process_worker.stop = True
 
     def next_job(self):
         if self.cancel:
@@ -156,6 +177,22 @@ class StartMuxingWorker(QObject):
         self.start_muxing_process_worker.wait = False
         self.read_log_mkvmerge_worker.wait = False
 
+    def check_if_crc_calculating_needed(self):
+        if self.data[self.current_job].is_crc_calculating_required:
+            if self.data[self.current_job].used_mkvpropedit:
+                folder_path = os.path.dirname(self.data[self.current_job].video_name_absolute)
+            else:
+                folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)
+            output_file_name = os.path.join(folder_path, self.data[self.current_job].video_name)
+            self.start_crc_calculating_process_worker.file_name = output_file_name
+            self.start_crc_calculating_process_worker.progress = 0
+            self.start_crc_calculating_process_worker.wait = False
+            GlobalSetting.MUXING_ON = True
+        else:
+            GlobalSetting.MUXING_ON = False
+            self.job_succeeded_signal.emit(self.current_job)
+            self.next_job()
+
     # noinspection PyAttributeOutsideInit
     def setup_start_muxing_process_thread(self):
         self.start_muxing_process_worker = StartMuxingProcessWorker()
@@ -165,6 +202,20 @@ class StartMuxingWorker(QObject):
         self.start_muxing_process_worker.all_finished.connect(self.start_muxing_process_thread.quit)
         self.start_muxing_process_worker.all_finished.connect(self.start_muxing_process_worker.deleteLater)
         self.start_muxing_process_worker.finished_job_signal.connect(self.finished_muxing_process)
+
+    # noinspection PyAttributeOutsideInit
+    def setup_calculate_crc_thread(self):
+        self.start_crc_calculating_process_worker = CalculateCRCProcessWorker()
+        self.start_crc_calculating_process_thread = QThread()
+        self.start_crc_calculating_process_worker.moveToThread(self.start_crc_calculating_process_thread)
+        self.start_crc_calculating_process_thread.started.connect(self.start_crc_calculating_process_worker.run)
+        self.start_crc_calculating_process_worker.all_finished.connect(self.start_crc_calculating_process_thread.quit)
+        self.start_crc_calculating_process_worker.all_finished.connect(
+            self.start_crc_calculating_process_worker.deleteLater)
+        self.start_crc_calculating_process_thread.finished.connect(
+            self.start_crc_calculating_process_thread.deleteLater)
+        self.start_crc_calculating_process_worker.crc_progress_signal.connect(self.receive_crc_progress)
+        self.start_crc_calculating_process_worker.crc_result_signal.connect(self.receive_crc_result)
 
     # noinspection PyAttributeOutsideInit
     def setup_read_mkvmerge_log_thread(self):
@@ -197,16 +248,32 @@ class StartMuxingWorker(QObject):
                 self.pause_from_error_occurred_signal.emit()
         self.progress_signal.emit(params)
 
+    def receive_crc_progress(self, progress: int):
+        self.crc_progress_signal.emit(progress)
+
+    def receive_crc_result(self, crc_string: str):
+        crc_data = CRCData()
+        crc_data.crc_string = crc_string
+        crc_data.job_index = self.current_job
+        self.data[self.current_job].new_crc = crc_string
+        self.job_succeeded_signal.emit(self.current_job)
+        GlobalSetting.MUXING_ON = False
+        self.next_job()
+
     def finished_read_log(self):
         self.finished_read_log_and_muxing += 1
         if self.finished_read_log_and_muxing == 2:  # both threads end
             self.add_footer_info_to_log_file()
             GlobalSetting.MUXING_ON = False
             self.finished_read_log_and_muxing = 0
-            self.next_job()
+            if self.data[self.current_job].error_occurred:
+                self.next_job()
+            else:
+                self.check_if_crc_calculating_needed()
 
     def finished_muxing_process(self, exit_code):
         if exit_code == 2:
+            self.data[self.current_job].error_occurred = True
             self.job_failed_signal.emit(self.current_job)
             if GlobalSetting.MUX_SETTING_ABORT_ON_ERRORS:
                 self.pause = True
@@ -215,14 +282,17 @@ class StartMuxingWorker(QObject):
                 self.job_failed_signal.emit(self.current_job)
                 if GlobalSetting.MUX_SETTING_ABORT_ON_ERRORS:
                     self.pause = True
-            else:
+            elif not self.data[self.current_job].is_crc_calculating_required:
                 self.job_succeeded_signal.emit(self.current_job)
         self.finished_read_log_and_muxing += 1
         if self.finished_read_log_and_muxing == 2:  # both threads end
             self.add_footer_info_to_log_file()
             GlobalSetting.MUXING_ON = False
             self.finished_read_log_and_muxing = 0
-            self.next_job()
+            if self.data[self.current_job].error_occurred:
+                self.next_job()
+            else:
+                self.check_if_crc_calculating_needed()
 
     def add_header_info_to_log_file(self):
 

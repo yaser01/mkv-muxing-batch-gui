@@ -103,6 +103,8 @@ class GlobalSetting(QWidget):
 
     MUX_SETTING_ABORT_ON_ERRORS = False
     MUX_SETTING_KEEP_LOG_FILE = False
+    MUX_SETTING_ADD_CRC = False
+    MUX_SETTING_REMOVE_OLD_CRC = False
 
     DESTINATION_FOLDER_PATH = ""
     JOB_QUEUE_EMPTY = True
