@@ -15,6 +15,7 @@ class LoadingVideosInfoDialog(QDialog):
         self.videos_list = videos_list
         self.videos_count = len(self.videos_list)
         self.current_video_done_index = 0
+        self.unsupported_files_list = []
         self.status_label = QLabel(
             "Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
         self.load_icon_movie = QMovie(SpinnerIconPath)
@@ -38,6 +39,7 @@ class LoadingVideosInfoDialog(QDialog):
         self.generate_media_info_files_worker.moveToThread(self.generate_media_info_files_thread)
         self.generate_media_info_files_thread.started.connect(self.generate_media_info_files_worker.run)
         self.generate_media_info_files_worker.job_succeeded_signal.connect(self.update_progress)
+        self.generate_media_info_files_worker.job_unsupported_file_signal.connect(self.add_new_unsupported_file)
         self.generate_media_info_files_worker.finished_all_jobs_signal.connect(
             self.generate_media_info_files_thread.quit)
         self.generate_media_info_files_worker.finished_all_jobs_signal.connect(
@@ -55,12 +57,16 @@ class LoadingVideosInfoDialog(QDialog):
         self.status_label.setText(
             " Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
 
+    def add_new_unsupported_file(self, file_name):
+        self.unsupported_files_list.append(file_name)
+
     def start_loading(self):
         self.load_icon_movie.start()
 
     def stop_loading(self):
         time.sleep(0.1)
         self.load_icon_movie.stop()
+
         self.close()
 
     def execute(self):
