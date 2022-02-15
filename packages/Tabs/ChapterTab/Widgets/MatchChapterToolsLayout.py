@@ -2,6 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QVBoxLayout, QShortcut
 
+from packages.Tabs.ChapterTab.Widgets.DeleteChapterButton import DeleteChapterButton
 from packages.Tabs.ChapterTab.Widgets.MoveChapterBottomButton import MoveChapterBottomButton
 from packages.Tabs.ChapterTab.Widgets.MoveChapterDownButton import MoveChapterDownButton
 from packages.Tabs.ChapterTab.Widgets.MoveChapterToButton import MoveChapterToButton
@@ -80,6 +81,7 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.move_chapter_down_button = MoveChapterDownButton()
         self.move_chapter_bottom_button = MoveChapterBottomButton()
         self.move_chapter_to_button = MoveChapterToButton()
+        self.delete_chapter_button = DeleteChapterButton()
         self.setup_shortcuts()
         self.setup_layout()
         self.connect_signals()
@@ -104,6 +106,9 @@ class MatchChapterToolsLayout(QVBoxLayout):
             update_global_chapter_files_list_order_to_down)
         self.move_chapter_bottom_button.move_chapter_to_bottom_signal.connect(
             update_global_chapter_files_list_order_to_bottom)
+        self.delete_chapter_button.delete_happened_signal.connect(
+            self.update_global_chapter_files_list_order_deleting)
+        self.delete_chapter_button.selected_row_after_delete.connect(self.change_selected_chapter_row)
 
     def setup_layout(self):
         self.addStretch()
@@ -116,6 +121,8 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.addWidget(self.move_chapter_bottom_button)
         self.addSpacing(10)
         self.addWidget(self.move_chapter_down_button)
+        self.addSpacing(10)
+        self.addWidget(self.delete_chapter_button)
         self.addStretch()
 
     def set_selected_row(self, selected_row, max_index):
@@ -129,6 +136,8 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.move_chapter_bottom_button.max_index = max_index
         self.move_chapter_to_button.current_index = selected_row
         self.move_chapter_to_button.max_index = max_index
+        self.delete_chapter_button.current_index = selected_row
+        self.delete_chapter_button.max_index = max_index
 
     # noinspection PyAttributeOutsideInit
     def setup_shortcuts(self):
@@ -147,6 +156,9 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.move_chapter_to_shortcut = QShortcut(QKeySequence("Ctrl+M"), self.chapter_tab)
         self.move_chapter_to_shortcut.activated.connect(self.move_chapter_to_button.clicked_button)
 
+        self.delete_chapter_shortcut = QShortcut(QKeySequence("Delete"), self.chapter_tab)
+        self.delete_chapter_shortcut.activated.connect(self.delete_chapter_button.clicked_button)
+
     def refresh_chapter_table(self):
         self.refresh_chapter_table_signal.emit()
 
@@ -160,12 +172,14 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.move_chapter_down_button.setEnabled(False)
         self.move_chapter_bottom_button.setEnabled(False)
         self.move_chapter_to_button.setEnabled(False)
+        self.delete_chapter_button.setEnabled(False)
 
         self.move_chapter_up_shortcut.setEnabled(False)
         self.move_chapter_top_shortcut.setEnabled(False)
         self.move_chapter_down_shortcut.setEnabled(False)
         self.move_chapter_bottom_shortcut.setEnabled(False)
         self.move_chapter_to_shortcut.setEnabled(False)
+        self.delete_chapter_shortcut.setEnabled(False)
 
     def enable_editable_widgets(self):
         self.move_chapter_up_button.setEnabled(True)
@@ -173,9 +187,16 @@ class MatchChapterToolsLayout(QVBoxLayout):
         self.move_chapter_down_button.setEnabled(True)
         self.move_chapter_bottom_button.setEnabled(True)
         self.move_chapter_to_button.setEnabled(True)
+        self.delete_chapter_button.setEnabled(True)
 
         self.move_chapter_up_shortcut.setEnabled(True)
         self.move_chapter_top_shortcut.setEnabled(True)
         self.move_chapter_down_shortcut.setEnabled(True)
         self.move_chapter_bottom_shortcut.setEnabled(True)
         self.move_chapter_to_shortcut.setEnabled(True)
+        self.delete_chapter_shortcut.setEnabled(True)
+
+    def update_global_chapter_files_list_order_deleting(self, index_to_delete):
+        del GlobalSetting.CHAPTER_FILES_LIST[index_to_delete]
+        del GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_delete]
+        self.refresh_chapter_table()

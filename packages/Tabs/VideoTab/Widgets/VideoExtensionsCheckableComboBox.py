@@ -204,6 +204,8 @@ class VideoExtensionsCheckableComboBox(QComboBox):
 
     def check_extensions_changes(self):
         new_extensions = self.currentData()
+        if self.current_extensions == new_extensions:
+            return
         if self.current_folder_path != "" and not self.current_folder_path.isspace():
             new_files_list = self.get_files_list(new_extensions=new_extensions)
             if new_files_list != self.current_files_list:

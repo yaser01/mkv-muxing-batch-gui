@@ -8,7 +8,7 @@ from packages.Tabs.AudioTab.Widgets.VideoMatchingTable import VideoMatchingTable
 
 
 class MatchAudioLayout(QHBoxLayout):
-    sync_audio_files_with_global_files_after_swap_signal = Signal()
+    sync_audio_files_with_global_files_after_swap_delete_signal = Signal()
 
     def __init__(self, tab_index, parent=None):
         super().__init__()
@@ -27,7 +27,7 @@ class MatchAudioLayout(QHBoxLayout):
         self.audio_table.table.selectionModel().selectionChanged.connect(
             self.send_selection_to_tools_layout
         )
-        self.match_tools_layout.refresh_audio_table_signal.connect(self.show_audio_files_after_swapping)
+        self.match_tools_layout.refresh_audio_table_signal.connect(self.show_audio_files_after_swapping_deleting)
         self.match_tools_layout.selected_audio_row_signal.connect(self.change_selected_audio_row)
 
     def setup_layout(self):
@@ -79,12 +79,12 @@ class MatchAudioLayout(QHBoxLayout):
         self.video_table.show_files()
 
     def show_audio_files(self):
-        self.sync_audio_files_with_global_files_after_swap_signal.emit()
+        self.sync_audio_files_with_global_files_after_swap_delete_signal.emit()
         self.audio_table.show_files()
 
-    def show_audio_files_after_swapping(self):
-        self.sync_audio_files_with_global_files_after_swap_signal.emit()
-        self.audio_table.show_files_after_swapping()
+    def show_audio_files_after_swapping_deleting(self):
+        self.sync_audio_files_with_global_files_after_swap_delete_signal.emit()
+        self.audio_table.show_files_after_swapping_deleting()
 
     def change_selected_audio_row(self, new_selected_row):
         self.audio_table.select_row(new_selected_row)

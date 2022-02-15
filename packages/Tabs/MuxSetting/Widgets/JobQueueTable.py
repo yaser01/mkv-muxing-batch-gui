@@ -16,7 +16,7 @@ from packages.Tabs.MuxSetting.Widgets.StartMuxingWorker import StartMuxingWorker
 from packages.Tabs.MuxSetting.Widgets.StatusWidget import StatusWidget
 from packages.Widgets.ChapterInfoDialog import ChapterInfoDialog
 from packages.Widgets.ErrorCell import ErrorCell
-from packages.Widgets.ErrorDialog import ErrorDialog
+from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
 from packages.Widgets.InfoCell import InfoCell
 from packages.Widgets.InfoWithOptionsCell import InfoWithOptionsCell
 from packages.Widgets.OkCell import OkCell
@@ -522,7 +522,7 @@ class JobQueueTable(TableWidget):
             if self.data[row_index].error_occurred:
                 message = self.data[row_index].muxing_message
                 message += "you can review log file for more details"
-                error_muxing_dialog = ErrorDialog(window_title="Muxing Error", info_message=message)
+                error_muxing_dialog = ErrorMuxingDialog(window_title="Muxing Error", info_message=message)
                 error_muxing_dialog.execute()
             elif self.data[row_index].done:
                 Ok_dialog = OkDialog(window_title="Muxing Done")

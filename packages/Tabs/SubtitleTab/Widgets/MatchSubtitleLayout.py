@@ -8,7 +8,7 @@ from packages.Tabs.SubtitleTab.Widgets.VideoMatchingTable import VideoMatchingTa
 
 
 class MatchSubtitleLayout(QHBoxLayout):
-    sync_subtitle_files_with_global_files_after_swap_signal = Signal()
+    sync_subtitle_files_with_global_files_after_swap_delete_signal = Signal()
 
     def __init__(self, tab_index, parent=None):
         super().__init__()
@@ -27,7 +27,7 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.subtitle_table.table.selectionModel().selectionChanged.connect(
             self.send_selection_to_tools_layout
         )
-        self.match_tools_layout.refresh_subtitle_table_signal.connect(self.show_subtitle_files_after_swapping)
+        self.match_tools_layout.refresh_subtitle_table_signal.connect(self.show_subtitle_files_after_swapping_deleting)
         self.match_tools_layout.selected_subtitle_row_signal.connect(self.change_selected_subtitle_row)
 
     def setup_layout(self):
@@ -79,12 +79,12 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.video_table.show_files()
 
     def show_subtitle_files(self):
-        self.sync_subtitle_files_with_global_files_after_swap_signal.emit()
+        self.sync_subtitle_files_with_global_files_after_swap_delete_signal.emit()
         self.subtitle_table.show_files()
 
-    def show_subtitle_files_after_swapping(self):
-        self.sync_subtitle_files_with_global_files_after_swap_signal.emit()
-        self.subtitle_table.show_files_after_swapping()
+    def show_subtitle_files_after_swapping_deleting(self):
+        self.sync_subtitle_files_with_global_files_after_swap_delete_signal.emit()
+        self.subtitle_table.show_files_after_swapping_deleting()
 
     def change_selected_subtitle_row(self, new_selected_row):
         self.subtitle_table.select_row(new_selected_row)

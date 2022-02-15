@@ -203,6 +203,8 @@ class AudioExtensionsCheckableComboBox(QComboBox):
 
     def check_extensions_changes(self):
         new_extensions = self.currentData()
+        if self.current_extensions == new_extensions:
+            return
         if self.current_folder_path != "" and not self.current_folder_path.isspace():
             new_files_list = self.get_files_list(new_extensions=new_extensions)
             new_files_list_sorted = sort_names_like_windows(new_files_list)

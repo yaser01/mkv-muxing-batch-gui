@@ -54,7 +54,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.chapter_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.chapter_extensions_comboBox.close_list.connect(self.check_extension_changes)
-        self.chapter_match_layout.sync_chapter_files_with_global_files_after_swap_signal.connect(
+        self.chapter_match_layout.sync_chapter_files_with_global_files_after_swap_delete_signal.connect(
             self.sync_chapter_files_with_global_files)
         self.tab_clicked_signal.connect(self.tab_clicked)
         self.chapter_match_layout.chapter_table.drop_folder_and_files_signal.connect(

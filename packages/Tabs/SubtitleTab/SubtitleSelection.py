@@ -75,7 +75,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.subtitle_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.subtitle_extensions_comboBox.close_list.connect(self.check_extension_changes)
-        self.subtitle_match_layout.sync_subtitle_files_with_global_files_after_swap_signal.connect(
+        self.subtitle_match_layout.sync_subtitle_files_with_global_files_after_swap_delete_signal.connect(
             self.sync_subtitle_files_with_global_files)
         self.tab_clicked_signal.connect(self.tab_clicked)
         self.subtitle_match_layout.subtitle_table.drop_folder_and_files_signal.connect(

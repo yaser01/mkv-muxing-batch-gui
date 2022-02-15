@@ -76,7 +76,7 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.audio_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.audio_extensions_comboBox.close_list.connect(self.check_extension_changes)
-        self.audio_match_layout.sync_audio_files_with_global_files_after_swap_signal.connect(
+        self.audio_match_layout.sync_audio_files_with_global_files_after_swap_delete_signal.connect(
             self.sync_audio_files_with_global_files)
         self.tab_clicked_signal.connect(self.tab_clicked)
         self.audio_match_layout.audio_table.drop_folder_and_files_signal.connect(

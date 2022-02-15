@@ -42,8 +42,9 @@ class ChapterMatchingTable(TableFixedHeaderWidget):
             self.table.setVerticalHeaderItem(i, item)
         self.current_files_list = files_list[:]  # for copy the rel elements not refrences
 
-    def show_files_after_swapping(self):
+    def show_files_after_swapping_deleting(self):
         files_list = GlobalSetting.CHAPTER_FILES_LIST
+        self.table.setRowCount(len(files_list))
         for i in range(len(files_list)):
             if files_list[i] != self.current_files_list[i]:
                 item = QTableWidgetItem(" " + files_list[i])
