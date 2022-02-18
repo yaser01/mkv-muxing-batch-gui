@@ -23,7 +23,7 @@ from packages.Tabs.MuxSetting.Widgets.MakeThisTrackDefaultComboBox import MakeTh
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseAudiosCheckBox import OnlyKeepThoseAudiosCheckBox
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseSubtitlesCheckBox import OnlyKeepThoseSubtitlesCheckBox
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
-from packages.Widgets.ErrorDialog import ErrorDialog
+from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
 from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.InvalidPathDialog import *
 
@@ -84,8 +84,8 @@ def check_if_want_to_keep_log_file():
             copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
         except Exception as e:
             write_to_log_file(e)
-            error_dialog = ErrorDialog(window_title="Permission Denied",
-                                       info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
+            error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
+                                             info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
                                                     "permissions on Destination folder")
             error_dialog.execute()
 
