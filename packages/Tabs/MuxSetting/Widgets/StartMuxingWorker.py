@@ -63,7 +63,6 @@ class StartMuxingWorker(QObject):
 
     def __init__(self, data):
         super().__init__()
-        print("R1")
         self.data = data  # type:list[SingleJobData]
         self.current_job = -1
         self.finished_read_log_and_muxing = 0
@@ -78,15 +77,10 @@ class StartMuxingWorker(QObject):
         self.setup_read_mkvmerge_log_thread()
         self.setup_read_mkvpropedit_log_thread()
         self.setup_calculate_crc_thread()
-        print("R2")
         self.start_muxing_process_thread.start()
-        print("R3")
         self.read_log_mkvmerge_thread.start()
-        print("R4")
         self.read_log_mkvpropedit_thread.start()
-        print("R5")
         self.start_crc_calculating_process_thread.start()
-        print("R6")
 
     def run(self):
         try:
