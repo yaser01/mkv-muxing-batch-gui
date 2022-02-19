@@ -184,7 +184,6 @@ class StartMuxingWorker(QObject):
             GlobalSetting.MUXING_ON = True
         else:
             GlobalSetting.MUXING_ON = False
-            self.job_succeeded_signal.emit(self.current_job)
             self.next_job()
 
     # noinspection PyAttributeOutsideInit
