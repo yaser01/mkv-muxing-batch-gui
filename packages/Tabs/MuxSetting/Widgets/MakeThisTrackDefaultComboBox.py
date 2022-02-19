@@ -143,10 +143,13 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         for i in range(self.model().rowCount()):
             if self.model().item(i).text() == "---Track Id---":
                 current_tracks = "id"
+                continue
             elif self.model().item(i).text() == "---Language---":
                 current_tracks = "lang"
+                continue
             elif self.model().item(i).text() == "---Track Name---":
                 current_tracks = "name"
+                continue
             if self.currentIndex() == i:
                 if current_tracks == "id":
                     count_tracks_id += 1
