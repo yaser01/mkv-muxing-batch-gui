@@ -24,6 +24,7 @@ from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseAudiosCheckBox import OnlyKee
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseSubtitlesCheckBox import OnlyKeepThoseSubtitlesCheckBox
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
+from packages.Widgets.FileNotFoundDialog import FileNotFoundDialog
 from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.InvalidPathDialog import *
 
@@ -77,6 +78,16 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
                                                              "setting to apply")
         no_setting_to_apply_dialog.execute()
         return False
+
+
+def check_if_all_input_videos_are_found():
+    for video_file in GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST:
+        if not Path.is_file(Path(video_file)):
+            invalid_dialog = FileNotFoundDialog(window_title="File Not Found",
+                                                error_message="File: \"" + video_file + "\" is not found")
+            invalid_dialog.execute()
+            return False
+    return True
 
 
 def check_if_want_to_keep_log_file():
@@ -364,10 +375,10 @@ class MuxSettingTab(QWidget):
                 os.remove(test_file_name_absolute)
             except Exception as e:
                 write_to_log_file(e)
-                invaild_dialog = InvalidPathDialog(window_title="Permission Denied",
+                invalid_dialog = InvalidPathDialog(window_title="Permission Denied",
                                                    error_message="MKV Muxing Batch GUI lacks write "
                                                                  "permissions on Destination folder")
-                invaild_dialog.execute()
+                invalid_dialog.execute()
                 self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
                 return False
         except Exception as e:
@@ -565,7 +576,8 @@ class MuxSettingTab(QWidget):
 
     def start_multiplexing_button_clicked(self):
         at_least_one_muxing_setting_has_been_selected = check_if_at_least_one_muxing_setting_has_been_selected()
-        if at_least_one_muxing_setting_has_been_selected:
+        all_input_videos_are_found = check_if_all_input_videos_are_found()
+        if at_least_one_muxing_setting_has_been_selected and all_input_videos_are_found:
             destination_path_valid = self.check_destination_path()
             if destination_path_valid:
                 self.setup_log_file()
