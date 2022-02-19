@@ -147,6 +147,8 @@ class GetJsonForMkvmergeJob:
             if self.job.chapter_found:
                 self.chapter_attach_command = add_json_line("--chapters") + \
                                               add_json_line(fix_windows_backslash_path(self.job.chapter_name_absolute))
+            elif GlobalSetting.CHAPTER_DISCARD_OLD:
+                self.discard_old_attachments_command = add_json_line("--no-chapters")
 
     def setup_video_default_duration_fps_command(self):
         if GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:

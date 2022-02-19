@@ -130,6 +130,9 @@ class GetJsonForMkvpropeditJob:
             if self.job.chapter_found:
                 self.chapter_attach_command = add_json_line("--chapters") + \
                                               add_json_line(fix_windows_backslash_path(self.job.chapter_name_absolute))
+            elif GlobalSetting.CHAPTER_DISCARD_OLD:
+                self.chapter_attach_command = add_json_line("--chapters")+add_json_line("")
+
 
     def make_other_subtitle_not_forced(self):
         change_forced_subtitle_commands_list = []
