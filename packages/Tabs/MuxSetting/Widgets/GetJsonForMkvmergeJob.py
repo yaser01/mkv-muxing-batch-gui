@@ -40,6 +40,19 @@ def change_file_extension_to_mkv(file_name):
     return new_file_name_with_mkv_extension
 
 
+def check_type_of_track_chosen(track):
+    value = ""
+    left_bracket_index = track.find("[")
+    right_bracket_index = track.rfind("]")
+    value = track[left_bracket_index + 1:right_bracket_index]
+    if track.find("Track Id: [") == 0:
+        return "id", value
+    elif track.find("Language: [") == 0:
+        return "lang", value
+    elif track.find("Track Name: [") == 0:
+        return "name", value
+
+
 class GetJsonForMkvmergeJob:
     def __init__(self, job: SingleJobData):
         self.job = job
@@ -107,6 +120,8 @@ class GetJsonForMkvmergeJob:
                 get_attribute(data=track["properties"], attribute="forced_track", default_value="no"))
             new_track_info.language = str(
                 get_attribute(data=track["properties"], attribute="language", default_value="eng"))
+            new_track_info.track_name = str(
+                get_attribute(data=track["properties"], attribute="track_name", default_value="UnNamedTrackBeBo"))
             if track["type"] == "audio":
                 self.audios_track_json_info.append(new_track_info)
             elif track["type"] == "subtitles":
@@ -280,26 +295,38 @@ class GetJsonForMkvmergeJob:
 
     def setup_only_keep_those_subtitles(self):
         if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED:
-            if len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES) == 0 and \
-                    len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS) == 0:
+            if len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES) == 0 and \
+                    len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS) == 0 and \
+                    len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES) == 0:
                 self.specify_subtitle_track_source_video_command = add_json_line("--no-subtitles")
             else:
-                only_keep_those_subtitle_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS
-                for language in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES:
+                only_keep_those_subtitle_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS
+                for track_name in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES:
+                    for my_subtitle_track in self.subtitles_track_json_info:
+                        if my_subtitle_track.track_name == track_name:
+                            only_keep_those_subtitle_list.append(my_subtitle_track.id)
+                for language in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES:
                     only_keep_those_subtitle_list.append(ISO_639_2_LANGUAGES[language])
+                only_keep_those_subtitle_list = list(dict.fromkeys(only_keep_those_subtitle_list))
                 self.specify_subtitle_track_source_video_command = add_json_line("--subtitle-tracks")
                 self.specify_subtitle_track_source_video_command += add_json_line(
                     ",".join(only_keep_those_subtitle_list))
 
     def setup_only_keep_those_audios(self):
         if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED:
-            if len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES) == 0 and \
-                    len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS) == 0:
+            if len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES) == 0 and \
+                    len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS) == 0 and \
+                    len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES) == 0:
                 self.specify_audio_track_source_video_command = add_json_line("--no-audio")
             else:
-                only_keep_those_audios_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS
-                for audio in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES:
+                only_keep_those_audios_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS
+                for track_name in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES:
+                    for my_audio_track in self.audios_track_json_info:
+                        if my_audio_track.track_name == track_name:
+                            only_keep_those_audios_list.append(my_audio_track.id)
+                for audio in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES:
                     only_keep_those_audios_list.append(ISO_639_2_LANGUAGES[audio])
+                only_keep_those_audios_list = list(dict.fromkeys(only_keep_those_audios_list))
                 self.specify_audio_track_source_video_command = add_json_line("--audio-tracks")
                 self.specify_audio_track_source_video_command += add_json_line(
                     ",".join(only_keep_those_audios_list))
@@ -308,11 +335,11 @@ class GetJsonForMkvmergeJob:
         if GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED:
             subtitle_track = GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK
             if (not subtitle_track.isspace()) and subtitle_track != "":
+                track_type, track_value = check_type_of_track_chosen(subtitle_track)
                 change_default_subtitle_commands_list = []
                 subtitle_track_id = ""
-                if subtitle_track.find("Track") != -1:
-                    subtitle_track = subtitle_track.split(" ")[1]
-                    subtitle_track_id = delete_trailing_zero_string(subtitle_track)
+                if track_type == "id":
+                    subtitle_track_id = delete_trailing_zero_string(track_value)
                     found_subtitle_with_this_id = False
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.id == subtitle_track_id:
@@ -320,10 +347,15 @@ class GetJsonForMkvmergeJob:
                             break
                     if not found_subtitle_with_this_id:
                         subtitle_track_id = ""
-                else:
-                    subtitle_track_language = ISO_639_2_LANGUAGES[subtitle_track]
+                elif track_type == "lang":
+                    subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.language == subtitle_track_language:
+                            subtitle_track_id = subtitle.id
+                            break
+                elif track_type == "name":
+                    for subtitle in self.subtitles_track_json_info:
+                        if subtitle.track_name == track_value:
                             subtitle_track_id = subtitle.id
                             break
                 if subtitle_track_id != "":
@@ -335,11 +367,11 @@ class GetJsonForMkvmergeJob:
         elif GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED:
             subtitle_track = GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK
             if (not subtitle_track.isspace()) and subtitle_track != "":
+                track_type, track_value = check_type_of_track_chosen(subtitle_track)
                 change_default_subtitle_commands_list = []
                 subtitle_track_id = ""
-                if subtitle_track.find("Track") != -1:
-                    subtitle_track = subtitle_track.split(" ")[1]
-                    subtitle_track_id = delete_trailing_zero_string(subtitle_track)
+                if track_type == "id":
+                    subtitle_track_id = delete_trailing_zero_string(track_value)
                     found_subtitle_with_this_id = False
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.id == subtitle_track_id:
@@ -357,8 +389,8 @@ class GetJsonForMkvmergeJob:
 
                         self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
                             change_default_subtitle_commands_list)
-                else:
-                    subtitle_track_language = ISO_639_2_LANGUAGES[subtitle_track]
+                elif track_type == "lang":
+                    subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
                     found_subtitle_with_this_language = False
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.language == subtitle_track_language:
@@ -377,16 +409,35 @@ class GetJsonForMkvmergeJob:
                                 change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                         self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
                             change_default_subtitle_commands_list)
+                elif track_type == "name":
+                    found_subtitle_with_this_track_name = False
+                    for subtitle in self.subtitles_track_json_info:
+                        if subtitle.track_name == track_value:
+                            found_subtitle_with_this_track_name = True
+                            break
+                    if found_subtitle_with_this_track_name:
+                        for subtitle in self.subtitles_track_json_info:
+                            if subtitle.track_name == track_value and subtitle_track_id == "":
+                                subtitle_track_id = subtitle.id
+                                change_default_subtitle_commands_list.append(add_json_line("--default-track"))
+                                change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                                change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
+                                change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                            else:
+                                change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
+                                change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
+                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                            change_default_subtitle_commands_list)
 
     def make_this_audio_default_forced(self):
         if GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_SEMI_ENABLED:
             audio_track = GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK
             if (not audio_track.isspace()) and audio_track != "":
+                track_type, track_value = check_type_of_track_chosen(audio_track)
                 change_default_audio_commands_list = []
                 audio_track_id = ""
-                if audio_track.find("Track") != -1:
-                    audio_track = audio_track.split(" ")[1]
-                    audio_track_id = delete_trailing_zero_string(audio_track)
+                if track_type == "id":
+                    audio_track_id = delete_trailing_zero_string(track_value)
                     found_audio_with_this_id = False
                     for audio in self.audios_track_json_info:
                         if audio.id == audio_track_id:
@@ -394,10 +445,15 @@ class GetJsonForMkvmergeJob:
                             break
                     if not found_audio_with_this_id:
                         audio_track_id = ""
-                else:
-                    audio_track_language = ISO_639_2_LANGUAGES[audio_track]
+                elif track_type == "lang":
+                    audio_track_language = ISO_639_2_LANGUAGES[track_value]
                     for audio in self.audios_track_json_info:
                         if audio.language == audio_track_language:
+                            audio_track_id = audio.id
+                            break
+                elif track_type == "name":
+                    for audio in self.audios_track_json_info:
+                        if audio.track_name == track_value:
                             audio_track_id = audio.id
                             break
                 if audio_track_id != "":
@@ -409,11 +465,11 @@ class GetJsonForMkvmergeJob:
         elif GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED:
             audio_track = GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK
             if (not audio_track.isspace()) and audio_track != "":
+                track_type, track_value = check_type_of_track_chosen(audio_track)
                 change_default_audio_commands_list = []
                 audio_track_id = ""
-                if audio_track.find("Track") != -1:
-                    audio_track = audio_track.split(" ")[1]
-                    audio_track_id = delete_trailing_zero_string(audio_track)
+                if track_type == "id":
+                    audio_track_id = delete_trailing_zero_string(track_value)
                     found_audio_with_this_id = False
                     for audio in self.audios_track_json_info:
                         if audio.id == audio_track_id:
@@ -431,8 +487,8 @@ class GetJsonForMkvmergeJob:
 
                         self.change_default_forced_audio_track_setting_source_video_command += ''.join(
                             change_default_audio_commands_list)
-                else:
-                    audio_track_language = ISO_639_2_LANGUAGES[audio_track]
+                elif track_type == "lang":
+                    audio_track_language = ISO_639_2_LANGUAGES[track_value]
                     found_audio_with_this_language = False
                     for audio in self.audios_track_json_info:
                         if audio.language == audio_track_language:
@@ -441,6 +497,25 @@ class GetJsonForMkvmergeJob:
                     if found_audio_with_this_language:
                         for audio in self.audios_track_json_info:
                             if audio.language == audio_track_language and audio_track_id == "":
+                                audio_track_id = audio.id
+                                change_default_audio_commands_list.append(add_json_line("--default-track"))
+                                change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))
+                                change_default_audio_commands_list.append(add_json_line("--forced-track"))
+                                change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))
+                            else:
+                                change_default_audio_commands_list.append(add_json_line("--forced-track"))
+                                change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
+                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                            change_default_audio_commands_list)
+                elif track_type == "name":
+                    found_audio_with_this_audio = False
+                    for audio in self.audios_track_json_info:
+                        if audio.track_name == track_value:
+                            found_audio_with_this_audio = True
+                            break
+                    if found_audio_with_this_audio:
+                        for audio in self.audios_track_json_info:
+                            if audio.track_name == track_value and audio_track_id == "":
                                 audio_track_id = audio.id
                                 change_default_audio_commands_list.append(add_json_line("--default-track"))
                                 change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))

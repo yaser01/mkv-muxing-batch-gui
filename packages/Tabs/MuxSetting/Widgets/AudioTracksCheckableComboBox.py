@@ -47,19 +47,22 @@ class AudioTracksCheckableComboBox(TracksCheckableComboBox):
             self.setDisabled(False)
             self.set_tool_tip_hint()
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED = True
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES = self.languages
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS = self.tracks
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES = self.tracks_language
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS = self.tracks_id
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES = self.tracks_name
         else:
             self.setDisabled(True)
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED = False
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES = []
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES = []
 
     def refresh_tracks(self):
         videos = GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST.copy()
         new_list = []
         audios_track_ids = []
         audios_track_languages = []
+        audios_track_names = []
         for video_name in videos:
             string_name_hash = hashlib.sha1((str(video_name)).encode('utf-8')).hexdigest()
             media_info_file_path = os.path.join(GlobalFiles.MediaInfoFolderPath, string_name_hash + ".json")
@@ -73,21 +76,31 @@ class AudioTracksCheckableComboBox(TracksCheckableComboBox):
                         get_attribute(data=track["properties"], attribute="language", default_value="UND"))
                     language_symbol = language.lower()
                     audios_track_languages.append(ISO_639_2_SYMBOLS.get(language_symbol, "Undetermined"))
+                    name = str(get_attribute(data=track["properties"], attribute="track_name",
+                                             default_value="UnNamedTrackBeBo"))
+                    if name != "UnNamedTrackBeBo":
+                        audios_track_names.append(name)
 
         audios_track_ids = list(dict.fromkeys(audios_track_ids))
         audios_track_languages = list(dict.fromkeys(audios_track_languages))
+        audios_track_names = list(dict.fromkeys(audios_track_names))
         for i in range(len(audios_track_ids)):
             audios_track_ids[i] = convert_string_integer_to_two_digit_string(audios_track_ids[i])
         audios_track_ids.sort()
         audios_track_languages.sort()
+        audios_track_names.sort()
         if len(audios_track_ids) > 0:
-            new_list = ["---Tracks---"]
+            new_list = ["---Track Id---"]
             new_list.extend(generate_track_ids(audios_track_ids))
         if len(audios_track_languages) > 0:
-            new_list.append("---Languages---")
+            new_list.append("---Language---")
             new_list.extend(audios_track_languages)
+        if len(audios_track_names) > 0:
+            new_list.append("---Track Name---")
+            new_list.extend(audios_track_names)
         if new_list != self.current_list:
             self.addItems(new_list)
             self.audio_tracks_changed_signal.emit(new_list)
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES = []
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES = []

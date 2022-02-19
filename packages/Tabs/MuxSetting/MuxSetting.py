@@ -86,7 +86,7 @@ def check_if_want_to_keep_log_file():
             write_to_log_file(e)
             error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
                                              info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
-                                                    "permissions on Destination folder")
+                                                          "permissions on Destination folder")
             error_dialog.execute()
 
 
@@ -496,12 +496,14 @@ class MuxSettingTab(QWidget):
         self.remove_old_crc_checksum_checkBox.setEnabled(True)
 
     def only_keep_those_audios_close_list(self):
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES = self.only_keep_those_audios_multi_choose_comboBox.languages
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS = self.only_keep_those_audios_multi_choose_comboBox.tracks
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES = self.only_keep_those_audios_multi_choose_comboBox.tracks_language
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS = self.only_keep_those_audios_multi_choose_comboBox.tracks_id
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES = self.only_keep_those_audios_multi_choose_comboBox.tracks_name
 
     def only_keep_those_subtitles_close_list(self):
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES = self.only_keep_those_subtitles_multi_choose_comboBox.languages
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS = self.only_keep_those_subtitles_multi_choose_comboBox.tracks
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES = self.only_keep_those_subtitles_multi_choose_comboBox.tracks_language
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS = self.only_keep_those_subtitles_multi_choose_comboBox.tracks_id
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES = self.only_keep_those_subtitles_multi_choose_comboBox.tracks_name
 
     def disable_make_this_subtitle_default_comboBox(self, state):
         self.make_this_subtitle_default_comboBox.setDisabled(state)
@@ -515,11 +517,11 @@ class MuxSettingTab(QWidget):
 
     def make_this_audio_default_comboBox_text_changed(self):
         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = str(
-            self.make_this_audio_default_comboBox.currentText())
+            self.make_this_audio_default_comboBox.current_text)
 
     def make_this_subtitle_default_comboBox_text_changed(self):
         GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK = str(
-            self.make_this_subtitle_default_comboBox.currentText())
+            self.make_this_subtitle_default_comboBox.current_text)
 
     def update_task_bar_progress(self, new_progress):
         self.update_task_bar_progress_signal.emit(new_progress)
