@@ -63,7 +63,6 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
             check_is_there_audio_to_mux() or \
             len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
             len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or \
-            GlobalSetting.CHAPTER_DISCARD_OLD or \
             GlobalSetting.ATTACHMENT_DISCARD_OLD or \
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
