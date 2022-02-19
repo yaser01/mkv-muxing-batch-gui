@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 import os
 from PySide2.QtCore import QThread, Signal
@@ -165,6 +166,15 @@ def calculate_size_after_muxing(finished_job: SingleJobData):
     except:
         output_video_size_bytes = 0
     return output_video_size_bytes
+
+
+def rename_file(file_name_old_crc_absolute_path, file_name_with_crc_absolute_path):
+    for i in range(500):
+        try:
+            os.rename(file_name_old_crc_absolute_path, file_name_with_crc_absolute_path)
+            return
+        except Exception as e:
+            time.sleep(0.05)
 
 
 class JobQueueTable(TableWidget):
@@ -670,16 +680,6 @@ class JobQueueTable(TableWidget):
         else:
             return Path(GlobalSetting.DESTINATION_FOLDER_PATH)
 
-    def rename_output_file(self, ):
-        crc_string = crc_data.crc_string
-        job_index = crc_data.job_index
-        output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
-        file_name_with_crc = Path(get_file_name_with_crc(output_video_name, crc_string))
-        output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
-        file_name_with_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, file_name_with_crc)
-        file_name_without_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, output_video_name)
-        os.rename(file_name_without_crc_absolute_path, file_name_with_crc_absolute_path)
-
     def update_muxing_progress(self, job_index, new_progress, params):
         self.total_progress -= self.data[job_index].progress
         self.data[job_index].progress = new_progress
@@ -702,7 +702,7 @@ class JobQueueTable(TableWidget):
             output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
             file_name_with_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, file_name_with_crc)
             file_name_old_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute, output_video_name)
-            os.rename(file_name_old_crc_absolute_path, file_name_with_crc_absolute_path)
+            rename_file(file_name_old_crc_absolute_path, file_name_with_crc_absolute_path)
             self.data[job_index].output_video_name = file_name_with_crc
             self.data[job_index].output_video_absolute_path = file_name_with_crc_absolute_path
         elif self.data[job_index].is_crc_removing_required:
@@ -712,7 +712,7 @@ class JobQueueTable(TableWidget):
             file_name_without_crc = Path(get_file_name_without_crc(output_video_name))
             file_name_without_crc_absolute_path = os.path.join(output_file_name_folder_path_absolute,
                                                                file_name_without_crc)
-            os.rename(file_name_old_absolute_path, file_name_without_crc_absolute_path)
+            rename_file(file_name_old_absolute_path, file_name_without_crc_absolute_path)
             self.data[job_index].output_video_name = file_name_without_crc
             self.data[job_index].output_video_absolute_path = file_name_without_crc_absolute_path
         else:
