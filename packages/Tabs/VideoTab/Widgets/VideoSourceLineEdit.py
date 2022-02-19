@@ -78,7 +78,6 @@ class VideoSourceLineEdit(QLineEdit):
                 new_path = ""
             self.edit_finished_signal.emit(new_path)
         self.stop_check_path = False
-        print("DONE")
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

@@ -367,7 +367,6 @@ class VideoSelectionSetting(GlobalSetting):
         self.unsupported_files_list = []
         if len(not_duplicate_files_absolute_path_list) > 0:
             self.unsupported_files_list = start_loading_new_videos_dialog(not_duplicate_files_absolute_path_list)
-            print(self.unsupported_files_list)
             if len(self.unsupported_files_list) > 0:
                 not_duplicate_files_and_supported_absolute_path_list = []
                 for new_file_name in not_duplicate_files_absolute_path_list:

@@ -204,5 +204,4 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
     def update_global_subtitle_files_list_order_deleting(self, index_to_delete):
         del GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_delete]
         del GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_delete]
-        print(GlobalSetting.SUBTITLE_FILES_LIST)
         self.refresh_subtitle_table()
