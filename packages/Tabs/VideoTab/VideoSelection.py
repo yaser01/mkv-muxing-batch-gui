@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, QMetaMethod
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
@@ -84,7 +84,6 @@ class VideoSelectionSetting(GlobalSetting):
         self.setLayout(self.main_layout)
 
     def update_folder_path(self, new_path: str):
-
         if new_path != "":
             self.video_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
@@ -424,10 +423,9 @@ class VideoSelectionSetting(GlobalSetting):
             pass
 
     def video_source_lineEdit_connect_edit_finished_signal(self):
-        try:
+        edit_finished_signal = QMetaMethod(self.video_source_lineEdit.edit_finished_signal)
+        if not self.video_source_lineEdit.isSignalConnected(edit_finished_signal):
             self.video_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
-        except Exception as e:
-            pass
 
     def enable_editable_widgets(self):
         self.video_source_lineEdit_connect_edit_finished_signal()
