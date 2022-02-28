@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal, QMetaMethod
+from PySide2.QtCore import Signal, QMetaMethod, SIGNAL
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
@@ -407,7 +407,6 @@ class VideoSelectionSetting(GlobalSetting):
             warning_dialog.execute_wth_no_block()
 
     def disable_editable_widgets(self):
-        self.video_source_lineEdit_disconnect_edit_finished_signal()
         self.video_extensions_comboBox.setEnabled(False)
         self.video_source_lineEdit.setEnabled(False)
         self.video_source_button.setEnabled(False)
@@ -416,19 +415,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.table.setAcceptDrops(False)
         self.table.disable_selection()
 
-    def video_source_lineEdit_disconnect_edit_finished_signal(self):
-        try:
-            self.video_source_lineEdit.edit_finished_signal.disconnect()
-        except Exception as e:
-            pass
-
-    def video_source_lineEdit_connect_edit_finished_signal(self):
-        edit_finished_signal = QMetaMethod(self.video_source_lineEdit.edit_finished_signal)
-        if not self.video_source_lineEdit.isSignalConnected(edit_finished_signal):
-            self.video_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
-
     def enable_editable_widgets(self):
-        self.video_source_lineEdit_connect_edit_finished_signal()
         self.video_extensions_comboBox.setEnabled(True)
         self.video_source_lineEdit.setEnabled(True)
         self.video_source_button.setEnabled(True)
