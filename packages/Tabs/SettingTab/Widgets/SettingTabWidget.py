@@ -1,3 +1,4 @@
+import PySide2
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
@@ -50,10 +51,10 @@ class SettingTabWidget(QWidget):
                                                                          default_extensions_list=DefaultOptions.Default_Chapter_Extensions)
 
         self.default_subtitle_language_layout = DefaultLanguageLayout(label_name="Subtitle Language: ",
-                                                                      languages_list=AllSubtitlesLanguages,
+                                                                      languages_list=DefaultOptions.Default_Favorite_Subtitle_Languages,
                                                                       default_language=DefaultOptions.Default_Subtitle_Language)
         self.default_audio_language_layout = DefaultLanguageLayout(label_name="Audio Language: ",
-                                                                   languages_list=AllAudiosLanguages,
+                                                                   languages_list=DefaultOptions.Default_Favorite_Audio_Languages,
                                                                    default_language=DefaultOptions.Default_Audio_Language)
         self.setting_info_text_icon_label = QLabel()
         self.setting_info_text_icon_label.setPixmap(QPixmap(InfoIconPath))
@@ -109,8 +110,20 @@ class SettingTabWidget(QWidget):
         self.default_extensions_layout.addLayout(self.default_chapter_extensions_layout, 1, 1)
 
     def setup_default_languages_layout(self):
-        self.default_languages_layout.addLayout(self.default_subtitle_language_layout, 0, 0)
-        self.default_languages_layout.addLayout(self.default_audio_language_layout, 0, 1)
+        self.default_languages_layout.addWidget(self.default_subtitle_language_layout.label, 0, 0)
+        self.default_languages_layout.addWidget(self.default_subtitle_language_layout.languages_comboBox, 0, 1)
+        self.default_languages_layout.addWidget(self.default_subtitle_language_layout.setting_button, 0, 2)
+        self.default_languages_layout.addWidget(QLabel(" "), 0, 3)
+        self.default_languages_layout.addWidget(self.default_audio_language_layout.label, 0, 4)
+        self.default_languages_layout.addWidget(self.default_audio_language_layout.languages_comboBox, 0, 5)
+        self.default_languages_layout.addWidget(self.default_audio_language_layout.setting_button, 0, 6)
+        self.default_languages_layout.setColumnStretch(0, 0)
+        self.default_languages_layout.setColumnStretch(1, 1)
+        self.default_languages_layout.setColumnStretch(2, 0)
+        self.default_languages_layout.setColumnStretch(3, 0)
+        self.default_languages_layout.setColumnStretch(4, 0)
+        self.default_languages_layout.setColumnStretch(5, 1)
+        self.default_languages_layout.setColumnStretch(6, 0)
 
     def connect_signals(self):
         pass

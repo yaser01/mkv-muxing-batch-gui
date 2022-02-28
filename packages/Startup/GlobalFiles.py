@@ -1,14 +1,11 @@
 import os
-import shutil
 import sys
-import json
 from os import listdir
-from os.path import isfile, join
 from pathlib import Path
 from PySide2.QtGui import QPixmap, QIcon
 import tempfile
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.ReadSettingFile import read_setting_file
 from packages.Widgets.MissingFilesMessage import MissingFilesMessage
 # noinspection PyUnresolvedReferences
 import packages.Startup.MainApplication
@@ -40,60 +37,6 @@ def delete_old_media_files():
             os.remove(file_name)
         except Exception as e:
             pass
-
-
-def get_data_from_json(json, attribute):
-    try:
-        return json[attribute]
-    except Exception as e:
-        return ""
-
-
-def read_setting_file():
-    setting_file_path = Path(SettingJsonInfoFilePath)
-    if setting_file_path.is_file():
-        with open(setting_file_path, "r+", encoding="UTF-8") as setting_file:
-            data = json.load(setting_file)
-            DefaultOptions.Default_Video_Directory = get_data_from_json(json=data, attribute="Default_Video_Directory")
-            DefaultOptions.Default_Video_Extensions = get_data_from_json(json=data,
-                                                                         attribute="Default_Video_Extensions")
-            DefaultOptions.Default_Subtitle_Directory = get_data_from_json(json=data,
-                                                                           attribute="Default_Subtitle_Directory")
-            DefaultOptions.Default_Subtitle_Extensions = get_data_from_json(json=data,
-                                                                            attribute="Default_Subtitle_Extensions")
-            DefaultOptions.Default_Subtitle_Language = get_data_from_json(json=data,
-                                                                          attribute="Default_Subtitle_Language")
-            DefaultOptions.Default_Audio_Directory = get_data_from_json(json=data, attribute="Default_Audio_Directory")
-            DefaultOptions.Default_Audio_Extensions = get_data_from_json(json=data,
-                                                                         attribute="Default_Audio_Extensions")
-            DefaultOptions.Default_Audio_Language = get_data_from_json(json=data, attribute="Default_Audio_Language")
-            DefaultOptions.Default_Chapter_Directory = get_data_from_json(json=data,
-                                                                          attribute="Default_Chapter_Directory")
-            DefaultOptions.Default_Chapter_Extensions = get_data_from_json(json=data,
-                                                                           attribute="Default_Chapter_Extensions")
-            DefaultOptions.Default_Attachment_Directory = get_data_from_json(json=data,
-                                                                             attribute="Default_Attachment_Directory")
-            DefaultOptions.Default_Destination_Directory = get_data_from_json(json=data,
-                                                                              attribute="Default_Destination_Directory")
-
-
-
-    else:
-        setting_data = {"Default_Video_Directory": DefaultOptions.Default_Video_Directory,
-                        "Default_Video_Extensions": DefaultOptions.Default_Video_Extensions,
-                        "Default_Subtitle_Directory": DefaultOptions.Default_Subtitle_Directory,
-                        "Default_Subtitle_Extensions": DefaultOptions.Default_Subtitle_Extensions,
-                        "Default_Subtitle_Language": DefaultOptions.Default_Subtitle_Language,
-                        "Default_Audio_Directory": DefaultOptions.Default_Audio_Directory,
-                        "Default_Audio_Extensions": DefaultOptions.Default_Audio_Extensions,
-                        "Default_Audio_Language": DefaultOptions.Default_Audio_Language,
-                        "Default_Chapter_Directory": DefaultOptions.Default_Chapter_Directory,
-                        "Default_Chapter_Extensions": DefaultOptions.Default_Chapter_Extensions,
-                        "Default_Attachment_Directory": DefaultOptions.Default_Attachment_Directory,
-                        "Default_Destination_Directory": DefaultOptions.Default_Destination_Directory
-                        }
-        with open(setting_file_path, "w+", encoding="UTF-8") as setting_file:
-            json.dump(setting_data, setting_file)
 
 
 script_path = sys.argv[0]  # get path of the this file
@@ -132,6 +75,8 @@ try:
     InfoBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'InfoBig.png')
     OkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Ok.png')
     ErrorIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Error.png')
+    LeftArrowIconPath = os.path.join(os.path.abspath(IconFolderPath), 'LeftArrow.png')
+    RightArrowIconPath = os.path.join(os.path.abspath(IconFolderPath), 'RightArrow.png')
     ErrorBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'ErrorBig.png')
     ClearIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Clear.svg')
     RefreshIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Refresh.svg')
@@ -174,6 +119,8 @@ try:
     SettingIcon = QIcon(QPixmap(SettingIconPath))
     TelegramIcon = QIcon(QPixmap(TelegramIconPath))
     TwitterIcon = QIcon(QPixmap(TwitterIconPath))
+    LeftArrowIcon = QIcon(QPixmap(LeftArrowIconPath))
+    RightArrowIcon = QIcon(QPixmap(RightArrowIconPath))
     AppIcon = QIcon(QPixmap(AppIconPath))
     LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
     AppLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "app_log.txt")
@@ -184,8 +131,7 @@ try:
     SettingJsonInfoFilePath = os.path.join(os.path.abspath(TempFolderPath), "setting.json")
     MKVPROPEDIT_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvpropedit")
     MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
-
-    read_setting_file()
+    read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
 except Exception as e:
     missing_files_message = MissingFilesMessage(error_message=str(e))
     missing_files_message.execute()
