@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import signal
 import sys
+from traceback import format_exception
 from datetime import datetime
 
 import psutil
@@ -59,8 +60,9 @@ def kill_all_children():
 
 def logger_exception(exception_type, exception_value, exception_trace_back):
     with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
-        log_file.write(str(datetime.utcnow()) + ' ' + str(exception_type) + "\n" + str(exception_value) + "\n" + str(
-            exception_trace_back) + '\n')
+        log_file.write(str(datetime.utcnow()) + '\n')
+        for string in format_exception(exception_type, exception_value, exception_trace_back):
+            log_file.write(string)
 
 
 def setup_logger():
