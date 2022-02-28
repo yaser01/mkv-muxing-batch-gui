@@ -7,4 +7,7 @@ class ProgressBar(QProgressBar):
         self.value = value
         self.setValue(self.value)
         self.setTextVisible(show_percentage)
-        self.setStyle(QStyleFactory.create("windowsvista"))
+        try:
+            self.setStyle(QStyleFactory.create("windowsvista"))
+        except Exception as e:
+            pass
