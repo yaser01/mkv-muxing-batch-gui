@@ -13,9 +13,7 @@ class SubtitleLanguageComboBox(QComboBox):
         self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
-        print(DefaultOptions.Default_Favorite_Subtitle_Languages)
         self.addItems(DefaultOptions.Default_Favorite_Subtitle_Languages)
-        print(DefaultOptions.Default_Favorite_Subtitle_Languages)
         self.setCurrentIndex(DefaultOptions.Default_Favorite_Subtitle_Languages.index(DefaultOptions.Default_Subtitle_Language))
         self.setToolTip(DefaultOptions.Default_Subtitle_Language)
         self.setMaxVisibleItems(8)
