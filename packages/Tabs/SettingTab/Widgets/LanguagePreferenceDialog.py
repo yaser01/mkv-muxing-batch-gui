@@ -66,8 +66,8 @@ class LanguagePreferenceDialog(QDialog):
 
     def setup_dialog_buttons_layout(self):
         self.dialog_buttons_layout.addStretch()
-        self.dialog_buttons_layout.addWidget(self.cancel_button)
         self.dialog_buttons_layout.addWidget(self.ok_button)
+        self.dialog_buttons_layout.addWidget(self.cancel_button)
         self.dialog_buttons_layout.addStretch()
 
     def setup_main_layout(self):
