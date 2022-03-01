@@ -48,6 +48,8 @@ class LanguagePreferenceDialog(QDialog):
         self.tools_layout.addWidget(self.add_language_button)
         self.tools_layout.addWidget(self.remove_language_button)
         self.tools_layout.addStretch()
+        self.add_language_button.setEnabled(False)
+        self.remove_language_button.setEnabled(False)
 
     def setup_selected_language_layout(self):
         self.selected_language_layout.addWidget(self.selected_language_label)
