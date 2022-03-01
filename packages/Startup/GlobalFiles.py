@@ -11,11 +11,29 @@ from packages.Widgets.MissingFilesMessage import MissingFilesMessage
 import packages.Startup.MainApplication
 
 
-def create_temp_folder_path():
-    temp_folder_path = tempfile.gettempdir()
-    my_temp_folder_path = os.path.join(os.path.abspath(temp_folder_path), Path('MKV Muxing Batch GUI'))
-    os.makedirs(my_temp_folder_path, exist_ok=True)
-    return my_temp_folder_path
+def create_app_data_folder():
+    """
+        Returns a parent directory path
+        where persistent application data can be stored.
+
+        # linux: ~/.local/share
+        # macOS: ~/Library/Application Support
+        # windows: C:/Users/<USER>/AppData/Roaming
+        """
+    home = Path.home()
+    app_data = ""
+    if sys.platform == "win32":
+        app_data = home / "AppData/Roaming"
+    elif sys.platform == "linux":
+        app_data = home / ".local/share"
+    elif sys.platform == "darwin":
+        app_data = home / "Library/Application Support"
+    my_app_data_folder = app_data / "MKV Muxing Batch GUI"
+    try:
+        os.makedirs(my_app_data_folder, exist_ok=True)
+    except Exception as e:
+        pass
+    return my_app_data_folder
 
 
 def get_file_name_absolute_path(file_name, folder_path):
@@ -46,9 +64,9 @@ FontFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Fonts'))
 IconFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Icons'))
 ToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
 LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
-TempFolderPath = create_temp_folder_path()
-MergeLogsFolderPath = os.path.join(os.path.abspath(TempFolderPath), Path('Logs'))
-MediaInfoFolderPath = os.path.join(os.path.abspath(TempFolderPath), Path('MediaInfo'))
+AppDataFolderPath = create_app_data_folder()
+MergeLogsFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('Logs'))
+MediaInfoFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('MediaInfo'))
 os.makedirs(MergeLogsFolderPath, exist_ok=True)
 os.makedirs(MediaInfoFolderPath, exist_ok=True)
 delete_old_media_files()
@@ -123,12 +141,12 @@ try:
     RightArrowIcon = QIcon(QPixmap(RightArrowIconPath))
     AppIcon = QIcon(QPixmap(AppIconPath))
     LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
-    AppLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "app_log.txt")
-    MuxingLogFilePath = os.path.join(os.path.abspath(TempFolderPath), "muxing_log_file.txt")
-    mkvpropeditJsonJobFilePath = os.path.join(os.path.abspath(TempFolderPath), "mkvpropeditJob.json")
-    mkvmergeJsonJobFilePath = os.path.join(os.path.abspath(TempFolderPath), "MkvmergeJob.json")
-    mkvmergeJsonInfoFilePath = os.path.join(os.path.abspath(TempFolderPath), "MkvmergeInfo.json")
-    SettingJsonInfoFilePath = os.path.join(os.path.abspath(TempFolderPath), "setting.json")
+    AppLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "app_log.txt")
+    MuxingLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "muxing_log_file.txt")
+    mkvpropeditJsonJobFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "mkvpropeditJob.json")
+    mkvmergeJsonJobFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "MkvmergeJob.json")
+    mkvmergeJsonInfoFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "MkvmergeInfo.json")
+    SettingJsonInfoFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "setting.json")
     MKVPROPEDIT_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvpropedit")
     MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
     read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)

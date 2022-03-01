@@ -14,5 +14,5 @@ class DefaultOptions(QWidget):
     Default_Audio_Directory = ""
     Default_Attachment_Directory = ""
     Default_Destination_Directory = ""
-    Default_Favorite_Subtitle_Languages = []
-    Default_Favorite_Audio_Languages = []
+    Default_Favorite_Subtitle_Languages = ['English']
+    Default_Favorite_Audio_Languages = ['English']

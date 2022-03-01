@@ -14,7 +14,7 @@ def get_data_from_json(json, attribute):
 def read_setting_file(setting_json_info_file_path, all_languages_file_path):
     with open(all_languages_file_path, "r", encoding="UTF-8") as language_file:
         all_languages = json.load(language_file)
-    all_languages=list(all_languages.keys())
+    all_languages = list(all_languages.keys())
     setting_file_path = Path(setting_json_info_file_path)
     if setting_file_path.is_file():
         with open(setting_file_path, "r+", encoding="UTF-8") as setting_file:

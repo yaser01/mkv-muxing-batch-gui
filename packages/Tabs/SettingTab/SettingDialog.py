@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QHBoxLayout, \
     QDialog, QGridLayout, QLabel, QPushButton
 
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, create_temp_folder_path
+from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, create_app_data_folder
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
@@ -113,7 +113,7 @@ class SettingDialog(QDialog):
             with open(setting_file_path, "w+", encoding="UTF-8") as setting_file:
                 json.dump(new_setting_data, setting_file)
         else:
-            create_temp_folder_path()
+            create_app_data_folder()
             with open(setting_file_path, "w+", encoding="UTF-8") as setting_file:
                 json.dump(new_setting_data, setting_file)
 
