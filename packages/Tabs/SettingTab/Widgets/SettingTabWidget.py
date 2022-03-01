@@ -95,7 +95,7 @@ class SettingTabWidget(QWidget):
 
     def setup_default_languages_groupBox(self):
         self.default_languages_groupBox.setStyle(QStyleFactory.create("windowsvista"))
-        self.default_languages_groupBox.setTitle("Default Language")
+        self.default_languages_groupBox.setTitle("Favorite Languages List")
         self.default_languages_groupBox.setLayout(self.default_languages_layout)
 
     def setup_default_directories_layout(self):
