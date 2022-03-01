@@ -11,8 +11,6 @@ def open_about_dialog():
 
 
 class AboutButton(QPushButton):
-    clear_signal = Signal()
-
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalFiles.AboutIcon)

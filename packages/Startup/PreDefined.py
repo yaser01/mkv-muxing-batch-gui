@@ -44,3 +44,4 @@ AllVideoDefaultDurationFPSLanguages = ['Default', '24p', '25p', '30p', '48p', '5
 GitHubRepoUrlTag = "<a href=\"https://github.com/yaser01/mkv-muxing-batch-gui\">Our Home Page</a> "
 GPLV2UrlTag = "<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a>"
 GitHubIssuesUrlTag = "<a href=\"https://github.com/yaser01/mkv-muxing-batch-gui/issues\">issues page</a>"
+DonationsUrl = "https://www.buymeacoffee.com/yaser01"

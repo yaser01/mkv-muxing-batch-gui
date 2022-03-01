@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QLabel, \
 from packages.Startup.GlobalFiles import AppIconPath, AboutIcon
 from packages.Startup.PreDefined import GitHubRepoUrlTag, GPLV2UrlTag, GitHubIssuesUrlTag
 from packages.Startup.Version import Version
+from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
 from packages.Tabs.SettingTab.Widgets.TelegramLabel import TelegramLabel
 from packages.Tabs.SettingTab.Widgets.TwitterLabel import TwitterLabel
 
@@ -28,7 +29,7 @@ class AboutDialog(QDialog):
                                         "warranty of design and fitness for a particular purpose")
         self.app_warranty_label.setAlignment(Qt.AlignCenter)
         self.app_bug_report_label = QLabel(
-            "you can report issues on the " + GitHubIssuesUrlTag)
+            "You can report issues on the " + GitHubIssuesUrlTag)
         self.app_bug_report_label.setOpenExternalLinks(True)
         self.app_bug_report_issue_link_label = QLabel("please visit the " + GitHubIssuesUrlTag)
         self.app_bug_report_issue_link_label.setOpenExternalLinks(True)
@@ -37,6 +38,12 @@ class AboutDialog(QDialog):
         self.social_twitter_label = TwitterLabel()
         self.social_telegram_label = TelegramLabel()
         self.ok_button = QPushButton("OK")
+        self.donate_button = DonateButton()
+        self.buttons_layout = QHBoxLayout()
+        self.buttons_layout.addStretch(0)
+        #self.buttons_layout.addWidget(self.donate_button)
+        self.buttons_layout.addWidget(self.ok_button)
+        self.buttons_layout.addStretch(0)
         self.social_media_layout = QHBoxLayout()
         self.social_media_layout.addWidget(QLabel(""), stretch=3)
         self.social_media_layout.addWidget(self.social_twitter_label, stretch=0)
@@ -55,7 +62,7 @@ class AboutDialog(QDialog):
         # self.main_layout.addWidget(self.app_bug_report_issue_link_label, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_follow_me_label, alignment=Qt.AlignCenter)
         self.main_layout.addLayout(self.social_media_layout)
-        self.main_layout.addWidget(self.ok_button, alignment=Qt.AlignCenter)
+        self.main_layout.addLayout(self.buttons_layout)
         # self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.setLayout(self.main_layout)
         self.setup_ui()

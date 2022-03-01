@@ -13,6 +13,7 @@ from packages.Tabs.SettingTab.Widgets.AboutButton import AboutButton
 from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLayout import DefaultDirectoryLayout
 from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExtensionsLayout
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
+from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
 
 
 class SettingTabWidget(QWidget):
@@ -60,8 +61,10 @@ class SettingTabWidget(QWidget):
         self.setting_info_text_icon_label.setPixmap(QPixmap(InfoIconPath))
         self.setting_info_text_label = QLabel("Changes will apply on next launch")
         self.setting_about_button = AboutButton()
+        self.setting_donate_button = DonateButton()
         self.setting_info_layout.addWidget(self.setting_info_text_icon_label, stretch=0)
         self.setting_info_layout.addWidget(self.setting_info_text_label, stretch=1)
+        self.setting_info_layout.addWidget(self.setting_donate_button, stretch=0, alignment=Qt.AlignRight)
         self.setting_info_layout.addWidget(self.setting_about_button, stretch=0, alignment=Qt.AlignRight)
         self.main_layout = QVBoxLayout()
         self.setup_main_layout()
