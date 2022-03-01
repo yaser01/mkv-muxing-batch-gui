@@ -1,5 +1,7 @@
 from PySide2.QtWidgets import QProgressBar, QStyleFactory
 
+from packages.Startup.GlobalFiles import WindowsStyle
+
 
 class ProgressBar(QProgressBar):
     def __init__(self, value=0, show_percentage=False):
@@ -7,7 +9,4 @@ class ProgressBar(QProgressBar):
         self.value = value
         self.setValue(self.value)
         self.setTextVisible(show_percentage)
-        try:
-            self.setStyle(QStyleFactory.create("windowsvista"))
-        except Exception as e:
-            pass
+        self.setStyle(WindowsStyle)
