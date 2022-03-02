@@ -144,7 +144,6 @@ try:
     RightArrowIcon = QIcon(QPixmap(RightArrowIconPath))
     DonationsIcon = QIcon(QPixmap(DonationsIconPath))
     AppIcon = QIcon(QPixmap(AppIconPath))
-    WindowsStyle = QStyleFactory.create("windowsvista")
     LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
     AppLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "app_log.txt")
     MuxingLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "muxing_log_file.txt")

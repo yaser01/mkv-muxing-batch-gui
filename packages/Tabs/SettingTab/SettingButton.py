@@ -1,3 +1,5 @@
+import time
+
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QPushButton
 
@@ -14,5 +16,10 @@ class SettingButton(QPushButton):
         self.clicked.connect(self.open_setting_dialog)
 
     def open_setting_dialog(self):
-        setting_dialog = SettingDialog()
-        setting_dialog.execute()
+        for i in range(2000):
+            try:
+                setting_dialog = SettingDialog()
+                setting_dialog.execute()
+                break
+            except Exception as e:
+                time.sleep(0.003)
