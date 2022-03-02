@@ -58,7 +58,7 @@ class SettingTabWidget(QWidget):
                                                                    default_language=DefaultOptions.Default_Audio_Language)
         self.setting_info_text_icon_label = QLabel()
         self.setting_info_text_icon_label.setPixmap(QPixmap(InfoIconPath))
-        self.setting_info_text_label = QLabel("Changes will apply on next launch")
+        self.setting_info_text_label = QLabel("Changes will take effect on next launch")
         self.setting_about_button = AboutButton()
         self.setting_donate_button = DonateButton()
         self.setting_info_layout.addWidget(self.setting_info_text_icon_label, stretch=0)
