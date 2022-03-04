@@ -75,8 +75,8 @@ class SettingDialog(QDialog):
         new_default_subtitle_language = self.setting_tab_widget.default_subtitle_language_layout.languages_comboBox.currentText()
         new_default_audio_language = self.setting_tab_widget.default_audio_language_layout.languages_comboBox.currentText()
 
-        new_default_subtitle_language_favorite_list = self.setting_tab_widget.default_subtitle_language_layout.current_languages_list
-        new_default_audio_language_favorite_list = self.setting_tab_widget.default_audio_language_layout.current_languages_list
+        new_default_subtitle_language_favorite_list = self.setting_tab_widget.default_subtitle_language_layout.current_languages_list.copy()
+        new_default_audio_language_favorite_list = self.setting_tab_widget.default_audio_language_layout.current_languages_list.copy()
 
         DefaultOptions.Default_Video_Directory = new_default_video_directory
         DefaultOptions.Default_Video_Extensions = new_default_video_extensions
@@ -90,8 +90,8 @@ class SettingDialog(QDialog):
         DefaultOptions.Default_Chapter_Extensions = new_default_chapter_extensions
         DefaultOptions.Default_Attachment_Directory = new_default_attachment_directory
         DefaultOptions.Default_Destination_Directory = new_default_destination_directory
-        DefaultOptions.Default_Favorite_Subtitle_Languages = new_default_subtitle_language_favorite_list
-        DefaultOptions.Default_Favorite_Audio_Languages = new_default_audio_language_favorite_list
+        DefaultOptions.Default_Favorite_Subtitle_Languages = new_default_subtitle_language_favorite_list.copy()
+        DefaultOptions.Default_Favorite_Audio_Languages = new_default_audio_language_favorite_list.copy()
         new_setting_data = {
             "Default_Video_Directory": DefaultOptions.Default_Video_Directory,
             "Default_Video_Extensions": DefaultOptions.Default_Video_Extensions,

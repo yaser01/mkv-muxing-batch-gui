@@ -6,3 +6,4 @@ class SingleTrackData:
         self.is_forced = ""
         self.language = ""
         self.track_name = ""
+        self.uid = ""
