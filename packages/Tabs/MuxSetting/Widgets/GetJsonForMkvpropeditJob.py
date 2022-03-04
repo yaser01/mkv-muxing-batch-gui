@@ -1,6 +1,6 @@
 import json
 import subprocess
-
+import sys
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -24,8 +24,11 @@ def delete_trailing_zero_string(string):
     return str(int(str(string)))
 
 
-def fix_windows_backslash_path(string):
-    return string.replace('\\', '\\\\')
+def check_for_system_backslash_path(string):
+    if sys.platform == "win32":  # Windows
+        return string.replace('\\', '\\\\')
+    else:
+        return string
 
 
 def increase_id_by_one(string):
@@ -121,7 +124,7 @@ class GetJsonForMkvpropeditJob:
                     file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
                     attachments_list_with_attach_command.append(add_json_line("--add-attachment"))
                     attachments_list_with_attach_command.append(
-                        add_json_line(fix_windows_backslash_path(file_to_attach)))
+                        add_json_line(check_for_system_backslash_path(file_to_attach)))
             self.attachments_attach_command = "".join(attachments_list_with_attach_command)
             self.discard_old_attachments_command = "".join(discard_old_attachments_list_command)
 
@@ -129,10 +132,10 @@ class GetJsonForMkvpropeditJob:
         if GlobalSetting.CHAPTER_ENABLED:
             if self.job.chapter_found:
                 self.chapter_attach_command = add_json_line("--chapters") + \
-                                              add_json_line(fix_windows_backslash_path(self.job.chapter_name_absolute))
+                                              add_json_line(
+                                                  check_for_system_backslash_path(self.job.chapter_name_absolute))
             elif GlobalSetting.CHAPTER_DISCARD_OLD:
-                self.chapter_attach_command = add_json_line("--chapters")+add_json_line("")
-
+                self.chapter_attach_command = add_json_line("--chapters") + add_json_line("")
 
     def make_other_subtitle_not_forced(self):
         change_forced_subtitle_commands_list = []
@@ -462,7 +465,7 @@ class GetJsonForMkvpropeditJob:
     # noinspection PyListCreation
     def setup_input_video_command(self):
         input_video_commands_list = []
-        input_video_commands_list.append(add_json_line(fix_windows_backslash_path(self.job.video_name_absolute)))
+        input_video_commands_list.append(add_json_line(check_for_system_backslash_path(self.job.video_name_absolute)))
         self.input_video_command = "".join(input_video_commands_list)
 
     def setup_final_command(self):

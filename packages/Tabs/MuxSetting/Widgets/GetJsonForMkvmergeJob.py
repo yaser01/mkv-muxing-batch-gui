@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 from pathlib import Path
-
+import sys
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -26,8 +26,11 @@ def delete_trailing_zero_string(string):
     return str(int(str(string)))
 
 
-def fix_windows_backslash_path(string):
-    return string.replace('\\', '\\\\')
+def check_for_system_backslash_path(string):
+    if sys.platform == "win32":  # Windows
+        return string.replace('\\', '\\\\')
+    else:
+        return string
 
 
 def get_attribute(data, attribute, default_value):
@@ -122,6 +125,8 @@ class GetJsonForMkvmergeJob:
                 get_attribute(data=track["properties"], attribute="language", default_value="eng"))
             new_track_info.track_name = str(
                 get_attribute(data=track["properties"], attribute="track_name", default_value="UnNamedTrackBeBo"))
+            new_track_info.uid = str(
+                get_attribute(data=track["properties"], attribute="uid", default_value="-1"))
             if track["type"] == "audio":
                 self.audios_track_json_info.append(new_track_info)
             elif track["type"] == "subtitles":
@@ -139,14 +144,14 @@ class GetJsonForMkvmergeJob:
                     file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
                     attachments_list_with_attach_command.append(add_json_line("--attach-file"))
                     attachments_list_with_attach_command.append(
-                        add_json_line(fix_windows_backslash_path(file_to_attach)))
+                        add_json_line(check_for_system_backslash_path(file_to_attach)))
             self.attachments_attach_command = "".join(attachments_list_with_attach_command)
 
     def setup_chapter_options(self):
         if GlobalSetting.CHAPTER_ENABLED:
             if self.job.chapter_found:
                 self.chapter_attach_command = add_json_line("--chapters") + \
-                                              add_json_line(fix_windows_backslash_path(self.job.chapter_name_absolute))
+                                              add_json_line(check_for_system_backslash_path(self.job.chapter_name_absolute))
             elif GlobalSetting.CHAPTER_DISCARD_OLD:
                 self.discard_old_attachments_command = add_json_line("--no-chapters")
 
@@ -195,7 +200,7 @@ class GetJsonForMkvmergeJob:
                     # add subtitle file
                     subtitle_command_list.append(add_json_line("("))
                     subtitle_command_list.append(
-                        add_json_line(fix_windows_backslash_path(self.job.subtitle_name_absolute[i])))
+                        add_json_line(check_for_system_backslash_path(self.job.subtitle_name_absolute[i])))
                     subtitle_command_list.append(add_json_line(")"))
                 self.subtitle_append_command = "".join(subtitle_command_list)
 
@@ -247,7 +252,7 @@ class GetJsonForMkvmergeJob:
                     # add audio file
                     audio_command_list.append(add_json_line("("))
                     audio_command_list.append(
-                        add_json_line(fix_windows_backslash_path(self.job.audio_name_absolute[i])))
+                        add_json_line(check_for_system_backslash_path(self.job.audio_name_absolute[i])))
                     audio_command_list.append(add_json_line(")"))
                 self.audio_append_command = "".join(audio_command_list)
 
@@ -302,7 +307,7 @@ class GetJsonForMkvmergeJob:
                     len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES) == 0:
                 self.specify_subtitle_track_source_video_command = add_json_line("--no-subtitles")
             else:
-                only_keep_those_subtitle_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS
+                only_keep_those_subtitle_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS.copy()
                 for track_name in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES:
                     for my_subtitle_track in self.subtitles_track_json_info:
                         if my_subtitle_track.track_name == track_name:
@@ -315,23 +320,32 @@ class GetJsonForMkvmergeJob:
                     ",".join(only_keep_those_subtitle_list))
 
     def setup_only_keep_those_audios(self):
+        print(self.job.video_name)
+        print("current must be empty :"+str(self.specify_audio_track_source_video_command))
+        print(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED)
         if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED:
             if len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES) == 0 and \
                     len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS) == 0 and \
                     len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES) == 0:
                 self.specify_audio_track_source_video_command = add_json_line("--no-audio")
             else:
-                only_keep_those_audios_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS
+                only_keep_those_audios_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS.copy()
+
+                print("from direct Ids"+str(only_keep_those_audios_list))
+
                 for track_name in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES:
                     for my_audio_track in self.audios_track_json_info:
                         if my_audio_track.track_name == track_name:
+                            print("Found track name :["+track_name+"] with uid: "+str(my_audio_track.uid))
                             only_keep_those_audios_list.append(my_audio_track.id)
                 for audio in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES:
                     only_keep_those_audios_list.append(ISO_639_2_LANGUAGES[audio])
+                    print("from direct languages" + str(only_keep_those_audios_list))
                 only_keep_those_audios_list = list(dict.fromkeys(only_keep_those_audios_list))
                 self.specify_audio_track_source_video_command = add_json_line("--audio-tracks")
                 self.specify_audio_track_source_video_command += add_json_line(
                     ",".join(only_keep_those_audios_list))
+        print(self.specify_audio_track_source_video_command)
 
     def make_this_subtitle_default_forced(self):
         if GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED:
@@ -544,14 +558,14 @@ class GetJsonForMkvmergeJob:
 
         output_video_commands_list = []
         output_video_commands_list.append(add_json_line("--output"))
-        output_video_commands_list.append(add_json_line(fix_windows_backslash_path(output_video_name_absolute)))
+        output_video_commands_list.append(add_json_line(check_for_system_backslash_path(output_video_name_absolute)))
         self.output_video_command = "".join(output_video_commands_list)
 
     # noinspection PyListCreation
     def setup_input_video_command(self):
         input_video_commands_list = []
         input_video_commands_list.append(add_json_line("("))
-        input_video_commands_list.append(add_json_line(fix_windows_backslash_path(self.job.video_name_absolute)))
+        input_video_commands_list.append(add_json_line(check_for_system_backslash_path(self.job.video_name_absolute)))
         input_video_commands_list.append(add_json_line(")"))
         self.input_video_command = "".join(input_video_commands_list)
 
