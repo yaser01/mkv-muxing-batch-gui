@@ -377,6 +377,10 @@ class GetJsonForMkvmergeJob:
                 if subtitle_track_id != "":
                     change_default_subtitle_commands_list.append(add_json_line("--default-track"))
                     change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                    for subtitle in self.audios_track_json_info:
+                        if subtitle.id != subtitle_track_id:
+                            change_default_subtitle_commands_list.append(add_json_line("--default-track"))
+                            change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                     self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
                         change_default_subtitle_commands_list)
 
@@ -400,6 +404,8 @@ class GetJsonForMkvmergeJob:
                         change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
                         for subtitle in self.subtitles_track_json_info:
                             if subtitle.id != subtitle_track_id:
+                                change_default_subtitle_commands_list.append(add_json_line("--default-track"))
+                                change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                                 change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
                                 change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
 
@@ -421,6 +427,8 @@ class GetJsonForMkvmergeJob:
                                 change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
                                 change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
                             else:
+                                change_default_subtitle_commands_list.append(add_json_line("--default-track"))
+                                change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                                 change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
                                 change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                         self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
@@ -440,6 +448,8 @@ class GetJsonForMkvmergeJob:
                                 change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
                                 change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
                             else:
+                                change_default_subtitle_commands_list.append(add_json_line("--default-track"))
+                                change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                                 change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
                                 change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
                         self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
@@ -475,6 +485,10 @@ class GetJsonForMkvmergeJob:
                 if audio_track_id != "":
                     change_default_audio_commands_list.append(add_json_line("--default-track"))
                     change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))
+                    for audio in self.audios_track_json_info:
+                        if audio.id != audio_track_id:
+                            change_default_audio_commands_list.append(add_json_line("--default-track"))
+                            change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
                     self.change_default_forced_audio_track_setting_source_video_command += ''.join(
                         change_default_audio_commands_list)
 
@@ -498,6 +512,8 @@ class GetJsonForMkvmergeJob:
                         change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))
                         for audio in self.audios_track_json_info:
                             if audio.id != audio_track_id:
+                                change_default_audio_commands_list.append(add_json_line("--default-track"))
+                                change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
                                 change_default_audio_commands_list.append(add_json_line("--forced-track"))
                                 change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
 
@@ -519,6 +535,8 @@ class GetJsonForMkvmergeJob:
                                 change_default_audio_commands_list.append(add_json_line("--forced-track"))
                                 change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))
                             else:
+                                change_default_audio_commands_list.append(add_json_line("--default-track"))
+                                change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
                                 change_default_audio_commands_list.append(add_json_line("--forced-track"))
                                 change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
                         self.change_default_forced_audio_track_setting_source_video_command += ''.join(
@@ -538,6 +556,8 @@ class GetJsonForMkvmergeJob:
                                 change_default_audio_commands_list.append(add_json_line("--forced-track"))
                                 change_default_audio_commands_list.append(add_json_line(audio_track_id + ":yes"))
                             else:
+                                change_default_audio_commands_list.append(add_json_line("--default-track"))
+                                change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
                                 change_default_audio_commands_list.append(add_json_line("--forced-track"))
                                 change_default_audio_commands_list.append(add_json_line(audio.id + ":no"))
                         self.change_default_forced_audio_track_setting_source_video_command += ''.join(
