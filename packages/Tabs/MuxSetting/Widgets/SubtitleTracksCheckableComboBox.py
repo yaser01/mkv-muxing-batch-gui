@@ -40,7 +40,7 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
         self.setMaximumWidth(screen_size.width() // 4)
         self.setDisabled(True)
         self.empty_selection_hint_string = "Discard All subtitle tracks from the source file<br>this option will lead to " \
-                                           "output video with NO old subtitles<br>[the new subtitle file will exists] "
+                                           "output video with NO old subtitles<br>[the new subtitle file(s) will exists] "
 
     def check_box_state_changed(self, state):
         if state == Qt.Checked:

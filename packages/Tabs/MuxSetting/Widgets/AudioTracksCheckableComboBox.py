@@ -40,7 +40,7 @@ class AudioTracksCheckableComboBox(TracksCheckableComboBox):
         self.setMaximumWidth(screen_size.width() // 4)
         self.setDisabled(True)
         self.empty_selection_hint_string = "Discard All audio tracks from the source file<br>this option will lead to " \
-                                           "output video with NO audios "
+                                           "output video with NO audios<br>[the new audio file(s) will exists]"
 
     def check_box_state_changed(self, new_state):
         if new_state == Qt.Checked:
