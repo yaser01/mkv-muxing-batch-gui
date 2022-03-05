@@ -320,9 +320,6 @@ class GetJsonForMkvmergeJob:
                     ",".join(only_keep_those_subtitle_list))
 
     def setup_only_keep_those_audios(self):
-        print(self.job.video_name)
-        print("current must be empty :"+str(self.specify_audio_track_source_video_command))
-        print(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED)
         if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED:
             if len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES) == 0 and \
                     len(GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS) == 0 and \
@@ -330,22 +327,16 @@ class GetJsonForMkvmergeJob:
                 self.specify_audio_track_source_video_command = add_json_line("--no-audio")
             else:
                 only_keep_those_audios_list = GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS.copy()
-
-                print("from direct Ids"+str(only_keep_those_audios_list))
-
                 for track_name in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES:
                     for my_audio_track in self.audios_track_json_info:
                         if my_audio_track.track_name == track_name:
-                            print("Found track name :["+track_name+"] with uid: "+str(my_audio_track.uid))
                             only_keep_those_audios_list.append(my_audio_track.id)
                 for audio in GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES:
                     only_keep_those_audios_list.append(ISO_639_2_LANGUAGES[audio])
-                    print("from direct languages" + str(only_keep_those_audios_list))
                 only_keep_those_audios_list = list(dict.fromkeys(only_keep_those_audios_list))
                 self.specify_audio_track_source_video_command = add_json_line("--audio-tracks")
                 self.specify_audio_track_source_video_command += add_json_line(
                     ",".join(only_keep_those_audios_list))
-        print(self.specify_audio_track_source_video_command)
 
     def make_this_subtitle_default_forced(self):
         if GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED:
