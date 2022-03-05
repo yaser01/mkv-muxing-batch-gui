@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 from os import listdir
 from pathlib import Path
@@ -38,6 +39,10 @@ def create_app_data_folder():
     return my_app_data_folder
 
 
+def add_double_quotation(string):
+    return "\"" + str(string) + "\""
+
+
 def get_file_name_absolute_path(file_name, folder_path):
     return os.path.join(Path(folder_path), file_name)
 
@@ -72,6 +77,24 @@ MediaInfoFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('Med
 os.makedirs(MergeLogsFolderPath, exist_ok=True)
 os.makedirs(MediaInfoFolderPath, exist_ok=True)
 delete_old_media_files()
+
+
+def get_mkvmerge_version():
+    with open(TestMkvmergeFilePath, "w+", encoding="UTF-8") as test_file:
+        command = add_double_quotation(MKVMERGE_PATH) + " -V"
+        mux_process = subprocess.run(command, shell=True, stdout=test_file)
+    with open(TestMkvmergeFilePath, "r+", encoding="UTF-8") as test_file:
+        return test_file.readline().rstrip()
+
+
+def get_mkvpropedit_version():
+    with open(TestMkvpropeditFilePath, "w+", encoding="UTF-8") as test_file:
+        command = add_double_quotation(MKVPROPEDIT_PATH) + " -V"
+        mux_process = subprocess.run(command, shell=True, stdout=test_file)
+    with open(TestMkvpropeditFilePath, "r+", encoding="UTF-8") as test_file:
+        return test_file.readline().rstrip()
+
+
 try:
     MyFontPath = os.path.join(os.path.abspath(FontFolderPath), 'OpenSans.ttf')
     WarningCheckBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'WarningCheckBig.png')
@@ -147,12 +170,22 @@ try:
     LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
     AppLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "app_log.txt")
     MuxingLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "muxing_log_file.txt")
+    TestMkvmergeFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "test_mkvmerge.txt")
+    TestMkvpropeditFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "test_mkvpropedit.txt")
     mkvpropeditJsonJobFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "mkvpropeditJob.json")
     mkvmergeJsonJobFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "MkvmergeJob.json")
     mkvmergeJsonInfoFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "MkvmergeInfo.json")
     SettingJsonInfoFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "setting.json")
     MKVPROPEDIT_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvpropedit")
     MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
+    MKVPROPEDIT_VERSION = get_mkvpropedit_version()
+    MKVMERGE_VERSION = get_mkvmerge_version()
+    if MKVMERGE_VERSION.find("mkvmerge") == -1:
+        MKVMERGE_VERSION="mkvmerge: not found!"
+        raise Exception("mkvmerge file! ")
+    if MKVPROPEDIT_VERSION.find("mkvpropedit") == -1:
+        MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
+        raise Exception("mkvpropedit file! ")
     read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
 except Exception as e:
     missing_files_message = MissingFilesMessage(error_message=str(e))

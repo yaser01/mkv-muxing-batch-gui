@@ -3,7 +3,7 @@ from PySide2.QtCore import Qt, QSize
 from PySide2.QtGui import QPixmap, QFont
 from PySide2.QtWidgets import QLabel, \
     QDialog, QPushButton, QHBoxLayout, QVBoxLayout
-from packages.Startup.GlobalFiles import AppIconPath, AboutIcon
+from packages.Startup.GlobalFiles import AppIconPath, AboutIcon, MKVMERGE_VERSION, MKVPROPEDIT_VERSION, MKVPROPEDIT_PATH
 from packages.Startup.PreDefined import GitHubRepoUrlTag, GPLV2UrlTag, GitHubIssuesUrlTag
 from packages.Startup.Version import Version
 from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
@@ -20,6 +20,8 @@ class AboutDialog(QDialog):
         self.app_icon_label.setPixmap(QPixmap(AppIconPath).scaledToHeight(175))
         self.app_name_label = QLabel("MKV Muxing Batch GUI")
         self.app_current_version = QLabel("Version: " + str(Version))
+        self.app_mkvmerge_current_version = QLabel(str(MKVMERGE_VERSION))
+        self.app_mkvpropedit_current_version = QLabel(str(MKVPROPEDIT_VERSION))
         self.app_link_github_label = QLabel("Check for updates on: " + GitHubRepoUrlTag)
         self.app_link_github_label.setOpenExternalLinks(True)
         self.app_licence_label = QLabel("MKV Muxing Batch GUI is released under the " + GPLV2UrlTag + "+ licence")
@@ -41,7 +43,7 @@ class AboutDialog(QDialog):
         self.donate_button = DonateButton()
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addStretch(0)
-        #self.buttons_layout.addWidget(self.donate_button)
+        # self.buttons_layout.addWidget(self.donate_button)
         self.buttons_layout.addWidget(self.ok_button)
         self.buttons_layout.addStretch(0)
         self.social_media_layout = QHBoxLayout()
@@ -55,6 +57,8 @@ class AboutDialog(QDialog):
         self.main_layout.addWidget(self.app_icon_label, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_name_label, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_current_version, alignment=Qt.AlignCenter)
+        self.main_layout.addWidget(self.app_mkvmerge_current_version, alignment=Qt.AlignCenter)
+        self.main_layout.addWidget(self.app_mkvpropedit_current_version, alignment=Qt.AlignCenter)
         self.main_layout.addWidget(self.app_link_github_label, alignment=Qt.AlignCenter)
         # self.main_layout.addWidget(self.app_licence_label, alignment=Qt.AlignCenter)
         # self.main_layout.addWidget(self.app_warranty_label, alignment=Qt.AlignCenter)
