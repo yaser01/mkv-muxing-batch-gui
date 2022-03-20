@@ -73,9 +73,9 @@ ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Win
 LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
 if sys.platform=="win32":
     if struct.calcsize("P") * 8 == 32:
-        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx32'))
+        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows32'))
     else:
-        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx64'))
+        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows64'))
 elif sys.platform == "linux" or sys.platform == "linux2":
     ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Linux'))
 else:
