@@ -4,8 +4,7 @@ import sys
 from os import listdir
 from pathlib import Path
 from PySide2.QtGui import QPixmap, QIcon
-import tempfile
-
+import struct
 from PySide2.QtWidgets import QStyleFactory
 
 from packages.Startup.ReadSettingFile import read_setting_file
@@ -69,8 +68,18 @@ script_folder = os.path.dirname(script_path)
 resources_folder = os.path.join(os.path.abspath(script_folder), Path('Resources'))
 FontFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Fonts'))
 IconFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Icons'))
-ToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
+GlobalToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
+ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx64'))
 LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
+if sys.platform=="win32":
+    if struct.calcsize("P") * 8 == 32:
+        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx32'))
+    else:
+        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx64'))
+elif sys.platform == "linux" or sys.platform == "linux2":
+    ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Linux'))
+else:
+    ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Other Systems'))
 AppDataFolderPath = create_app_data_folder()
 MergeLogsFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('Logs'))
 MediaInfoFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('MediaInfo'))

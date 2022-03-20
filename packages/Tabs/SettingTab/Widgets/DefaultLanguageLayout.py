@@ -33,7 +33,6 @@ class DefaultLanguageLayout:
         return
         self.addWidget(self.label,stretch=0)
         self.addWidget(self.languages_comboBox,stretch=1)
-        print("QQE")
         self.addWidget(self.setting_button, stretch=0)
 
     def setup_label_width_first_column(self):

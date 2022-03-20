@@ -1,3 +1,4 @@
+import sys
 import PySide2
 from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt, QColor
@@ -52,7 +53,10 @@ class AttachmentTable(TableWidget):
         urls = data.urls()
         paths_to_add = []
         for url in urls:
-            current_path = url.path()[1:]
+            if sys.platform=="win32":
+                current_path = url.path()[1:]
+            else:
+                current_path = url.path()
             paths_to_add.append(current_path)
         self.drop_folder_and_files_signal.emit(sort_names_like_windows(paths_to_add))
 

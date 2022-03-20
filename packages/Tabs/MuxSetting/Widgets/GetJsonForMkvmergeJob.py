@@ -1,5 +1,6 @@
 import json
 import os
+from platform import platform
 import subprocess
 from pathlib import Path
 import sys
@@ -8,7 +9,7 @@ from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
 from packages.Widgets.SingleTrackData import SingleTrackData
-
+from sys import platform
 
 def add_two_spaces():
     return "  "
@@ -558,7 +559,10 @@ class GetJsonForMkvmergeJob:
     def setup_ui_language(self):
         ui_language_commands_list = []
         ui_language_commands_list.append(add_double_quotation("--ui-language") + ",")
-        ui_language_commands_list.append(add_json_line("en"))
+        if platform=="win32":
+            ui_language_commands_list.append(add_json_line("en"))
+        else:
+            ui_language_commands_list.append(add_json_line("en_US"))
         self.ui_language_command = "".join(ui_language_commands_list)
 
     # noinspection PyListCreation

@@ -3,20 +3,22 @@ import signal
 import sys
 from traceback import format_exception
 from datetime import datetime
-
 import psutil
 from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
 from packages.Startup.MainApplication import MainApplication
-from packages.MainWindow import MainWindow
 from packages.Widgets.WarningDialog import WarningDialog
-import ctypes
+if sys.platform=="win32":
+    import ctypes
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
+    from packages.MainWindow import MainWindow
+else:
+    from packages.MainWindowNonWindowsSystem import MainWindowNonWindowsSystem as MainWindow
+import faulthandler
 
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
-# noinspection PyAttributeOutsideInit
 
-
+faulthandler.enable()
 window: MainWindow
 app: QApplication
 
