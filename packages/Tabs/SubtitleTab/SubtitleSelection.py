@@ -396,4 +396,5 @@ class SubtitleSelectionSetting(QGroupBox):
 
     def set_default_directory(self):
         self.subtitle_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Subtitle_Directory)
+        self.update_folder_path(DefaultOptions.Default_Subtitle_Directory)
         self.subtitle_source_lineEdit.check_new_path()

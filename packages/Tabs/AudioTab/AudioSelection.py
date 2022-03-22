@@ -397,4 +397,5 @@ class AudioSelectionSetting(QGroupBox):
 
     def set_default_directory(self):
         self.audio_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Audio_Directory)
+        self.update_folder_path(DefaultOptions.Default_Audio_Directory)
         self.audio_source_lineEdit.check_new_path()

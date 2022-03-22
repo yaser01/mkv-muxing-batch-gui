@@ -428,5 +428,6 @@ class VideoSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.video_source_lineEdit.setText(DefaultOptions.Default_Video_Directory)
+        self.video_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Video_Directory)
+        self.update_folder_path(DefaultOptions.Default_Video_Directory)
         self.video_source_lineEdit.check_new_path()

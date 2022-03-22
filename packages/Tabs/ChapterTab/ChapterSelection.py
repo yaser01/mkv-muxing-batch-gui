@@ -341,4 +341,5 @@ class ChapterSelectionSetting(GlobalSetting):
 
     def set_default_directory(self):
         self.chapter_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Chapter_Directory)
+        self.update_folder_path(DefaultOptions.Default_Chapter_Directory)
         self.chapter_source_lineEdit.check_new_path()
