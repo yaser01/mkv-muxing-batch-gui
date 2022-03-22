@@ -9,13 +9,14 @@ from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
 from packages.Startup.MainApplication import MainApplication
 from packages.Widgets.WarningDialog import WarningDialog
+import faulthandler
 if sys.platform=="win32":
     import ctypes
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
     from packages.MainWindow import MainWindow
 else:
     from packages.MainWindowNonWindowsSystem import MainWindowNonWindowsSystem as MainWindow
-import faulthandler
+
 
 
 faulthandler.enable()

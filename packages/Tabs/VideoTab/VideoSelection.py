@@ -380,7 +380,8 @@ class VideoSelectionSetting(GlobalSetting):
                 error_dialog = ErrorDialog(window_title="Unrecognised files", error_message=error_message,
                                            parent=self.window())
                 error_dialog.execute_wth_no_block()
-                self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_and_supported_absolute_path_list)
+                self.files_names_absolute_list_with_dropped_files.extend(
+                    not_duplicate_files_and_supported_absolute_path_list)
                 self.files_names_absolute_list.extend(not_duplicate_files_and_supported_absolute_path_list)
                 self.files_size_list.extend(
                     get_files_size_with_absolute_path_list(not_duplicate_files_and_supported_absolute_path_list))

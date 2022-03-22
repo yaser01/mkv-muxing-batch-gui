@@ -71,7 +71,7 @@ IconFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Icons'))
 GlobalToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
 ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx64'))
 LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
-if sys.platform=="win32":
+if sys.platform == "win32":
     if struct.calcsize("P") * 8 == 32:
         ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows32'))
     else:
@@ -190,7 +190,7 @@ try:
     MKVPROPEDIT_VERSION = get_mkvpropedit_version()
     MKVMERGE_VERSION = get_mkvmerge_version()
     if MKVMERGE_VERSION.find("mkvmerge") == -1:
-        MKVMERGE_VERSION="mkvmerge: not found!"
+        MKVMERGE_VERSION = "mkvmerge: not found!"
         raise Exception("mkvmerge file! ")
     if MKVPROPEDIT_VERSION.find("mkvpropedit") == -1:
         MKVPROPEDIT_VERSION = "mkvpropedit: not found!"

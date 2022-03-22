@@ -8,7 +8,7 @@ from packages.Tabs.SettingTab.Widgets.LanguagePreferenceDialog import LanguagePr
 class SubtitleLanguageOrderButton(QPushButton):
     new_language_list_signal = Signal(list)
 
-    def __init__(self,current_language_list):
+    def __init__(self, current_language_list):
         super().__init__()
         self.setIcon(SettingIcon)
         self.setIconSize(QSize(20, 20))

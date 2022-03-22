@@ -179,7 +179,8 @@ class SubtitleInfoDialog(QDialog):
     def setup_subtitle_language_comboBox(self):
         self.subtitle_language_comboBox.addItems(DefaultOptions.Default_Favorite_Subtitle_Languages)
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(self.current_subtitle_language[self.current_subtitle_index]))
+            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+                self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setMaxVisibleItems(8)
         self.subtitle_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
 
@@ -239,7 +240,8 @@ class SubtitleInfoDialog(QDialog):
             self.current_subtitle_index]
 
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(self.current_subtitle_language[self.current_subtitle_index]))
+            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+                self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_delay_spin.setValue(float(self.current_subtitle_delay[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
         self.subtitle_set_default_checkBox.setChecked(
@@ -285,7 +287,8 @@ class SubtitleInfoDialog(QDialog):
         self.subtitle_set_forced_checkBox.setChecked(
             bool(self.current_subtitle_set_forced[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(self.current_subtitle_language[self.current_subtitle_index]))
+            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+                self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
         self.subtitle_name_value.setText(str(self.current_subtitle_name[self.current_subtitle_index]))
 

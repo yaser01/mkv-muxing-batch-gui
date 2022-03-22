@@ -224,7 +224,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_match_layout.show_subtitle_files()
 
     def update_other_classes_variables(self):
-        #self.change_global_last_path_directory()
+        # self.change_global_last_path_directory()
         self.change_global_subtitle_list()
         self.subtitle_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.subtitle_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)

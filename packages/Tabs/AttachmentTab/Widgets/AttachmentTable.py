@@ -53,7 +53,7 @@ class AttachmentTable(TableWidget):
         urls = data.urls()
         paths_to_add = []
         for url in urls:
-            if sys.platform=="win32":
+            if sys.platform == "win32":
                 current_path = url.path()[1:]
             else:
                 current_path = url.path()

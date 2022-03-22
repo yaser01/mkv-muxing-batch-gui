@@ -13,8 +13,9 @@ from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
 import faulthandler
 
-
 faulthandler.enable()
+
+
 class SettingDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)

@@ -143,7 +143,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.update_other_classes_variables()
 
     def update_other_classes_variables(self):
-        #self.change_global_last_path_directory()
+        # self.change_global_last_path_directory()
         self.change_global_attachment_list()
         self.attachment_source_lineEdit.set_current_folder_path(self.folder_path)
         self.attachment_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
@@ -300,6 +300,6 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.attachment_source_lineEdit.set_text_safe_change (DefaultOptions.Default_Attachment_Directory)
+        self.attachment_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Attachment_Directory)
         self.update_folder_path(DefaultOptions.Default_Attachment_Directory)
         self.attachment_source_lineEdit.check_new_path()

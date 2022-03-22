@@ -459,7 +459,7 @@ class GetJsonForMkvpropeditJob:
     def setup_ui_language(self):
         ui_language_commands_list = []
         ui_language_commands_list.append(add_double_quotation("--ui-language") + ",")
-        if sys.platform=="win32":
+        if sys.platform == "win32":
             ui_language_commands_list.append(add_json_line("en"))
         else:
             ui_language_commands_list.append(add_json_line("en_US"))

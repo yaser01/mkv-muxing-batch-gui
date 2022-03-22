@@ -130,7 +130,7 @@ def get_file_name_without_crc(file_name):
             last_valid_char = i
             break
     file_name_without_crc = file_name_without_crc[
-                         :last_valid_char + 1] + file_name_without_crc[extension_index:]
+                            :last_valid_char + 1] + file_name_without_crc[extension_index:]
     return file_name_without_crc
 
 

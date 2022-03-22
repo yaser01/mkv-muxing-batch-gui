@@ -51,7 +51,6 @@ class JobQueueLayout(QGridLayout):
             except Exception as e:
                 time.sleep(0.003)
 
-
     def show_necessary_table_columns(self):
         self.table.show_necessary_columns()
 
