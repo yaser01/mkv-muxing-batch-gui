@@ -17,8 +17,6 @@ if sys.platform=="win32":
 else:
     from packages.MainWindowNonWindowsSystem import MainWindowNonWindowsSystem as MainWindow
 
-
-
 faulthandler.enable()
 window: MainWindow
 app: QApplication
