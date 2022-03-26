@@ -60,31 +60,34 @@ class TracksCheckableComboBox(QComboBox):
         self.update_shown_text()
 
     def eventFilter(self, object, event):
-        if self.isEnabled():
-            if object == self.lineEdit():
-                if event.type() == QEvent.MouseButtonRelease:
-                    if self.closeOnLineEditClick:
-                        self.hidePopup()
-                    else:
-                        self.showPopup()
-                    return True
-                return False
-
-            if object == self.view().viewport():
-                if event.type() == QEvent.MouseButtonRelease:
-                    index = self.view().indexAt(event.pos())
-                    item = self.model().item(index.row())
-                    if item.text().find("---Track Id---") == -1 and item.text().find(
-                            "---Language---") == -1 and item.text().find("---Track Name---") == -1:
-                        if item.checkState() == Qt.Checked:
-                            item.setCheckState(Qt.Unchecked)
+        try:
+            if self.isEnabled():
+                if object == self.lineEdit():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        if self.closeOnLineEditClick:
+                            self.hidePopup()
                         else:
-                            item.setCheckState(Qt.Checked)
+                            self.showPopup()
                         return True
-                    else:
-                        return False
-            return False
-        else:
+                    return False
+
+                if object == self.view().viewport():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        index = self.view().indexAt(event.pos())
+                        item = self.model().item(index.row())
+                        if item.text().find("---Track Id---") == -1 and item.text().find(
+                                "---Language---") == -1 and item.text().find("---Track Name---") == -1:
+                            if item.checkState() == Qt.Checked:
+                                item.setCheckState(Qt.Unchecked)
+                            else:
+                                item.setCheckState(Qt.Checked)
+                            return True
+                        else:
+                            return False
+                return False
+            else:
+                return False
+        except Exception as e:
             return False
 
     def showPopup(self):

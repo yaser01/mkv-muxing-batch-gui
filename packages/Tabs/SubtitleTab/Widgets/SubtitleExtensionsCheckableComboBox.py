@@ -77,27 +77,30 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
         super().resizeEvent(event)
 
     def eventFilter(self, object, event):
-        if self.isEnabled():
-            if object == self.lineEdit():
-                if event.type() == QEvent.MouseButtonRelease:
-                    if self.closeOnLineEditClick:
-                        self.hidePopup()
-                    else:
-                        self.showPopup()
-                    return True
-                return False
+        try:
+            if self.isEnabled():
+                if object == self.lineEdit():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        if self.closeOnLineEditClick:
+                            self.hidePopup()
+                        else:
+                            self.showPopup()
+                        return True
+                    return False
 
-            if object == self.view().viewport():
-                if event.type() == QEvent.MouseButtonRelease:
-                    index = self.view().indexAt(event.pos())
-                    item = self.model().item(index.row())
-                    if item.checkState() == Qt.Checked:
-                        item.setCheckState(Qt.Unchecked)
-                    else:
-                        item.setCheckState(Qt.Checked)
-                    return True
-            return False
-        else:
+                if object == self.view().viewport():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        index = self.view().indexAt(event.pos())
+                        item = self.model().item(index.row())
+                        if item.checkState() == Qt.Checked:
+                            item.setCheckState(Qt.Unchecked)
+                        else:
+                            item.setCheckState(Qt.Checked)
+                        return True
+                return False
+            else:
+                return False
+        except Exception as e:
             return False
 
     def showPopup(self):

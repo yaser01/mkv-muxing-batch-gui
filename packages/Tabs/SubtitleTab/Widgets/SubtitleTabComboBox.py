@@ -85,15 +85,18 @@ class SubtitleTabComboBox(QComboBox):
         self.lineEdit().deselect()
 
     def eventFilter(self, object, event):
-        if self.isEnabled():
-            if object == self.lineEdit():
-                if event.type() == QEvent.MouseButtonRelease:
-                    if self.closeOnLineEditClick:
-                        self.hidePopup()
-                    else:
-                        self.showPopup()
-                    return True
-                return False
+        try:
+            if self.isEnabled():
+                if object == self.lineEdit():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        if self.closeOnLineEditClick:
+                            self.hidePopup()
+                        else:
+                            self.showPopup()
+                        return True
+                    return False
+        except Exception as e:
+            return False
 
     def hidePopup(self):
         super().hidePopup()
