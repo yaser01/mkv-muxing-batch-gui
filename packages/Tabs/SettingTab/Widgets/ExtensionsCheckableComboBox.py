@@ -79,7 +79,7 @@ class ExtensionsCheckableComboBox(QComboBox):
                         return True
                 return False
             except Exception as e:
-                pass
+                return False
         else:
             return False
 

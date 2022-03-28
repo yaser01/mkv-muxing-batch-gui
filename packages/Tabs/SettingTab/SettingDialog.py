@@ -5,13 +5,13 @@ from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QHBoxLayout, \
     QDialog, QGridLayout, QLabel, QPushButton
-
+import faulthandler
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, create_app_data_folder
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
-
+faulthandler.enable()
 class SettingDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
