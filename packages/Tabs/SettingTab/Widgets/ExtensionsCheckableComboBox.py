@@ -57,6 +57,8 @@ class ExtensionsCheckableComboBox(QComboBox):
         super().resizeEvent(event)
 
     def eventFilter(self, object, event):
+        if str(event.__class__).find("Event") == -1:
+            return False
         if self.isEnabled():
             try:
                 if object == self.lineEdit():

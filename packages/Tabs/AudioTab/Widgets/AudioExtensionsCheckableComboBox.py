@@ -78,6 +78,8 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         super().resizeEvent(event)
 
     def eventFilter(self, object, event):
+        if str(event.__class__).find("Event") == -1:
+            return False
         try:
             if self.isEnabled():
                 if object == self.lineEdit():

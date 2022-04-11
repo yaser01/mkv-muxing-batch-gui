@@ -79,6 +79,8 @@ class VideoExtensionsCheckableComboBox(QComboBox):
         super().resizeEvent(event)
 
     def eventFilter(self, object, event):
+        if str(event.__class__).find("Event") == -1:
+            return False
         try:
             if self.isEnabled():
                 if object == self.lineEdit():
@@ -150,7 +152,7 @@ class VideoExtensionsCheckableComboBox(QComboBox):
             item.setData(text)
         else:
             item.setData(data)
-        item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+        item.setFlags(Qt.ItemIsEnabled or Qt.ItemIsUserCheckable)
         item.setData(Qt.Unchecked, Qt.CheckStateRole)
         self.model().appendRow(item)
 
