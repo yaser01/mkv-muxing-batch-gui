@@ -3,7 +3,7 @@
 App for muxing(merging) videos with [subtitles,audios,chapters,attachments] with many options.
 
 ## App Preview
-https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-a890-0fed94f54f42.mp4
+https://user-images.githubusercontent.com/52576632/166163331-b8fe2e9c-3f5c-4967-9ce5-9b6f5231956d.mp4
 ## Videos Options
 
 >1. You can view media info of each file so you can keep an eye on the video tracks
@@ -14,6 +14,7 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 >1. Add new subtitle to each video file
 >1. Subtitles names **don't have to match** videos names
 >1. You can reorder the subtitles so that each subtitle is matched with the right video
+>1. You can remove files from subtitle tab
 >1. You can set subtitles to be default/forced
 >1. You can set subtitle delay, track name, language
 >1. You can set the new subtitle to be at the top of subtitles tracks in the output video [instead of adding it at the last]
@@ -24,6 +25,7 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 >1. Add new audio to each video file
 >1. Audios names **don't have to match** videos names
 >1. You can reorder the audios so that each audio is matched with the right video
+>1. You can remove files from audio tab
 >1. You can set audios to be default/forced
 >1. You can set audio delay, track name, language
 >1. You can set the new audio to be at the top of audios tracks in the output video [instead of adding it at the last]
@@ -34,6 +36,7 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 >1. add new chapter to each video file
 >1. Chapters names **don't have to match** videos names
 >1. You can reorder the chapters so that each chapter is matched with the right video
+>1. You can remove files from chapter tab
 
 ## Attachments Options
 
