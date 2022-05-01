@@ -154,9 +154,14 @@ def get_file_name_with_crc(file_name, crc_string):
         if file_name_without_extension[i] != " ":
             last_valid_char = i
             break
-    file_name_with_crc = file_name_without_crc[
-                         :last_valid_char + 1] + " [" + crc_string + "]" + file_name_without_crc[
-                                                                           extension_index:]
+    if file_name_without_crc[last_valid_char] in ['[', ']', ')', '(', '}', '{']:
+        file_name_with_crc = file_name_without_crc[
+                             :last_valid_char + 1] + "[" + crc_string + "]" + file_name_without_crc[
+                                                                              extension_index:]
+    else:
+        file_name_with_crc = file_name_without_crc[
+                             :last_valid_char + 1] + " [" + crc_string + "]" + file_name_without_crc[
+                                                                               extension_index:]
     return file_name_with_crc
 
 
