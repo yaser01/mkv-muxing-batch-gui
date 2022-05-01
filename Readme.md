@@ -65,13 +65,13 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 ## Supported Extensions
 
 **Video**:
-[AVI, MKV, MP4, M4V, MOV, MPEG, OGG, OGM, H264, H265, WEBM, WMV]
+[AVI, MKV, MP4, M4V, MOV, MPEG, TS, OGG, OGM, H264, H265, WEBM, WMV]
 
 **Subtitle**:
-[ASS, SRT, SSA, SUP, PGS, MKS]
+[ASS, SRT, SSA, SUP, PGS, MKS, VTT]
 
 **Audio**:
-[AAC, AC3, FLAC, EAC3, MKA, M4A, MP3, DTS, DTSMA, THD, WAV, OGG]
+[AAC, AC3, FLAC, EAC3, MKA, M4A, MP3, DTS, DTSMA, THD, WAV, OGG, OPUS]
 
 **Chapter**:
 [XML]
@@ -79,11 +79,17 @@ https://user-images.githubusercontent.com/52576632/136703937-ee0e7eb5-c6f2-456e-
 ## 💾 Downloads
 
 [![Github All Releases](https://img.shields.io/github/downloads/yaser01/mkv-muxing-batch-gui/total.svg?color=4DC71F&label=Downloads&logo=github")](https://github.com/yaser01/mkv-muxing-batch-gui/releases/latest)
-
+[![Donate](https://img.shields.io/badge/Donate-Buy_Me_A_Coffe-blueviolet.svg)](https://www.buymeacoffee.com/yaser01)
+<br>
 MKV Muxing Batch GUI works on Windows 7/8/8.1/10/11 32-bit/64-bit
-
+<br>Now Support most of Linux distributions :D
 See the project's [releases&nbsp;page](https://github.com/yaser01/mkv-muxing-batch-gui/releases) for download links
 
+### For Linux Users
+Before starting the app make sure to install the following libraries using commands:
+>sudo apt-get install -y libpugixml-dev
+> <br>
+>sudo apt-get install -y libmatroska-dev
 ## 🙏 Attribution
 
 - The whole app depends on mkvmerge and mkvpropedit so Big thanks to [MKVToolNix](https://gitlab.com/mbunkus/mkvtoolnix)
