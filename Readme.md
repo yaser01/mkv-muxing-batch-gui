@@ -89,10 +89,24 @@ MKV Muxing Batch GUI works on Windows 7/8/8.1/10/11 32-bit/64-bit
 See the project's [releases&nbsp;page](https://github.com/yaser01/mkv-muxing-batch-gui/releases) for download links
 
 ### For Linux Users
+
 Before starting the app make sure to install the following libraries using commands:
 >sudo apt-get install -y libpugixml-dev
 > <br>
 >sudo apt-get install -y libmatroska-dev
+
+### Updating The Mkvmerge version
+
+Important: Don't attempt to do this unless you know what you are doing as it may break the app and you will need to reinstall it again
+if you want to change the mkvmerge version that the app use the you can do the following:
+>Go to the folder where the app is intalled(for exmple on windows: "C:\Program Files (x86)\MKV Muxing Batch GUI")
+> <br>
+>Navigate to Resources\Tools\ [your operating system]
+> <br>
+>You will find the mkvmerge.exe and mkvpropedit.exe
+> <br>
+>Replace them with the ones from the newer version
+
 ## 🙏 Attribution
 
 - The whole app depends on mkvmerge and mkvpropedit so Big thanks to [MKVToolNix](https://gitlab.com/mbunkus/mkvtoolnix)
