@@ -11,7 +11,7 @@ from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, c
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
-faulthandler.enable()
+#faulthandler.enable()
 class SettingDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)

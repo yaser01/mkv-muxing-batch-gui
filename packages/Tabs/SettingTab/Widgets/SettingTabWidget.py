@@ -14,7 +14,7 @@ from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExte
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
 from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
 import faulthandler
-faulthandler.enable()
+#faulthandler.enable()
 class SettingTabWidget(QWidget):
     def __init__(self):
         super().__init__()
