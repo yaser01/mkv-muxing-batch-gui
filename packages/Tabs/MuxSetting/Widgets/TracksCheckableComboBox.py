@@ -1,6 +1,6 @@
 from PySide2 import QtCore, QtGui
 from PySide2.QtCore import Qt, QEvent
-from PySide2.QtGui import QFontMetrics
+from PySide2.QtGui import QFontMetrics, QResizeEvent
 from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
 
 from packages.Startup.PreDefined import *
@@ -24,6 +24,7 @@ class TracksCheckableComboBox(QComboBox):
         # Make the combo editable to set a custom text, but readonly
         self.hint = ""
         self.current_list = []
+        self.current_text = ""
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
@@ -31,8 +32,9 @@ class TracksCheckableComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.empty_selection_string = "Discard All"
         self.empty_selection_hint_string = ""
-        self.tracks = []
-        self.languages = []
+        self.tracks_id = []
+        self.tracks_language = []
+        self.tracks_name = []
 
         # Use custom delegate
         self.setItemDelegate(TracksCheckableComboBox.Delegate())
@@ -55,32 +57,39 @@ class TracksCheckableComboBox(QComboBox):
         # Recompute text to elide as needed
         self.updateText()
         super().resizeEvent(event)
+        self.update_shown_text()
 
     def eventFilter(self, object, event):
-        if self.isEnabled():
-            if object == self.lineEdit():
-                if event.type() == QEvent.MouseButtonRelease:
-                    if self.closeOnLineEditClick:
-                        self.hidePopup()
-                    else:
-                        self.showPopup()
-                    return True
-                return False
-
-            if object == self.view().viewport():
-                if event.type() == QEvent.MouseButtonRelease:
-                    index = self.view().indexAt(event.pos())
-                    item = self.model().item(index.row())
-                    if item.text().find("Tracks") == -1 and item.text().find("Languages") == -1:
-                        if item.checkState() == Qt.Checked:
-                            item.setCheckState(Qt.Unchecked)
-                        else:
-                            item.setCheckState(Qt.Checked)
-                        return True
-                    else:
-                        return False
+        if str(event.__class__).find("Event") == -1:
             return False
-        else:
+        try:
+            if self.isEnabled():
+                if object == self.lineEdit():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        if self.closeOnLineEditClick:
+                            self.hidePopup()
+                        else:
+                            self.showPopup()
+                        return True
+                    return False
+
+                if object == self.view().viewport():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        index = self.view().indexAt(event.pos())
+                        item = self.model().item(index.row())
+                        if item.text().find("---Track Id---") == -1 and item.text().find(
+                                "---Language---") == -1 and item.text().find("---Track Name---") == -1:
+                            if item.checkState() == Qt.Checked:
+                                item.setCheckState(Qt.Unchecked)
+                            else:
+                                item.setCheckState(Qt.Checked)
+                            return True
+                        else:
+                            return False
+                return False
+            else:
+                return False
+        except Exception as e:
             return False
 
     def showPopup(self):
@@ -103,50 +112,68 @@ class TracksCheckableComboBox(QComboBox):
         self.closeOnLineEditClick = False
 
     def updateText(self):
-        count_tracks = 0
-        count_languages = 0
+        count_tracks_id = 0
+        count_tracks_languages = 0
+        count_tracks_names = 0
         tracks = []
-        languages = []
-        tracks_text = []
-        languages_text = []
+        tracks_id_text = []
+        tracks_name_text = []
+        tracks_languages_text = []
         text = ""
+        current_tracks = "None"
         for i in range(self.model().rowCount()):
+            if self.model().item(i).text() == "---Track Id---":
+                current_tracks = "id"
+            elif self.model().item(i).text() == "---Language---":
+                current_tracks = "lang"
+            elif self.model().item(i).text() == "---Track Name---":
+                current_tracks = "name"
             if self.model().item(i).checkState() == Qt.Checked:
-                if self.model().item(i).text().find("Track") != -1:
-                    count_tracks += 1
+                if current_tracks == "id":
+                    count_tracks_id += 1
                     tracks.append(self.model().item(i).text())
-                    tracks_text.append(self.model().item(i).text().split(" ")[1])
-
-                elif self.model().item(i).text() in AllSubtitlesLanguages:
-                    count_languages += 1
-                    languages.append(self.model().item(i).text())
-                    languages_text.append(self.model().item(i).text())
-        self.tracks = tracks_text
-        self.languages = languages_text
-        if count_tracks > 0:
-            tracks_text = "Tracks: [" + ", ".join(tracks_text) + "]"
-            text = tracks_text
-        if count_languages > 0:
-            languages_text = "Languages: [" + ", ".join(languages_text) + "]"
+                    tracks_id_text.append(self.model().item(i).text().split(" ")[1])
+                elif current_tracks == "lang":
+                    count_tracks_languages += 1
+                    tracks_languages_text.append(self.model().item(i).text())
+                elif current_tracks == "name":
+                    count_tracks_names += 1
+                    tracks_name_text.append(self.model().item(i).text())
+        self.tracks_id = tracks_id_text
+        self.tracks_language = tracks_languages_text
+        self.tracks_name = tracks_name_text
+        if count_tracks_id > 0:
+            tracks_id_text = "Track Ids: [" + ", ".join(tracks_id_text) + "]"
+            text = tracks_id_text
+        if count_tracks_languages > 0:
+            tracks_languages_text = "Languages: [" + ", ".join(tracks_languages_text) + "]"
             if text != "":
-                text = text + "," + languages_text
+                text = text + "," + tracks_languages_text
             else:
-                text = languages_text
+                text = tracks_languages_text
+        if count_tracks_names > 0:
+            tracks_name_text = "Track Names: [" + ", ".join(tracks_name_text) + "]"
+            if text != "":
+                text = text + "," + tracks_name_text
+            else:
+                text = tracks_name_text
 
         # Compute elided text (with "...")
-        metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.ElideRight, self.lineEdit().width())
-        if elided_text != "":
-            non_italic_font = self.lineEdit().font()
-            non_italic_font.setItalic(False)
-            self.lineEdit().setFont(non_italic_font)
-            self.lineEdit().setText(elided_text)
-            if count_tracks > 0:
-                self.hint = tracks_text
-                if count_languages > 0:
-                    self.hint = self.hint + "<br>" + languages_text
-            elif count_languages > 0:
-                self.hint = languages_text
+        self.current_text = text
+        if text != "":
+            self.update_shown_text()
+            if count_tracks_id > 0:
+                self.hint = tracks_id_text
+                if count_tracks_languages > 0:
+                    self.hint = self.hint + "<br>" + tracks_languages_text
+                if count_tracks_names > 0:
+                    self.hint = self.hint + "<br>" + tracks_name_text
+            elif count_tracks_languages > 0:
+                self.hint = tracks_languages_text
+                if count_tracks_names > 0:
+                    self.hint = self.hint + "<br>" + tracks_name_text
+            elif count_tracks_names:
+                self.hint = tracks_name_text
         else:
             italic_font = self.lineEdit().font()
             italic_font.setItalic(True)
@@ -162,7 +189,8 @@ class TracksCheckableComboBox(QComboBox):
             item.setData(text)
         else:
             item.setData(data)
-        if text.find("Tracks") == -1 and text.find("Languages") == -1:
+        if text.find("---Track Id---") == -1 and text.find("---Language---") == -1 and text.find(
+                "---Track Name---") == -1:
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             item.setData(Qt.Unchecked, Qt.CheckStateRole)
             item.setData(text, Qt.ToolTipRole)
@@ -239,3 +267,18 @@ class TracksCheckableComboBox(QComboBox):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def update_shown_text(self):
+        if self.current_text != "":
+            metrics = QFontMetrics(self.lineEdit().font())
+            non_italic_font = self.lineEdit().font()
+            non_italic_font.setItalic(False)
+            self.lineEdit().setFont(non_italic_font)
+            elided_text = metrics.elidedText(self.current_text, Qt.ElideRight, self.lineEdit().width())
+            self.lineEdit().setText(elided_text)
+        else:
+            italic_font = self.lineEdit().font()
+            italic_font.setItalic(True)
+            self.lineEdit().setFont(italic_font)
+            self.lineEdit().setText(self.empty_selection_string)
+            self.hint = self.empty_selection_hint_string

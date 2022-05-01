@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
 import signal
 import sys
+from traceback import format_exception
 from datetime import datetime
-
 import psutil
 from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
 from packages.Startup import GlobalFiles
 from packages.Startup.MainApplication import MainApplication
-from packages.MainWindow import MainWindow
 from packages.Widgets.WarningDialog import WarningDialog
-import ctypes
+import faulthandler
 
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
-# noinspection PyAttributeOutsideInit
+if sys.platform == "win32":
+    import ctypes
 
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
+    from packages.MainWindow import MainWindow
+else:
+    from packages.MainWindowNonWindowsSystem import MainWindowNonWindowsSystem as MainWindow
 
+# faulthandler.enable()
 window: MainWindow
 app: QApplication
 
@@ -59,9 +63,9 @@ def kill_all_children():
 
 def logger_exception(exception_type, exception_value, exception_trace_back):
     with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
-        log_file.write(str(datetime.utcnow()) + ' ' + str(exception_type) + "\n" + str(exception_value) + "\n" + str(
-            exception_trace_back) + '\n')
-
+        log_file.write(str(datetime.utcnow()) + '\n')
+        for string in format_exception(exception_type, exception_value, exception_trace_back):
+            log_file.write(string)
 
 
 def setup_logger():

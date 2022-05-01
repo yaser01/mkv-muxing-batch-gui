@@ -1,6 +1,6 @@
 import json
 import subprocess
-
+import sys
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -24,12 +24,28 @@ def delete_trailing_zero_string(string):
     return str(int(str(string)))
 
 
-def fix_windows_backslash_path(string):
-    return string.replace('\\', '\\\\')
+def check_for_system_backslash_path(string):
+    if sys.platform == "win32":  # Windows
+        return string.replace('\\', '\\\\')
+    else:
+        return string
 
 
 def increase_id_by_one(string):
     return str(int(string) + 1)
+
+
+def check_type_of_track_chosen(track):
+    value = ""
+    left_bracket_index = track.find("[")
+    right_bracket_index = track.rfind("]")
+    value = track[left_bracket_index + 1:right_bracket_index]
+    if track.find("Track Id: [") == 0:
+        return "id", value
+    elif track.find("Language: [") == 0:
+        return "lang", value
+    elif track.find("Track Name: [") == 0:
+        return "name", value
 
 
 def get_attribute(data, attribute, default_value):
@@ -86,6 +102,8 @@ class GetJsonForMkvpropeditJob:
                 get_attribute(data=track["properties"], attribute="forced_track", default_value="no"))
             new_track_info.language = str(
                 get_attribute(data=track["properties"], attribute="language", default_value="eng"))
+            new_track_info.track_name = str(
+                get_attribute(data=track["properties"], attribute="track_name", default_value="UnNamedTrackBeBo"))
             if track["type"] == "audio":
                 self.audios_track_json_info.append(new_track_info)
             elif track["type"] == "subtitles":
@@ -106,7 +124,7 @@ class GetJsonForMkvpropeditJob:
                     file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
                     attachments_list_with_attach_command.append(add_json_line("--add-attachment"))
                     attachments_list_with_attach_command.append(
-                        add_json_line(fix_windows_backslash_path(file_to_attach)))
+                        add_json_line(check_for_system_backslash_path(file_to_attach)))
             self.attachments_attach_command = "".join(attachments_list_with_attach_command)
             self.discard_old_attachments_command = "".join(discard_old_attachments_list_command)
 
@@ -114,7 +132,10 @@ class GetJsonForMkvpropeditJob:
         if GlobalSetting.CHAPTER_ENABLED:
             if self.job.chapter_found:
                 self.chapter_attach_command = add_json_line("--chapters") + \
-                                              add_json_line(fix_windows_backslash_path(self.job.chapter_name_absolute))
+                                              add_json_line(
+                                                  check_for_system_backslash_path(self.job.chapter_name_absolute))
+            elif GlobalSetting.CHAPTER_DISCARD_OLD:
+                self.chapter_attach_command = add_json_line("--chapters") + add_json_line("")
 
     def make_other_subtitle_not_forced(self):
         change_forced_subtitle_commands_list = []
@@ -130,9 +151,9 @@ class GetJsonForMkvpropeditJob:
             if (not subtitle_track.isspace()) and subtitle_track != "":
                 change_default_subtitle_commands_list = []
                 subtitle_track_id = ""
-                if subtitle_track.find("Track") != -1:
-                    subtitle_track = subtitle_track.split(" ")[1]
-                    subtitle_track_id = delete_trailing_zero_string(subtitle_track)
+                track_type, track_value = check_type_of_track_chosen(subtitle_track)
+                if track_type == "id":
+                    subtitle_track_id = delete_trailing_zero_string(track_value)
                     found_subtitle_with_this_id = False
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.id == subtitle_track_id:
@@ -154,10 +175,30 @@ class GetJsonForMkvpropeditJob:
 
                         self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
                             change_default_subtitle_commands_list)
-                else:
-                    subtitle_track_language = ISO_639_2_LANGUAGES[subtitle_track]
+                elif track_type == "lang":
+                    subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.language == subtitle_track_language:
+                            subtitle_track_id = subtitle.id
+                            break
+                    if subtitle_track_id != "":
+                        change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                        change_default_subtitle_commands_list.append(
+                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                        change_default_subtitle_commands_list.append(add_json_line("--set"))
+                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                        for subtitle in self.subtitles_track_json_info:
+                            if subtitle.id != subtitle_track_id:
+                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                change_default_subtitle_commands_list.append(
+                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                            change_default_subtitle_commands_list)
+                elif track_type == "name":
+                    for subtitle in self.subtitles_track_json_info:
+                        if subtitle.track_name == track_value:
                             subtitle_track_id = subtitle.id
                             break
                     if subtitle_track_id != "":
@@ -181,9 +222,9 @@ class GetJsonForMkvpropeditJob:
             if (not subtitle_track.isspace()) and subtitle_track != "":
                 change_default_subtitle_commands_list = []
                 subtitle_track_id = ""
-                if subtitle_track.find("Track") != -1:
-                    subtitle_track = subtitle_track.split(" ")[1]
-                    subtitle_track_id = delete_trailing_zero_string(subtitle_track)
+                track_type, track_value = check_type_of_track_chosen(subtitle_track)
+                if track_type == "id":
+                    subtitle_track_id = delete_trailing_zero_string(track_value)
                     found_subtitle_with_this_id = False
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.id == subtitle_track_id:
@@ -209,10 +250,34 @@ class GetJsonForMkvpropeditJob:
 
                         self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
                             change_default_subtitle_commands_list)
-                else:
-                    subtitle_track_language = ISO_639_2_LANGUAGES[subtitle_track]
+                elif track_type == "lang":
+                    subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
                     for subtitle in self.subtitles_track_json_info:
                         if subtitle.language == subtitle_track_language:
+                            subtitle_track_id = subtitle.id
+                            break
+                    if subtitle_track_id != "":
+                        change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                        change_default_subtitle_commands_list.append(
+                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                        change_default_subtitle_commands_list.append(add_json_line("--set"))
+                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                        change_default_subtitle_commands_list.append(add_json_line("--set"))
+                        change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                        for subtitle in self.subtitles_track_json_info:
+                            if subtitle.id != subtitle_track_id:
+                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                change_default_subtitle_commands_list.append(
+                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                                change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
+                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                            change_default_subtitle_commands_list)
+                elif track_type == "name":
+                    for subtitle in self.subtitles_track_json_info:
+                        if subtitle.track_name == track_value:
                             subtitle_track_id = subtitle.id
                             break
                     if subtitle_track_id != "":
@@ -241,9 +306,9 @@ class GetJsonForMkvpropeditJob:
             if (not audio_track.isspace()) and audio_track != "":
                 change_default_audio_commands_list = []
                 audio_track_id = ""
-                if audio_track.find("Track") != -1:
-                    audio_track = audio_track.split(" ")[1]
-                    audio_track_id = delete_trailing_zero_string(audio_track)
+                track_type, track_value = check_type_of_track_chosen(audio_track)
+                if track_type == "id":
+                    audio_track_id = delete_trailing_zero_string(track_value)
                     found_audio_with_this_id = False
                     for audio in self.audios_track_json_info:
                         if audio.id == audio_track_id:
@@ -265,10 +330,30 @@ class GetJsonForMkvpropeditJob:
 
                         self.change_default_forced_audio_track_setting_source_video_command += ''.join(
                             change_default_audio_commands_list)
-                else:
-                    audio_track_language = ISO_639_2_LANGUAGES[audio_track]
+                elif track_type == "lang":
+                    audio_track_language = ISO_639_2_LANGUAGES[track_value]
                     for audio in self.audios_track_json_info:
                         if audio.language == audio_track_language:
+                            audio_track_id = audio.id
+                            break
+                    if audio_track_id != "":
+                        change_default_audio_commands_list.append(add_json_line("--edit"))
+                        change_default_audio_commands_list.append(
+                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                        change_default_audio_commands_list.append(add_json_line("--set"))
+                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                        for audio in self.audios_track_json_info:
+                            if audio.id != audio_track_id:
+                                change_default_audio_commands_list.append(add_json_line("--edit"))
+                                change_default_audio_commands_list.append(
+                                    add_json_line("track:" + increase_id_by_one(audio.id)))
+                                change_default_audio_commands_list.append(add_json_line("--set"))
+                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                            change_default_audio_commands_list)
+                elif track_type == "name":
+                    for audio in self.audios_track_json_info:
+                        if audio.track_name == track_value:
                             audio_track_id = audio.id
                             break
                     if audio_track_id != "":
@@ -292,9 +377,9 @@ class GetJsonForMkvpropeditJob:
             if (not audio_track.isspace()) and audio_track != "":
                 change_default_audio_commands_list = []
                 audio_track_id = ""
-                if audio_track.find("Track") != -1:
-                    audio_track = audio_track.split(" ")[1]
-                    audio_track_id = delete_trailing_zero_string(audio_track)
+                track_type, track_value = check_type_of_track_chosen(audio_track)
+                if track_type == "id":
+                    audio_track_id = delete_trailing_zero_string(track_value)
                     found_audio_with_this_id = False
                     for audio in self.audios_track_json_info:
                         if audio.id == audio_track_id:
@@ -320,10 +405,34 @@ class GetJsonForMkvpropeditJob:
 
                         self.change_default_forced_audio_track_setting_source_video_command += ''.join(
                             change_default_audio_commands_list)
-                else:
-                    audio_track_language = ISO_639_2_LANGUAGES[audio_track]
+                elif track_type == "lang":
+                    audio_track_language = ISO_639_2_LANGUAGES[track_value]
                     for audio in self.audios_track_json_info:
                         if audio.language == audio_track_language:
+                            audio_track_id = audio.id
+                            break
+                    if audio_track_id != "":
+                        change_default_audio_commands_list.append(add_json_line("--edit"))
+                        change_default_audio_commands_list.append(
+                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                        change_default_audio_commands_list.append(add_json_line("--set"))
+                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                        change_default_audio_commands_list.append(add_json_line("--set"))
+                        change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                        for audio in self.audios_track_json_info:
+                            if audio.id != audio_track_id:
+                                change_default_audio_commands_list.append(add_json_line("--edit"))
+                                change_default_audio_commands_list.append(
+                                    add_json_line("track:" + increase_id_by_one(audio.id)))
+                                change_default_audio_commands_list.append(add_json_line("--set"))
+                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                                change_default_audio_commands_list.append(add_json_line("--set"))
+                                change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
+                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                            change_default_audio_commands_list)
+                elif track_type == "name":
+                    for audio in self.audios_track_json_info:
+                        if audio.track_name == track_value:
                             audio_track_id = audio.id
                             break
                     if audio_track_id != "":
@@ -350,13 +459,16 @@ class GetJsonForMkvpropeditJob:
     def setup_ui_language(self):
         ui_language_commands_list = []
         ui_language_commands_list.append(add_double_quotation("--ui-language") + ",")
-        ui_language_commands_list.append(add_json_line("en"))
+        if sys.platform == "win32":
+            ui_language_commands_list.append(add_json_line("en"))
+        else:
+            ui_language_commands_list.append(add_json_line("en_US"))
         self.ui_language_command = "".join(ui_language_commands_list)
 
     # noinspection PyListCreation
     def setup_input_video_command(self):
         input_video_commands_list = []
-        input_video_commands_list.append(add_json_line(fix_windows_backslash_path(self.job.video_name_absolute)))
+        input_video_commands_list.append(add_json_line(check_for_system_backslash_path(self.job.video_name_absolute)))
         self.input_video_command = "".join(input_video_commands_list)
 
     def setup_final_command(self):

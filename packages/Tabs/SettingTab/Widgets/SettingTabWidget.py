@@ -12,8 +12,11 @@ from packages.Tabs.SettingTab.Widgets.AboutButton import AboutButton
 from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLayout import DefaultDirectoryLayout
 from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExtensionsLayout
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
+from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
+import faulthandler
 
 
+# faulthandler.enable()
 class SettingTabWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -50,17 +53,19 @@ class SettingTabWidget(QWidget):
                                                                          default_extensions_list=DefaultOptions.Default_Chapter_Extensions)
 
         self.default_subtitle_language_layout = DefaultLanguageLayout(label_name="Subtitle Language: ",
-                                                                      languages_list=AllSubtitlesLanguages,
+                                                                      languages_list=DefaultOptions.Default_Favorite_Subtitle_Languages,
                                                                       default_language=DefaultOptions.Default_Subtitle_Language)
         self.default_audio_language_layout = DefaultLanguageLayout(label_name="Audio Language: ",
-                                                                   languages_list=AllAudiosLanguages,
+                                                                   languages_list=DefaultOptions.Default_Favorite_Audio_Languages,
                                                                    default_language=DefaultOptions.Default_Audio_Language)
         self.setting_info_text_icon_label = QLabel()
         self.setting_info_text_icon_label.setPixmap(QPixmap(InfoIconPath))
-        self.setting_info_text_label = QLabel("Changes will apply on next launch")
+        self.setting_info_text_label = QLabel("Changes will take effect on next launch")
         self.setting_about_button = AboutButton()
+        self.setting_donate_button = DonateButton()
         self.setting_info_layout.addWidget(self.setting_info_text_icon_label, stretch=0)
         self.setting_info_layout.addWidget(self.setting_info_text_label, stretch=1)
+        self.setting_info_layout.addWidget(self.setting_donate_button, stretch=0, alignment=Qt.AlignRight)
         self.setting_info_layout.addWidget(self.setting_about_button, stretch=0, alignment=Qt.AlignRight)
         self.main_layout = QVBoxLayout()
         self.setup_main_layout()
@@ -91,7 +96,7 @@ class SettingTabWidget(QWidget):
 
     def setup_default_languages_groupBox(self):
         self.default_languages_groupBox.setStyle(QStyleFactory.create("windowsvista"))
-        self.default_languages_groupBox.setTitle("Default Language")
+        self.default_languages_groupBox.setTitle("Favorite Languages List")
         self.default_languages_groupBox.setLayout(self.default_languages_layout)
 
     def setup_default_directories_layout(self):
@@ -109,8 +114,20 @@ class SettingTabWidget(QWidget):
         self.default_extensions_layout.addLayout(self.default_chapter_extensions_layout, 1, 1)
 
     def setup_default_languages_layout(self):
-        self.default_languages_layout.addLayout(self.default_subtitle_language_layout, 0, 0)
-        self.default_languages_layout.addLayout(self.default_audio_language_layout, 0, 1)
+        self.default_languages_layout.addWidget(self.default_subtitle_language_layout.label, 0, 0)
+        self.default_languages_layout.addWidget(self.default_subtitle_language_layout.languages_comboBox, 0, 1)
+        self.default_languages_layout.addWidget(self.default_subtitle_language_layout.setting_button, 0, 2)
+        self.default_languages_layout.addWidget(QLabel(" "), 0, 3)
+        self.default_languages_layout.addWidget(self.default_audio_language_layout.label, 0, 4)
+        self.default_languages_layout.addWidget(self.default_audio_language_layout.languages_comboBox, 0, 5)
+        self.default_languages_layout.addWidget(self.default_audio_language_layout.setting_button, 0, 6)
+        self.default_languages_layout.setColumnStretch(0, 0)
+        self.default_languages_layout.setColumnStretch(1, 1)
+        self.default_languages_layout.setColumnStretch(2, 0)
+        self.default_languages_layout.setColumnStretch(3, 0)
+        self.default_languages_layout.setColumnStretch(4, 0)
+        self.default_languages_layout.setColumnStretch(5, 1)
+        self.default_languages_layout.setColumnStretch(6, 0)
 
     def connect_signals(self):
         pass

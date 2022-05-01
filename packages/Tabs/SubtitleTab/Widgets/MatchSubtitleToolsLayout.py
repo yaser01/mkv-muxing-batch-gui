@@ -3,6 +3,7 @@ from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QVBoxLayout, QShortcut
 
 from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.SubtitleTab.Widgets.DeleteSubtitleButton import DeleteSubtitleButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleBottomButton import MoveSubtitleBottomButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleDownButton import MoveSubtitleDownButton
 from packages.Tabs.SubtitleTab.Widgets.MoveSubtitleToButton import MoveSubtitleToButton
@@ -23,6 +24,7 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_down_button = MoveSubtitleDownButton()
         self.move_subtitle_bottom_button = MoveSubtitleBottomButton()
         self.move_subtitle_to_button = MoveSubtitleToButton()
+        self.delete_subtitle_button = DeleteSubtitleButton()
         self.setup_shortcuts()
         self.setup_layout()
         self.connect_signals()
@@ -48,6 +50,9 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_bottom_button.selected_row_after_swap.connect(self.change_selected_subtitle_row)
         self.move_subtitle_to_button.swap_happened_signal.connect(self.refresh_subtitle_table)
         self.move_subtitle_to_button.selected_row_after_swap.connect(self.change_selected_subtitle_row)
+        self.delete_subtitle_button.delete_happened_signal.connect(
+            self.update_global_subtitle_files_list_order_deleting)
+        self.delete_subtitle_button.selected_row_after_delete.connect(self.change_selected_subtitle_row)
 
     def setup_layout(self):
         self.addStretch()
@@ -60,6 +65,8 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.addWidget(self.move_subtitle_bottom_button)
         self.addSpacing(10)
         self.addWidget(self.move_subtitle_down_button)
+        self.addSpacing(10)
+        self.addWidget(self.delete_subtitle_button)
         self.addStretch()
 
     def set_selected_row(self, selected_row, max_index):
@@ -73,6 +80,8 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_bottom_button.max_index = max_index
         self.move_subtitle_to_button.current_index = selected_row
         self.move_subtitle_to_button.max_index = max_index
+        self.delete_subtitle_button.current_index = selected_row
+        self.delete_subtitle_button.max_index = max_index
 
     # noinspection PyAttributeOutsideInit
     def setup_shortcuts(self):
@@ -91,6 +100,9 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_to_shortcut = QShortcut(QKeySequence("Ctrl+M"), self.subtitle_tab)
         self.move_subtitle_to_shortcut.activated.connect(self.move_subtitle_to_button.clicked_button)
 
+        self.delete_subtitle_shortcut = QShortcut(QKeySequence("Delete"), self.subtitle_tab)
+        self.delete_subtitle_shortcut.activated.connect(self.delete_subtitle_button.clicked_button)
+
     def refresh_subtitle_table(self):
         self.refresh_subtitle_table_signal.emit()
 
@@ -104,12 +116,14 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_down_button.setEnabled(False)
         self.move_subtitle_bottom_button.setEnabled(False)
         self.move_subtitle_to_button.setEnabled(False)
+        self.delete_subtitle_button.setEnabled(False)
 
         self.move_subtitle_up_shortcut.setEnabled(False)
         self.move_subtitle_top_shortcut.setEnabled(False)
         self.move_subtitle_down_shortcut.setEnabled(False)
         self.move_subtitle_bottom_shortcut.setEnabled(False)
         self.move_subtitle_to_shortcut.setEnabled(False)
+        self.delete_subtitle_shortcut.setEnabled(False)
 
     def enable_editable_widgets(self):
         self.move_subtitle_up_button.setEnabled(True)
@@ -117,12 +131,14 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.move_subtitle_down_button.setEnabled(True)
         self.move_subtitle_bottom_button.setEnabled(True)
         self.move_subtitle_to_button.setEnabled(True)
+        self.delete_subtitle_button.setEnabled(True)
 
         self.move_subtitle_up_shortcut.setEnabled(True)
         self.move_subtitle_top_shortcut.setEnabled(True)
         self.move_subtitle_down_shortcut.setEnabled(True)
         self.move_subtitle_bottom_shortcut.setEnabled(True)
         self.move_subtitle_to_shortcut.setEnabled(True)
+        self.delete_subtitle_shortcut.setEnabled(True)
 
     def update_global_subtitle_files_list_order_to_top(self, index_to_move):
         temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move]
@@ -184,3 +200,8 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
             GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
                 index_last_file]
         GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_last_file] = temp_for_swap
+
+    def update_global_subtitle_files_list_order_deleting(self, index_to_delete):
+        del GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_delete]
+        del GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_delete]
+        self.refresh_subtitle_table()

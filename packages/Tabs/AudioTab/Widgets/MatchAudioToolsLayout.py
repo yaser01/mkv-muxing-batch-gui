@@ -2,6 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QVBoxLayout, QShortcut
 
+from packages.Tabs.AudioTab.Widgets.DeleteAudioButton import DeleteAudioButton
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.AudioTab.Widgets.MoveAudioBottomButton import MoveAudioBottomButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioDownButton import MoveAudioDownButton
@@ -23,6 +24,7 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_down_button = MoveAudioDownButton()
         self.move_audio_bottom_button = MoveAudioBottomButton()
         self.move_audio_to_button = MoveAudioToButton()
+        self.delete_audio_button = DeleteAudioButton()
         self.setup_shortcuts()
         self.setup_layout()
         self.connect_signals()
@@ -47,6 +49,9 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_bottom_button.selected_row_after_swap.connect(self.change_selected_audio_row)
         self.move_audio_to_button.swap_happened_signal.connect(self.refresh_audio_table)
         self.move_audio_to_button.selected_row_after_swap.connect(self.change_selected_audio_row)
+        self.delete_audio_button.delete_happened_signal.connect(
+            self.update_global_audio_files_list_order_deleting)
+        self.delete_audio_button.selected_row_after_delete.connect(self.change_selected_audio_row)
 
     def setup_layout(self):
         self.addStretch()
@@ -59,6 +64,8 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.addWidget(self.move_audio_bottom_button)
         self.addSpacing(10)
         self.addWidget(self.move_audio_down_button)
+        self.addSpacing(10)
+        self.addWidget(self.delete_audio_button)
         self.addStretch()
 
     def set_selected_row(self, selected_row, max_index):
@@ -72,6 +79,8 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_bottom_button.max_index = max_index
         self.move_audio_to_button.current_index = selected_row
         self.move_audio_to_button.max_index = max_index
+        self.delete_audio_button.current_index = selected_row
+        self.delete_audio_button.max_index = max_index
 
     # noinspection PyAttributeOutsideInit
     def setup_shortcuts(self):
@@ -90,6 +99,9 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_to_shortcut = QShortcut(QKeySequence("Ctrl+M"), self.audio_tab)
         self.move_audio_to_shortcut.activated.connect(self.move_audio_to_button.clicked_button)
 
+        self.delete_audio_shortcut = QShortcut(QKeySequence("Delete"), self.audio_tab)
+        self.delete_audio_shortcut.activated.connect(self.delete_audio_button.clicked_button)
+
     def refresh_audio_table(self):
         self.refresh_audio_table_signal.emit()
 
@@ -103,12 +115,14 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_down_button.setEnabled(False)
         self.move_audio_bottom_button.setEnabled(False)
         self.move_audio_to_button.setEnabled(False)
+        self.delete_audio_button.setEnabled(False)
 
         self.move_audio_up_shortcut.setEnabled(False)
         self.move_audio_top_shortcut.setEnabled(False)
         self.move_audio_down_shortcut.setEnabled(False)
         self.move_audio_bottom_shortcut.setEnabled(False)
         self.move_audio_to_shortcut.setEnabled(False)
+        self.delete_audio_shortcut.setEnabled(False)
 
     def enable_editable_widgets(self):
         self.move_audio_up_button.setEnabled(True)
@@ -116,12 +130,14 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.move_audio_down_button.setEnabled(True)
         self.move_audio_bottom_button.setEnabled(True)
         self.move_audio_to_button.setEnabled(True)
+        self.delete_audio_button.setEnabled(True)
 
         self.move_audio_up_shortcut.setEnabled(True)
         self.move_audio_top_shortcut.setEnabled(True)
         self.move_audio_down_shortcut.setEnabled(True)
         self.move_audio_bottom_shortcut.setEnabled(True)
         self.move_audio_to_shortcut.setEnabled(True)
+        self.delete_audio_shortcut.setEnabled(True)
 
     def update_global_audio_files_list_order_to_top(self, index_to_move):
         temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
@@ -183,3 +199,8 @@ class MatchAudioToolsLayout(QVBoxLayout):
             GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
                 index_last_file]
         GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_last_file] = temp_for_swap
+
+    def update_global_audio_files_list_order_deleting(self, index_to_delete):
+        del GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_delete]
+        del GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_delete]
+        self.refresh_audio_table()

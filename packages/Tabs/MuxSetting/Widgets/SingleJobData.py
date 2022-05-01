@@ -35,6 +35,12 @@ class SingleJobData:
         self.chapter_name = ""
         self.chapter_name_absolute = ""
 
+        self.output_video_name = ""
+        self.output_video_absolute_path = ""
+
+        self.is_crc_calculating_required = False
+        self.is_crc_removing_required = False
+        self.progress_crc = 0
         self.progress = 0
         self.size_before_muxing = "0 MB"
         self.size_after_muxing = "0 MB"
@@ -43,3 +49,4 @@ class SingleJobData:
         self.error_occurred = False
         self.used_mkvpropedit = False
         self.muxing_message = ""
+        self.new_crc = ""

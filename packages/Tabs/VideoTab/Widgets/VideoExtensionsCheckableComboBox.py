@@ -79,27 +79,32 @@ class VideoExtensionsCheckableComboBox(QComboBox):
         super().resizeEvent(event)
 
     def eventFilter(self, object, event):
-        if self.isEnabled():
-            if object == self.lineEdit():
-                if event.type() == QEvent.MouseButtonRelease:
-                    if self.closeOnLineEditClick:
-                        self.hidePopup()
-                    else:
-                        self.showPopup()
-                    return True
-                return False
-
-            if object == self.view().viewport():
-                if event.type() == QEvent.MouseButtonRelease:
-                    index = self.view().indexAt(event.pos())
-                    item = self.model().item(index.row())
-                    if item.checkState() == Qt.Checked:
-                        item.setCheckState(Qt.Unchecked)
-                    else:
-                        item.setCheckState(Qt.Checked)
-                    return True
+        if str(event.__class__).find("Event") == -1:
             return False
-        else:
+        try:
+            if self.isEnabled():
+                if object == self.lineEdit():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        if self.closeOnLineEditClick:
+                            self.hidePopup()
+                        else:
+                            self.showPopup()
+                        return True
+                    return False
+
+                if object == self.view().viewport():
+                    if event.type() == QEvent.MouseButtonRelease:
+                        index = self.view().indexAt(event.pos())
+                        item = self.model().item(index.row())
+                        if item.checkState() == Qt.Checked:
+                            item.setCheckState(Qt.Unchecked)
+                        else:
+                            item.setCheckState(Qt.Checked)
+                        return True
+                return False
+            else:
+                return False
+        except Exception as e:
             return False
 
     def showPopup(self):
@@ -147,7 +152,7 @@ class VideoExtensionsCheckableComboBox(QComboBox):
             item.setData(text)
         else:
             item.setData(data)
-        item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+        item.setFlags(Qt.ItemIsEnabled or Qt.ItemIsUserCheckable)
         item.setData(Qt.Unchecked, Qt.CheckStateRole)
         self.model().appendRow(item)
 
@@ -204,6 +209,8 @@ class VideoExtensionsCheckableComboBox(QComboBox):
 
     def check_extensions_changes(self):
         new_extensions = self.currentData()
+        if self.current_extensions == new_extensions:
+            return
         if self.current_folder_path != "" and not self.current_folder_path.isspace():
             new_files_list = self.get_files_list(new_extensions=new_extensions)
             if new_files_list != self.current_files_list:

@@ -8,7 +8,7 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class MatchChapterLayout(QHBoxLayout):
-    sync_chapter_files_with_global_files_after_swap_signal = Signal()
+    sync_chapter_files_with_global_files_after_swap_delete_signal = Signal()
 
     def __init__(self, parent=None):
         super().__init__()
@@ -26,7 +26,7 @@ class MatchChapterLayout(QHBoxLayout):
         self.chapter_table.table.selectionModel().selectionChanged.connect(
             self.send_selection_to_tools_layout
         )
-        self.match_tools_layout.refresh_chapter_table_signal.connect(self.show_chapter_files_after_swapping)
+        self.match_tools_layout.refresh_chapter_table_signal.connect(self.show_chapter_files_after_swapping_deleting)
         self.match_tools_layout.selected_chapter_row_signal.connect(self.change_selected_chapter_row)
 
     def setup_layout(self):
@@ -77,12 +77,12 @@ class MatchChapterLayout(QHBoxLayout):
     def show_video_files(self):
         self.video_table.show_files()
 
-    def show_chapter_files_after_swapping(self):
-        self.sync_chapter_files_with_global_files_after_swap_signal.emit()
-        self.chapter_table.show_files_after_swapping()
+    def show_chapter_files_after_swapping_deleting(self):
+        self.sync_chapter_files_with_global_files_after_swap_delete_signal.emit()
+        self.chapter_table.show_files_after_swapping_deleting()
 
     def show_chapter_files(self):
-        self.sync_chapter_files_with_global_files_after_swap_signal.emit()
+        self.sync_chapter_files_with_global_files_after_swap_delete_signal.emit()
         self.chapter_table.show_files()
 
     def change_selected_chapter_row(self, new_selected_row):

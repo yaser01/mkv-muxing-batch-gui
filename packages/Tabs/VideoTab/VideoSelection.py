@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, QMetaMethod, SIGNAL
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
@@ -12,6 +12,7 @@ from packages.Tabs.VideoTab.Widgets.VideoInfoButton import VideoInfoButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceButton import VideoSourceButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceLineEdit import VideoSourceLineEdit
 from packages.Tabs.VideoTab.Widgets.VideoTable import VideoTable
+from packages.Widgets.ErrorDialog import ErrorDialog
 from packages.Widgets.InvalidPathDialog import *
 
 # noinspection PyAttributeOutsideInit
@@ -36,9 +37,10 @@ def get_files_size_with_absolute_path_list(files_name_absolute_path):
     return files_size_list
 
 
-def show_loading_dialog(new_videos_list):
+def start_loading_new_videos_dialog(new_videos_list):
     loading_videos_info_dialog = LoadingVideosInfoDialog(new_videos_list)
     loading_videos_info_dialog.execute()
+    return loading_videos_info_dialog.unsupported_files_list
 
 
 class VideoSelectionSetting(GlobalSetting):
@@ -65,6 +67,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_size_list = []
         self.files_names_checked_list = []
         self.files_names_absolute_list_with_dropped_files = []
+        self.unsupported_files_list = []
         self.current_video_extensions = DefaultOptions.Default_Video_Extensions
         self.is_drag_and_drop = False
         self.setup_widgets()
@@ -81,16 +84,13 @@ class VideoSelectionSetting(GlobalSetting):
         self.setLayout(self.main_layout)
 
     def update_folder_path(self, new_path: str):
-
         if new_path != "":
-            self.video_source_lineEdit.setText(new_path)
+            self.video_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_files_list()
         else:
             if self.is_drag_and_drop:
-                self.video_source_lineEdit.stop_check_path = True
-                self.video_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.video_source_lineEdit.stop_check_path = False
+                self.video_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -125,11 +125,32 @@ class VideoSelectionSetting(GlobalSetting):
                 self.files_size_list = get_files_size_with_absolute_path_list(new_files_absolute_path_list)
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.files_names_checked_list = ([True] * len(new_files_absolute_path_list))
+                self.unsupported_files_list = []
                 if len(new_files_absolute_path_list) > 0:
-                    show_loading_dialog(new_files_absolute_path_list)
+                    self.unsupported_files_list = start_loading_new_videos_dialog(new_files_absolute_path_list)
+                    if len(self.unsupported_files_list) > 0:
+                        new_files_absolute_path_list = []
+                        self.files_names_list = []
+                        self.folders_paths = []
+                        for file_absolute_path in new_files_absolute_path_list:
+                            if file_absolute_path not in self.unsupported_files_list:
+                                new_files_absolute_path_list.append(file_absolute_path)
+                                self.files_names_list.append(os.path.basename(file_absolute_path))
+                                if os.path.dirname(file_absolute_path) not in self.folders_paths:
+                                    self.folders_paths.append(Path(os.path.dirname(file_absolute_path)))
+                        self.files_names_absolute_list = new_files_absolute_path_list.copy()
+                        self.files_size_list = get_files_size_with_absolute_path_list(new_files_absolute_path_list)
+                        self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
+                        self.files_names_checked_list = ([True] * len(new_files_absolute_path_list))
+                        error_message = "One or more files couldn't be recognised as video:"
+                        for file_name_absolute in self.unsupported_files_list:
+                            error_message += "\n" + os.path.basename(file_name_absolute)
+                        error_dialog = ErrorDialog(window_title="Unrecognised files", error_message=error_message,
+                                                   parent=self.window())
+                        error_dialog.execute_wth_no_block()
                 self.video_source_lineEdit.stop_check_path = False
             else:
-                self.video_source_lineEdit.setText("")
+                self.video_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -140,8 +161,29 @@ class VideoSelectionSetting(GlobalSetting):
             self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
             self.files_size_list = get_files_size_list(files_list=self.files_names_list, folder_path=self.folder_path)
             self.files_names_checked_list = ([True] * len(self.files_names_absolute_list))
+            self.unsupported_files_list = []
             if len(self.files_names_absolute_list) > 0:
-                show_loading_dialog(self.files_names_absolute_list)
+                self.unsupported_files_list = start_loading_new_videos_dialog(self.files_names_absolute_list)
+                if len(self.unsupported_files_list) > 0:
+                    new_files_absolute_path_list = []
+                    self.files_names_list = []
+                    self.folders_paths = []
+                    for file_absolute_path in self.files_names_absolute_list:
+                        if file_absolute_path not in self.unsupported_files_list:
+                            new_files_absolute_path_list.append(file_absolute_path)
+                            self.files_names_list.append(os.path.basename(file_absolute_path))
+                            if os.path.dirname(file_absolute_path) not in self.folders_paths:
+                                self.folders_paths.append(Path(os.path.dirname(file_absolute_path)))
+                    self.files_names_absolute_list = new_files_absolute_path_list.copy()
+                    self.files_size_list = get_files_size_with_absolute_path_list(new_files_absolute_path_list)
+                    self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
+                    self.files_names_checked_list = ([True] * len(new_files_absolute_path_list))
+                    error_message = "One or more files couldn't be recognised as video:"
+                    for file_name_absolute in self.unsupported_files_list:
+                        error_message += "\n" + os.path.basename(file_name_absolute)
+                    error_dialog = ErrorDialog(window_title="Unrecognised files", error_message=error_message,
+                                               parent=self.window())
+                    error_dialog.execute_wth_no_block()
         except Exception as e:
             invalid_path_dialog = InvalidPathDialog()
             invalid_path_dialog.execute()
@@ -201,7 +243,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.files_size_list = []
-        self.video_source_lineEdit.setText("")
+        self.video_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.files_names_checked_list = []
         self.show_files_list()
@@ -317,20 +359,44 @@ class VideoSelectionSetting(GlobalSetting):
             else:
                 not_duplicate_files_absolute_path_list.append(new_file_name)
                 not_duplicate_files_list.append(os.path.basename(new_file_name))
-                self.files_names_list.append(os.path.basename(new_file_name))
-                if os.path.dirname(new_file_name) not in self.folders_paths:
-                    self.folders_paths.append(Path(os.path.dirname(new_file_name)))
         self.video_source_lineEdit.stop_check_path = True
         self.video_source_lineEdit.setText(self.drag_and_dropped_text)
         self.is_drag_and_drop = True
         self.folder_path = ""
-        self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_absolute_path_list)
-        self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
-        self.files_size_list.extend(get_files_size_with_absolute_path_list(not_duplicate_files_absolute_path_list))
-        self.files_names_checked_list.extend([True] * len(not_duplicate_files_absolute_path_list))
-        self.show_files_list()
+        self.unsupported_files_list = []
         if len(not_duplicate_files_absolute_path_list) > 0:
-            show_loading_dialog(not_duplicate_files_absolute_path_list)
+            self.unsupported_files_list = start_loading_new_videos_dialog(not_duplicate_files_absolute_path_list)
+            if len(self.unsupported_files_list) > 0:
+                not_duplicate_files_and_supported_absolute_path_list = []
+                for new_file_name in not_duplicate_files_absolute_path_list:
+                    if new_file_name not in self.unsupported_files_list:
+                        not_duplicate_files_and_supported_absolute_path_list.append(new_file_name)
+                        self.files_names_list.append(os.path.basename(new_file_name))
+                        if os.path.dirname(new_file_name) not in self.folders_paths:
+                            self.folders_paths.append(Path(os.path.dirname(new_file_name)))
+                error_message = "One or more files couldn't be recognised as video:"
+                for file_name_absolute in self.unsupported_files_list:
+                    error_message += "\n" + os.path.basename(file_name_absolute)
+                error_dialog = ErrorDialog(window_title="Unrecognised files", error_message=error_message,
+                                           parent=self.window())
+                error_dialog.execute_wth_no_block()
+                self.files_names_absolute_list_with_dropped_files.extend(
+                    not_duplicate_files_and_supported_absolute_path_list)
+                self.files_names_absolute_list.extend(not_duplicate_files_and_supported_absolute_path_list)
+                self.files_size_list.extend(
+                    get_files_size_with_absolute_path_list(not_duplicate_files_and_supported_absolute_path_list))
+                self.files_names_checked_list.extend([True] * len(not_duplicate_files_and_supported_absolute_path_list))
+            else:
+                for file_name in not_duplicate_files_absolute_path_list:
+                    self.files_names_list.append(os.path.basename(file_name))
+                    if os.path.dirname(file_name) not in self.folders_paths:
+                        self.folders_paths.append(Path(os.path.dirname(file_name)))
+                self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_absolute_path_list)
+                self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
+                self.files_size_list.extend(
+                    get_files_size_with_absolute_path_list(not_duplicate_files_absolute_path_list))
+                self.files_names_checked_list.extend([True] * len(not_duplicate_files_absolute_path_list))
+        self.show_files_list()
         self.video_source_lineEdit.stop_check_path = False
         if duplicate_flag:
             info_message = "One or more files have the same name with the old files will be " \
@@ -342,7 +408,6 @@ class VideoSelectionSetting(GlobalSetting):
             warning_dialog.execute_wth_no_block()
 
     def disable_editable_widgets(self):
-        self.video_source_lineEdit_disconnect_edit_finished_signal()
         self.video_extensions_comboBox.setEnabled(False)
         self.video_source_lineEdit.setEnabled(False)
         self.video_source_button.setEnabled(False)
@@ -351,20 +416,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.table.setAcceptDrops(False)
         self.table.disable_selection()
 
-    def video_source_lineEdit_disconnect_edit_finished_signal(self):
-        try:
-            self.video_source_lineEdit.edit_finished_signal.disconnect()
-        except Exception as e:
-            pass
-
-    def video_source_lineEdit_connect_edit_finished_signal(self):
-        try:
-            self.video_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
-        except Exception as e:
-            pass
-
     def enable_editable_widgets(self):
-        self.video_source_lineEdit_connect_edit_finished_signal()
         self.video_extensions_comboBox.setEnabled(True)
         self.video_source_lineEdit.setEnabled(True)
         self.video_source_button.setEnabled(True)
@@ -377,5 +429,6 @@ class VideoSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.video_source_lineEdit.setText(DefaultOptions.Default_Video_Directory)
+        self.video_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Video_Directory)
+        self.update_folder_path(DefaultOptions.Default_Video_Directory)
         self.video_source_lineEdit.check_new_path()

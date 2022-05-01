@@ -28,9 +28,9 @@ def generate_languages_tracks():
 tracks_list = generate_track_ids(10)
 generate_languages_tracks()
 ISO_639_2_SYMBOLS = {v: k for k, v in ISO_639_2_LANGUAGES.items()}
-AllVideosExtensions = ['AVI', 'MKV', 'MP4', 'M4V', 'MOV', 'MPEG', 'OGG', 'OGM', 'H264', 'H265', "WEBM", 'WMV']
-AllSubtitlesExtensions = ['ASS', 'SRT', 'SSA', 'SUP', 'PGS', 'MKS']
-AllAudiosExtensions = ['AAC', 'AC3', 'FLAC', 'EAC3', 'MKA', 'M4A', 'MP3', 'DTS', 'DTSMA', 'THD', 'WAV', 'OGG']
+AllVideosExtensions = ['AVI', 'MKV', 'MP4', 'M4V', 'MOV', 'MPEG', 'TS', 'OGG', 'OGM', 'H264', 'H265', "WEBM", 'WMV']
+AllSubtitlesExtensions = ['ASS', 'SRT', 'SSA', 'SUP', 'PGS', 'MKS', 'VTT']
+AllAudiosExtensions = ['AAC', 'AC3', 'FLAC', 'EAC3', 'MKA', 'M4A', 'MP3', 'DTS', 'DTSMA', 'THD', 'WAV', 'OGG', 'OPUS']
 AllSubtitlesLanguages = list(ISO_639_2_LANGUAGES.keys())
 AllAudiosLanguages = list(ISO_639_2_LANGUAGES.keys())
 AllChapterExtensions = ['XML']
@@ -44,3 +44,4 @@ AllVideoDefaultDurationFPSLanguages = ['Default', '24p', '25p', '30p', '48p', '5
 GitHubRepoUrlTag = "<a href=\"https://github.com/yaser01/mkv-muxing-batch-gui\">Our Home Page</a> "
 GPLV2UrlTag = "<a href=\"http://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GPLv2</a>"
 GitHubIssuesUrlTag = "<a href=\"https://github.com/yaser01/mkv-muxing-batch-gui/issues\">issues page</a>"
+DonationsUrl = "https://www.buymeacoffee.com/yaser01"

@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QFormLayout
 
 from packages.Startup import GlobalFiles
-from packages.Startup.PreDefined import AllAudiosLanguages
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
 
 
@@ -177,9 +177,10 @@ class AudioInfoDialog(QDialog):
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
 
     def setup_audio_language_comboBox(self):
-        self.audio_language_comboBox.addItems(AllAudiosLanguages)
+        self.audio_language_comboBox.addItems(DefaultOptions.Default_Favorite_Audio_Languages)
         self.audio_language_comboBox.setCurrentIndex(
-            AllAudiosLanguages.index(self.current_audio_language[self.current_audio_index]))
+            DefaultOptions.Default_Favorite_Audio_Languages.index(
+                self.current_audio_language[self.current_audio_index]))
         self.audio_language_comboBox.setMaxVisibleItems(8)
         self.audio_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
 
@@ -239,7 +240,8 @@ class AudioInfoDialog(QDialog):
             self.current_audio_index]
 
         self.audio_language_comboBox.setCurrentIndex(
-            AllAudiosLanguages.index(self.current_audio_language[self.current_audio_index]))
+            DefaultOptions.Default_Favorite_Audio_Languages.index(
+                self.current_audio_language[self.current_audio_index]))
         self.audio_delay_spin.setValue(float(self.current_audio_delay[self.current_audio_index]))
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
         self.audio_set_default_checkBox.setChecked(
@@ -285,7 +287,8 @@ class AudioInfoDialog(QDialog):
         self.audio_set_forced_checkBox.setChecked(
             bool(self.current_audio_set_forced[self.current_audio_index]))
         self.audio_language_comboBox.setCurrentIndex(
-            AllAudiosLanguages.index(self.current_audio_language[self.current_audio_index]))
+            DefaultOptions.Default_Favorite_Audio_Languages.index(
+                self.current_audio_language[self.current_audio_index]))
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
         self.audio_name_value.setText(str(self.current_audio_name[self.current_audio_index]))
 

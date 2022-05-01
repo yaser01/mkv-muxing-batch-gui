@@ -23,7 +23,8 @@ from packages.Tabs.MuxSetting.Widgets.MakeThisTrackDefaultComboBox import MakeTh
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseAudiosCheckBox import OnlyKeepThoseAudiosCheckBox
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseSubtitlesCheckBox import OnlyKeepThoseSubtitlesCheckBox
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
-from packages.Widgets.ErrorDialog import ErrorDialog
+from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
+from packages.Widgets.FileNotFoundDialog import FileNotFoundDialog
 from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.InvalidPathDialog import *
 
@@ -59,15 +60,16 @@ def check_is_there_audio_to_mux():
 
 # noinspection PyAttributeOutsideInit
 def check_if_at_least_one_muxing_setting_has_been_selected():
-    if check_is_there_subtitle_to_mux() or\
-            check_is_there_audio_to_mux() or\
-            len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or\
-            len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or\
-            GlobalSetting.ATTACHMENT_DISCARD_OLD or\
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or\
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or\
-            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or\
-            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "" or\
+    if check_is_there_subtitle_to_mux() or \
+            check_is_there_audio_to_mux() or \
+            len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
+            len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or \
+            GlobalSetting.CHAPTER_DISCARD_OLD or \
+            GlobalSetting.ATTACHMENT_DISCARD_OLD or \
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
+            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or \
+            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "" or \
             GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
@@ -78,15 +80,25 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
         return False
 
 
+def check_if_all_input_videos_are_found():
+    for video_file in GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST:
+        if not Path.is_file(Path(video_file)):
+            invalid_dialog = FileNotFoundDialog(window_title="File Not Found",
+                                                error_message="File: \"" + video_file + "\" is not found")
+            invalid_dialog.execute()
+            return False
+    return True
+
+
 def check_if_want_to_keep_log_file():
     if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
         try:
             copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
         except Exception as e:
             write_to_log_file(e)
-            error_dialog = ErrorDialog(window_title="Permission Denied",
-                                       info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
-                                                    "permissions on Destination folder")
+            error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
+                                             info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
+                                                          "permissions on Destination folder")
             error_dialog.execute()
 
 
@@ -141,6 +153,8 @@ class MuxSettingTab(QWidget):
             self.make_this_subtitle_default_comboBox_text_changed)
 
         self.abort_on_errors_checkBox.stateChanged.connect(self.abort_on_errors_state_changed)
+        self.add_crc_checksum_checkBox.stateChanged.connect(self.add_crc_checksum_state_changed)
+        self.remove_old_crc_checksum_checkBox.stateChanged.connect(self.remove_old_crc_checksum_state_changed)
 
         self.keep_log_file_checkBox.stateChanged.connect(self.keep_log_file_state_changed)
         self.job_queue_layout.update_task_bar_progress_signal.connect(self.update_task_bar_progress)
@@ -158,6 +172,8 @@ class MuxSettingTab(QWidget):
         self.setup_abort_on_errors_checkBox()
         self.setup_discard_old_attachments_checkBox()
         self.setup_keep_log_file_checkBox()
+        self.setup_add_crc_checksum_checkBox()
+        self.setup_remove_old_crc_checkBox()
         self.setup_clear_job_queue_button()
         self.setup_tool_tip_hint()
         self.setup_layouts()
@@ -192,6 +208,8 @@ class MuxSettingTab(QWidget):
         self.abort_on_errors_checkBox = QCheckBox()
         self.discard_old_attachments_checkBox = QCheckBox()
         self.keep_log_file_checkBox = QCheckBox()
+        self.add_crc_checksum_checkBox = QCheckBox()
+        self.remove_old_crc_checksum_checkBox = QCheckBox()
         self.control_queue_button = ControlQueueButton()
         self.clear_job_queue_button = QPushButton()
         self.mux_tools_layout_first_row = QHBoxLayout()
@@ -211,20 +229,32 @@ class MuxSettingTab(QWidget):
         self.mux_tools_layout_first_row.addWidget(self.only_keep_those_audios_multi_choose_comboBox, 2)
         self.mux_tools_layout_first_row.addWidget(self.make_this_audio_default_checkBox, 1)
         self.mux_tools_layout_first_row.addWidget(self.make_this_audio_default_comboBox, 2)
+        self.mux_tools_layout_first_row.addWidget(self.add_crc_checksum_checkBox)
         self.mux_tools_layout_first_row.addWidget(self.abort_on_errors_checkBox, 1)
-        self.mux_tools_layout_first_row.addWidget(self.keep_log_file_checkBox)
+        self.mux_tools_layout_first_row.addWidget(self.clear_job_queue_button, stretch=0)
 
     def setup_mux_tools_layout_second_row(self):
         self.mux_tools_layout_second_row.addWidget(self.only_keep_those_subtitles_multi_choose_comboBox, 2)
         self.mux_tools_layout_second_row.addWidget(self.make_this_subtitle_default_checkBox, 1)
         self.mux_tools_layout_second_row.addWidget(self.make_this_subtitle_default_comboBox, 2)
-        self.mux_tools_layout_second_row.addWidget(self.control_queue_button, 0)
-        self.mux_tools_layout_second_row.addWidget(self.clear_job_queue_button, 0)
+        self.mux_tools_layout_second_row.addWidget(self.remove_old_crc_checksum_checkBox, 1)
+        self.mux_tools_layout_second_row.addWidget(self.keep_log_file_checkBox)
+        self.mux_tools_layout_second_row.addWidget(self.control_queue_button)
 
     def setup_clear_job_queue_button(self):
         self.clear_job_queue_button.setText("Clear All")
         self.clear_job_queue_button.setIcon(GlobalFiles.CleanIcon)
         self.clear_job_queue_button.setDisabled(True)
+
+    def setup_add_crc_checksum_checkBox(self):
+        self.add_crc_checksum_checkBox.setText("Add CRC checksum")
+        self.add_crc_checksum_checkBox.setToolTip("Add CRC checksum to the end of output file's name")
+
+    def setup_remove_old_crc_checkBox(self):
+        self.remove_old_crc_checksum_checkBox.setText("Remove Old CRC   ")
+        self.remove_old_crc_checksum_checkBox.setToolTip(
+            "Remove Old CRC from the end of the file (will do nothing if there is "
+            "none)")
 
     def setup_keep_log_file_checkBox(self):
         self.keep_log_file_checkBox.setText("Keep Log File")
@@ -289,15 +319,24 @@ class MuxSettingTab(QWidget):
             self.make_this_subtitle_default_comboBox.y(),
         )
 
-        self.control_queue_button.move(
+        self.remove_old_crc_checksum_checkBox.move(
+            self.add_crc_checksum_checkBox.x(),
+            self.add_crc_checksum_checkBox.y() + self.add_crc_checksum_checkBox.height() + 9,
+        )
+        self.keep_log_file_checkBox.move(
             self.abort_on_errors_checkBox.x(),
-            self.control_queue_button.y(),
+            self.abort_on_errors_checkBox.y() + self.abort_on_errors_checkBox.height() + 8,
+        )
+        self.control_queue_button.move(
+            self.clear_job_queue_button.x(),
+            self.clear_job_queue_button.y() + self.clear_job_queue_button.height() + 5,
         )
 
-        self.clear_job_queue_button.move(
-            self.control_queue_button.x() + self.control_queue_button.width() + 5,
-            self.clear_job_queue_button.y(),
+        self.clear_job_queue_button.resize(
+            self.control_queue_button.width(),
+            self.control_queue_button.height(),
         )
+        self.clear_job_queue_button.setFixedWidth(self.control_queue_button.width())
 
     def open_select_destination_folder_dialog(self):
         temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Destination Folder",
@@ -336,10 +375,10 @@ class MuxSettingTab(QWidget):
                 os.remove(test_file_name_absolute)
             except Exception as e:
                 write_to_log_file(e)
-                invaild_dialog = InvalidPathDialog(window_title="Permission Denied",
+                invalid_dialog = InvalidPathDialog(window_title="Permission Denied",
                                                    error_message="MKV Muxing Batch GUI lacks write "
                                                                  "permissions on Destination folder")
-                invaild_dialog.execute()
+                invalid_dialog.execute()
                 self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
                 return False
         except Exception as e:
@@ -452,6 +491,8 @@ class MuxSettingTab(QWidget):
         self.make_this_subtitle_default_comboBox.setEnabled(False)
         self.make_this_audio_default_checkBox.setEnabled(False)
         self.make_this_audio_default_comboBox.setEnabled(False)
+        self.add_crc_checksum_checkBox.setEnabled(False)
+        self.remove_old_crc_checksum_checkBox.setEnabled(False)
 
     def enable_editable_widgets(self):
         self.only_keep_those_subtitles_checkBox.setEnabled(True)
@@ -463,14 +504,18 @@ class MuxSettingTab(QWidget):
         self.make_this_subtitle_default_comboBox.setEnabled(self.make_this_subtitle_default_checkBox.isChecked())
         self.make_this_audio_default_checkBox.setEnabled(True)
         self.make_this_audio_default_comboBox.setEnabled(self.make_this_audio_default_checkBox.isChecked())
+        self.add_crc_checksum_checkBox.setEnabled(True)
+        self.remove_old_crc_checksum_checkBox.setEnabled(True)
 
     def only_keep_those_audios_close_list(self):
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_LANGUAGES = self.only_keep_those_audios_multi_choose_comboBox.languages
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS = self.only_keep_those_audios_multi_choose_comboBox.tracks
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_LANGUAGES = self.only_keep_those_audios_multi_choose_comboBox.tracks_language
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_IDS = self.only_keep_those_audios_multi_choose_comboBox.tracks_id
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_TRACKS_NAMES = self.only_keep_those_audios_multi_choose_comboBox.tracks_name
 
     def only_keep_those_subtitles_close_list(self):
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES = self.only_keep_those_subtitles_multi_choose_comboBox.languages
-        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS = self.only_keep_those_subtitles_multi_choose_comboBox.tracks
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES = self.only_keep_those_subtitles_multi_choose_comboBox.tracks_language
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS = self.only_keep_those_subtitles_multi_choose_comboBox.tracks_id
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES = self.only_keep_those_subtitles_multi_choose_comboBox.tracks_name
 
     def disable_make_this_subtitle_default_comboBox(self, state):
         self.make_this_subtitle_default_comboBox.setDisabled(state)
@@ -484,11 +529,11 @@ class MuxSettingTab(QWidget):
 
     def make_this_audio_default_comboBox_text_changed(self):
         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = str(
-            self.make_this_audio_default_comboBox.currentText())
+            self.make_this_audio_default_comboBox.current_text)
 
     def make_this_subtitle_default_comboBox_text_changed(self):
         GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK = str(
-            self.make_this_subtitle_default_comboBox.currentText())
+            self.make_this_subtitle_default_comboBox.current_text)
 
     def update_task_bar_progress(self, new_progress):
         self.update_task_bar_progress_signal.emit(new_progress)
@@ -509,13 +554,30 @@ class MuxSettingTab(QWidget):
     def abort_on_errors_state_changed(state):
         GlobalSetting.MUX_SETTING_ABORT_ON_ERRORS = bool(state)
 
+    def add_crc_checksum_state_changed(self, state):
+        if state:
+            GlobalSetting.MUX_SETTING_ADD_CRC = True
+            GlobalSetting.MUX_SETTING_REMOVE_OLD_CRC = True
+            self.remove_old_crc_checksum_checkBox.setChecked(True)
+        else:
+            GlobalSetting.MUX_SETTING_ADD_CRC = False
+
+    def remove_old_crc_checksum_state_changed(self, state):
+        if state:
+            GlobalSetting.MUX_SETTING_REMOVE_OLD_CRC = True
+        else:
+            GlobalSetting.MUX_SETTING_ADD_CRC = False
+            GlobalSetting.MUX_SETTING_REMOVE_OLD_CRC = False
+            self.add_crc_checksum_checkBox.setChecked(False)
+
     @staticmethod
     def keep_log_file_state_changed(state):
         GlobalSetting.MUX_SETTING_KEEP_LOG_FILE = bool(state)
 
     def start_multiplexing_button_clicked(self):
         at_least_one_muxing_setting_has_been_selected = check_if_at_least_one_muxing_setting_has_been_selected()
-        if at_least_one_muxing_setting_has_been_selected:
+        all_input_videos_are_found = check_if_all_input_videos_are_found()
+        if at_least_one_muxing_setting_has_been_selected and all_input_videos_are_found:
             destination_path_valid = self.check_destination_path()
             if destination_path_valid:
                 self.setup_log_file()

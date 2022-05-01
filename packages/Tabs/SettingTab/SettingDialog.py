@@ -5,13 +5,14 @@ from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QHBoxLayout, \
     QDialog, QGridLayout, QLabel, QPushButton
-
+import faulthandler
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, create_temp_folder_path
+from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, create_app_data_folder
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
 
+# faulthandler.enable()
 class SettingDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -74,6 +75,10 @@ class SettingDialog(QDialog):
 
         new_default_subtitle_language = self.setting_tab_widget.default_subtitle_language_layout.languages_comboBox.currentText()
         new_default_audio_language = self.setting_tab_widget.default_audio_language_layout.languages_comboBox.currentText()
+
+        new_default_subtitle_language_favorite_list = self.setting_tab_widget.default_subtitle_language_layout.current_languages_list.copy()
+        new_default_audio_language_favorite_list = self.setting_tab_widget.default_audio_language_layout.current_languages_list.copy()
+
         DefaultOptions.Default_Video_Directory = new_default_video_directory
         DefaultOptions.Default_Video_Extensions = new_default_video_extensions
         DefaultOptions.Default_Subtitle_Directory = new_default_subtitle_directory
@@ -86,25 +91,30 @@ class SettingDialog(QDialog):
         DefaultOptions.Default_Chapter_Extensions = new_default_chapter_extensions
         DefaultOptions.Default_Attachment_Directory = new_default_attachment_directory
         DefaultOptions.Default_Destination_Directory = new_default_destination_directory
-        new_setting_data = {"Default_Video_Directory": DefaultOptions.Default_Video_Directory,
-                            "Default_Video_Extensions": DefaultOptions.Default_Video_Extensions,
-                            "Default_Subtitle_Directory": DefaultOptions.Default_Subtitle_Directory,
-                            "Default_Subtitle_Extensions": DefaultOptions.Default_Subtitle_Extensions,
-                            "Default_Subtitle_Language": DefaultOptions.Default_Subtitle_Language,
-                            "Default_Audio_Directory": DefaultOptions.Default_Audio_Directory,
-                            "Default_Audio_Extensions": DefaultOptions.Default_Audio_Extensions,
-                            "Default_Audio_Language": DefaultOptions.Default_Audio_Language,
-                            "Default_Chapter_Directory": DefaultOptions.Default_Chapter_Directory,
-                            "Default_Chapter_Extensions": DefaultOptions.Default_Chapter_Extensions,
-                            "Default_Attachment_Directory": DefaultOptions.Default_Attachment_Directory,
-                            "Default_Destination_Directory": DefaultOptions.Default_Destination_Directory
-                            }
+        DefaultOptions.Default_Favorite_Subtitle_Languages = new_default_subtitle_language_favorite_list.copy()
+        DefaultOptions.Default_Favorite_Audio_Languages = new_default_audio_language_favorite_list.copy()
+        new_setting_data = {
+            "Default_Video_Directory": DefaultOptions.Default_Video_Directory,
+            "Default_Video_Extensions": DefaultOptions.Default_Video_Extensions,
+            "Default_Subtitle_Directory": DefaultOptions.Default_Subtitle_Directory,
+            "Default_Subtitle_Extensions": DefaultOptions.Default_Subtitle_Extensions,
+            "Default_Subtitle_Language": DefaultOptions.Default_Subtitle_Language,
+            "Default_Audio_Directory": DefaultOptions.Default_Audio_Directory,
+            "Default_Audio_Extensions": DefaultOptions.Default_Audio_Extensions,
+            "Default_Audio_Language": DefaultOptions.Default_Audio_Language,
+            "Default_Chapter_Directory": DefaultOptions.Default_Chapter_Directory,
+            "Default_Chapter_Extensions": DefaultOptions.Default_Chapter_Extensions,
+            "Default_Attachment_Directory": DefaultOptions.Default_Attachment_Directory,
+            "Default_Destination_Directory": DefaultOptions.Default_Destination_Directory,
+            "Default_Favorite_Subtitle_Languages": DefaultOptions.Default_Favorite_Subtitle_Languages,
+            "Default_Favorite_Audio_Languages": DefaultOptions.Default_Favorite_Audio_Languages
+        }
         setting_file_path = Path(SettingJsonInfoFilePath)
         if setting_file_path.is_file():
             with open(setting_file_path, "w+", encoding="UTF-8") as setting_file:
                 json.dump(new_setting_data, setting_file)
         else:
-            create_temp_folder_path()
+            create_app_data_folder()
             with open(setting_file_path, "w+", encoding="UTF-8") as setting_file:
                 json.dump(new_setting_data, setting_file)
 

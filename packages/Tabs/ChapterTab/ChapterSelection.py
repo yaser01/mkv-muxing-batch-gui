@@ -9,6 +9,7 @@ from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import 
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceButton import ChapterSourceButton
 from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceLineEdit import ChapterSourceLineEdit
+from packages.Tabs.ChapterTab.Widgets.DiscardOldChaptersCheckBox import DiscardOldChaptersCheckBox
 from packages.Tabs.ChapterTab.Widgets.MatchChapterLayout import MatchChapterLayout
 from packages.Tabs.GlobalSetting import *
 from packages.Widgets.InvalidPathDialog import *
@@ -34,6 +35,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_source_lineEdit = ChapterSourceLineEdit()
         self.chapter_source_button = ChapterSourceButton()
         self.chapter_clear_button = ChapterClearButton()
+        self.discard_old_chapters_checkBox = DiscardOldChaptersCheckBox()
         self.chapter_extensions_comboBox = ChapterExtensionsCheckableComboBox()
         self.chapter_match_layout = MatchChapterLayout(parent=self)
         self.chapter_options_layout = QHBoxLayout()
@@ -54,7 +56,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.chapter_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.chapter_extensions_comboBox.close_list.connect(self.check_extension_changes)
-        self.chapter_match_layout.sync_chapter_files_with_global_files_after_swap_signal.connect(
+        self.chapter_match_layout.sync_chapter_files_with_global_files_after_swap_delete_signal.connect(
             self.sync_chapter_files_with_global_files)
         self.tab_clicked_signal.connect(self.tab_clicked)
         self.chapter_match_layout.chapter_table.drop_folder_and_files_signal.connect(
@@ -79,6 +81,7 @@ class ChapterSelectionSetting(GlobalSetting):
     def setup_chapter_options_layout(self):
         self.chapter_options_layout.addWidget(self.chapter_extensions_comboBox)
         self.chapter_options_layout.addStretch()
+        self.chapter_options_layout.addWidget(self.discard_old_chapters_checkBox, alignment=Qt.AlignRight)
 
     def setup_main_layout(self):
         self.main_layout.addWidget(self.chapter_source_label, 0, 0)
@@ -98,14 +101,12 @@ class ChapterSelectionSetting(GlobalSetting):
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
-            self.chapter_source_lineEdit.setText(new_path)
+            self.chapter_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_chapter_files_list()
         else:
             if self.is_drag_and_drop:
-                self.chapter_source_lineEdit.stop_check_path = True
-                self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.chapter_source_lineEdit.stop_check_path = False
+                self.chapter_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -137,7 +138,7 @@ class ChapterSelectionSetting(GlobalSetting):
                 self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
                 self.chapter_source_lineEdit.stop_check_path = False
             else:
-                self.chapter_source_lineEdit.setText("")
+                self.chapter_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -180,7 +181,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_match_layout.show_chapter_files()
 
     def update_other_classes_variables(self):
-        self.change_global_last_path_directory()
+        # self.change_global_last_path_directory()
         self.change_global_chapter_list()
         self.chapter_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.chapter_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)
@@ -196,7 +197,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.chapter_source_lineEdit.setText("")
+        self.chapter_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.show_chapter_files_list()
 
@@ -212,12 +213,13 @@ class ChapterSelectionSetting(GlobalSetting):
         if on:
             self.show_video_files_list()
         else:
-            self.chapter_source_lineEdit.setText("")
+            self.chapter_source_lineEdit.set_text_safe_change("")
             self.chapter_match_layout.clear_tables()
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
             self.current_chapter_extensions = DefaultOptions.Default_Chapter_Extensions
+            self.discard_old_chapters_checkBox.setChecked(False)
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
             self.is_drag_and_drop = False
             self.chapter_source_lineEdit.set_is_drag_and_drop(False)
@@ -236,7 +238,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.chapter_match_layout.clear_chapter_selection()
         if (QMouseEvent.buttons() == Qt.RightButton or QMouseEvent.buttons() == Qt.LeftButton) and (
                 self.chapter_source_lineEdit.text() == ""):
-            self.chapter_source_lineEdit.setText(self.folder_path)
+            self.chapter_source_lineEdit.set_text_safe_change(self.folder_path)
         return QWidget.mousePressEvent(self, QMouseEvent)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
@@ -260,6 +262,7 @@ class ChapterSelectionSetting(GlobalSetting):
     def disable_editable_widgets(self):
         self.chapter_source_lineEdit.setEnabled(False)
         self.chapter_source_button.setEnabled(False)
+        self.discard_old_chapters_checkBox.setEnabled(False)
         self.chapter_extensions_comboBox.setEnabled(False)
         self.chapter_clear_button.setEnabled(False)
         self.chapter_main_groupBox.setCheckable(False)
@@ -268,6 +271,7 @@ class ChapterSelectionSetting(GlobalSetting):
     def enable_editable_widgets(self):
         self.chapter_source_lineEdit.setEnabled(True)
         self.chapter_source_button.setEnabled(True)
+        self.discard_old_chapters_checkBox.setEnabled(True)
         self.chapter_extensions_comboBox.setEnabled(True)
         self.chapter_clear_button.setEnabled(True)
         if GlobalSetting.CHAPTER_ENABLED:
@@ -336,5 +340,6 @@ class ChapterSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.chapter_source_lineEdit.setText(DefaultOptions.Default_Chapter_Directory)
+        self.chapter_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Chapter_Directory)
+        self.update_folder_path(DefaultOptions.Default_Chapter_Directory)
         self.chapter_source_lineEdit.check_new_path()

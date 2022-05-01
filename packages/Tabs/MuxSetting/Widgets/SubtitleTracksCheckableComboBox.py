@@ -40,26 +40,29 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
         self.setMaximumWidth(screen_size.width() // 4)
         self.setDisabled(True)
         self.empty_selection_hint_string = "Discard All subtitle tracks from the source file<br>this option will lead to " \
-                                           "output video with NO old subtitles<br>[the new subtitle file will exists] "
+                                           "output video with NO old subtitles<br>[the new subtitle file(s) will exists] "
 
     def check_box_state_changed(self, state):
         if state == Qt.Checked:
             self.setDisabled(False)
             self.set_tool_tip_hint()
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED = True
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES = self.languages
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS = self.tracks
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES = self.tracks_language
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS = self.tracks_id
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES = self.tracks_name
         else:
             self.setDisabled(True)
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED = False
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES = []
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES = []
 
     def refresh_tracks(self):
         videos = GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST.copy()
         new_list = []
         subtitles_track_ids = []
         subtitles_track_languages = []
+        subtitles_track_names = []
         for video_name in videos:
             string_name_hash = hashlib.sha1((str(video_name)).encode('utf-8')).hexdigest()
             media_info_file_path = os.path.join(GlobalFiles.MediaInfoFolderPath, string_name_hash + ".json")
@@ -73,21 +76,31 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
                         get_attribute(data=track["properties"], attribute="language", default_value="UND"))
                     language_symbol = language.lower()
                     subtitles_track_languages.append(ISO_639_2_SYMBOLS.get(language_symbol, "Undetermined"))
+                    name = str(get_attribute(data=track["properties"], attribute="track_name",
+                                             default_value="UnNamedTrackBeBo"))
+                    if name != "UnNamedTrackBeBo":
+                        subtitles_track_names.append(name)
 
         subtitles_track_ids = list(dict.fromkeys(subtitles_track_ids))
         subtitles_track_languages = list(dict.fromkeys(subtitles_track_languages))
+        subtitles_track_names = list(dict.fromkeys(subtitles_track_names))
         for i in range(len(subtitles_track_ids)):
             subtitles_track_ids[i] = convert_string_integer_to_two_digit_string(subtitles_track_ids[i])
         subtitles_track_ids.sort()
         subtitles_track_languages.sort()
+        subtitles_track_names.sort()
         if len(subtitles_track_ids) > 0:
-            new_list = ["---Tracks---"]
+            new_list = ["---Track Id---"]
             new_list.extend(generate_track_ids(subtitles_track_ids))
         if len(subtitles_track_languages) > 0:
-            new_list.append("---Languages---")
+            new_list.append("---Language---")
             new_list.extend(subtitles_track_languages)
+        if len(subtitles_track_names) > 0:
+            new_list.append("---Track Name---")
+            new_list.extend(subtitles_track_names)
         if new_list != self.current_list:
             self.addItems(new_list)
             self.subtitle_tracks_changed_signal.emit(new_list)
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_LANGUAGES = []
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_LANGUAGES = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_IDS = []
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_TRACKS_NAMES = []

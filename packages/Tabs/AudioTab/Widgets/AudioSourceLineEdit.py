@@ -34,9 +34,14 @@ class AudioSourceLineEdit(QLineEdit):
     def set_current_folder_path(self, new_path):
         self.current_folder_path = new_path
 
+    def set_text_safe_change(self, new_text):
+        self.stop_check_path = True
+        self.setText(new_text)
+        self.stop_check_path = False
+
     def check_new_path(self):
         new_path = self.text()
-        if not self.stop_check_path:
+        if self.isModified() and not self.stop_check_path:
             self.stop_check_path = True
             if os.path.isdir(new_path):
                 if Path(new_path) != Path(self.current_folder_path):
@@ -47,22 +52,28 @@ class AudioSourceLineEdit(QLineEdit):
                         if reload_dialog.result == "Yes":
                             self.is_drag_and_drop = False
                             self.set_is_drag_and_drop_signal.emit(False)
+                            self.stop_check_path = True
                             self.setText(new_path)
                         else:
                             new_path = self.current_folder_path
+                            self.stop_check_path = True
                             self.setText(self.current_folder_path)
                     else:
                         self.is_drag_and_drop = False
                         self.set_is_drag_and_drop_signal.emit(False)
+                        self.stop_check_path = True
                         self.setText(new_path)
                 else:
+                    self.stop_check_path = True
                     self.setText(self.current_folder_path)
             else:
                 if new_path == "" or new_path.isspace() or self.is_drag_and_drop:
+                    self.stop_check_path = True
                     self.setText(self.current_folder_path)
                 else:
                     invalid_path_dialog = InvalidPathDialog()
                     invalid_path_dialog.execute()
+                    self.stop_check_path = True
                     self.setText(self.current_folder_path)
                 new_path = ""
             self.edit_finished_signal.emit(new_path)

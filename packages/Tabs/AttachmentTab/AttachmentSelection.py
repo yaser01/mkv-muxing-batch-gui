@@ -75,16 +75,14 @@ class AttachmentSelectionSetting(GlobalSetting):
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
-            self.attachment_source_lineEdit.setText(new_path)
+            self.attachment_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
 
             self.update_total_size()
             self.show_files_list()
         else:
             if self.is_drag_and_drop:
-                self.attachment_source_lineEdit.stop_check_path = True
-                self.attachment_source_lineEdit.setText(self.drag_and_dropped_text)
-                self.attachment_source_lineEdit.stop_check_path = False
+                self.attachment_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
 
     def update_total_size(self):
         self.attachment_total_size_value_label.update_total_size(self.files_names_absolute_list,
@@ -113,7 +111,7 @@ class AttachmentSelectionSetting(GlobalSetting):
                 self.attachment_source_lineEdit.stop_check_path = False
                 self.update_total_size()
             else:
-                self.attachment_source_lineEdit.setText("")
+                self.attachment_source_lineEdit.set_text_safe_change("")
             return
         try:
             self.is_drag_and_drop = False
@@ -145,7 +143,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.update_other_classes_variables()
 
     def update_other_classes_variables(self):
-        self.change_global_last_path_directory()
+        # self.change_global_last_path_directory()
         self.change_global_attachment_list()
         self.attachment_source_lineEdit.set_current_folder_path(self.folder_path)
         self.attachment_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
@@ -167,7 +165,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_size_list = []
-        self.attachment_source_lineEdit.setText("")
+        self.attachment_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.files_checked_list = []
         self.update_total_size()
@@ -239,7 +237,7 @@ class AttachmentSelectionSetting(GlobalSetting):
     def activate_tab(self, on):
         if not on:
             self.table.clear_table()
-            self.attachment_source_lineEdit.setText("")
+            self.attachment_source_lineEdit.set_text_safe_change("")
             self.attachment_total_size_value_label.set_total_size_zero()
             self.discard_old_attachments_checkBox.setChecked(False)
             self.folder_path = ""
@@ -302,5 +300,6 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.attachment_source_lineEdit.setText(DefaultOptions.Default_Attachment_Directory)
+        self.attachment_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Attachment_Directory)
+        self.update_folder_path(DefaultOptions.Default_Attachment_Directory)
         self.attachment_source_lineEdit.check_new_path()
