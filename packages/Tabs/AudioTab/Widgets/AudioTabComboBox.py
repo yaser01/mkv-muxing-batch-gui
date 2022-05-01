@@ -102,8 +102,6 @@ class AudioTabComboBox(QComboBox):
         except Exception as e:
             return False
 
-
-
     def hidePopup(self):
         super().hidePopup()
         # Used to prevent immediate reopening when clicking on the lineEdit
