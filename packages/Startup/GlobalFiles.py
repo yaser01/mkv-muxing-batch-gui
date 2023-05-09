@@ -90,16 +90,18 @@ delete_old_media_files()
 
 def get_mkvmerge_version():
     with open(TestMkvmergeFilePath, "w+", encoding="UTF-8") as test_file:
-        command = add_double_quotation(MKVMERGE_PATH) + " -V"
-        mux_process = subprocess.run(command, shell=True, stdout=test_file)
+        try:
+            mux_process = subprocess.run([MKVMERGE_PATH, "-V"], shell=False, stdout=test_file)
+        except: return ""
     with open(TestMkvmergeFilePath, "r+", encoding="UTF-8") as test_file:
         return test_file.readline().rstrip()
 
 
 def get_mkvpropedit_version():
     with open(TestMkvpropeditFilePath, "w+", encoding="UTF-8") as test_file:
-        command = add_double_quotation(MKVPROPEDIT_PATH) + " -V"
-        mux_process = subprocess.run(command, shell=True, stdout=test_file)
+        try:
+            mux_process = subprocess.run([MKVPROPEDIT_PATH, "-V"], shell=False, stdout=test_file)
+        except: return ""
     with open(TestMkvpropeditFilePath, "r+", encoding="UTF-8") as test_file:
         return test_file.readline().rstrip()
 
@@ -189,12 +191,22 @@ try:
     MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
     MKVPROPEDIT_VERSION = get_mkvpropedit_version()
     MKVMERGE_VERSION = get_mkvmerge_version()
-    if MKVMERGE_VERSION.find("mkvmerge") == -1:
-        MKVMERGE_VERSION = "mkvmerge: not found!"
-        raise Exception("mkvmerge file! ")
-    if MKVPROPEDIT_VERSION.find("mkvpropedit") == -1:
-        MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
-        raise Exception("mkvpropedit file! ")
+    if "mkvmerge" not in MKVMERGE_VERSION:
+        print("Could not use portable mkvmerge. Trying system version...", end="")
+        MKVMERGE_PATH = "mkvmerge"
+        MKVMERGE_VERSION = get_mkvmerge_version()
+        if "mkvmerge" not in MKVMERGE_VERSION:
+            MKVMERGE_VERSION = "mkvmerge: not found!"
+            raise Exception("mkvmerge file! ")
+        else: print("OK")
+    if "mkvpropedit" not in MKVPROPEDIT_VERSION:
+        print("Could not use portable mkvpropedit. Trying system version...", end="")
+        MKVPROPEDIT_PATH = "mkvpropedit"
+        MKVPROPEDIT_VERSION = get_mkvpropedit_version()
+        if "mkvpropedit" not in MKVPROPEDIT_VERSION:
+            MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
+            raise Exception("mkvpropedit file! ")
+        else: print("OK")
     read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
 except Exception as e:
     missing_files_message = MissingFilesMessage(error_message=str(e))
