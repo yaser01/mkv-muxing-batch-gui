@@ -1,3 +1,5 @@
+import time
+
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
     QGroupBox,
@@ -340,6 +342,10 @@ class ChapterSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
+        if DefaultOptions.Default_Chapter_Directory == "":
+            return
+        self.activate_tab(on=True)
         self.chapter_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Chapter_Directory)
         self.update_folder_path(DefaultOptions.Default_Chapter_Directory)
         self.chapter_source_lineEdit.check_new_path()
+
