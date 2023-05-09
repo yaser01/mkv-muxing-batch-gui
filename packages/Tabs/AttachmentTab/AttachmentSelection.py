@@ -300,6 +300,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
+        self.attachment_main_groupBox.setChecked(True)
         self.attachment_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Attachment_Directory)
         self.update_folder_path(DefaultOptions.Default_Attachment_Directory)
         self.attachment_source_lineEdit.check_new_path()
