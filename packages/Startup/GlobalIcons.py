@@ -1,17 +1,19 @@
 from PySide2.QtGui import QIcon, QPixmap
 
-from packages.Startup.GlobalFiles import OkIconPath, ErrorIconPath, ErrorBigIconPath, SubtitleIconPath, SwitchIconPath, \
+from packages.Startup.GlobalFiles import OkIconPath, ErrorIconPath, ErrorBigIconPath, SubtitleLightIconPath, \
+    SwitchIconPath, \
     RefreshIconPath, QuestionIconPath, NoMarkIconPath, PlusIconPath, TrashLightIconPath, TrashDarkIconPath, \
     RedDashIconPath, InfoIconPath, AboutIconPath, InfoSettingIconPath, WarningCheckBigIconPath, WarningCheckIconPath, \
     StartMultiplexingIconPath, PauseMultiplexingIconPath, AddToQueueIconPath, ClearIconPath, TopLightIconPath, \
     DownLightIconPath, UpLightIconPath, BottomLightIconPath, TopDarkIconPath, DownDarkIconPath, UpDarkIconPath, \
     BottomDarkIconPath, FolderIconPath, SettingIconPath, TelegramIconPath, TwitterIconPath, LeftArrowIconPath, \
-    RightArrowIconPath, DonationsIconPath, ThemeIconPath, AppIconPath
+    RightArrowIconPath, DonationsIconPath, ThemeIconPath, AppIconPath, SubtitleDarkIconPath
 
 OkIcon = QIcon(QPixmap(OkIconPath))
 ErrorIcon = QIcon(QPixmap(ErrorIconPath))
 ErrorBigIcon = QIcon(QPixmap(ErrorBigIconPath))
-SubtitleIcon = QIcon(QPixmap(SubtitleIconPath))
+SubtitleLightIcon = QIcon(QPixmap(SubtitleLightIconPath))
+SubtitleDarkIcon = QIcon(QPixmap(SubtitleDarkIconPath))
 SwitchIcon = QIcon(QPixmap(SwitchIconPath))
 RefreshIcon = QIcon(QPixmap(RefreshIconPath))
 QuestionIcon = QIcon(QPixmap(QuestionIconPath))

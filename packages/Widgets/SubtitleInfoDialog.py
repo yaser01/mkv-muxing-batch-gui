@@ -117,7 +117,11 @@ class SubtitleInfoDialog(QDialog):
 
     def setup_ui(self):
         self.disable_question_mark_window()
-        self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.SubtitleIconPath).scaledToHeight(100))
+        if DefaultOptions.Dark_Mode:
+            subtitle_icon_path = GlobalFiles.SubtitleDarkIconPath
+        else:
+            subtitle_icon_path = GlobalFiles.SubtitleLightIconPath
+        self.messageIcon.setPixmap(QtGui.QPixmap(subtitle_icon_path).scaledToHeight(100))
         self.set_dialog_values()
         self.set_default_buttons()
         if self.subtitle_set_default_disabled:

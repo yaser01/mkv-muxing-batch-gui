@@ -117,7 +117,11 @@ class AudioInfoDialog(QDialog):
 
     def setup_ui(self):
         self.disable_question_mark_window()
-        self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.AudioIconPath).scaledToHeight(100))
+        if DefaultOptions.Dark_Mode:
+            audio_icon_path = GlobalFiles.AudioDarkIconPath
+        else:
+            audio_icon_path = GlobalFiles.AudioLightIconPath
+        self.messageIcon.setPixmap(QtGui.QPixmap(audio_icon_path).scaledToHeight(100))
         self.set_dialog_values()
         self.set_default_buttons()
         if self.audio_set_default_disabled:
