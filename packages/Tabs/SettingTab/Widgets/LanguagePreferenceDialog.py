@@ -1,9 +1,8 @@
 from PySide2 import QtGui
 from PySide2.QtCore import Qt, QSize
-from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QDialog, QListWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
+from PySide2.QtWidgets import QDialog, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
 
-from packages.Startup.GlobalFiles import LeftArrowIcon, RightArrowIcon
+from packages.Startup.GlobalIcons import LeftArrowIcon, RightArrowIcon
 from packages.Startup.PreDefined import AllSubtitlesLanguages
 from packages.Widgets.ListWidget import ListWidget
 

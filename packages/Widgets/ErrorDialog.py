@@ -4,6 +4,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class ErrorDialog(QDialog):
@@ -47,7 +48,7 @@ class ErrorDialog(QDialog):
 
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
-        self.setWindowIcon(GlobalFiles.ErrorBigIcon)
+        self.setWindowIcon(GlobalIcons.ErrorBigIcon)
         self.message.setText(self.error_message)
 
     def disable_question_mark_window(self):

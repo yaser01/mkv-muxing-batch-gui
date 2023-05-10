@@ -1,12 +1,10 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
     QGroupBox,
-    QVBoxLayout,
 )
 
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Tabs.GlobalSetting import *
-from packages.Tabs.AudioTab.Widgets.MatchAudioLayout import MatchAudioLayout
+from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.AudioTab.Widgets.AudioClearButton import AudioClearButton
 from packages.Tabs.AudioTab.Widgets.AudioDelayDoubleSpinBox import AudioDelayDoubleSpinBox
 from packages.Tabs.AudioTab.Widgets.AudioExtensionsCheckableComboBox import AudioExtensionsCheckableComboBox
@@ -16,8 +14,9 @@ from packages.Tabs.AudioTab.Widgets.AudioSetDefaultCheckBox import AudioSetDefau
 from packages.Tabs.AudioTab.Widgets.AudioSetForcedCheckBox import AudioSetForcedCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSourceButton import AudioSourceButton
 from packages.Tabs.AudioTab.Widgets.AudioSourceLineEdit import AudioSourceLineEdit
-from packages.Tabs.AudioTab.Widgets.AudioTabComboBox import AudioTabComboBox
 from packages.Tabs.AudioTab.Widgets.AudioTrackNameLineEdit import AudioTrackNameLineEdit
+from packages.Tabs.AudioTab.Widgets.MatchAudioLayout import MatchAudioLayout
+from packages.Tabs.GlobalSetting import *
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
 from packages.Widgets.YesNoDialog import *
@@ -399,3 +398,11 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Audio_Directory)
         self.update_folder_path(DefaultOptions.Default_Audio_Directory)
         self.audio_source_lineEdit.check_new_path()
+
+    def update_theme_mode_state(self):
+        if DefaultOptions.Dark_Mode:
+            self.setPalette(get_dark_palette())
+        else:
+            self.setPalette(get_light_palette())
+        self.setStyleSheet(
+            "QGroupBox#main_groupBox {subcontrol-origin: margin;left: 3px;padding: 3px 0px 3px 0px;}")

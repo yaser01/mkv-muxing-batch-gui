@@ -8,8 +8,8 @@ from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosExtensions
-from packages.Tabs.GlobalSetting import GlobalSetting, get_files_names_absolute_list, sort_names_like_windows
 from packages.Tabs.AudioTab.Widgets.ReloadAudioFilesDialog import ReloadAudioFilesDialog
+from packages.Tabs.GlobalSetting import GlobalSetting, get_files_names_absolute_list, sort_names_like_windows
 
 
 class AudioExtensionsCheckableComboBox(QComboBox):

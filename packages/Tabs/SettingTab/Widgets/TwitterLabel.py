@@ -1,6 +1,6 @@
 import webbrowser
 
-from PySide2.QtCore import QEvent, Qt
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QMouseEvent, QPixmap, QCursor
 from PySide2.QtWidgets import QLabel
 

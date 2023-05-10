@@ -3,7 +3,7 @@ from pathlib import Path
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QPushButton, QFileDialog
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Tabs.ChapterTab.Widgets.ReloadChapterFilesDialog import ReloadChapterFilesDialog
 from packages.Tabs.GlobalSetting import GlobalSetting
 
@@ -14,7 +14,7 @@ class ChapterSourceButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.hint_when_enabled = ""
-        self.setIcon(GlobalFiles.SelectFolderIcon)
+        self.setIcon(GlobalIcons.SelectFolderIcon)
         self.is_there_old_files = False
         self.clicked.connect(self.open_select_folder_dialog)
 

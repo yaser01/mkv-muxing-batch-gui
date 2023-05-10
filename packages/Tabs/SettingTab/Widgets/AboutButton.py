@@ -1,7 +1,6 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide2.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Tabs.SettingTab.Widgets.AboutDialog import AboutDialog
 
 
@@ -13,7 +12,7 @@ def open_about_dialog():
 class AboutButton(QPushButton):
     def __init__(self):
         super().__init__()
-        self.setIcon(GlobalFiles.AboutIcon)
+        self.setIcon(GlobalIcons.AboutIcon)
         self.setText(" About")
         self.hint_when_enabled = "About Us"
         self.setToolTip(self.hint_when_enabled)

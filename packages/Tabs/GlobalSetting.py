@@ -1,13 +1,13 @@
 # Here we have everything that must be shared between all tabs
-from datetime import datetime
 import os
 import re
+from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 from PySide2.QtWidgets import QWidget
-from collections import defaultdict
+
 from packages.Startup import GlobalFiles
-from packages.Startup.DefaultOptions import DefaultOptions
 
 
 def sort_names_like_windows(names_list):

@@ -3,8 +3,10 @@ from PySide2.QtCore import QEvent
 from PySide2.QtGui import Qt, QFontMetrics
 from PySide2.QtWidgets import QComboBox
 
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosTracks
+from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -215,3 +217,10 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.lineEdit().setFont(non_italic_font)
         elided_text = metrics.elidedText(self.current_text, Qt.ElideRight, self.lineEdit().width())
         self.lineEdit().setText(elided_text)
+
+    def update_theme_mode_state(self):
+        if DefaultOptions.Dark_Mode:
+            self.setPalette(get_dark_palette())
+        else:
+            self.setPalette(get_light_palette())
+        self.setStyleSheet("QComboBox { combobox-popup: 0; }")

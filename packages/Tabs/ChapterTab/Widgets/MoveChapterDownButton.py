@@ -1,7 +1,7 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -15,7 +15,7 @@ class MoveChapterDownButton(QPushButton):
         self.current_index = -1
         self.max_index = -1
         self.hint_when_enabled = ""
-        self.setIcon(GlobalFiles.DownIcon)
+        self.setIcon(GlobalIcons.DownLightIcon)
         self.setup_tool_tip_hint()
         self.clicked.connect(self.clicked_button)
 

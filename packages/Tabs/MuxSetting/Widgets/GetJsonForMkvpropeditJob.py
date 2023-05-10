@@ -1,6 +1,7 @@
 import json
 import subprocess
 import sys
+
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting

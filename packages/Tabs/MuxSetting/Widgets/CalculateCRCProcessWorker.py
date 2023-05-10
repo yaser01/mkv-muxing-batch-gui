@@ -1,11 +1,9 @@
-import subprocess
 import traceback
 import zlib
 from os.path import getsize
 
 from PySide2.QtCore import Signal, QObject, QThread
 
-from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import write_to_log_file
 
 

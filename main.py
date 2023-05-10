@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+import faulthandler
 import signal
 import sys
-from traceback import format_exception
 from datetime import datetime
+from traceback import format_exception
 import psutil
+from packages.Startup.MainApplication import MainApplication
+from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from PySide2.QtGui import QFont, QFontDatabase
 from PySide2.QtWidgets import QApplication
-from packages.Startup import GlobalFiles
-from packages.Startup.MainApplication import MainApplication
 from packages.Widgets.WarningDialog import WarningDialog
-import faulthandler
 
 if sys.platform == "win32":
     import ctypes
@@ -19,17 +20,17 @@ if sys.platform == "win32":
 else:
     from packages.MainWindowNonWindowsSystem import MainWindowNonWindowsSystem as MainWindow
 
-# faulthandler.enable()
+faulthandler.enable()
 window: MainWindow
 app: QApplication
 
 
 def setup_application_font():
     try:
-        id = QFontDatabase.addApplicationFont(GlobalFiles.MyFontPath)
-        _fontstr = QFontDatabase.applicationFontFamilies(id)[0]
-        _font = QFont(_fontstr, 10)
-        app.setFont(_font)
+        font_id = QFontDatabase.addApplicationFont(GlobalFiles.MyFontPath)
+        font_name = QFontDatabase.applicationFontFamilies(font_id)[0]
+        font = QFont(font_name, 10)
+        app.setFont(font)
     except Exception as e:
         warning_dialog = WarningDialog(window_title="Missing Fonts", info_message="Can't find 'OpenSans' font at "
                                                                                   "../Resources/Fonts/OpenSans.ttf\n" +
@@ -40,7 +41,7 @@ def setup_application_font():
 def create_application():
     global app
     app = MainApplication
-    app.setWindowIcon(GlobalFiles.AppIcon)
+    app.setWindowIcon(GlobalIcons.AppIcon)
 
 
 def create_window():

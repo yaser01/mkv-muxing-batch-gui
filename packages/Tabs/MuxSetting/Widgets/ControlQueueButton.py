@@ -1,9 +1,8 @@
-import PySide2
 from PySide2 import QtCore
 from PySide2.QtGui import QPaintEvent
 from PySide2.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class ControlQueueButton(QPushButton):
@@ -22,35 +21,35 @@ class ControlQueueButton(QPushButton):
     def set_state_add_to_queue(self):
         self.state = "ADD"
         self.setText(" Add To Queue")
-        self.setIcon(GlobalFiles.AddToQueueIcon)
+        self.setIcon(GlobalIcons.AddToQueueIcon)
         self.setToolTip("")
         self.setDisabled(False)
 
     def set_state_start_multiplexing(self):
         self.state = "START"
         self.setText(" Start Multiplexing")
-        self.setIcon(GlobalFiles.StartMultiplexingIcon)
+        self.setIcon(GlobalIcons.StartMultiplexingIcon)
         self.setToolTip("")
         self.setDisabled(False)
 
     def set_state_pause_multiplexing(self):
         self.state = "PAUSE"
         self.setText(" Pause Multiplexing")
-        self.setIcon(GlobalFiles.PauseMultiplexingIcon)
+        self.setIcon(GlobalIcons.PauseMultiplexingIcon)
         self.setToolTip("")
         self.setDisabled(False)
 
     def set_state_pausing_multiplexing(self):
         self.state = "PAUSING"
         self.setText(" Waiting Current Job")
-        self.setIcon(GlobalFiles.PauseMultiplexingIcon)
+        self.setIcon(GlobalIcons.PauseMultiplexingIcon)
         self.setToolTip("will pause muxing after current job finished")
         self.setDisabled(True)
 
     def set_state_resume_multiplexing(self):
         self.state = "RESUME"
         self.setText(" Resume Multiplexing")
-        self.setIcon(GlobalFiles.StartMultiplexingIcon)
+        self.setIcon(GlobalIcons.StartMultiplexingIcon)
         self.setToolTip("")
 
     def paintEvent(self, event: QPaintEvent):

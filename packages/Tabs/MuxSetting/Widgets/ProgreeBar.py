@@ -1,6 +1,8 @@
-from os import symlink
-from PySide2.QtWidgets import QProgressBar, QStyleFactory
 from sys import platform
+
+from PySide2.QtWidgets import QProgressBar, QStyleFactory
+
+from packages.Startup.SetupThems import get_dark_palette
 
 
 class ProgressBar(QProgressBar):
@@ -9,5 +11,7 @@ class ProgressBar(QProgressBar):
         self.value = value
         self.setValue(self.value)
         self.setTextVisible(show_percentage)
+        return
         if platform == "win32":
             self.setStyle(QStyleFactory.create("windowsvista"))
+            self.setPalette(get_dark_palette())

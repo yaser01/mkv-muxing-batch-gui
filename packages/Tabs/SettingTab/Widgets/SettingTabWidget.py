@@ -3,17 +3,16 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
     QGridLayout, QLabel, QHBoxLayout
 
-from packages.Startup import GlobalFiles
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Startup.GlobalFiles import InfoIcon, InfoSettingIconPath, InfoIconPath
+from packages.Startup.GlobalFiles import InfoIconPath
+from packages.Startup.MainApplication import get_dark_palette, get_light_palette
 from packages.Startup.PreDefined import AllVideosExtensions, AllSubtitlesExtensions, AllAudiosExtensions, \
-    AllChapterExtensions, AllSubtitlesLanguages, AllAudiosLanguages
+    AllChapterExtensions
 from packages.Tabs.SettingTab.Widgets.AboutButton import AboutButton
 from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLayout import DefaultDirectoryLayout
 from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExtensionsLayout
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
 from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
-import faulthandler
 
 
 # faulthandler.enable()
@@ -88,16 +87,28 @@ class SettingTabWidget(QWidget):
         self.default_directories_groupBox.setStyle(QStyleFactory.create("windowsvista"))
         self.default_directories_groupBox.setTitle("Default Directories")
         self.default_directories_groupBox.setLayout(self.default_directories_layout)
+        if DefaultOptions.Dark_Mode:
+            self.default_directories_groupBox.setPalette(get_dark_palette())
+        else:
+            self.default_directories_groupBox.setPalette(get_light_palette())
 
     def setup_default_extensions_groupBox(self):
         self.default_extensions_groupBox.setStyle(QStyleFactory.create("windowsvista"))
         self.default_extensions_groupBox.setTitle("Default Extensions")
         self.default_extensions_groupBox.setLayout(self.default_extensions_layout)
+        if DefaultOptions.Dark_Mode:
+            self.default_extensions_groupBox.setPalette(get_dark_palette())
+        else:
+            self.default_extensions_groupBox.setPalette(get_light_palette())
 
     def setup_default_languages_groupBox(self):
         self.default_languages_groupBox.setStyle(QStyleFactory.create("windowsvista"))
         self.default_languages_groupBox.setTitle("Favorite Languages List")
         self.default_languages_groupBox.setLayout(self.default_languages_layout)
+        if DefaultOptions.Dark_Mode:
+            self.default_languages_groupBox.setPalette(get_dark_palette())
+        else:
+            self.default_languages_groupBox.setPalette(get_light_palette())
 
     def setup_default_directories_layout(self):
         self.default_directories_layout.addLayout(self.default_video_directory_layout)

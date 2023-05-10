@@ -2,19 +2,20 @@ import os
 import sys
 
 from PySide2 import QtCore
-from PySide2.QtGui import QPalette, QColor
 from PySide2.QtWidgets import QApplication, QToolTip, QStyleFactory
 
-
-def setup_tool_tip_style():
-    tool_tip_palette = QToolTip.palette()
-    tool_tip_palette.setColor(QPalette.ToolTipBase, QColor("#FFFFFF"))
-    tool_tip_palette.setColor(QPalette.ToolTipText, QColor("#505050"))
-    QToolTip.setPalette(tool_tip_palette)
+from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.GlobalFiles import SettingJsonInfoFilePath, LanguagesFilePath
+from packages.Startup.ReadSettingFile import read_setting_file
+from packages.Startup.SetupThems import get_light_palette, get_dark_palette
 
 
 def set_application_style():
     MainApplication.setStyle(QStyleFactory.create("Fusion"))
+    if DefaultOptions.Dark_Mode:
+        apply_dark_mode()
+    else:
+        apply_light_mode()
 
 
 def keep_screen_resolution_good():
@@ -25,7 +26,19 @@ def keep_screen_resolution_good():
     os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '2'
 
 
+def apply_light_mode():
+    palette = get_light_palette()
+    MainApplication.setPalette(palette)
+    QToolTip.setPalette(palette)
+
+
+def apply_dark_mode():
+    palette = get_dark_palette()
+    MainApplication.setPalette(palette)
+    QToolTip.setPalette(palette)
+
+
+read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
 keep_screen_resolution_good()
 MainApplication = QApplication(sys.argv)
-setup_tool_tip_style()
 set_application_style()

@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 def click_show_log_file():
@@ -56,7 +57,7 @@ class OkDialog(QDialog):
 
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
-        self.setWindowIcon(GlobalFiles.OkIcon)
+        self.setWindowIcon(GlobalIcons.OkIcon)
         self.message.setText(self.info_message)
 
     def disable_question_mark_window(self):

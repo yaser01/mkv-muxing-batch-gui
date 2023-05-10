@@ -3,7 +3,6 @@ from PySide2.QtWidgets import QComboBox
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Startup.PreDefined import AllSubtitlesLanguages
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 

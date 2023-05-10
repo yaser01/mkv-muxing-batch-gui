@@ -1,6 +1,6 @@
 import time
 
-from PySide2.QtCore import Qt, QThread
+from PySide2.QtCore import Qt, QThread, QSize
 from PySide2.QtGui import QMovie
 from PySide2.QtWidgets import QDialog, QLabel, QHBoxLayout
 
@@ -17,10 +17,12 @@ class LoadingVideosInfoDialog(QDialog):
         self.current_video_done_index = 0
         self.unsupported_files_list = []
         self.status_label = QLabel(
-            "Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
+            "  Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
         self.load_icon_movie = QMovie(SpinnerIconPath)
+        self.load_icon_movie.setScaledSize(QSize(32, 32))
         self.load_icon_label = QLabel()
         self.load_icon_label.setMovie(self.load_icon_movie)
+        self.load_icon_movie.setSpeed(120)
         self.layout = QHBoxLayout()
         self.layout.addStretch(2)
         self.layout.addWidget(self.load_icon_label)
@@ -55,7 +57,7 @@ class LoadingVideosInfoDialog(QDialog):
     def update_progress(self):
         self.current_video_done_index += 1
         self.status_label.setText(
-            " Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
+            "  Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
 
     def add_new_unsupported_file(self, file_name):
         self.unsupported_files_list.append(file_name)

@@ -3,7 +3,9 @@ from PySide2.QtCore import Qt, QSize
 from PySide2.QtGui import QPixmap, QFont
 from PySide2.QtWidgets import QLabel, \
     QDialog, QPushButton, QHBoxLayout, QVBoxLayout
-from packages.Startup.GlobalFiles import AppIconPath, AboutIcon, MKVMERGE_VERSION, MKVPROPEDIT_VERSION, MKVPROPEDIT_PATH
+
+from packages.Startup.GlobalFiles import AppIconPath, MKVMERGE_VERSION, MKVPROPEDIT_VERSION
+from packages.Startup.GlobalIcons import AboutIcon
 from packages.Startup.PreDefined import GitHubRepoUrlTag, GPLV2UrlTag, GitHubIssuesUrlTag
 from packages.Startup.Version import Version
 from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton

@@ -4,6 +4,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class InvalidPathDialog(QDialog):
@@ -45,7 +46,7 @@ class InvalidPathDialog(QDialog):
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
         self.message.setText(self.error_message)
-        self.setWindowIcon(GlobalFiles.ErrorIcon)
+        self.setWindowIcon(GlobalIcons.ErrorIcon)
 
     def disable_question_mark_window(self):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)

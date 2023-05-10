@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class InfoDialog(QDialog):
@@ -47,7 +48,7 @@ class InfoDialog(QDialog):
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
         self.message.setText(self.info_message)
-        self.setWindowIcon(GlobalFiles.InfoIcon)
+        self.setWindowIcon(GlobalIcons.InfoIcon)
 
     def disable_question_mark_window(self):
         self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)

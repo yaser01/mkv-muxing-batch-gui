@@ -2,8 +2,7 @@ import PySide2
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QMainWindow, QFrame, QVBoxLayout
 
-from packages.Startup import GlobalFiles
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
 from packages.Startup.Version import Version
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -28,7 +27,7 @@ class MainWindowNonWindowsSystem(QMainWindow):
         super().__init__(parent=parent)
         self.resize(int(width_factor * 1100), int(height_factor * 635))
         self.setWindowTitle("MKV Muxing Batch GUI v" + str(Version))
-        self.setWindowIcon(GlobalFiles.AppIcon)
+        self.setWindowIcon(GlobalIcons.AppIcon)
         self.tabs = TabsManager()
         self.tabs_frame = QFrame()
         self.tabs_layout = QVBoxLayout()

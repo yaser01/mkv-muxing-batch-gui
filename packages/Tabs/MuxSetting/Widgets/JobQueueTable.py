@@ -1,6 +1,7 @@
+import os
 import time
 from pathlib import Path
-import os
+
 from PySide2.QtCore import QThread, Signal
 from PySide2.QtGui import Qt, QFontMetrics
 from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
@@ -8,13 +9,13 @@ from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, get_readable_filesize
-from packages.Tabs.MuxSetting.Widgets.CRCData import CRCData
 from packages.Tabs.MuxSetting.Widgets.ConfirmUsingMkvpropedit import ConfirmUsingMkvpropedit
 from packages.Tabs.MuxSetting.Widgets.MuxingParams import MuxingParams
 from packages.Tabs.MuxSetting.Widgets.ProgreeBar import ProgressBar
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
 from packages.Tabs.MuxSetting.Widgets.StartMuxingWorker import StartMuxingWorker
 from packages.Tabs.MuxSetting.Widgets.StatusWidget import StatusWidget
+from packages.Widgets.AudioInfoDialog import AudioInfoDialog
 from packages.Widgets.ChapterInfoDialog import ChapterInfoDialog
 from packages.Widgets.ErrorCell import ErrorCell
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
@@ -23,7 +24,6 @@ from packages.Widgets.InfoWithOptionsCell import InfoWithOptionsCell
 from packages.Widgets.OkCell import OkCell
 from packages.Widgets.OkDialog import OkDialog
 from packages.Widgets.SubtitleInfoDialog import SubtitleInfoDialog
-from packages.Widgets.AudioInfoDialog import AudioInfoDialog
 from packages.Widgets.TableWidget import TableWidget
 from packages.Widgets.WarningCell import WarningCell
 from packages.Widgets.WarningDialog import WarningDialog

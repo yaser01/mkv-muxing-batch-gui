@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal, QMetaMethod, SIGNAL
+from PySide2.QtCore import Signal
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import *
@@ -14,7 +14,6 @@ from packages.Tabs.VideoTab.Widgets.VideoSourceLineEdit import VideoSourceLineEd
 from packages.Tabs.VideoTab.Widgets.VideoTable import VideoTable
 from packages.Widgets.ErrorDialog import ErrorDialog
 from packages.Widgets.InvalidPathDialog import *
-
 # noinspection PyAttributeOutsideInit
 from packages.Widgets.WarningDialog import WarningDialog
 
@@ -432,3 +431,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Video_Directory)
         self.update_folder_path(DefaultOptions.Default_Video_Directory)
         self.video_source_lineEdit.check_new_path()
+
+    def update_theme_mode_state(self):
+        self.table.update_theme_mode_state()
+        self.video_default_duration_fps_comboBox.update_theme_mode_state()

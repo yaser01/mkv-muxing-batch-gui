@@ -1,5 +1,3 @@
-import time
-
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
     QGroupBox,
@@ -7,16 +5,16 @@ from PySide2.QtWidgets import (
 )
 
 from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
 from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import ChapterExtensionsCheckableComboBox
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceButton import ChapterSourceButton
-from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceLineEdit import ChapterSourceLineEdit
 from packages.Tabs.ChapterTab.Widgets.DiscardOldChaptersCheckBox import DiscardOldChaptersCheckBox
 from packages.Tabs.ChapterTab.Widgets.MatchChapterLayout import MatchChapterLayout
 from packages.Tabs.GlobalSetting import *
 from packages.Widgets.InvalidPathDialog import *
-from packages.Widgets.YesNoDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
+from packages.Widgets.YesNoDialog import *
 
 
 # noinspection PyAttributeOutsideInit

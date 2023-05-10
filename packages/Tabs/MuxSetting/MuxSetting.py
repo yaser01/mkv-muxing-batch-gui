@@ -9,10 +9,9 @@ from PySide2.QtGui import QPaintEvent, QResizeEvent
 from PySide2.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
-    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, QCompleter, )
+    QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
 
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Startup.PreDefined import AllSubtitlesTracks
 from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
 from packages.Tabs.MuxSetting.Widgets.ControlQueueButton import ControlQueueButton
@@ -243,7 +242,7 @@ class MuxSettingTab(QWidget):
 
     def setup_clear_job_queue_button(self):
         self.clear_job_queue_button.setText("Clear All")
-        self.clear_job_queue_button.setIcon(GlobalFiles.CleanIcon)
+        self.clear_job_queue_button.setIcon(GlobalIcons.CleanIcon)
         self.clear_job_queue_button.setDisabled(True)
 
     def setup_add_crc_checksum_checkBox(self):
@@ -268,7 +267,7 @@ class MuxSettingTab(QWidget):
         self.abort_on_errors_checkBox.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
 
     def setup_destination_path_button(self):
-        self.destination_path_button.setIcon(GlobalFiles.SelectFolderIcon)
+        self.destination_path_button.setIcon(GlobalIcons.SelectFolderIcon)
 
     def setup_destination_path_lineEdit(self):
         self.destination_path_lineEdit.setPlaceholderText("Enter Destination Folder Path")
@@ -622,3 +621,7 @@ class MuxSettingTab(QWidget):
 
     def set_default_directory(self):
         self.destination_path_lineEdit.setText(DefaultOptions.Default_Destination_Directory)
+
+    def update_theme_mode_state(self):
+        self.make_this_audio_default_comboBox.update_theme_mode_state()
+        self.make_this_subtitle_default_comboBox.update_theme_mode_state()

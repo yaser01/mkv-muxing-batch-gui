@@ -3,12 +3,12 @@ from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QVBoxLayout, QShortcut
 
 from packages.Tabs.AudioTab.Widgets.DeleteAudioButton import DeleteAudioButton
-from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.AudioTab.Widgets.MoveAudioBottomButton import MoveAudioBottomButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioDownButton import MoveAudioDownButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioToButton import MoveAudioToButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioTopButton import MoveAudioTopButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioUpButton import MoveAudioUpButton
+from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class MatchAudioToolsLayout(QVBoxLayout):

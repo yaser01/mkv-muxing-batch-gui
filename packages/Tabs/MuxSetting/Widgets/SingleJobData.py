@@ -1,8 +1,3 @@
-from collections import defaultdict
-
-from packages.Startup.DefaultOptions import DefaultOptions
-
-
 class SingleJobData:
     def __init__(self):
         self.video_name = ""

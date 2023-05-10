@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class ConfirmCheckMakeThisTrackDefault(QDialog):
@@ -11,7 +12,7 @@ class ConfirmCheckMakeThisTrackDefault(QDialog):
         self.yesButton = QPushButton("OK")
         self.noButton = QPushButton("Cancel")
         self.setWindowTitle("Confirm Check")
-        self.setWindowIcon(GlobalFiles.QuestionIcon)
+        self.setWindowIcon(GlobalIcons.QuestionIcon)
         self.track_type = track_type
         self.message = QLabel(
             "<nobr>Are you sure?<br>This will <b>uncheck</b> set default option from " + self.track_type + " tab")

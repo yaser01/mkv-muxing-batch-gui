@@ -118,3 +118,8 @@ class SubtitleTabManager(GlobalSetting):
     def set_default_directory(self):
         for subtitle_tab in self.subtitle_tabs:
             subtitle_tab.set_default_directory()
+
+    def update_theme_mode_state(self):
+        self.subtitle_tab_comboBox.update_theme_mode_state()
+        for subtitle_tab in self.subtitle_tabs:
+            subtitle_tab.update_theme_mode_state()

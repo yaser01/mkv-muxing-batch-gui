@@ -1,4 +1,4 @@
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Widgets.YesNoDialog import YesNoDialog
 
 
@@ -8,7 +8,7 @@ class ClearAudioTabDialog(YesNoDialog):
         self.message.setText(
             "Are you sure ?\nThis will remove current tab")
         self.setWindowTitle("Remove Tab")
-        self.setWindowIcon(GlobalFiles.NoMarkIcon)
+        self.setWindowIcon(GlobalIcons.NoMarkIcon)
 
     def execute(self):
         self.exec_()

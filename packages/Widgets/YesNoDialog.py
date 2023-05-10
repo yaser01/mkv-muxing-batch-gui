@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QDialog, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class YesNoDialog(QDialog):
@@ -51,7 +52,7 @@ class YesNoDialog(QDialog):
     def reset_dialog_values(self):
         self.setWindowTitle("")  # determine when use
         self.message.setText("")  # determine when use
-        self.setWindowIcon(GlobalFiles.RefreshIcon)
+        self.setWindowIcon(GlobalIcons.RefreshIcon)
 
     def set_message_icon_warning(self):
         self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.WarningCheckBigIconPath))

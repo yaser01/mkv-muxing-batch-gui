@@ -1,11 +1,7 @@
-from pathlib import Path
-
 from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide2.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.VideoTab.Widgets.ReloadVideoFilesDialog import ReloadVideoFilesDialog
 from packages.Tabs.VideoTab.Widgets.VideoInfoDialog import VideoInfoDialog
 
 

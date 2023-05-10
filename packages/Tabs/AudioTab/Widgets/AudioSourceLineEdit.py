@@ -4,8 +4,8 @@ from pathlib import Path
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QLineEdit
 
-from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.AudioTab.Widgets.ReloadAudioFilesDialog import ReloadAudioFilesDialog
+from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Widgets.InvalidPathDialog import InvalidPathDialog
 
 

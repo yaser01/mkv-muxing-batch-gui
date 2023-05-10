@@ -1,12 +1,13 @@
-import os
 import sys
 
 import PySide2
 from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt, QColor
 from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
-from packages.Tabs.GlobalSetting import GlobalSetting, sort_names_like_windows
+
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
+from packages.Tabs.GlobalSetting import sort_names_like_windows
 from packages.Widgets.TableWidget import TableWidget
 
 
@@ -21,6 +22,8 @@ class VideoTable(TableWidget):
             "Name": 0,
             "Size": 1,
         }
+        self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
+                           "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
         self.setColumnCount(2)
         self.setRowCount(0)
         self.setAcceptDrops(True)
@@ -33,6 +36,7 @@ class VideoTable(TableWidget):
         self.set_row_height(new_height=screen_size.height() // 27)
         self.setup_columns()
         self.itemChanged.connect(self.update_checked_videos_state)
+        self.itemClicked.connect(self.update_selected_row)
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
@@ -85,7 +89,7 @@ class VideoTable(TableWidget):
 
     def set_column_name(self, column_index, name):
         column = QTableWidgetItem(name)
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.setHorizontalHeaderItem(column_index, column)
 
     def set_row_height(self, new_height):
@@ -106,9 +110,9 @@ class VideoTable(TableWidget):
             self.set_row_file_name(file_name=files_names_list[i], row_index=i, is_checked=files_names_checked_list[i])
             self.set_row_file_size(file_size=files_size_list[i], row_index=i)
             if files_names_checked_list[i]:
-                self.update_row_text_color(row_index=i, color_string="#000000")
+                self.update_row_text_color(row_index=i, status="activate")
             else:
-                self.update_row_text_color(row_index=i, color_string="#787878")
+                self.update_row_text_color(row_index=i, status="disable")
         self.show()
 
     def set_row_number(self, row_number, row_index):
@@ -132,21 +136,29 @@ class VideoTable(TableWidget):
         video_index = item.row()
         if self.checking_row_updates:
             self.checking_row_updates = False
-            self.update_selected_row(row_index=video_index)
+            self.update_selected_row(item=item)
             if item.checkState() == Qt.Unchecked:
-                self.update_row_text_color(row_index=video_index, color_string="#787878")
+                self.update_row_text_color(row_index=video_index, status="disable")
                 self.update_unchecked_video_signal.emit(video_index)
             elif item.checkState() == Qt.Checked:
-                self.update_row_text_color(row_index=video_index, color_string="#000000")
+                self.update_row_text_color(row_index=video_index, status="activate")
                 self.update_checked_video_signal.emit(video_index)
             self.checking_row_updates = True
 
-    def update_row_text_color(self, row_index, color_string):
-        new_color = QColor(color_string)
+    def update_theme_mode_state(self):
+        for i in reversed(range(self.rowCount())):
+            self.update_checked_videos_state(self.item(i, self.column_ids["Name"]))
+
+    def update_row_text_color(self, row_index, status):
+        if DefaultOptions.Dark_Mode:
+            new_color = QColor(self.text_color["dark"][status])
+        else:
+            new_color = QColor(self.text_color["light"][status])
         self.item(row_index, self.column_ids["Name"]).setTextColor(new_color)
         self.item(row_index, self.column_ids["Size"]).setTextColor(new_color)
 
-    def update_selected_row(self, row_index):
+    def update_selected_row(self, item):
+        row_index = item.row()
         self.selectRow(row_index)
 
     def disable_selection(self):
@@ -155,4 +167,5 @@ class VideoTable(TableWidget):
 
     def enable_selection(self):
         for i in reversed(range(self.rowCount())):
-            self.item(i, self.column_ids["Name"]).setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+            self.item(i, self.column_ids["Name"]).setFlags(
+                Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)

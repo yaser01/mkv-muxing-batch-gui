@@ -1,4 +1,5 @@
 import sys
+
 from PySide2 import QtGui
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtGui import QPalette

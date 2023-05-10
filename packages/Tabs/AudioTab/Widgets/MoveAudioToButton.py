@@ -1,8 +1,8 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QPushButton
 
-from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.AudioTab.Widgets.MoveAudioToDialog import MoveAudioToDialog
+from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class MoveAudioToButton(QPushButton):

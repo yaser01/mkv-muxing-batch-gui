@@ -1,11 +1,9 @@
-from pathlib import Path
-
 from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide2.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
-from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Startup import GlobalIcons
 from packages.Tabs.AttachmentTab.Widgets.ClearAttachmentFilesDialog import ClearAttachmentFilesDialog
+from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class AttachmentClearButton(QPushButton):
@@ -13,7 +11,7 @@ class AttachmentClearButton(QPushButton):
 
     def __init__(self):
         super().__init__()
-        self.setIcon(GlobalFiles.NoMarkIcon)
+        self.setIcon(GlobalIcons.NoMarkIcon)
         self.hint_when_enabled = "Clear Files"
         self.setToolTip(self.hint_when_enabled)
         self.is_there_old_files = False

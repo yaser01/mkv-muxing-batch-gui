@@ -5,9 +5,10 @@ from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QHBoxLayout, \
     QDialog, QGridLayout, QLabel, QPushButton
-import faulthandler
+
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Startup.GlobalFiles import SettingIcon, SettingJsonInfoFilePath, create_app_data_folder
+from packages.Startup.GlobalFiles import SettingJsonInfoFilePath, create_app_data_folder
+from packages.Startup.GlobalIcons import SettingIcon
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.SettingTabWidget import SettingTabWidget
 
@@ -107,7 +108,8 @@ class SettingDialog(QDialog):
             "Default_Attachment_Directory": DefaultOptions.Default_Attachment_Directory,
             "Default_Destination_Directory": DefaultOptions.Default_Destination_Directory,
             "Default_Favorite_Subtitle_Languages": DefaultOptions.Default_Favorite_Subtitle_Languages,
-            "Default_Favorite_Audio_Languages": DefaultOptions.Default_Favorite_Audio_Languages
+            "Default_Favorite_Audio_Languages": DefaultOptions.Default_Favorite_Audio_Languages,
+            "Dark_Mode": DefaultOptions.Dark_Mode
         }
         setting_file_path = Path(SettingJsonInfoFilePath)
         if setting_file_path.is_file():

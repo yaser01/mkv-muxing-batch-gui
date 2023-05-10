@@ -1,10 +1,10 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
     QGroupBox,
-    QVBoxLayout,
 )
 
 from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleLayout import MatchSubtitleLayout
 from packages.Tabs.SubtitleTab.Widgets.SubtitleClearButton import SubtitleClearButton
@@ -16,7 +16,6 @@ from packages.Tabs.SubtitleTab.Widgets.SubtitleSetDefaultCheckBox import Subtitl
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSetForcedCheckBox import SubtitleSetForcedCheckBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceButton import SubtitleSourceButton
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceLineEdit import SubtitleSourceLineEdit
-from packages.Tabs.SubtitleTab.Widgets.SubtitleTabComboBox import SubtitleTabComboBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleTrackNameLineEdit import SubtitleTrackNameLineEdit
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
@@ -398,3 +397,11 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Subtitle_Directory)
         self.update_folder_path(DefaultOptions.Default_Subtitle_Directory)
         self.subtitle_source_lineEdit.check_new_path()
+
+    def update_theme_mode_state(self):
+        if DefaultOptions.Dark_Mode:
+            self.setPalette(get_dark_palette())
+        else:
+            self.setPalette(get_light_palette())
+        self.setStyleSheet(
+            "QGroupBox#main_groupBox {subcontrol-origin: margin;left: 3px;padding: 3px 0px 3px 0px;}")

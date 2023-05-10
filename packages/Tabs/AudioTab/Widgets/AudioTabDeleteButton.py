@@ -1,12 +1,10 @@
-from pathlib import Path
-
 from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide2.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
-from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.AudioTab.Widgets.ClearAudioFilesDialog import ClearAudioFilesDialog
+from packages.Startup import GlobalIcons
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.AudioTab.Widgets.ClearAudioTabDialog import ClearAudioTabDialog
+from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class AudioTabDeleteButton(QPushButton):
@@ -14,11 +12,13 @@ class AudioTabDeleteButton(QPushButton):
 
     def __init__(self):
         super().__init__()
-        self.setIcon(GlobalFiles.TrashIcon)
+        self.setIcon(GlobalIcons.TrashLightIcon)
         self.hint_when_enabled = "Remove Tab"
         self.setToolTip(self.hint_when_enabled)
         self.clicked.connect(self.open_delete_tab_dialog)
         self.is_there_old_files = False
+        self.dark_mode_applied = False
+
 
     def set_is_there_old_file(self, new_state):
         self.is_there_old_files = new_state
@@ -56,3 +56,12 @@ class AudioTabDeleteButton(QPushButton):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        if DefaultOptions.Dark_Mode and not self.dark_mode_applied:
+            self.setIcon(GlobalIcons.TrashDarkIcon)
+            self.dark_mode_applied = True
+        if not DefaultOptions.Dark_Mode and self.dark_mode_applied:
+            self.setIcon(GlobalIcons.TrashLightIcon)
+            self.dark_mode_applied = False

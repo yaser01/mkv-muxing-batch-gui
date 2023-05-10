@@ -1,10 +1,8 @@
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QColor, QPalette, qRgba
-from PySide2.QtWidgets import QDialog, QTreeWidgetItem, QHBoxLayout, QTreeWidget, QPushButton, QVBoxLayout
+from PySide2.QtWidgets import QDialog, QHBoxLayout, QPushButton, QVBoxLayout
 
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.VideoTab.Widgets.MediaInfoTreeWidget import MediaInfoTreeWidget
-from packages.Widgets.TreeWidget import TreeWidget
 
 
 class VideoInfoDialog(QDialog):

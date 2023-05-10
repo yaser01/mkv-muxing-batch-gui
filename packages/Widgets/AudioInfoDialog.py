@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
     QFormLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
 
@@ -154,7 +155,7 @@ class AudioInfoDialog(QDialog):
 
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
-        self.setWindowIcon(GlobalFiles.InfoSettingIcon)
+        self.setWindowIcon(GlobalIcons.InfoSettingIcon)
 
     def disable_question_mark_window(self):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)

@@ -44,10 +44,13 @@ def read_setting_file(setting_json_info_file_path, all_languages_file_path):
                                                                                     attribute="Default_Favorite_Subtitle_Languages")
             DefaultOptions.Default_Favorite_Audio_Languages = get_data_from_json(json=data,
                                                                                  attribute="Default_Favorite_Audio_Languages")
+            DefaultOptions.Dark_Mode = get_data_from_json(json=data, attribute="Dark_Mode")
             if not DefaultOptions.Default_Favorite_Audio_Languages:
                 DefaultOptions.Default_Favorite_Audio_Languages = all_languages
             if not DefaultOptions.Default_Favorite_Subtitle_Languages:
                 DefaultOptions.Default_Favorite_Subtitle_Languages = all_languages
+            if not DefaultOptions.Dark_Mode:
+                DefaultOptions.Dark_Mode = False
 
     else:
         setting_data = {"Default_Video_Directory": DefaultOptions.Default_Video_Directory,
@@ -63,7 +66,8 @@ def read_setting_file(setting_json_info_file_path, all_languages_file_path):
                         "Default_Attachment_Directory": DefaultOptions.Default_Attachment_Directory,
                         "Default_Destination_Directory": DefaultOptions.Default_Destination_Directory,
                         "Default_Favorite_Subtitle_Languages": DefaultOptions.Default_Favorite_Subtitle_Languages,
-                        "Default_Favorite_Audio_Languages": DefaultOptions.Default_Favorite_Audio_Languages
+                        "Default_Favorite_Audio_Languages": DefaultOptions.Default_Favorite_Audio_Languages,
+                        "Dark_Mode": DefaultOptions.Dark_Mode
                         }
         with open(setting_file_path, "w+", encoding="UTF-8") as setting_file:
             json.dump(setting_data, setting_file)

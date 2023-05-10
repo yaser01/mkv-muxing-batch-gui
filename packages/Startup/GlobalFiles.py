@@ -1,16 +1,11 @@
 import os
+import struct
 import subprocess
 import sys
 from os import listdir
 from pathlib import Path
-from PySide2.QtGui import QPixmap, QIcon
-import struct
-from PySide2.QtWidgets import QStyleFactory
 
-from packages.Startup.ReadSettingFile import read_setting_file
 from packages.Widgets.MissingFilesMessage import MissingFilesMessage
-# noinspection PyUnresolvedReferences
-import packages.Startup.MainApplication
 
 
 def create_app_data_folder():
@@ -92,7 +87,8 @@ def get_mkvmerge_version():
     with open(TestMkvmergeFilePath, "w+", encoding="UTF-8") as test_file:
         try:
             mux_process = subprocess.run([MKVMERGE_PATH, "-V"], shell=False, stdout=test_file)
-        except: return ""
+        except:
+            return ""
     with open(TestMkvmergeFilePath, "r+", encoding="UTF-8") as test_file:
         return test_file.readline().rstrip()
 
@@ -101,7 +97,8 @@ def get_mkvpropedit_version():
     with open(TestMkvpropeditFilePath, "w+", encoding="UTF-8") as test_file:
         try:
             mux_process = subprocess.run([MKVPROPEDIT_PATH, "-V"], shell=False, stdout=test_file)
-        except: return ""
+        except:
+            return ""
     with open(TestMkvpropeditFilePath, "r+", encoding="UTF-8") as test_file:
         return test_file.readline().rstrip()
 
@@ -123,7 +120,8 @@ try:
     NoMarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'NoMark.svg')
     RedDashIconPath = os.path.join(os.path.abspath(IconFolderPath), 'RedDash.svg')
     PlusIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Plus.svg')
-    TrashIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Trash.svg')
+    TrashLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Trash_Light.svg')
+    TrashDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Trash_Dark.svg')
     SwitchIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Switch.svg')
     QuestionIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Question.svg')
     InfoBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'InfoBig.png')
@@ -135,49 +133,22 @@ try:
     DonationsIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Donations.png')
     ClearIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Clear.svg')
     RefreshIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Refresh.svg')
-    TopIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Top.svg')
-    DownIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Down.svg')
-    UpIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Up.svg')
-    BottomIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Bottom.svg')
+    TopLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Top_Light.svg')
+    DownLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Down_Light.svg')
+    UpLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Up_Light.svg')
+    BottomLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Bottom_Light.svg')
+    TopDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Top_Dark.svg')
+    DownDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Down_Dark.svg')
+    UpDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Up_Dark.svg')
+    BottomDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Bottom_Dark.svg')
     FolderIconPath = os.path.join(os.path.abspath(IconFolderPath), 'SelectFolder.svg')
     SpinnerIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Spinner.gif')
     GoodJobIconPath = os.path.join(os.path.abspath(IconFolderPath), 'GoodJob.png')
     SettingIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Setting.svg')
     TelegramIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Telegram.svg')
     TwitterIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Twitter.svg')
+    ThemeIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Day_And_Night.png')
     AppIconPath = os.path.join(os.path.abspath(IconFolderPath), 'App.ico')
-    OkIcon = QIcon(QPixmap(OkIconPath))
-    ErrorIcon = QIcon(QPixmap(ErrorIconPath))
-    ErrorBigIcon = QIcon(QPixmap(ErrorBigIconPath))
-    SubtitleIcon = QIcon(QPixmap(SubtitleIconPath))
-    SwitchIcon = QIcon(QPixmap(SwitchIconPath))
-    RefreshIcon = QIcon(QPixmap(RefreshIconPath))
-    QuestionIcon = QIcon(QPixmap(QuestionIconPath))
-    NoMarkIcon = QIcon(QPixmap(NoMarkIconPath))
-    PlusIcon = QIcon(QPixmap(PlusIconPath))
-    TrashIcon = QIcon(QPixmap(TrashIconPath))
-    RedDashIcon = QIcon(QPixmap(RedDashIconPath))
-    InfoIcon = QIcon(QPixmap(InfoIconPath))
-    AboutIcon = QIcon(QPixmap(AboutIconPath))
-    InfoSettingIcon = QIcon(QPixmap(InfoSettingIconPath))
-    WarningCheckBigIcon = QIcon(QPixmap(WarningCheckBigIconPath))
-    WarningCheckIcon = QIcon(QPixmap(WarningCheckIconPath))
-    StartMultiplexingIcon = QIcon(QPixmap(StartMultiplexingIconPath))
-    PauseMultiplexingIcon = QIcon(QPixmap(PauseMultiplexingIconPath))
-    AddToQueueIcon = QIcon(QPixmap(AddToQueueIconPath))
-    CleanIcon = QIcon(QPixmap(ClearIconPath))
-    TopIcon = QIcon(QPixmap(TopIconPath))
-    DownIcon = QIcon(QPixmap(DownIconPath))
-    UpIcon = QIcon(QPixmap(UpIconPath))
-    BottomIcon = QIcon(QPixmap(BottomIconPath))
-    SelectFolderIcon = QIcon(QPixmap(FolderIconPath))
-    SettingIcon = QIcon(QPixmap(SettingIconPath))
-    TelegramIcon = QIcon(QPixmap(TelegramIconPath))
-    TwitterIcon = QIcon(QPixmap(TwitterIconPath))
-    LeftArrowIcon = QIcon(QPixmap(LeftArrowIconPath))
-    RightArrowIcon = QIcon(QPixmap(RightArrowIconPath))
-    DonationsIcon = QIcon(QPixmap(DonationsIconPath))
-    AppIcon = QIcon(QPixmap(AppIconPath))
     LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
     AppLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "app_log.txt")
     MuxingLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "muxing_log_file.txt")
@@ -198,7 +169,8 @@ try:
         if "mkvmerge" not in MKVMERGE_VERSION:
             MKVMERGE_VERSION = "mkvmerge: not found!"
             raise Exception("mkvmerge file! ")
-        else: print("OK")
+        else:
+            print("OK")
     if "mkvpropedit" not in MKVPROPEDIT_VERSION:
         print("Could not use portable mkvpropedit. Trying system version...", end="")
         MKVPROPEDIT_PATH = "mkvpropedit"
@@ -206,8 +178,9 @@ try:
         if "mkvpropedit" not in MKVPROPEDIT_VERSION:
             MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
             raise Exception("mkvpropedit file! ")
-        else: print("OK")
-    read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
+        else:
+            print("OK")
 except Exception as e:
+    print(e)
     missing_files_message = MissingFilesMessage(error_message=str(e))
     missing_files_message.execute()

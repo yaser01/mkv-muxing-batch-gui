@@ -3,7 +3,7 @@ import time
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QPushButton
 
-from packages.Startup.GlobalFiles import SettingIcon
+from packages.Startup.GlobalIcons import SettingIcon
 from packages.Tabs.SettingTab.SettingDialog import SettingDialog
 
 

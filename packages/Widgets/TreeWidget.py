@@ -1,6 +1,6 @@
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPalette, QBrush
 from PySide2.QtWidgets import QTreeWidget, QStyledItemDelegate, QStyle
-from PySide2.QtCore import Qt
 
 
 class TreeWidget(QTreeWidget):

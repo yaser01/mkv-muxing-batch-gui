@@ -1,6 +1,7 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QVBoxLayout, QGroupBox
 
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.AttachmentTab.Widgets.AttachmentClearButton import AttachmentClearButton
 from packages.Tabs.AttachmentTab.Widgets.AttachmentSourceButton import AttachmentSourceButton
 from packages.Tabs.AttachmentTab.Widgets.AttachmentSourceLineEdit import AttachmentSourceLineEdit
@@ -11,7 +12,6 @@ from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
 from packages.Widgets.InvalidPathDialog import *
-
 # noinspection PyAttributeOutsideInit
 from packages.Widgets.WarningDialog import WarningDialog
 
@@ -72,6 +72,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_groupBox.setCheckable(True)
         self.attachment_main_groupBox.setChecked(False)
         self.attachment_main_groupBox.setLayout(self.attachment_main_layout)
+        #self.attachment_main_groupBox.setFocusProxy(Qt.NoFocus)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":

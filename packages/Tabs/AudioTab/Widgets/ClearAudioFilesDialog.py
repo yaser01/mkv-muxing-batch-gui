@@ -1,4 +1,4 @@
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Widgets.YesNoDialog import YesNoDialog
 
 
@@ -8,7 +8,7 @@ class ClearAudioFilesDialog(YesNoDialog):
         self.message.setText(
             "Are you sure ?\nThis will clear all audio files")
         self.setWindowTitle("Clear Audio Files")
-        self.setWindowIcon(GlobalFiles.NoMarkIcon)
+        self.setWindowIcon(GlobalIcons.NoMarkIcon)
 
     def execute(self):
         self.exec_()

@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QHBoxLayout, QLabel
+from PySide2.QtWidgets import QLabel
 
 from packages.Tabs.SettingTab.Widgets.AudioLanguageOrderButton import AudioLanguageOrderButton
 from packages.Tabs.SettingTab.Widgets.LanguagesComboBox import LanguagesComboBox

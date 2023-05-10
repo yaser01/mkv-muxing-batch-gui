@@ -2,6 +2,7 @@ from PySide2 import QtGui
 from PySide2.QtCore import Qt, QEvent
 from PySide2.QtGui import QFontMetrics
 from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
+
 from packages.Startup.InitializeScreenResolution import screen_size
 
 

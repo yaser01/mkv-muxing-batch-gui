@@ -16,3 +16,4 @@ class DefaultOptions(QWidget):
     Default_Destination_Directory = ""
     Default_Favorite_Subtitle_Languages = ['English', 'Arabic']
     Default_Favorite_Audio_Languages = ['English', 'Arabic']
+    Dark_Mode = False
