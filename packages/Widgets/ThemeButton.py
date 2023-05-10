@@ -40,9 +40,9 @@ class ThemeButton(QPushButton):
         self.setIcon(ThemeIcon)
         self.setIconSize(QSize(18, 18))
         self.setText("")
-        self.clicked.connect(self.open_setting_dialog)
+        self.clicked.connect(self.theme_button_clicked)
 
-    def open_setting_dialog(self):
+    def theme_button_clicked(self):
         if DefaultOptions.Dark_Mode:
             apply_light_mode()
         else:
