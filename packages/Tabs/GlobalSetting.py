@@ -19,9 +19,9 @@ def sort_names_like_windows(names_list):
 def get_readable_filesize(size_bytes, suffix='B'):
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
         if abs(size_bytes) < 1024.0:
-            return "%3.1f %s%s" % (size_bytes, unit, suffix)
+            return "%3.2f %s%s" % (size_bytes, unit, suffix)
         size_bytes /= 1024.0
-    return "%.1f %s%s" % (size_bytes, 'Y', suffix)
+    return "%.2f %s%s" % (size_bytes, 'Y', suffix)
 
 
 def get_files_names_absolute_list(files_names, folder_path):
