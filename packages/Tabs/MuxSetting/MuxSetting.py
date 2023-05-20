@@ -476,6 +476,7 @@ class MuxSettingTab(QWidget):
         self.control_queue_button.set_state_add_to_queue()
         self.clear_job_queue_button.setDisabled(True)
         self.control_queue_button.setDisabled(False)
+        GlobalSetting.JOB_QUEUE_FINISHED = False
         self.enable_editable_widgets()
         self.enable_muxing_setting()
         self.setup_enable_options_for_mkv_only_options()
@@ -613,6 +614,7 @@ class MuxSettingTab(QWidget):
         self.clear_job_queue_button.setDisabled(False)
         self.update_task_bar_clear_signal.emit()
         GlobalSetting.JOB_QUEUE_EMPTY = True
+        GlobalSetting.JOB_QUEUE_FINISHED = True
         check_if_want_to_keep_log_file()
 
     def setup_log_file(self):

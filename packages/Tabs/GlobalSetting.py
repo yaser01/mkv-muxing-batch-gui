@@ -111,6 +111,7 @@ class GlobalSetting(QWidget):
 
     DESTINATION_FOLDER_PATH = ""
     JOB_QUEUE_EMPTY = True
+    JOB_QUEUE_FINISHED = False
     MUXING_ON = False
     LogFilePath = ""
     DISABLE_TOOLTIP = "<b>[Disabled]</b> because job queue has unfinished job(s)"

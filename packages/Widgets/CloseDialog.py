@@ -7,13 +7,18 @@ from packages.Startup import GlobalIcons
 
 
 class CloseDialog(QDialog):
-    def __init__(self, parent=None):
+    """
+    CloseDialog class to create an exit dialog with confirmation button
+    You can check for result after calling `CloseDialog.execute()`
+    By checking of value `CloseDialog.result` which can be either [Cancel/Exit]
+    """
+    def __init__(self, parent=None, info_message="Close Dialog", close_button_name="Close"):
         super().__init__(parent)
-        self.info_message = "Are you sure you want to exit ?\nThis will stop current muxing"
+        self.info_message = info_message
         self.window_title = "Confirm Exit"
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.exit_button = QPushButton("Stop Muxing")
+        self.exit_button = QPushButton(close_button_name)
         self.cancel_button = QPushButton("Cancel")
         self.result = "Cancel"
         self.buttons_layout = QHBoxLayout()

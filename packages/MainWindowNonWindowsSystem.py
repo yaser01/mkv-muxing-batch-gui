@@ -7,19 +7,20 @@ from packages.Startup.InitializeScreenResolution import width_factor, height_fac
 from packages.Startup.Version import Version
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.TabsManager import TabsManager
-from packages.Widgets.CloseDialog import CloseDialog
+from packages.Widgets.CloseDialogWhileAtLeastOneOptionSelected import CloseDialogWhileAtLeastOneOptionSelected
+from packages.Widgets.CloseDialogWhileMuxingOn import CloseDialogWhileMuxingOn
 
 
 def check_if_exit_when_muxing_on():
-    if GlobalSetting.MUXING_ON:
-        close_dialog = CloseDialog()
-        close_dialog.execute()
-        if close_dialog.result == "Exit":
-            return True
-        else:
-            return False
-    else:
-        return True
+    close_dialog = CloseDialogWhileMuxingOn()
+    close_dialog.execute()
+    return close_dialog.result == 'Exit'
+
+
+def check_if_exit_while_selected_one_option():
+    close_dialog = CloseDialogWhileAtLeastOneOptionSelected()
+    close_dialog.execute()
+    return close_dialog.result == 'Exit'
 
 
 class MainWindowNonWindowsSystem(QMainWindow):
@@ -56,8 +57,20 @@ class MainWindowNonWindowsSystem(QMainWindow):
         self.setMinimumSize(self.minimumSizeHint())
 
     def closeEvent(self, event: PySide2.QtGui.QCloseEvent):
-        want_to_exit = check_if_exit_when_muxing_on()
-        if want_to_exit:
-            super().closeEvent(event)
-        else:
-            event.ignore()
+        muxing_on = GlobalSetting.MUXING_ON
+        if muxing_on:
+            want_to_exit = check_if_exit_when_muxing_on()
+            if want_to_exit:
+                super().closeEvent(event)
+            else:
+                event.ignore()
+            return
+        option_selected = len(GlobalSetting.VIDEO_FILES_LIST) > 0 and not GlobalSetting.JOB_QUEUE_FINISHED
+        if option_selected:
+            want_to_exit = check_if_exit_while_selected_one_option()
+            if want_to_exit:
+                super().closeEvent(event)
+            else:
+                event.ignore()
+            return
+        super().closeEvent(event)
