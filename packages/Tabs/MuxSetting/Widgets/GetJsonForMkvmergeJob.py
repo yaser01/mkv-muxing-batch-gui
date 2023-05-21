@@ -10,6 +10,7 @@ from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
+from packages.Widgets.SingleAttachmentData import SingleAttachmentData
 from packages.Widgets.SingleTrackData import SingleTrackData
 
 
@@ -85,6 +86,7 @@ class GetJsonForMkvmergeJob:
         self.videos_track_json_info = []  # type: list[SingleTrackData]
         self.subtitles_track_json_info = []  # type: list[SingleTrackData]
         self.audios_track_json_info = []  # type: list[SingleTrackData]
+        self.attachments_json_info = []  # type: list[SingleAttachmentData]
         self.setup_commands()
         self.generate_mkvmerge_json_job_file()
 
@@ -136,15 +138,33 @@ class GetJsonForMkvmergeJob:
                 self.subtitles_track_json_info.append(new_track_info)
             elif track["type"] == "video":
                 self.videos_track_json_info.append(new_track_info)
+        for attachment in self.json_info["attachments"]:
+            new_attachment_info = SingleAttachmentData()
+            new_attachment_info.file_name = str(
+                get_attribute(data=attachment, attribute="file_name", default_value="no_name.ttf"))
+            new_attachment_info.id = str(get_attribute(data=attachment, attribute="id", default_value="-1"))
+            new_attachment_info.size = get_attribute(data=attachment, attribute="size", default_value=0)
+            self.attachments_json_info.append(new_attachment_info)
 
     def setup_attachments_options(self):
         if GlobalSetting.ATTACHMENT_ENABLED:
+            allow_duplicates = GlobalSetting.ATTACHMENT_ALLOW_DUPLICATE
+            discard_old = GlobalSetting.ATTACHMENT_DISCARD_OLD
             attachments_list_with_attach_command = []
-            if GlobalSetting.ATTACHMENT_DISCARD_OLD:
+            if discard_old:
                 self.discard_old_attachments_command = add_json_line("--no-attachments")
             for i in range(len(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)):
                 if GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[i]:
                     file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
+                    file_name_to_attach = os.path.basename(file_to_attach)
+                    if not discard_old and not allow_duplicates:
+                        attachment_already_found = False
+                        for attachment in self.attachments_json_info:
+                            if attachment.file_name == file_name_to_attach:
+                                attachment_already_found = True
+                                break
+                        if attachment_already_found:
+                            continue
                     attachments_list_with_attach_command.append(add_json_line("--attach-file"))
                     attachments_list_with_attach_command.append(
                         add_json_line(check_for_system_backslash_path(file_to_attach)))
@@ -435,9 +455,11 @@ class GetJsonForMkvmergeJob:
                                 if subtitle.language == subtitle_track_language and subtitle_track_id == "":
                                     subtitle_track_id = subtitle.id
                                     change_default_subtitle_commands_list.append(add_json_line("--default-track"))
-                                    change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line(subtitle_track_id + ":yes"))
                                     change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
-                                    change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line(subtitle_track_id + ":yes"))
                                 else:
                                     change_default_subtitle_commands_list.append(add_json_line("--default-track"))
                                     change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))
@@ -456,9 +478,11 @@ class GetJsonForMkvmergeJob:
                                 if subtitle.track_name == track_value and subtitle_track_id == "":
                                     subtitle_track_id = subtitle.id
                                     change_default_subtitle_commands_list.append(add_json_line("--default-track"))
-                                    change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line(subtitle_track_id + ":yes"))
                                     change_default_subtitle_commands_list.append(add_json_line("--forced-track"))
-                                    change_default_subtitle_commands_list.append(add_json_line(subtitle_track_id + ":yes"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line(subtitle_track_id + ":yes"))
                                 else:
                                     change_default_subtitle_commands_list.append(add_json_line("--default-track"))
                                     change_default_subtitle_commands_list.append(add_json_line(subtitle.id + ":no"))

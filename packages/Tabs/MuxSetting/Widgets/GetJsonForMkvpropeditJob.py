@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 
@@ -6,6 +7,7 @@ from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_LANGUAGES
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
+from packages.Widgets.SingleAttachmentData import SingleAttachmentData
 from packages.Widgets.SingleTrackData import SingleTrackData
 
 
@@ -71,6 +73,7 @@ class GetJsonForMkvpropeditJob:
         self.videos_track_json_info = []  # type: list[SingleTrackData]
         self.subtitles_track_json_info = []  # type: list[SingleTrackData]
         self.audios_track_json_info = []  # type: list[SingleTrackData]
+        self.attachments_json_info = []  # type: list[SingleAttachmentData]
         self.setup_commands()
         self.generate_mkvpropedit_json_file()
 
@@ -105,24 +108,44 @@ class GetJsonForMkvpropeditJob:
                 get_attribute(data=track["properties"], attribute="language", default_value="eng"))
             new_track_info.track_name = str(
                 get_attribute(data=track["properties"], attribute="track_name", default_value="UnNamedTrackBeBo"))
+            new_track_info.uid = str(
+                get_attribute(data=track["properties"], attribute="uid", default_value="-1"))
             if track["type"] == "audio":
                 self.audios_track_json_info.append(new_track_info)
             elif track["type"] == "subtitles":
                 self.subtitles_track_json_info.append(new_track_info)
             elif track["type"] == "video":
                 self.videos_track_json_info.append(new_track_info)
+        for attachment in self.json_info["attachments"]:
+            new_attachment_info = SingleAttachmentData()
+            new_attachment_info.file_name = str(
+                get_attribute(data=attachment, attribute="file_name", default_value="no_name.ttf"))
+            new_attachment_info.id = str(get_attribute(data=attachment, attribute="id", default_value="-1"))
+            new_attachment_info.size = get_attribute(data=attachment, attribute="size", default_value=0)
+            self.attachments_json_info.append(new_attachment_info)
 
     def setup_attachments_options(self):
         if GlobalSetting.ATTACHMENT_ENABLED:
             attachments_list_with_attach_command = []
             discard_old_attachments_list_command = []
-            if GlobalSetting.ATTACHMENT_DISCARD_OLD:
+            allow_duplicates = GlobalSetting.ATTACHMENT_ALLOW_DUPLICATE
+            discard_old = GlobalSetting.ATTACHMENT_DISCARD_OLD
+            if discard_old:
                 for i in range(self.number_of_old_attachments + 2):
                     attachments_list_with_attach_command.append(add_json_line("--delete-attachment"))
                     attachments_list_with_attach_command.append(add_json_line(str(i)))
             for i in range(len(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)):
                 if GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[i]:
                     file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
+                    file_name_to_attach = os.path.basename(file_to_attach)
+                    if not discard_old and not allow_duplicates:
+                        attachment_already_found = False
+                        for attachment in self.attachments_json_info:
+                            if attachment.file_name == file_name_to_attach:
+                                attachment_already_found = True
+                                break
+                        if attachment_already_found:
+                            continue
                     attachments_list_with_attach_command.append(add_json_line("--add-attachment"))
                     attachments_list_with_attach_command.append(
                         add_json_line(check_for_system_backslash_path(file_to_attach)))

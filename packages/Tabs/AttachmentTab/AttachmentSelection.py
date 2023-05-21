@@ -2,6 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QVBoxLayout, QGroupBox
 
 from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Tabs.AttachmentTab.Widgets.AllowDuplicateAttachmentsCheckBox import AllowDuplicateAttachmentsCheckBox
 from packages.Tabs.AttachmentTab.Widgets.AttachmentClearButton import AttachmentClearButton
 from packages.Tabs.AttachmentTab.Widgets.AttachmentSourceButton import AttachmentSourceButton
 from packages.Tabs.AttachmentTab.Widgets.AttachmentSourceLineEdit import AttachmentSourceLineEdit
@@ -47,8 +48,10 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_clear_button = AttachmentClearButton()
         self.attachment_source_button = AttachmentSourceButton()
         self.discard_old_attachments_checkBox = DiscardOldAttachmentsCheckBox()
+        self.allow_duplicate_attachments_checkBox = AllowDuplicateAttachmentsCheckBox()
         self.table = AttachmentTable()
         self.MainLayout = QVBoxLayout()
+        self.attachments_options_layout = QHBoxLayout()
         self.attachment_main_groupBox = QGroupBox(self)
         self.attachment_main_layout = QGridLayout()
         self.folder_path = ""
@@ -62,6 +65,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.connect_signals()
 
     def setup_layouts(self):
+        self.setup_attachments_options_layout()
         self.setup_main_layout()
         self.setup_attachment_main_groupBox()
         self.MainLayout.addWidget(self.attachment_main_groupBox)
@@ -72,7 +76,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_groupBox.setCheckable(True)
         self.attachment_main_groupBox.setChecked(False)
         self.attachment_main_groupBox.setLayout(self.attachment_main_layout)
-        #self.attachment_main_groupBox.setFocusProxy(Qt.NoFocus)
+        # self.attachment_main_groupBox.setFocusProxy(Qt.NoFocus)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
@@ -150,6 +154,10 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
         self.attachment_clear_button.set_is_there_old_file(len(self.files_names_list) > 0)
 
+    def setup_attachments_options_layout(self):
+        self.attachments_options_layout.addWidget(self.allow_duplicate_attachments_checkBox)
+        self.attachments_options_layout.addWidget(self.discard_old_attachments_checkBox)
+
     def setup_main_layout(self):
         self.attachment_main_layout.addWidget(self.attachment_source_label, 0, 0)
         self.attachment_main_layout.addWidget(self.attachment_source_lineEdit, 0, 1, 1, 80)
@@ -157,7 +165,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_layout.addWidget(self.attachment_source_button, 0, 82, 1, 1)
         self.attachment_main_layout.addWidget(self.attachment_total_size_label, 1, 0)
         self.attachment_main_layout.addWidget(self.attachment_total_size_value_label, 1, 1)
-        self.attachment_main_layout.addWidget(self.discard_old_attachments_checkBox, 1, 40, 1, -1,
+        self.attachment_main_layout.addLayout(self.attachments_options_layout, 1, 39, 1, -1,
                                               alignment=Qt.AlignRight)
         self.attachment_main_layout.addWidget(self.table, 2, 0, 1, -1)
 
@@ -218,6 +226,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_source_lineEdit.setEnabled(False)
         self.attachment_source_button.setEnabled(False)
         self.discard_old_attachments_checkBox.setEnabled(False)
+        self.allow_duplicate_attachments_checkBox.setEnabled(False)
         self.attachment_main_groupBox.setCheckable(False)
         self.attachment_clear_button.setEnabled(False)
         self.table.setAcceptDrops(False)
@@ -226,6 +235,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_source_lineEdit.setEnabled(True)
         self.attachment_source_button.setEnabled(True)
         self.discard_old_attachments_checkBox.setEnabled(True)
+        self.allow_duplicate_attachments_checkBox.setEnabled(True)
         self.attachment_clear_button.setEnabled(True)
         self.table.setAcceptDrops(True)
         if GlobalSetting.ATTACHMENT_ENABLED:
@@ -241,6 +251,7 @@ class AttachmentSelectionSetting(GlobalSetting):
             self.attachment_source_lineEdit.set_text_safe_change("")
             self.attachment_total_size_value_label.set_total_size_zero()
             self.discard_old_attachments_checkBox.setChecked(False)
+            self.allow_duplicate_attachments_checkBox.setChecked(False)
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
