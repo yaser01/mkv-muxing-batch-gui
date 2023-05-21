@@ -113,7 +113,7 @@ class StartMuxingWorker(QObject):
             return
 
         job = self.data[self.current_job]
-        if not job.done:
+        if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
             GetJsonForMkvmergeJob(job)
             if GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
                 GetJsonForMkvpropeditJob(job)

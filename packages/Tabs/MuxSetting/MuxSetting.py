@@ -159,7 +159,7 @@ class MuxSettingTab(QWidget):
         self.job_queue_layout.paused_done_signal.connect(self.paused_done)
         self.job_queue_layout.cancel_done_signal.connect(self.cancel_done)
         self.job_queue_layout.finished_all_jobs_signal.connect(self.finished_all_jobs)
-        self.job_queue_layout.pause_from_error_occurred_signal.connect(self.pause_multiplexing_button_clicked)
+        self.job_queue_layout.pause_from_error_occurred_signal.connect(self.pause_multiplexing_from_error_button_clicked)
 
     def setup_widgets(self):
         self.setup_mux_setting_groupBox()
@@ -596,6 +596,11 @@ class MuxSettingTab(QWidget):
             self.clear_job_queue_button.setDisabled(True)
 
     def pause_multiplexing_button_clicked(self):
+        self.job_queue_layout.pause_muxing()
+        self.control_queue_button.setDisabled(True)
+        self.control_queue_button.set_state_pausing_multiplexing()
+
+    def pause_multiplexing_from_error_button_clicked(self):
         self.job_queue_layout.pause_muxing()
         self.control_queue_button.setDisabled(True)
         self.control_queue_button.set_state_pausing_multiplexing()
