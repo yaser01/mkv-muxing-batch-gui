@@ -15,6 +15,9 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         super().__init__()
         self.current_list = []
         self.current_text = ""
+        self.empty_selection_string = "None"
+        self.empty_selection_hint_string = "The selected flag [default/forced/both] will be removed from all " \
+                                           "corresponding tracks"
         self.addItems(AllAudiosTracks)
         self.setMinimumWidth(screen_size.width() // 12)
         self.setMaximumWidth(screen_size.width() // 4)
@@ -33,7 +36,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.closeOnLineEditClick = False
         # Prevent popup from closing when clicking on an item
         self.view().viewport().installEventFilter(self)
-        self.currentIndexChanged.connect(self.updateText)
+        self.activated.connect(self.updateText)
         self.setDisabled(True)
 
     def disable_select(self):
@@ -67,6 +70,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.startTimer(100)
         # Refresh the display text when closing
         self.updateText(self.currentIndex())
+        self.update_shown_text()
         # self.check_if_nothing_selected()
 
     def timerEvent(self, event):
@@ -134,7 +138,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
 
     def resizeEvent(self, e: PySide2.QtGui.QResizeEvent):
         super().resizeEvent(e)
-        self.update_shown_text_not_italic()
+        self.update_shown_text()
 
     # noinspection PyAttributeOutsideInit
     def updateText(self, new_index):
@@ -189,7 +193,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.current_text = text
         # Compute elided text (with "...")
         if text != "":
-            self.update_shown_text_not_italic()
+            self.update_shown_text()
             if count_tracks_id > 0:
                 self.hint = tracks_id_text
                 if count_tracks_languages > 0:
@@ -210,13 +214,20 @@ class MakeThisTrackDefaultComboBox(QComboBox):
             self.hint = ""
         self.setToolTip(self.hint)
 
-    def update_shown_text_not_italic(self):
-        metrics = QFontMetrics(self.lineEdit().font())
-        non_italic_font = self.lineEdit().font()
-        non_italic_font.setItalic(False)
-        self.lineEdit().setFont(non_italic_font)
-        elided_text = metrics.elidedText(self.current_text, Qt.ElideRight, self.lineEdit().width())
-        self.lineEdit().setText(elided_text)
+    def update_shown_text(self):
+        if self.current_text != "":
+            metrics = QFontMetrics(self.lineEdit().font())
+            non_italic_font = self.lineEdit().font()
+            non_italic_font.setItalic(False)
+            self.lineEdit().setFont(non_italic_font)
+            elided_text = metrics.elidedText(self.current_text, Qt.ElideRight, self.lineEdit().width())
+            self.lineEdit().setText(elided_text)
+        else:
+            italic_font = self.lineEdit().font()
+            italic_font.setItalic(True)
+            self.lineEdit().setFont(italic_font)
+            self.lineEdit().setText(self.empty_selection_string)
+            self.setToolTip(self.empty_selection_hint_string)
 
     def update_theme_mode_state(self):
         if DefaultOptions.Dark_Mode:
@@ -224,3 +235,8 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         else:
             self.setPalette(get_light_palette())
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
+
+    def refresh_tracks(self, new_list):
+        self.addItems(texts=new_list)
+        self.current_text = ""
+        self.update_shown_text()

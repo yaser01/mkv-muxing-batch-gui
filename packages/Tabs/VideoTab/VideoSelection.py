@@ -284,6 +284,8 @@ class VideoSelectionSetting(GlobalSetting):
                 GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST.append(self.files_names_absolute_list[i])
                 if Path(os.path.dirname(self.files_names_absolute_list[i])) not in GlobalSetting.VIDEO_SOURCE_PATHS:
                     GlobalSetting.VIDEO_SOURCE_PATHS.append(Path(os.path.dirname(self.files_names_absolute_list[i])))
+        GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST = refresh_tracks("audio")
+        GlobalSetting.MUX_SETTING_SUBTITLE_TRACKS_LIST = refresh_tracks("subtitles")
 
     def update_checked_video(self, video_index):
         self.files_names_checked_list[video_index] = True

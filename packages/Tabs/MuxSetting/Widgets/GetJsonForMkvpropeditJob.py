@@ -149,312 +149,356 @@ class GetJsonForMkvpropeditJob:
     def make_this_subtitle_default_forced(self):
         if GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED:
             subtitle_track = GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK
-            if (not subtitle_track.isspace()) and subtitle_track != "":
+            if not subtitle_track.isspace():
                 change_default_subtitle_commands_list = []
-                subtitle_track_id = ""
-                track_type, track_value = check_type_of_track_chosen(subtitle_track)
-                if track_type == "id":
-                    subtitle_track_id = delete_trailing_zero_string(track_value)
-                    found_subtitle_with_this_id = False
+                if subtitle_track == "":
                     for subtitle in self.subtitles_track_json_info:
-                        if subtitle.id == subtitle_track_id:
-                            found_subtitle_with_this_id = True
-                            break
-                    if found_subtitle_with_this_id:
                         change_default_subtitle_commands_list.append(add_json_line("--edit"))
                         change_default_subtitle_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            add_json_line("track:" + increase_id_by_one(subtitle.id)))
                         change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                        change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                    self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                        change_default_subtitle_commands_list)
+                else:
+                    subtitle_track_id = ""
+                    track_type, track_value = check_type_of_track_chosen(subtitle_track)
+                    if track_type == "id":
+                        subtitle_track_id = delete_trailing_zero_string(track_value)
+                        found_subtitle_with_this_id = False
                         for subtitle in self.subtitles_track_json_info:
-                            if subtitle.id != subtitle_track_id:
-                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                                change_default_subtitle_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                            if subtitle.id == subtitle_track_id:
+                                found_subtitle_with_this_id = True
+                                break
+                        if found_subtitle_with_this_id:
+                            change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                            change_default_subtitle_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            for subtitle in self.subtitles_track_json_info:
+                                if subtitle.id != subtitle_track_id:
+                                    change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
 
-                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
-                            change_default_subtitle_commands_list)
-                elif track_type == "lang":
-                    subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
-                    for subtitle in self.subtitles_track_json_info:
-                        if subtitle.language == subtitle_track_language:
-                            subtitle_track_id = subtitle.id
-                            break
-                    if subtitle_track_id != "":
-                        change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                        change_default_subtitle_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
-                        change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                                change_default_subtitle_commands_list)
+                    elif track_type == "lang":
+                        subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
                         for subtitle in self.subtitles_track_json_info:
-                            if subtitle.id != subtitle_track_id:
-                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                                change_default_subtitle_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
-                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
-                            change_default_subtitle_commands_list)
-                elif track_type == "name":
-                    for subtitle in self.subtitles_track_json_info:
-                        if subtitle.track_name == track_value:
-                            subtitle_track_id = subtitle.id
-                            break
-                    if subtitle_track_id != "":
-                        change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                        change_default_subtitle_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
-                        change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            if subtitle.language == subtitle_track_language:
+                                subtitle_track_id = subtitle.id
+                                break
+                        if subtitle_track_id != "":
+                            change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                            change_default_subtitle_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            for subtitle in self.subtitles_track_json_info:
+                                if subtitle.id != subtitle_track_id:
+                                    change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                            self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                                change_default_subtitle_commands_list)
+                    elif track_type == "name":
                         for subtitle in self.subtitles_track_json_info:
-                            if subtitle.id != subtitle_track_id:
-                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                                change_default_subtitle_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
-                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
-                            change_default_subtitle_commands_list)
+                            if subtitle.track_name == track_value:
+                                subtitle_track_id = subtitle.id
+                                break
+                        if subtitle_track_id != "":
+                            change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                            change_default_subtitle_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            for subtitle in self.subtitles_track_json_info:
+                                if subtitle.id != subtitle_track_id:
+                                    change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                            self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                                change_default_subtitle_commands_list)
 
         elif GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED:
             subtitle_track = GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK
-            if (not subtitle_track.isspace()) and subtitle_track != "":
+            if not subtitle_track.isspace():
                 change_default_subtitle_commands_list = []
-                subtitle_track_id = ""
-                track_type, track_value = check_type_of_track_chosen(subtitle_track)
-                if track_type == "id":
-                    subtitle_track_id = delete_trailing_zero_string(track_value)
-                    found_subtitle_with_this_id = False
+                if subtitle_track == "":
                     for subtitle in self.subtitles_track_json_info:
-                        if subtitle.id == subtitle_track_id:
-                            found_subtitle_with_this_id = True
-                            break
-                    if found_subtitle_with_this_id:
                         change_default_subtitle_commands_list.append(add_json_line("--edit"))
                         change_default_subtitle_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            add_json_line("track:" + increase_id_by_one(subtitle.id)))
                         change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                        change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
                         change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                        change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
+                    self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                        change_default_subtitle_commands_list)
+                else:
+                    subtitle_track_id = ""
+                    track_type, track_value = check_type_of_track_chosen(subtitle_track)
+                    if track_type == "id":
+                        subtitle_track_id = delete_trailing_zero_string(track_value)
+                        found_subtitle_with_this_id = False
                         for subtitle in self.subtitles_track_json_info:
-                            if subtitle.id != subtitle_track_id:
-                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                                change_default_subtitle_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
+                            if subtitle.id == subtitle_track_id:
+                                found_subtitle_with_this_id = True
+                                break
+                        if found_subtitle_with_this_id:
+                            change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                            change_default_subtitle_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                            for subtitle in self.subtitles_track_json_info:
+                                if subtitle.id != subtitle_track_id:
+                                    change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
 
-                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
-                            change_default_subtitle_commands_list)
-                elif track_type == "lang":
-                    subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
-                    for subtitle in self.subtitles_track_json_info:
-                        if subtitle.language == subtitle_track_language:
-                            subtitle_track_id = subtitle.id
-                            break
-                    if subtitle_track_id != "":
-                        change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                        change_default_subtitle_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
-                        change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
-                        change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                            self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                                change_default_subtitle_commands_list)
+                    elif track_type == "lang":
+                        subtitle_track_language = ISO_639_2_LANGUAGES[track_value]
                         for subtitle in self.subtitles_track_json_info:
-                            if subtitle.id != subtitle_track_id:
-                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                                change_default_subtitle_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
-                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
-                            change_default_subtitle_commands_list)
-                elif track_type == "name":
-                    for subtitle in self.subtitles_track_json_info:
-                        if subtitle.track_name == track_value:
-                            subtitle_track_id = subtitle.id
-                            break
-                    if subtitle_track_id != "":
-                        change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                        change_default_subtitle_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
-                        change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
-                        change_default_subtitle_commands_list.append(add_json_line("--set"))
-                        change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                            if subtitle.language == subtitle_track_language:
+                                subtitle_track_id = subtitle.id
+                                break
+                        if subtitle_track_id != "":
+                            change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                            change_default_subtitle_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                            for subtitle in self.subtitles_track_json_info:
+                                if subtitle.id != subtitle_track_id:
+                                    change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
+                            self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                                change_default_subtitle_commands_list)
+                    elif track_type == "name":
                         for subtitle in self.subtitles_track_json_info:
-                            if subtitle.id != subtitle_track_id:
-                                change_default_subtitle_commands_list.append(add_json_line("--edit"))
-                                change_default_subtitle_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(subtitle.id)))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
-                                change_default_subtitle_commands_list.append(add_json_line("--set"))
-                                change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
-                        self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
-                            change_default_subtitle_commands_list)
+                            if subtitle.track_name == track_value:
+                                subtitle_track_id = subtitle.id
+                                break
+                        if subtitle_track_id != "":
+                            change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                            change_default_subtitle_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(subtitle_track_id)))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-default=1"))
+                            change_default_subtitle_commands_list.append(add_json_line("--set"))
+                            change_default_subtitle_commands_list.append(add_json_line("flag-forced=1"))
+                            for subtitle in self.subtitles_track_json_info:
+                                if subtitle.id != subtitle_track_id:
+                                    change_default_subtitle_commands_list.append(add_json_line("--edit"))
+                                    change_default_subtitle_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(subtitle.id)))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-default=0"))
+                                    change_default_subtitle_commands_list.append(add_json_line("--set"))
+                                    change_default_subtitle_commands_list.append(add_json_line("flag-forced=0"))
+                            self.change_default_forced_subtitle_track_setting_source_video_command += ''.join(
+                                change_default_subtitle_commands_list)
 
     def make_this_audio_default_forced(self):
         if GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_SEMI_ENABLED:
             audio_track = GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK
-            if (not audio_track.isspace()) and audio_track != "":
+            if not audio_track.isspace():
                 change_default_audio_commands_list = []
-                audio_track_id = ""
-                track_type, track_value = check_type_of_track_chosen(audio_track)
-                if track_type == "id":
-                    audio_track_id = delete_trailing_zero_string(track_value)
-                    found_audio_with_this_id = False
+                if audio_track == "":
                     for audio in self.audios_track_json_info:
-                        if audio.id == audio_track_id:
-                            found_audio_with_this_id = True
-                            break
-                    if found_audio_with_this_id:
                         change_default_audio_commands_list.append(add_json_line("--edit"))
                         change_default_audio_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            add_json_line("track:" + increase_id_by_one(audio.id)))
                         change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                        change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                    self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                        change_default_audio_commands_list)
+                else:
+                    audio_track_id = ""
+                    track_type, track_value = check_type_of_track_chosen(audio_track)
+                    if track_type == "id":
+                        audio_track_id = delete_trailing_zero_string(track_value)
+                        found_audio_with_this_id = False
                         for audio in self.audios_track_json_info:
-                            if audio.id != audio_track_id:
-                                change_default_audio_commands_list.append(add_json_line("--edit"))
-                                change_default_audio_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(audio.id)))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                            if audio.id == audio_track_id:
+                                found_audio_with_this_id = True
+                                break
+                        if found_audio_with_this_id:
+                            change_default_audio_commands_list.append(add_json_line("--edit"))
+                            change_default_audio_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            for audio in self.audios_track_json_info:
+                                if audio.id != audio_track_id:
+                                    change_default_audio_commands_list.append(add_json_line("--edit"))
+                                    change_default_audio_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(audio.id)))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-default=0"))
 
-                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
-                            change_default_audio_commands_list)
-                elif track_type == "lang":
-                    audio_track_language = ISO_639_2_LANGUAGES[track_value]
-                    for audio in self.audios_track_json_info:
-                        if audio.language == audio_track_language:
-                            audio_track_id = audio.id
-                            break
-                    if audio_track_id != "":
-                        change_default_audio_commands_list.append(add_json_line("--edit"))
-                        change_default_audio_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
-                        change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                                change_default_audio_commands_list)
+                    elif track_type == "lang":
+                        audio_track_language = ISO_639_2_LANGUAGES[track_value]
                         for audio in self.audios_track_json_info:
-                            if audio.id != audio_track_id:
-                                change_default_audio_commands_list.append(add_json_line("--edit"))
-                                change_default_audio_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(audio.id)))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
-                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
-                            change_default_audio_commands_list)
-                elif track_type == "name":
-                    for audio in self.audios_track_json_info:
-                        if audio.track_name == track_value:
-                            audio_track_id = audio.id
-                            break
-                    if audio_track_id != "":
-                        change_default_audio_commands_list.append(add_json_line("--edit"))
-                        change_default_audio_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
-                        change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            if audio.language == audio_track_language:
+                                audio_track_id = audio.id
+                                break
+                        if audio_track_id != "":
+                            change_default_audio_commands_list.append(add_json_line("--edit"))
+                            change_default_audio_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            for audio in self.audios_track_json_info:
+                                if audio.id != audio_track_id:
+                                    change_default_audio_commands_list.append(add_json_line("--edit"))
+                                    change_default_audio_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(audio.id)))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                            self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                                change_default_audio_commands_list)
+                    elif track_type == "name":
                         for audio in self.audios_track_json_info:
-                            if audio.id != audio_track_id:
-                                change_default_audio_commands_list.append(add_json_line("--edit"))
-                                change_default_audio_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(audio.id)))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
-                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
-                            change_default_audio_commands_list)
+                            if audio.track_name == track_value:
+                                audio_track_id = audio.id
+                                break
+                        if audio_track_id != "":
+                            change_default_audio_commands_list.append(add_json_line("--edit"))
+                            change_default_audio_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            for audio in self.audios_track_json_info:
+                                if audio.id != audio_track_id:
+                                    change_default_audio_commands_list.append(add_json_line("--edit"))
+                                    change_default_audio_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(audio.id)))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                            self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                                change_default_audio_commands_list)
 
         elif GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED:
             audio_track = GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK
-            if (not audio_track.isspace()) and audio_track != "":
+            if not audio_track.isspace():
                 change_default_audio_commands_list = []
-                audio_track_id = ""
-                track_type, track_value = check_type_of_track_chosen(audio_track)
-                if track_type == "id":
-                    audio_track_id = delete_trailing_zero_string(track_value)
-                    found_audio_with_this_id = False
+                if audio_track == "":
                     for audio in self.audios_track_json_info:
-                        if audio.id == audio_track_id:
-                            found_audio_with_this_id = True
-                            break
-                    if found_audio_with_this_id:
                         change_default_audio_commands_list.append(add_json_line("--edit"))
                         change_default_audio_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            add_json_line("track:" + increase_id_by_one(audio.id)))
                         change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                        change_default_audio_commands_list.append(add_json_line("flag-default=0"))
                         change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                        change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
+                    self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                        change_default_audio_commands_list)
+                else:
+                    audio_track_id = ""
+                    track_type, track_value = check_type_of_track_chosen(audio_track)
+                    if track_type == "id":
+                        audio_track_id = delete_trailing_zero_string(track_value)
+                        found_audio_with_this_id = False
                         for audio in self.audios_track_json_info:
-                            if audio.id != audio_track_id:
-                                change_default_audio_commands_list.append(add_json_line("--edit"))
-                                change_default_audio_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(audio.id)))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
+                            if audio.id == audio_track_id:
+                                found_audio_with_this_id = True
+                                break
+                        if found_audio_with_this_id:
+                            change_default_audio_commands_list.append(add_json_line("--edit"))
+                            change_default_audio_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                            for audio in self.audios_track_json_info:
+                                if audio.id != audio_track_id:
+                                    change_default_audio_commands_list.append(add_json_line("--edit"))
+                                    change_default_audio_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(audio.id)))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
 
-                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
-                            change_default_audio_commands_list)
-                elif track_type == "lang":
-                    audio_track_language = ISO_639_2_LANGUAGES[track_value]
-                    for audio in self.audios_track_json_info:
-                        if audio.language == audio_track_language:
-                            audio_track_id = audio.id
-                            break
-                    if audio_track_id != "":
-                        change_default_audio_commands_list.append(add_json_line("--edit"))
-                        change_default_audio_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
-                        change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
-                        change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                            self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                                change_default_audio_commands_list)
+                    elif track_type == "lang":
+                        audio_track_language = ISO_639_2_LANGUAGES[track_value]
                         for audio in self.audios_track_json_info:
-                            if audio.id != audio_track_id:
-                                change_default_audio_commands_list.append(add_json_line("--edit"))
-                                change_default_audio_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(audio.id)))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
-                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
-                            change_default_audio_commands_list)
-                elif track_type == "name":
-                    for audio in self.audios_track_json_info:
-                        if audio.track_name == track_value:
-                            audio_track_id = audio.id
-                            break
-                    if audio_track_id != "":
-                        change_default_audio_commands_list.append(add_json_line("--edit"))
-                        change_default_audio_commands_list.append(
-                            add_json_line("track:" + increase_id_by_one(audio_track_id)))
-                        change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-default=1"))
-                        change_default_audio_commands_list.append(add_json_line("--set"))
-                        change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                            if audio.language == audio_track_language:
+                                audio_track_id = audio.id
+                                break
+                        if audio_track_id != "":
+                            change_default_audio_commands_list.append(add_json_line("--edit"))
+                            change_default_audio_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                            for audio in self.audios_track_json_info:
+                                if audio.id != audio_track_id:
+                                    change_default_audio_commands_list.append(add_json_line("--edit"))
+                                    change_default_audio_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(audio.id)))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
+                            self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                                change_default_audio_commands_list)
+                    elif track_type == "name":
                         for audio in self.audios_track_json_info:
-                            if audio.id != audio_track_id:
-                                change_default_audio_commands_list.append(add_json_line("--edit"))
-                                change_default_audio_commands_list.append(
-                                    add_json_line("track:" + increase_id_by_one(audio.id)))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-default=0"))
-                                change_default_audio_commands_list.append(add_json_line("--set"))
-                                change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
-                        self.change_default_forced_audio_track_setting_source_video_command += ''.join(
-                            change_default_audio_commands_list)
+                            if audio.track_name == track_value:
+                                audio_track_id = audio.id
+                                break
+                        if audio_track_id != "":
+                            change_default_audio_commands_list.append(add_json_line("--edit"))
+                            change_default_audio_commands_list.append(
+                                add_json_line("track:" + increase_id_by_one(audio_track_id)))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-default=1"))
+                            change_default_audio_commands_list.append(add_json_line("--set"))
+                            change_default_audio_commands_list.append(add_json_line("flag-forced=1"))
+                            for audio in self.audios_track_json_info:
+                                if audio.id != audio_track_id:
+                                    change_default_audio_commands_list.append(add_json_line("--edit"))
+                                    change_default_audio_commands_list.append(
+                                        add_json_line("track:" + increase_id_by_one(audio.id)))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-default=0"))
+                                    change_default_audio_commands_list.append(add_json_line("--set"))
+                                    change_default_audio_commands_list.append(add_json_line("flag-forced=0"))
+                            self.change_default_forced_audio_track_setting_source_video_command += ''.join(
+                                change_default_audio_commands_list)
 
     # noinspection PyListCreation
     def setup_ui_language(self):

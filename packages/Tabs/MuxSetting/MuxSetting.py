@@ -67,8 +67,10 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
             GlobalSetting.ATTACHMENT_DISCARD_OLD or \
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
-            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK != "" or \
-            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK != "" or \
+            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_SEMI_ENABLED or \
+            GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED or \
+            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED or \
+            GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED or \
             GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
@@ -138,10 +140,6 @@ class MuxSettingTab(QWidget):
         self.clear_job_queue_button.clicked.connect(self.clear_job_queue_button_clicked)
 
         self.only_keep_those_audios_multi_choose_comboBox.closeList.connect(self.only_keep_those_audios_close_list)
-        self.only_keep_those_audios_multi_choose_comboBox.audio_tracks_changed_signal.connect(
-            self.make_this_audio_default_comboBox.addItems)
-        self.only_keep_those_subtitles_multi_choose_comboBox.subtitle_tracks_changed_signal.connect(
-            self.make_this_subtitle_default_comboBox.addItems)
 
         self.only_keep_those_subtitles_multi_choose_comboBox.closeList.connect(
             self.only_keep_those_subtitles_close_list)
@@ -427,6 +425,8 @@ class MuxSettingTab(QWidget):
     def setup_tracks_to_be_chosen_mkv_only_options(self):
         self.only_keep_those_subtitles_multi_choose_comboBox.refresh_tracks()
         self.only_keep_those_audios_multi_choose_comboBox.refresh_tracks()
+        self.make_this_subtitle_default_comboBox.refresh_tracks(new_list=GlobalSetting.MUX_SETTING_SUBTITLE_TRACKS_LIST)
+        self.make_this_audio_default_comboBox.refresh_tracks(new_list=GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST)
 
     def setup_enable_options_for_mkv_only_options(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
@@ -522,11 +522,15 @@ class MuxSettingTab(QWidget):
         self.make_this_subtitle_default_comboBox.setDisabled(state)
         if state:
             self.make_this_subtitle_default_comboBox.setCurrentIndex(-1)
+            self.make_this_subtitle_default_comboBox.current_text=""
+            self.make_this_subtitle_default_comboBox.update_shown_text()
 
     def disable_make_this_audio_default_comboBox(self, state):
         self.make_this_audio_default_comboBox.setDisabled(state)
         if state:
             self.make_this_audio_default_comboBox.setCurrentIndex(-1)
+            self.make_this_audio_default_comboBox.current_text = ""
+            self.make_this_audio_default_comboBox.update_shown_text()
 
     def make_this_audio_default_comboBox_text_changed(self):
         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = str(
