@@ -24,8 +24,8 @@ from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseSubtitlesCheckBox import Only
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
 from packages.Widgets.FileNotFoundDialog import FileNotFoundDialog
-from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.InvalidPathDialog import *
+from packages.Widgets.NoSettingToApplyDialog import NoSettingToApplyDialog
 
 
 # noinspection PyAttributeOutsideInit
@@ -72,11 +72,12 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
             GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
-        no_setting_to_apply_dialog = InfoDialog(window_title="No Setting Selected",
-                                                info_message="You haven't select any "
-                                                             "setting to apply")
+        no_setting_to_apply_dialog = NoSettingToApplyDialog()
         no_setting_to_apply_dialog.execute()
-        return False
+        if no_setting_to_apply_dialog.result == "Cancel":
+            return False
+        else:
+            return True
 
 
 def check_if_all_input_videos_are_found():
@@ -575,17 +576,20 @@ class MuxSettingTab(QWidget):
         GlobalSetting.MUX_SETTING_KEEP_LOG_FILE = bool(state)
 
     def start_multiplexing_button_clicked(self):
-        at_least_one_muxing_setting_has_been_selected = check_if_at_least_one_muxing_setting_has_been_selected()
+        destination_path_valid = self.check_destination_path()
+        if not destination_path_valid:
+            return
+        confirm_muxing = check_if_at_least_one_muxing_setting_has_been_selected()
+        if not confirm_muxing:
+            return
         all_input_videos_are_found = check_if_all_input_videos_are_found()
-        if at_least_one_muxing_setting_has_been_selected and all_input_videos_are_found:
-            destination_path_valid = self.check_destination_path()
-            if destination_path_valid:
-                self.setup_log_file()
-                self.control_queue_button.set_state_pause_multiplexing()
-                self.disable_muxing_setting()
-                self.job_queue_layout.start_muxing()
-                self.start_muxing_signal.emit()
-                self.clear_job_queue_button.setDisabled(True)
+        if all_input_videos_are_found:
+            self.setup_log_file()
+            self.control_queue_button.set_state_pause_multiplexing()
+            self.disable_muxing_setting()
+            self.job_queue_layout.start_muxing()
+            self.start_muxing_signal.emit()
+            self.clear_job_queue_button.setDisabled(True)
 
     def pause_multiplexing_button_clicked(self):
         self.job_queue_layout.pause_muxing()
