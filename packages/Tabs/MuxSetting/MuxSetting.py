@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 from os import makedirs
 from pathlib import Path
@@ -12,18 +13,21 @@ from PySide2.QtWidgets import (
     QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
 
 from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file
+from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file, \
+    get_readable_filesize
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
 from packages.Tabs.MuxSetting.Widgets.ControlQueueButton import ControlQueueButton
 from packages.Tabs.MuxSetting.Widgets.JobQueueLayout import JobQueueLayout
 from packages.Tabs.MuxSetting.Widgets.MakeThisAudioDefaultCheckBox import MakeThisAudioDefaultCheckBox
 from packages.Tabs.MuxSetting.Widgets.MakeThisSubtitleDefaultCheckBox import MakeThisSubtitleDefaultCheckBox
 from packages.Tabs.MuxSetting.Widgets.MakeThisTrackDefaultComboBox import MakeThisTrackDefaultComboBox
+from packages.Tabs.MuxSetting.Widgets.NoSpaceWarningDialog import NoSpaceWarningDialog
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseAudiosCheckBox import OnlyKeepThoseAudiosCheckBox
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseSubtitlesCheckBox import OnlyKeepThoseSubtitlesCheckBox
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
 from packages.Widgets.FileNotFoundDialog import FileNotFoundDialog
+from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.NoSettingToApplyDialog import NoSettingToApplyDialog
 
@@ -104,6 +108,24 @@ def check_if_want_to_keep_log_file():
             error_dialog.execute()
 
 
+def get_approximate_size_of_output_of_job(job):
+    file_size = 0
+    try:
+        file_size += os.path.getsize(job.video_name_absolute)
+    except:
+        return file_size
+    for subtitle_to_add in job.subtitle_name_absolute:
+        file_size += os.path.getsize(subtitle_to_add)
+    for audio_to_add in job.audio_name_absolute:
+        file_size += os.path.getsize(audio_to_add)
+    for attachment in GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST:
+        file_size += os.path.getsize(attachment)
+    if job.chapter_name_absolute != "":
+        file_size += os.path.getsize(job.chapter_name_absolute)
+    file_size += 10 * 1024 * 1024  # size add approximate for each file  [Added 20 MB]
+    return file_size
+
+
 class MuxSettingTab(QWidget):
     tab_clicked_signal = Signal()
     start_muxing_signal = Signal()
@@ -159,7 +181,8 @@ class MuxSettingTab(QWidget):
         self.job_queue_layout.paused_done_signal.connect(self.paused_done)
         self.job_queue_layout.cancel_done_signal.connect(self.cancel_done)
         self.job_queue_layout.finished_all_jobs_signal.connect(self.finished_all_jobs)
-        self.job_queue_layout.pause_from_error_occurred_signal.connect(self.pause_multiplexing_from_error_button_clicked)
+        self.job_queue_layout.pause_from_error_occurred_signal.connect(
+            self.pause_multiplexing_from_error_button_clicked)
 
     def setup_widgets(self):
         self.setup_mux_setting_groupBox()
@@ -399,6 +422,23 @@ class MuxSettingTab(QWidget):
         GlobalSetting.DESTINATION_FOLDER_PATH = temp_destination_path
         return True
 
+    def check_available_space(self):
+        free_space = shutil.disk_usage(path=GlobalSetting.DESTINATION_FOLDER_PATH).free
+        needed_space = 0
+        for job in self.job_queue_layout.table.data:
+            if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+                file_size = get_approximate_size_of_output_of_job(job)
+                needed_space += file_size
+        readable_needed_space = get_readable_filesize(needed_space)
+        readable_free_space = get_readable_filesize(free_space)
+        if free_space - needed_space <= 1024:
+            low_space_warning_dialog = NoSpaceWarningDialog(
+                warning_message=f"You need about [{readable_needed_space}] for muxing your files.\nCurrent free space [{readable_free_space}]",
+                window_title="Low Disk Space")
+            low_space_warning_dialog.execute()
+            return low_space_warning_dialog.result == "Muxing"
+        return True
+
     def setup_tool_tip_hint(self):
         self.only_keep_those_subtitles_multi_choose_comboBox.set_tool_tip_hint()
         self.only_keep_those_audios_multi_choose_comboBox.set_tool_tip_hint()
@@ -522,7 +562,7 @@ class MuxSettingTab(QWidget):
         self.make_this_subtitle_default_comboBox.setDisabled(state)
         if state:
             self.make_this_subtitle_default_comboBox.setCurrentIndex(-1)
-            self.make_this_subtitle_default_comboBox.current_text=""
+            self.make_this_subtitle_default_comboBox.current_text = ""
             self.make_this_subtitle_default_comboBox.update_shown_text()
 
     def disable_make_this_audio_default_comboBox(self, state):
@@ -582,6 +622,9 @@ class MuxSettingTab(QWidget):
     def start_multiplexing_button_clicked(self):
         destination_path_valid = self.check_destination_path()
         if not destination_path_valid:
+            return
+        is_there_enough_space = self.check_available_space()
+        if not is_there_enough_space:
             return
         confirm_muxing = check_if_at_least_one_muxing_setting_has_been_selected()
         if not confirm_muxing:
