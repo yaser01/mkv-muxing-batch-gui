@@ -86,10 +86,12 @@ https://user-images.githubusercontent.com/52576632/166163331-b8fe2e9c-3f5c-4967-
 >1. When the option [keep this subtitle/audio only] is activated with language/track that does not exist in the source video, then the option will lead to output video with only chosen language/track (even if it means to discard all subtitle/audio from the source)
 
 ## 📁Supported Extensions
-- **Video**: AVI, MKV, MP4, M4V, MOV, MPEG, TS, OGG, OGM, H264, H265, WEBM, WMV
-- **Subtitle**: ASS, SRT, SSA, SUP, PGS, MKS, VTT
-- **Audio**: AAC, AC3, FLAC, EAC3, MKA, M4A, MP3, DTS, DTSMA, THD, WAV, OGG, OPUS
-- **Chapter**: XML
+|     Type    |                                        Extensions                                       |
+|:-----------:|:---------------------------------------------------------------------------------------:|
+|   Video     | AVI, MKV, MP4, M4V, MOV, MPEG, TS, OGG, OGM, H264, H265, WEBM, WMV                       |
+|  Subtitle   | ASS, SRT, SSA, SUP, PGS, MKS, VTT                                                       |
+|   Audio     | AAC, AC3, FLAC, EAC3, MKA, M4A, MP3, DTS, DTSMA, THD, WAV, OGG, OPUS                      |
+|   Chapter   | XML                                                                                     |
 
 ## ⬇Downloads
 
