@@ -58,6 +58,23 @@ class TracksCheckableComboBox(QComboBox):
         super().resizeEvent(event)
         self.update_shown_text()
 
+    def update_state_of_select_all_check(self):
+        counter_item_checked = 0
+        counter_item_unchecked = 0
+        for i in range(1, self.model().rowCount()):
+            item = self.model().item(i)
+            if item.flags() & Qt.ItemIsUserCheckable:
+                if item.checkState() == Qt.Checked:
+                    counter_item_checked += 1
+                else:
+                    counter_item_unchecked += 1
+        if counter_item_checked == 0:
+            self.model().item(0).setCheckState(Qt.Unchecked)
+        elif counter_item_unchecked == 0:
+            self.model().item(0).setCheckState(Qt.Checked)
+        else:
+            self.model().item(0).setCheckState(Qt.PartiallyChecked)
+
     def eventFilter(self, object, event):
         if str(event.__class__).find("Event") == -1:
             return False
@@ -76,12 +93,29 @@ class TracksCheckableComboBox(QComboBox):
                     if event.type() == QEvent.MouseButtonRelease:
                         index = self.view().indexAt(event.pos())
                         item = self.model().item(index.row())
-                        if item.text().find("---Track Id---") == -1 and item.text().find(
+                        print(item.text())
+                        if item.text().find("All Tracks") != -1:
+                            if item.checkState() == Qt.Checked or item.checkState() == Qt.PartiallyChecked:
+                                for i in range(0, self.model().rowCount()):
+                                    item = self.model().item(i)
+                                    if item.text().find("---Track Id---") == -1 and item.text().find(
+                                            "---Language---") == -1 and item.text().find("---Track Name---") == -1:
+                                        item.setCheckState(Qt.Unchecked)
+                            else:
+                                for i in range(0, self.model().rowCount()):
+                                    item = self.model().item(i)
+                                    if item.text().find("---Track Id---") == -1 and item.text().find(
+                                            "---Language---") == -1 and item.text().find("---Track Name---") == -1:
+                                        item.setCheckState(Qt.Checked)
+                            return True
+                        elif item.text().find("---Track Id---") == -1 and item.text().find(
                                 "---Language---") == -1 and item.text().find("---Track Name---") == -1:
                             if item.checkState() == Qt.Checked:
                                 item.setCheckState(Qt.Unchecked)
+                                self.update_state_of_select_all_check()
                             else:
                                 item.setCheckState(Qt.Checked)
+                                self.update_state_of_select_all_check()
                             return True
                         else:
                             return False
@@ -162,15 +196,15 @@ class TracksCheckableComboBox(QComboBox):
         if text != "":
             self.update_shown_text()
             if count_tracks_id > 0:
-                self.hint = tracks_id_text
+                self.hint = "-" + tracks_id_text
                 if count_tracks_languages > 0:
-                    self.hint = self.hint + "<br>" + tracks_languages_text
+                    self.hint = self.hint + "<br>" + "-" + tracks_languages_text
                 if count_tracks_names > 0:
-                    self.hint = self.hint + "<br>" + tracks_name_text
+                    self.hint = self.hint + "<br>" + "-" + tracks_name_text
             elif count_tracks_languages > 0:
                 self.hint = tracks_languages_text
                 if count_tracks_names > 0:
-                    self.hint = self.hint + "<br>" + tracks_name_text
+                    self.hint = self.hint + "<br>" + "-" + tracks_name_text
             elif count_tracks_names:
                 self.hint = tracks_name_text
         else:
@@ -189,10 +223,15 @@ class TracksCheckableComboBox(QComboBox):
         else:
             item.setData(data)
         if text.find("---Track Id---") == -1 and text.find("---Language---") == -1 and text.find(
-                "---Track Name---") == -1:
+                "---Track Name---") == -1 and text.find("All Tracks") == -1:
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             item.setData(Qt.Unchecked, Qt.CheckStateRole)
             item.setData(text, Qt.ToolTipRole)
+            self.model().appendRow(item)
+        elif text.find("All Tracks") != -1:
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+            item.setData(Qt.Unchecked, Qt.CheckStateRole)
+            item.setTextAlignment(Qt.AlignCenter)
             self.model().appendRow(item)
         else:
             # bigger_font=self.lineEdit().font()
@@ -205,6 +244,7 @@ class TracksCheckableComboBox(QComboBox):
 
     def addItems(self, texts, datalist=None):
         self.clear()
+        self.addItem("All Tracks      ", None)
         for i, text in enumerate(texts):
             try:
                 data = datalist[i]
