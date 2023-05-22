@@ -318,3 +318,6 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Attachment_Directory)
         self.update_folder_path(DefaultOptions.Default_Attachment_Directory)
         self.attachment_source_lineEdit.check_new_path()
+
+    def update_theme_mode_state(self):
+        self.table.update_theme_mode_state()

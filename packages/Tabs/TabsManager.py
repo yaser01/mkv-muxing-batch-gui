@@ -134,6 +134,7 @@ class TabsManager(QTabWidget):
         self.video_tab.update_theme_mode_state()
         self.subtitle_tab.update_theme_mode_state()
         self.audio_tab.update_theme_mode_state()
+        self.attachment_tab.update_theme_mode_state()
         self.mux_setting_tab.update_theme_mode_state()
         self.update_tabs_name_theme_mode_state()
         if DefaultOptions.Dark_Mode:

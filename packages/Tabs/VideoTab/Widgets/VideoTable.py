@@ -146,6 +146,7 @@ class VideoTable(TableWidget):
             self.checking_row_updates = True
 
     def update_theme_mode_state(self):
+        self.divide_factor_color=3
         for i in reversed(range(self.rowCount())):
             self.update_checked_videos_state(self.item(i, self.column_ids["Name"]))
 
@@ -167,5 +168,6 @@ class VideoTable(TableWidget):
 
     def enable_selection(self):
         for i in reversed(range(self.rowCount())):
-            self.item(i, self.column_ids["Name"]).setFlags(
-                Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
+            if not self.item(i, self.column_ids["Name"]).flags() & (Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable):
+                self.item(i, self.column_ids["Name"]).setFlags(
+                    Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)

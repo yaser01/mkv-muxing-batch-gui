@@ -5,6 +5,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt, QColor
 from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
 
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, sort_names_like_windows
 from packages.Widgets.TableWidget import TableWidget
@@ -24,6 +25,8 @@ class AttachmentTable(TableWidget):
             "Name": 0,
             "Size": 1,
         }
+        self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
+                           "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
         self.disable_table_bold_column()
         self.disable_table_edit()
         self.force_select_whole_row()
@@ -106,9 +109,9 @@ class AttachmentTable(TableWidget):
             self.set_row_file_name(file_name=files_names_list[i], row_index=i, is_checked=files_names_checked_list[i])
             self.set_row_file_size(file_size=files_size_list[i], row_index=i)
             if files_names_checked_list[i]:
-                self.update_row_text_color(row_index=i, color_string="#000000")
+                self.update_row_text_color(row_index=i, status="activate")
             else:
-                self.update_row_text_color(row_index=i, color_string="#787878")
+                self.update_row_text_color(row_index=i, status="disable")
         self.show()
         self.checking_row_updates = True
 
@@ -141,20 +144,27 @@ class AttachmentTable(TableWidget):
             if attachment_index < len(GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST):
                 if item.checkState() == Qt.Unchecked:
                     GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[attachment_index] = False
-                    self.update_row_text_color(row_index=attachment_index, color_string="#787878")
+                    self.update_row_text_color(row_index=attachment_index, status="disable")
                     self.update_unchecked_attachment_signal.emit(
                         GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[attachment_index])
                 elif item.checkState() == Qt.Checked:
                     GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[attachment_index] = True
-                    self.update_row_text_color(row_index=attachment_index, color_string="#000000")
+                    self.update_row_text_color(row_index=attachment_index, status="activate")
                     self.update_checked_attachment_signal.emit(
                         GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[attachment_index])
             self.checking_row_updates = True
 
-    def update_row_text_color(self, row_index, color_string):
-        new_color = QColor(color_string)
+    def update_row_text_color(self, row_index, status):
+        if DefaultOptions.Dark_Mode:
+            new_color = QColor(self.text_color["dark"][status])
+        else:
+            new_color = QColor(self.text_color["light"][status])
         self.item(row_index, self.column_ids["Name"]).setTextColor(new_color)
         self.item(row_index, self.column_ids["Size"]).setTextColor(new_color)
+
+    def update_theme_mode_state(self):
+        for i in reversed(range(self.rowCount())):
+            self.update_checked_attachments_state(self.item(i, self.column_ids["Name"]))
 
     def update_selected_row(self, row_index):
         self.selectRow(row_index)
