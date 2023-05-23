@@ -5,12 +5,6 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.VideoTab.Widgets.VideoInfoDialog import VideoInfoDialog
 
 
-def open_video_info_dialog():
-    if len(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST) > 0:
-        video_info_dialog = VideoInfoDialog()
-        video_info_dialog.execute()
-
-
 class VideoInfoButton(QPushButton):
     clicked_signal = Signal(str)
 
@@ -18,8 +12,9 @@ class VideoInfoButton(QPushButton):
         super().__init__()
         self.setText("Media Info")
         self.hint_when_enabled = ""
+        self.video_info_dialog = None
         self.is_there_old_files = False
-        self.clicked.connect(open_video_info_dialog)
+        self.clicked.connect(self.open_video_info_dialog)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
@@ -45,3 +40,8 @@ class VideoInfoButton(QPushButton):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def open_video_info_dialog(self):
+        if len(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST) > 0:
+            self.video_info_dialog = VideoInfoDialog()
+            self.video_info_dialog.show()
