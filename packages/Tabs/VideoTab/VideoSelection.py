@@ -9,6 +9,7 @@ from packages.Tabs.VideoTab.Widgets.VideoClearButton import VideoClearButton
 from packages.Tabs.VideoTab.Widgets.VideoDefaultDurationFPSComboBox import VideoDefaultDurationFPSComboBox
 from packages.Tabs.VideoTab.Widgets.VideoExtensionsCheckableComboBox import VideoExtensionsCheckableComboBox
 from packages.Tabs.VideoTab.Widgets.VideoInfoButton import VideoInfoButton
+from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksButton import ModifyOldTracksButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceButton import VideoSourceButton
 from packages.Tabs.VideoTab.Widgets.VideoSourceLineEdit import VideoSourceLineEdit
 from packages.Tabs.VideoTab.Widgets.VideoTable import VideoTable
@@ -55,8 +56,10 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_default_duration_fps_label = QLabel()
         self.video_default_duration_fps_comboBox = VideoDefaultDurationFPSComboBox()
         self.video_extensions_comboBox = VideoExtensionsCheckableComboBox()
+        self.video_modify_old_tracks_button = ModifyOldTracksButton()
         self.video_info_button = VideoInfoButton()
         self.table = VideoTable()
+        self.side_buttons_layout = QHBoxLayout()
         self.main_layout = QGridLayout()
         self.folder_path = ""
         self.drag_and_dropped_text = "[Drag & Drop Files]"
@@ -79,8 +82,13 @@ class VideoSelectionSetting(GlobalSetting):
         self.setup_layouts()
 
     def setup_layouts(self):
+        self.setup_side_buttons_layout()
         self.setup_main_layout()
         self.setLayout(self.main_layout)
+
+    def setup_side_buttons_layout(self):
+        self.side_buttons_layout.addWidget(self.video_modify_old_tracks_button)
+        self.side_buttons_layout.addWidget(self.video_info_button)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
@@ -265,7 +273,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.main_layout.addWidget(self.video_extensions_comboBox, 1, 1)
         self.main_layout.addWidget(self.video_default_duration_fps_label, 1, 2)
         self.main_layout.addWidget(self.video_default_duration_fps_comboBox, 1, 3)
-        self.main_layout.addWidget(self.video_info_button, 1, 4, 1, -1, alignment=Qt.AlignRight)
+        self.main_layout.addLayout(self.side_buttons_layout, 1, 4, 1, -1, alignment=Qt.AlignRight)
         self.main_layout.addWidget(self.table, 2, 0, 1, -1)
 
     def change_global_last_path_directory(self):
@@ -286,13 +294,19 @@ class VideoSelectionSetting(GlobalSetting):
                     GlobalSetting.VIDEO_SOURCE_PATHS.append(Path(os.path.dirname(self.files_names_absolute_list[i])))
         GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST = refresh_tracks("audio")
         GlobalSetting.MUX_SETTING_SUBTITLE_TRACKS_LIST = refresh_tracks("subtitles")
+        refresh_old_tracks_info("audio")
+        refresh_old_tracks_info("subtitles")
 
     def update_checked_video(self, video_index):
+        if self.files_names_checked_list[video_index]:
+            return
         self.files_names_checked_list[video_index] = True
         self.change_global_video_list()
         self.update_global_video_source_mkv_only()
 
     def update_unchecked_video(self, video_index):
+        if not self.files_names_checked_list[video_index]:
+            return
         self.files_names_checked_list[video_index] = False
         self.change_global_video_list()
         self.update_global_video_source_mkv_only()

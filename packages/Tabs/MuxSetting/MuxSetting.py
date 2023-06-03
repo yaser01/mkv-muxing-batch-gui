@@ -122,7 +122,7 @@ def get_approximate_size_of_output_of_job(job):
         file_size += os.path.getsize(attachment)
     if job.chapter_name_absolute != "":
         file_size += os.path.getsize(job.chapter_name_absolute)
-    file_size += 10 * 1024 * 1024  # size add approximate for each file  [Added 20 MB]
+    file_size += 10 * 1024 * 1024  # size add approximate for each file  [Added 10 MB]
     return file_size
 
 
@@ -455,11 +455,11 @@ class MuxSettingTab(QWidget):
             change_global_LogFilePath()
         else:
             self.enable_editable_widgets()
-            self.setup_enable_options_for_mkv_only_options()
+            self.setup_enable_options_based_on_global_state()
 
     def tab_clicked(self):
         self.job_queue_layout.show_necessary_table_columns()
-        self.setup_enable_options_for_mkv_only_options()
+        self.setup_enable_options_based_on_global_state()
         self.setup_tracks_to_be_chosen_mkv_only_options()
 
     def setup_tracks_to_be_chosen_mkv_only_options(self):
@@ -468,20 +468,9 @@ class MuxSettingTab(QWidget):
         self.make_this_subtitle_default_comboBox.refresh_tracks(new_list=GlobalSetting.MUX_SETTING_SUBTITLE_TRACKS_LIST)
         self.make_this_audio_default_comboBox.refresh_tracks(new_list=GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST)
 
-    def setup_enable_options_for_mkv_only_options(self):
+    def setup_enable_options_based_on_global_state(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
-            if GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
-                self.only_keep_those_audios_checkBox.setEnabled(True)
-                self.only_keep_those_subtitles_checkBox.setEnabled(True)
-                self.make_this_audio_default_checkBox.setEnabled(True)
-                self.make_this_subtitle_default_checkBox.setEnabled(True)
-                self.only_keep_those_audios_checkBox.setToolTip("")
-                self.only_keep_those_subtitles_checkBox.setToolTip("")
-                self.make_this_audio_default_comboBox.setToolTip("")
-                self.make_this_subtitle_default_comboBox.setToolTip("")
-                self.setup_tool_tip_hint()
-            else:
-
+            if not  GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
                 self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
                 self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
                 self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
@@ -491,26 +480,44 @@ class MuxSettingTab(QWidget):
                 self.only_keep_those_subtitles_checkBox.setEnabled(False)
                 self.make_this_audio_default_checkBox.setEnabled(False)
                 self.make_this_subtitle_default_checkBox.setEnabled(False)
-                self.only_keep_those_audios_checkBox.setToolTip("<b>[Disabled]</b> Only works when video files "
-                                                                "are Mkv only")
-                self.only_keep_those_subtitles_checkBox.setToolTip("<b>[Disabled]</b> Only works when video files "
-                                                                   "are Mkv only")
+                disable_reason = "Only works when video files are Mkv only"
+                self.only_keep_those_audios_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_audio_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_audio_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+            elif GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+                self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
+                self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
+                self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
+                self.make_this_subtitle_default_checkBox.setCheckState(Qt.Unchecked)
 
-                self.make_this_audio_default_checkBox.setToolTip("<b>[Disabled]</b> Only works when video files "
-                                                                 "are Mkv only")
-
-                self.make_this_subtitle_default_checkBox.setToolTip("<b>[Disabled]</b> Only works when video files "
-                                                                    "are Mkv only")
-                self.make_this_audio_default_comboBox.setToolTip("<b>[Disabled]</b> Only works when video files "
-                                                                 "are Mkv only")
-                self.make_this_subtitle_default_comboBox.setToolTip("<b>[Disabled]</b> Only works when video files "
-                                                                    "are Mkv only")
-                self.only_keep_those_audios_multi_choose_comboBox.setToolTip(
-                    "<b>[Disabled]</b> Only works when video files "
-                    "are Mkv only")
-                self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(
-                    "<b>[Disabled]</b> Only works when video files "
-                    "are Mkv only")
+                self.only_keep_those_audios_checkBox.setEnabled(False)
+                self.only_keep_those_subtitles_checkBox.setEnabled(False)
+                self.make_this_audio_default_checkBox.setEnabled(False)
+                self.make_this_subtitle_default_checkBox.setEnabled(False)
+                disable_reason = "Because you have used <b>Modify Old Tracks</b> option in Video Tab"
+                self.only_keep_those_audios_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_audio_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_audio_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+            else:
+                self.only_keep_those_audios_checkBox.setEnabled(True)
+                self.only_keep_those_subtitles_checkBox.setEnabled(True)
+                self.make_this_audio_default_checkBox.setEnabled(True)
+                self.make_this_subtitle_default_checkBox.setEnabled(True)
+                self.only_keep_those_audios_checkBox.setToolTip("")
+                self.only_keep_those_subtitles_checkBox.setToolTip("")
+                self.make_this_audio_default_comboBox.setToolTip("")
+                self.make_this_subtitle_default_comboBox.setToolTip("")
+                self.setup_tool_tip_hint()
 
     def clear_job_queue_button_clicked(self):
         self.job_queue_layout.clear_queue()
@@ -520,7 +527,7 @@ class MuxSettingTab(QWidget):
         GlobalSetting.JOB_QUEUE_FINISHED = False
         self.enable_editable_widgets()
         self.enable_muxing_setting()
-        self.setup_enable_options_for_mkv_only_options()
+        self.setup_enable_options_based_on_global_state()
         self.update_task_bar_clear_signal.emit()
 
     def disable_editable_widgets(self):
@@ -664,7 +671,7 @@ class MuxSettingTab(QWidget):
     def finished_all_jobs(self):
         self.enable_editable_widgets()
         self.enable_muxing_setting()
-        self.setup_enable_options_for_mkv_only_options()
+        self.setup_enable_options_based_on_global_state()
         self.control_queue_button.set_state_start_multiplexing()
         self.control_queue_button.setDisabled(True)
         self.clear_job_queue_button.setDisabled(False)

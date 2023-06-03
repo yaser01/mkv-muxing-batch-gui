@@ -145,9 +145,16 @@ class VideoTable(TableWidget):
                 self.update_checked_video_signal.emit(video_index)
             self.checking_row_updates = True
 
+    def update_video_theme(self, item: QTableWidgetItem):
+        video_index = item.row()
+        if item.checkState() == Qt.Unchecked:
+            self.update_row_text_color(row_index=video_index, status="disable")
+        elif item.checkState() == Qt.Checked:
+            self.update_row_text_color(row_index=video_index, status="activate")
+
     def update_theme_mode_state(self):
         for i in reversed(range(self.rowCount())):
-            self.update_checked_videos_state(self.item(i, self.column_ids["Name"]))
+            self.update_video_theme(self.item(i, self.column_ids["Name"]))
 
     def update_row_text_color(self, row_index, status):
         if DefaultOptions.Dark_Mode:
@@ -167,6 +174,7 @@ class VideoTable(TableWidget):
 
     def enable_selection(self):
         for i in reversed(range(self.rowCount())):
-            if not self.item(i, self.column_ids["Name"]).flags() & (Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable):
+            if not self.item(i, self.column_ids["Name"]).flags() & (
+                    Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable):
                 self.item(i, self.column_ids["Name"]).setFlags(
                     Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
