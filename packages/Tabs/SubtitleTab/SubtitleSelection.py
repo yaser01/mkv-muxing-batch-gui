@@ -11,7 +11,7 @@ from packages.Tabs.SubtitleTab.Widgets.SubtitleClearButton import SubtitleClearB
 from packages.Tabs.SubtitleTab.Widgets.SubtitleDelayDoubleSpinBox import SubtitleDelayDoubleSpinBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleExtensionsCheckableComboBox import SubtitleExtensionsCheckableComboBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleLanguageComboBox import SubtitleLanguageComboBox
-from packages.Tabs.SubtitleTab.Widgets.SubtitleMuxAtTop import SubtitleMuxAtTop
+from packages.Tabs.SubtitleTab.Widgets.SubtitleMuxOrderWidget import SubtitleMuxOrderWidget
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSetDefaultCheckBox import SubtitleSetDefaultCheckBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSetForcedCheckBox import SubtitleSetForcedCheckBox
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceButton import SubtitleSourceButton
@@ -51,7 +51,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_delay_spin = SubtitleDelayDoubleSpinBox(self.tab_index)
         self.subtitle_set_forced_checkBox = SubtitleSetForcedCheckBox(self.tab_index)
         self.subtitle_set_default_checkBox = SubtitleSetDefaultCheckBox(self.tab_index)
-        self.subtitle_mux_at_top_checkBox = SubtitleMuxAtTop(self.tab_index)
+        self.subtitle_mux_order_widget = SubtitleMuxOrderWidget(self.tab_index)
         self.subtitle_match_layout = MatchSubtitleLayout(parent=self, tab_index=self.tab_index)
         self.subtitle_options_layout = QHBoxLayout()
         self.subtitle_set_default_forced_layout = QHBoxLayout()
@@ -89,7 +89,7 @@ class SubtitleSelectionSetting(QGroupBox):
         GlobalSetting.SUBTITLE_TAB_ENABLED[self.tab_index] = False
         GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = False
-        GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = False
+        GlobalSetting.SUBTITLE_SET_ORDER[self.tab_index] = -1
         GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = DefaultOptions.Default_Subtitle_Language
 
     def create_properties(self):
@@ -110,19 +110,18 @@ class SubtitleSelectionSetting(QGroupBox):
         # self.MainLayout.addWidget(self.subtitle_main_groupBox)
 
     def setup_subtitle_check_default_forced_layout(self):
-        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_set_default_checkBox)
-        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_set_forced_checkBox)
-        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_mux_at_top_checkBox)
+        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_set_default_checkBox, stretch=0)
+        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_set_forced_checkBox, stretch=0)
+        self.subtitle_set_default_forced_layout.addWidget(self.subtitle_mux_order_widget, stretch=3)
 
     def setup_subtitle_options_layout(self):
         self.subtitle_options_layout.addWidget(self.subtitle_extensions_comboBox, 2)
         self.subtitle_options_layout.addWidget(self.subtitle_language_label)
-        self.subtitle_options_layout.addWidget(self.subtitle_language_comboBox, 4)
+        self.subtitle_options_layout.addWidget(self.subtitle_language_comboBox, 5)
         self.subtitle_options_layout.addWidget(self.subtitle_track_name_lineEdit, 2)
         self.subtitle_options_layout.addWidget(self.subtitle_delay_label)
         self.subtitle_options_layout.addWidget(self.subtitle_delay_spin)
-        self.subtitle_options_layout.addSpacing(10)
-        self.subtitle_options_layout.addLayout(self.subtitle_set_default_forced_layout)
+        self.subtitle_options_layout.addLayout(self.subtitle_set_default_forced_layout, 7)
         self.subtitle_options_layout.addStretch()
 
     def setup_main_layout(self):
@@ -275,7 +274,7 @@ class SubtitleSelectionSetting(QGroupBox):
             GlobalSetting.SUBTITLE_DELAY[self.tab_index] = 0.0
             GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = False
             GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = False
-            GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = False
+            GlobalSetting.SUBTITLE_SET_ORDER[self.tab_index] = -1
             GlobalSetting.SUBTITLE_TAB_ENABLED[self.tab_index] = False
             GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = ""
 
@@ -303,7 +302,14 @@ class SubtitleSelectionSetting(QGroupBox):
             self.disable_editable_widgets()
         else:
             self.enable_editable_widgets()
+            self.check_if_video_modify_old_tracks_activated()
             self.update_subtitle_set_default_forced_state()
+
+    def check_if_video_modify_old_tracks_activated(self):
+        if GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+            self.subtitle_mux_order_widget.setToolTip(
+                "<nobr><b>[Semi Disabled]</b> Only [At Top] option is available<br>Because you have used <b>Modify Old "
+                "Tracks</b> option in Video Tab")
 
     def update_subtitle_set_default_forced_state(self):
         self.subtitle_set_default_checkBox.update_check_state()
@@ -320,7 +326,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_set_forced_checkBox.setEnabled(False)
         self.setCheckable(False)
         self.subtitle_clear_button.setEnabled(False)
-        self.subtitle_mux_at_top_checkBox.setEnabled(False)
+        self.subtitle_mux_order_widget.setEnabled(False)
         self.subtitle_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -333,7 +339,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_set_default_checkBox.setEnabled(True)
         self.subtitle_set_forced_checkBox.setEnabled(True)
         self.subtitle_clear_button.setEnabled(True)
-        self.subtitle_mux_at_top_checkBox.setEnabled(True)
+        self.subtitle_mux_order_widget.setEnabled(True)
         self.subtitle_match_layout.enable_editable_widgets()
 
     def sync_subtitle_files_with_global_files(self):

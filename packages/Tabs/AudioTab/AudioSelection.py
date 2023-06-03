@@ -9,7 +9,7 @@ from packages.Tabs.AudioTab.Widgets.AudioClearButton import AudioClearButton
 from packages.Tabs.AudioTab.Widgets.AudioDelayDoubleSpinBox import AudioDelayDoubleSpinBox
 from packages.Tabs.AudioTab.Widgets.AudioExtensionsCheckableComboBox import AudioExtensionsCheckableComboBox
 from packages.Tabs.AudioTab.Widgets.AudioLanguageComboBox import AudioLanguageComboBox
-from packages.Tabs.AudioTab.Widgets.AudioMuxAtTop import AudioMuxAtTop
+from packages.Tabs.AudioTab.Widgets.AudioMuxOrderWidget import AudioMuxOrderWidget
 from packages.Tabs.AudioTab.Widgets.AudioSetDefaultCheckBox import AudioSetDefaultCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSetForcedCheckBox import AudioSetForcedCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSourceButton import AudioSourceButton
@@ -52,7 +52,7 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_delay_spin = AudioDelayDoubleSpinBox(self.tab_index)
         self.audio_set_forced_checkBox = AudioSetForcedCheckBox(self.tab_index)
         self.audio_set_default_checkBox = AudioSetDefaultCheckBox(self.tab_index)
-        self.audio_mux_at_top_checkBox = AudioMuxAtTop(self.tab_index)
+        self.audio_mux_order_widget = AudioMuxOrderWidget(self.tab_index)
         self.audio_match_layout = MatchAudioLayout(parent=self, tab_index=self.tab_index)
         self.audio_options_layout = QHBoxLayout()
         self.audio_set_default_forced_layout = QHBoxLayout()
@@ -90,7 +90,7 @@ class AudioSelectionSetting(QGroupBox):
         GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = False
         GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
-        GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
+        GlobalSetting.AUDIO_SET_ORDER[self.tab_index] = -1
         GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = DefaultOptions.Default_Audio_Language
 
     def create_properties(self):
@@ -111,19 +111,18 @@ class AudioSelectionSetting(QGroupBox):
         # self.MainLayout.addWidget(self.audio_main_groupBox)
 
     def setup_audio_check_default_forced_layout(self):
-        self.audio_set_default_forced_layout.addWidget(self.audio_set_default_checkBox)
-        self.audio_set_default_forced_layout.addWidget(self.audio_set_forced_checkBox)
-        self.audio_set_default_forced_layout.addWidget(self.audio_mux_at_top_checkBox)
+        self.audio_set_default_forced_layout.addWidget(self.audio_set_default_checkBox,stretch=0)
+        self.audio_set_default_forced_layout.addWidget(self.audio_set_forced_checkBox,stretch=0)
+        self.audio_set_default_forced_layout.addWidget(self.audio_mux_order_widget,stretch=3)
 
     def setup_audio_options_layout(self):
         self.audio_options_layout.addWidget(self.audio_extensions_comboBox, 2)
         self.audio_options_layout.addWidget(self.audio_language_label)
-        self.audio_options_layout.addWidget(self.audio_language_comboBox, 4)
+        self.audio_options_layout.addWidget(self.audio_language_comboBox, 5)
         self.audio_options_layout.addWidget(self.audio_track_name_lineEdit, 2)
         self.audio_options_layout.addWidget(self.audio_delay_label)
         self.audio_options_layout.addWidget(self.audio_delay_spin)
-        self.audio_options_layout.addSpacing(10)
-        self.audio_options_layout.addLayout(self.audio_set_default_forced_layout)
+        self.audio_options_layout.addLayout(self.audio_set_default_forced_layout,7)
         self.audio_options_layout.addStretch()
 
     def setup_main_layout(self):
@@ -276,7 +275,7 @@ class AudioSelectionSetting(QGroupBox):
             GlobalSetting.AUDIO_DELAY[self.tab_index] = 0.0
             GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
             GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
-            GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
+            GlobalSetting.AUDIO_SET_ORDER[self.tab_index] = -1
             GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = False
             GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = ""
 
@@ -304,8 +303,14 @@ class AudioSelectionSetting(QGroupBox):
             self.disable_editable_widgets()
         else:
             self.enable_editable_widgets()
+            self.check_if_video_modify_old_tracks_activated()
             self.update_audio_set_default_forced_state()
 
+    def check_if_video_modify_old_tracks_activated(self):
+        if GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+            self.audio_mux_order_widget.setToolTip(
+                "<nobr><b>[Semi Disabled]</b> Only [At Top] option is available<br>Because you have used <b>Modify Old "
+                "Tracks</b> option in Video Tab")
     def update_audio_set_default_forced_state(self):
         self.audio_set_default_checkBox.update_check_state()
         self.audio_set_forced_checkBox.update_check_state()
@@ -321,7 +326,7 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_set_forced_checkBox.setEnabled(False)
         self.setCheckable(False)
         self.audio_clear_button.setEnabled(False)
-        self.audio_mux_at_top_checkBox.setEnabled(False)
+        self.audio_mux_order_widget.setEnabled(False)
         self.audio_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -334,7 +339,7 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_set_default_checkBox.setEnabled(True)
         self.audio_set_forced_checkBox.setEnabled(True)
         self.audio_clear_button.setEnabled(True)
-        self.audio_mux_at_top_checkBox.setEnabled(True)
+        self.audio_mux_order_widget.setEnabled(True)
         self.audio_match_layout.enable_editable_widgets()
 
     def sync_audio_files_with_global_files(self):

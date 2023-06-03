@@ -89,7 +89,7 @@ class SubtitleTabManager(GlobalSetting):
         GlobalSetting.SUBTITLE_TRACK_NAME.pop(index_to_delete, None)
         GlobalSetting.SUBTITLE_SET_DEFAULT.pop(index_to_delete, None)
         GlobalSetting.SUBTITLE_SET_FORCED.pop(index_to_delete, None)
-        GlobalSetting.SUBTITLE_SET_AT_TOP.pop(index_to_delete, None)
+        GlobalSetting.SUBTITLE_SET_ORDER.pop(index_to_delete, None)
         GlobalSetting.SUBTITLE_TAB_ENABLED.pop(index_to_delete, None)
         GlobalSetting.SUBTITLE_LANGUAGE.pop(index_to_delete, None)
         self.current_tab_index = self.subtitle_tabs_indices[previous_tab_index]

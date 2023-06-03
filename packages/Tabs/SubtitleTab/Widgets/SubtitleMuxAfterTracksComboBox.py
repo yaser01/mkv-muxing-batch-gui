@@ -1,27 +1,49 @@
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QCheckBox
+from PySide2.QtCore import Signal, Qt
+from PySide2.QtWidgets import QComboBox
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
-class SubtitleMuxAtTop(QCheckBox):
-    def __init__(self, tab_index):
+def append_int(num):
+    if num > 9:
+        secondToLastDigit = str(num)[-2]
+        if secondToLastDigit == '1':
+            return 'th'
+    lastDigit = num % 10
+    if lastDigit == 1:
+        return 'st'
+    elif lastDigit == 2:
+        return 'nd'
+    elif lastDigit == 3:
+        return 'rd'
+    else:
+        return 'th'
+
+
+def num_to_ith(num):
+    value = str(num) + append_int(num)
+    return value
+
+
+class SubtitleMuxAfterTracksComboBox(QComboBox):
+    current_index_changed = Signal(int)
+
+    def __init__(self):
         super().__init__()
-        self.tab_index = tab_index
-        self.hint_when_enabled = "<nobr>checking this will lead to make this the <b>*</b>First subtitle  in the " \
-                                 "output file <br>Only check it if you really know what you are doing <br><b>*</b>[" \
-                                 "Respecting other subtitles with the same option] "
-        self.setText("Mux At Top")
-        self.setToolTip(self.hint_when_enabled)
-        self.stateChanged.connect(self.change_global_subtitle_set_at_top)
+        self.hint_when_enabled = ""
+        self.setMaxVisibleItems(8)
+        self.setMinimumWidth(100)
+        self.currentIndexChanged.connect(self.current_index_changed.emit)
 
-    def change_global_subtitle_set_at_top(self):
-        GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = self.checkState() == Qt.Checked
-
-    def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index]))
-        self.setToolTip(self.hint_when_enabled)
-        self.setToolTipDuration(12000)
+    def update_tracks(self, number_of_tracks):
+        self.clear()
+        self.addItem("[At Top]")
+        for item_id in range(1, number_of_tracks + 1):
+            self.addItem(num_to_ith(item_id) + " Subtitle")
+        for i in range(self.count()):
+            self.setItemData(i, self.itemText(i), Qt.ToolTipRole)
+        self.setStyleSheet("QComboBox { combobox-popup: 0; }")
+        self.setCurrentIndex(0)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)

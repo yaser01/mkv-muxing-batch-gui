@@ -89,7 +89,7 @@ class AudioTabManager(GlobalSetting):
         GlobalSetting.AUDIO_TRACK_NAME.pop(index_to_delete, None)
         GlobalSetting.AUDIO_SET_DEFAULT.pop(index_to_delete, None)
         GlobalSetting.AUDIO_SET_FORCED.pop(index_to_delete, None)
-        GlobalSetting.AUDIO_SET_AT_TOP.pop(index_to_delete, None)
+        GlobalSetting.AUDIO_SET_ORDER.pop(index_to_delete, None)
         GlobalSetting.AUDIO_TAB_ENABLED.pop(index_to_delete, None)
         GlobalSetting.AUDIO_LANGUAGE.pop(index_to_delete, None)
         self.current_tab_index = self.audio_tabs_indices[previous_tab_index]
