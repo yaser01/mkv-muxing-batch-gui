@@ -14,7 +14,7 @@ class RefreshFilesButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.RefreshIcon)
-        self.hint_when_enabled = ""
+        self.hint_when_enabled = "Refresh Files"
         self.current_path = ""
         self.clicked.connect(self.refresh_files)
 
