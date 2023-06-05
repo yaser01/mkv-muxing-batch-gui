@@ -18,6 +18,7 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
     def __init__(self, tab_index, parent=None):
         super().__init__()
         self.tab_index = tab_index
+        self.max_subtitle_index = -1
         self.subtitle_tab = parent
         self.move_subtitle_up_button = MoveSubtitleUpButton()
         self.move_subtitle_top_button = MoveSubtitleTopButton()
@@ -70,6 +71,7 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.addStretch()
 
     def set_selected_row(self, selected_row, max_index):
+        self.max_subtitle_index = max_index
         self.move_subtitle_up_button.current_index = selected_row
         self.move_subtitle_up_button.max_index = max_index
         self.move_subtitle_top_button.current_index = selected_row
@@ -141,15 +143,18 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         self.delete_subtitle_shortcut.setEnabled(True)
 
     def update_global_subtitle_files_list_order_to_top(self, index_to_move):
-        temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move]
-        GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][0]
-        GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][0] = temp_for_swap
+        while index_to_move > 0:
+            temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move]
+            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move - 1]
+            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move - 1] = temp_for_swap
 
-        temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
-        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][0]
-        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][0] = temp_for_swap
+            temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                    index_to_move - 1]
+            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move - 1] = temp_for_swap
+            index_to_move -= 1
 
     def update_global_subtitle_files_list_order_to_up(self, index_to_move):
         temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move]
@@ -189,17 +194,18 @@ class MatchSubtitleToolsLayout(QVBoxLayout):
         GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
 
     def update_global_subtitle_files_list_order_to_bottom(self, index_to_move):
-        index_last_file = len(GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index]) - 1
-        temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move]
-        GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_last_file]
-        GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_last_file] = temp_for_swap
+        while index_to_move < self.max_subtitle_index:
+            temp_for_swap = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move]
+            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move + 1]
+            GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
 
-        temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
-        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
-                index_last_file]
-        GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_last_file] = temp_for_swap
+            temp_for_swap = GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                    index_to_move + 1]
+            GlobalSetting.SUBTITLE_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
+            index_to_move += 1
 
     def update_global_subtitle_files_list_order_deleting(self, index_to_delete):
         del GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index][index_to_delete]

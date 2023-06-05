@@ -18,6 +18,7 @@ class MatchAudioToolsLayout(QVBoxLayout):
     def __init__(self, tab_index, parent=None):
         super().__init__()
         self.tab_index = tab_index
+        self.max_audio_index = -1
         self.audio_tab = parent
         self.move_audio_up_button = MoveAudioUpButton()
         self.move_audio_top_button = MoveAudioTopButton()
@@ -69,6 +70,7 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.addStretch()
 
     def set_selected_row(self, selected_row, max_index):
+        self.max_audio_index = max_index
         self.move_audio_up_button.current_index = selected_row
         self.move_audio_up_button.max_index = max_index
         self.move_audio_top_button.current_index = selected_row
@@ -140,15 +142,18 @@ class MatchAudioToolsLayout(QVBoxLayout):
         self.delete_audio_shortcut.setEnabled(True)
 
     def update_global_audio_files_list_order_to_top(self, index_to_move):
-        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
-        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][0]
-        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][0] = temp_for_swap
+        while index_to_move > 0:
+            temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move - 1]
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move - 1] = temp_for_swap
 
-        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][0]
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][0] = temp_for_swap
+            temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                    index_to_move - 1]
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move - 1] = temp_for_swap
+            index_to_move -= 1
 
     def update_global_audio_files_list_order_to_up(self, index_to_move):
         temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
@@ -188,17 +193,18 @@ class MatchAudioToolsLayout(QVBoxLayout):
         GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
 
     def update_global_audio_files_list_order_to_bottom(self, index_to_move):
-        index_last_file = len(GlobalSetting.AUDIO_FILES_LIST[self.tab_index]) - 1
-        temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
-        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_last_file]
-        GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_last_file] = temp_for_swap
+        while index_to_move < self.max_audio_index:
+            temp_for_swap = GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move]
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move + 1]
+            GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
 
-        temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
-            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
-                index_last_file]
-        GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_last_file] = temp_for_swap
+            temp_for_swap = GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move]
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move] = \
+                GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][
+                    index_to_move + 1]
+            GlobalSetting.AUDIO_FILES_ABSOLUTE_PATH_LIST[self.tab_index][index_to_move + 1] = temp_for_swap
+            index_to_move += 1
 
     def update_global_audio_files_list_order_deleting(self, index_to_delete):
         del GlobalSetting.AUDIO_FILES_LIST[self.tab_index][index_to_delete]
