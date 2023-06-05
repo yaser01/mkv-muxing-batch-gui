@@ -170,11 +170,10 @@ class VideoTable(TableWidget):
 
     def disable_selection(self):
         for i in reversed(range(self.rowCount())):
-            self.item(i, self.column_ids["Name"]).setFlags(~Qt.ItemIsUserCheckable)
+            self.item(i, self.column_ids["Name"]).setFlags(
+                self.item(i, self.column_ids["Name"]).flags() & (~Qt.ItemIsUserCheckable))
 
     def enable_selection(self):
         for i in reversed(range(self.rowCount())):
-            if not self.item(i, self.column_ids["Name"]).flags() & (
-                    Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable):
-                self.item(i, self.column_ids["Name"]).setFlags(
-                    Qt.ItemIsEnabled | Qt.ItemIsUserCheckable | Qt.ItemIsSelectable)
+            self.item(i, self.column_ids["Name"]).setFlags(
+                self.item(i, self.column_ids["Name"]).flags() | Qt.ItemIsUserCheckable)
