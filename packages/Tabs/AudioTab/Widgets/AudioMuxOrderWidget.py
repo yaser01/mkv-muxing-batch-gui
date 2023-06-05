@@ -9,9 +9,9 @@ class AudioMuxOrderWidget(QWidget):
         super().__init__()
         self.tab_index = tab_index
         self.hint_when_enabled = "<nobr>Define Where the <b>new</b> audio track will be among old audio tracks<" \
-                                 "br>The Default behavior is new subtitles added after the last track<br>" \
+                                 "br>The Default behavior is new audios added after the last track<br>" \
                                  "Only check it if you really know what you are doing <br><b>*</b>[" \
-                                 "Respecting other subtitles with the same option] "
+                                 "Respecting other audios with the same option] "
         self.setMaximumWidth(300)
         self.setToolTip(self.hint_when_enabled)
         self.mini_layout = QHBoxLayout()
