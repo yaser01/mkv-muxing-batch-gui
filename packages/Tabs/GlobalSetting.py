@@ -2,10 +2,10 @@
 import copy
 import hashlib
 import json
+import logging
 import os
 import re
 from collections import defaultdict
-from datetime import datetime
 from pathlib import Path
 from typing import List
 
@@ -85,8 +85,7 @@ def convert_check_state_int_to_check_state(value):
 
 
 def write_to_log_file(exception):
-    with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
-        log_file.write(str(datetime.utcnow()) + ' ' + str(exception) + '\n')
+    logging.error(exception)
 
 
 def refresh_tracks(track_type):

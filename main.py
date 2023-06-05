@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import faulthandler
+import logging
 import signal
 import sys
 from datetime import datetime
@@ -63,13 +64,21 @@ def kill_all_children():
 
 
 def logger_exception(exception_type, exception_value, exception_trace_back):
-    with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
-        log_file.write(str(datetime.utcnow()) + '\n')
-        for string in format_exception(exception_type, exception_value, exception_trace_back):
-            log_file.write(string)
+    for string in format_exception(exception_type, exception_value, exception_trace_back):
+        logging.error(string)
 
 
 def setup_logger():
+    logging.basicConfig(
+        format='(%(asctime)s): %(name)s [%(levelname)s]: %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler(filename=GlobalFiles.AppLogFilePath,
+                                encoding='utf-8', mode='a+'),
+            logging.StreamHandler()
+        ]
+    )
     sys.excepthook = logger_exception
 
 
