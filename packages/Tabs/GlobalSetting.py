@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget
 
 from packages.Startup import GlobalFiles
@@ -65,6 +66,22 @@ def convert_string_to_boolean(string):
         return True
     else:
         return False
+
+
+def convert_boolean_to_checked_value(value):
+    if value is None:
+        return 1  # Qt.PartiallyChecked
+    if value:
+        return 2  # Qt.Checked
+    return 0  # Qt.Unchecked
+
+
+def convert_check_state_int_to_check_state(value):
+    if value == 1:
+        return Qt.PartiallyChecked
+    if value == 2:
+        return Qt.Checked
+    return Qt.Unchecked
 
 
 def write_to_log_file(exception):
@@ -149,17 +166,20 @@ def refresh_old_tracks_info_as_bulk(tracks_info: List[List[SingleOldTrackData]])
                 if temp_old_track_data.language != track_dict[track_id][video_id].language:
                     temp_old_track_data.language = "[Old]"
                 if temp_old_track_data.is_enabled != track_dict[track_id][video_id].is_enabled:
-                    temp_old_track_data.is_enabled = False
+                    temp_old_track_data.is_enabled = None
                 if temp_old_track_data.is_default != track_dict[track_id][video_id].is_default:
-                    temp_old_track_data.is_default = False
+                    temp_old_track_data.is_default = None
                 if temp_old_track_data.is_forced != track_dict[track_id][video_id].is_forced:
-                    temp_old_track_data.is_forced = False
+                    temp_old_track_data.is_forced = None
         if all_same:
             tracks_bulk_data[track_id] = temp_old_track_data
         else:
             temp_old_track_data.track_name = "[Old]"
             temp_old_track_data.language = "[Old]"
             tracks_bulk_data[track_id] = temp_old_track_data
+        tracks_bulk_data[track_id].is_enabled = convert_boolean_to_checked_value(tracks_bulk_data[track_id].is_enabled)
+        tracks_bulk_data[track_id].is_default = convert_boolean_to_checked_value(tracks_bulk_data[track_id].is_default)
+        tracks_bulk_data[track_id].is_forced = convert_boolean_to_checked_value(tracks_bulk_data[track_id].is_forced)
         tracks_bulk_data[track_id].order = order_id
     return tracks_bulk_data
 
@@ -190,8 +210,7 @@ def refresh_old_tracks_info(track_type):
                                                      default_value=False)
                 new_track.is_forced = get_attribute(data=track["properties"], attribute="forced_track",
                                                     default_value=False)
-                new_track.is_enabled = get_attribute(data=track["properties"], attribute="enabled_track",
-                                                     default_value=False)
+                new_track.is_enabled = True
                 new_track.uid = str(
                     get_attribute(data=track["properties"], attribute="uid", default_value="-1"))
                 video_tracks.append(new_track)
@@ -208,6 +227,12 @@ def refresh_old_tracks_info(track_type):
             tracks_info=GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_INFO)
         GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING = copy.deepcopy(
             GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING_ORIGINAL)
+    elif track_type == "video":
+        GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO = new_list
+        GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_BULK_SETTING_ORIGINAL = refresh_old_tracks_info_as_bulk(
+            tracks_info=GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO)
+        GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_BULK_SETTING = copy.deepcopy(
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_BULK_SETTING_ORIGINAL)
 
 
 class GlobalSetting(QWidget):
@@ -218,13 +243,24 @@ class GlobalSetting(QWidget):
     VIDEO_FILES_ABSOLUTE_PATH_LIST = []
     VIDEO_SOURCE_MKV_ONLY = []
     VIDEO_DEFAULT_DURATION_FPS = ""
-    VIDEO_OLD_TRACKS_SUBTITLES_INFO: List[List[SingleOldTrackData]] = []
+    VIDEO_OLD_TRACKS_VIDEOS_INFO: List[List[SingleOldTrackData]] = []
     VIDEO_OLD_TRACKS_AUDIOS_INFO: List[List[SingleOldTrackData]] = []
-    VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING_ORIGINAL = defaultdict(SingleOldTrackData)
+    VIDEO_OLD_TRACKS_SUBTITLES_INFO: List[List[SingleOldTrackData]] = []
+    VIDEO_OLD_TRACKS_VIDEOS_BULK_SETTING_ORIGINAL = defaultdict(SingleOldTrackData)
     VIDEO_OLD_TRACKS_AUDIOS_BULK_SETTING_ORIGINAL = defaultdict(SingleOldTrackData)
-    VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING = defaultdict(SingleOldTrackData)
+    VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING_ORIGINAL = defaultdict(SingleOldTrackData)
+    VIDEO_OLD_TRACKS_VIDEOS_BULK_SETTING = defaultdict(SingleOldTrackData)
     VIDEO_OLD_TRACKS_AUDIOS_BULK_SETTING = defaultdict(SingleOldTrackData)
-    VIDEO_OLD_TRACKS_ACTIVATED = False
+    VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING = defaultdict(SingleOldTrackData)
+    VIDEO_OLD_TRACKS_VIDEOS_MODIFIED_ACTIVATED = False
+    VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED = False
+    VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED = False
+    VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED = False
+    VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED = False
+    VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED = False
+    VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED = False
+    VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED = False
+    VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED = False
 
     SUBTITLE_ENABLED = False
     SUBTITLE_TAB_ENABLED = defaultdict(bool)
@@ -234,7 +270,7 @@ class GlobalSetting(QWidget):
     SUBTITLE_DELAY = defaultdict(float)
     SUBTITLE_SET_DEFAULT = defaultdict(bool)
     SUBTITLE_SET_FORCED = defaultdict(bool)
-    SUBTITLE_SET_AT_TOP = defaultdict(bool)
+    SUBTITLE_SET_ORDER = defaultdict(int)
     SUBTITLE_SET_DEFAULT_DISABLED = False
     SUBTITLE_SET_FORCED_DISABLED = False
     SUBTITLE_LANGUAGE = defaultdict(str)
@@ -247,7 +283,7 @@ class GlobalSetting(QWidget):
     AUDIO_DELAY = defaultdict(float)
     AUDIO_SET_DEFAULT = defaultdict(bool)
     AUDIO_SET_FORCED = defaultdict(bool)
-    AUDIO_SET_AT_TOP = defaultdict(bool)
+    AUDIO_SET_ORDER = defaultdict(int)
     AUDIO_SET_DEFAULT_DISABLED = False
     AUDIO_SET_FORCED_DISABLED = False
     AUDIO_LANGUAGE = defaultdict(str)

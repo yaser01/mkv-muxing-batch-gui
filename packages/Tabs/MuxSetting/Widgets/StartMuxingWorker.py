@@ -33,8 +33,14 @@ def check_if_mkvpropedit_good():
             return False
     if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
-            not GlobalSetting.VIDEO_SOURCE_MKV_ONLY or \
-            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
+            (not GlobalSetting.VIDEO_SOURCE_MKV_ONLY) or \
+            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"] or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED:
         return False
     else:
         return True

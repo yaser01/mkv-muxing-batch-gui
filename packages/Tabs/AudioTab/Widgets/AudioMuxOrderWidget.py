@@ -26,7 +26,7 @@ class AudioMuxOrderWidget(QWidget):
 
     def connect_signals(self):
         self.check_box.stateChanged.connect(self.check_box_state_changed)
-        self.tracks_combobox.current_index_changed.connect(self.change_global_subtitle_set_at_top)
+        self.tracks_combobox.current_index_changed.connect(self.change_global_audio_set_at_top)
 
     def setup_mini_layout(self):
         self.mini_layout.addWidget(self.check_box, stretch=0)
@@ -39,13 +39,13 @@ class AudioMuxOrderWidget(QWidget):
         self.tracks_combobox.setContentsMargins(0, 0, 0, 0)
         self.setContentsMargins(0, 0, 0, 0)
 
-    def change_global_subtitle_set_at_top(self, new_order):
+    def change_global_audio_set_at_top(self, new_order):
         GlobalSetting.AUDIO_SET_ORDER[self.tab_index] = new_order
 
     def check_box_state_changed(self, new_state):
         if new_state:
             self.tracks_combobox.setEnabled(True)
-            if not GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+            if not GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED:
                 self.tracks_combobox.update_tracks(
                     number_of_tracks=len(GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_BULK_SETTING.keys()))
             else:
@@ -58,21 +58,20 @@ class AudioMuxOrderWidget(QWidget):
     def check_current_status(self):
         if self.check_box.isChecked():
             self.tracks_combobox.setEnabled(True)
-            if not GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
-                self.tracks_combobox.update_tracks(
-                    number_of_tracks=len(GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_BULK_SETTING.keys()))
+            if not GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED:
+                if self.tracks_combobox.count() != len(
+                        GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_BULK_SETTING.keys()) + 1:
+                    self.tracks_combobox.update_tracks(
+                        number_of_tracks=len(GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_BULK_SETTING.keys()))
+                    self.check_box.setChecked(False)
             else:
-                self.tracks_combobox.update_tracks(
-                    number_of_tracks=0)
+                if self.tracks_combobox.count() != 1:
+                    self.tracks_combobox.update_tracks(
+                        number_of_tracks=0)
+                    self.check_box.setChecked(False)
         else:
             self.tracks_combobox.setCurrentIndex(-1)
             self.tracks_combobox.setEnabled(False)
-
-
-    def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.AUDIO_SET_ORDER[self.tab_index]))
-        self.setToolTip(self.hint_when_enabled)
-        self.setToolTipDuration(12000)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
@@ -95,6 +94,7 @@ class AudioMuxOrderWidget(QWidget):
             self.setToolTip(self.hint_when_enabled)
 
     def setToolTip(self, new_tool_tip: str):
-        if (self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY) and not GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+        if (
+                self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY) and not GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)

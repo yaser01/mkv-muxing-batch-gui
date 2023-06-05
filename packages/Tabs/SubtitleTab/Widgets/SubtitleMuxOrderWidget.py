@@ -45,7 +45,7 @@ class SubtitleMuxOrderWidget(QWidget):
     def check_box_state_changed(self, new_state):
         if new_state:
             self.tracks_combobox.setEnabled(True)
-            if not GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+            if not GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED:
                 self.tracks_combobox.update_tracks(
                     number_of_tracks=len(GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING.keys()))
             else:
@@ -58,21 +58,20 @@ class SubtitleMuxOrderWidget(QWidget):
     def check_current_status(self):
         if self.check_box.isChecked():
             self.tracks_combobox.setEnabled(True)
-            if not GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
-                self.tracks_combobox.update_tracks(
-                    number_of_tracks=len(GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING.keys()))
+            if not GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED:
+                if self.tracks_combobox.count() != len(
+                        GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING.keys()) + 1:
+                    self.tracks_combobox.update_tracks(
+                        number_of_tracks=len(GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING.keys()))
+                    self.check_box.setChecked(False)
             else:
-                self.tracks_combobox.update_tracks(
-                    number_of_tracks=0)
+                if self.tracks_combobox.count() != 1:
+                    self.tracks_combobox.update_tracks(
+                        number_of_tracks=0)
+                    self.check_box.setChecked(False)
         else:
             self.tracks_combobox.setCurrentIndex(-1)
             self.tracks_combobox.setEnabled(False)
-
-
-    def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_ORDER[self.tab_index]))
-        self.setToolTip(self.hint_when_enabled)
-        self.setToolTipDuration(12000)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
@@ -95,6 +94,7 @@ class SubtitleMuxOrderWidget(QWidget):
             self.setToolTip(self.hint_when_enabled)
 
     def setToolTip(self, new_tool_tip: str):
-        if (self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY) and not GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+        if (
+                self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY) and not GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)

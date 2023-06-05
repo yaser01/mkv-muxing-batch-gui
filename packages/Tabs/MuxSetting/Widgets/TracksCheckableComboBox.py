@@ -93,7 +93,6 @@ class TracksCheckableComboBox(QComboBox):
                     if event.type() == QEvent.MouseButtonRelease:
                         index = self.view().indexAt(event.pos())
                         item = self.model().item(index.row())
-                        print(item.text())
                         if item.text().find("All Tracks") != -1:
                             if item.checkState() == Qt.Checked or item.checkState() == Qt.PartiallyChecked:
                                 for i in range(0, self.model().rowCount()):

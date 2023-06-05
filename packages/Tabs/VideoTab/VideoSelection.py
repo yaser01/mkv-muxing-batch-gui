@@ -44,6 +44,23 @@ def start_loading_new_videos_dialog(new_videos_list):
     return loading_videos_info_dialog.unsupported_files_list
 
 
+def update_global_videos_tracks_info():
+    GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST = refresh_tracks("audio")
+    GlobalSetting.MUX_SETTING_SUBTITLE_TRACKS_LIST = refresh_tracks("subtitles")
+    refresh_old_tracks_info("video")
+    refresh_old_tracks_info("audio")
+    refresh_old_tracks_info("subtitles")
+    GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_MODIFIED_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED = False
+    GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED = False
+
+
 class VideoSelectionSetting(GlobalSetting):
     tab_clicked_signal = Signal()
 
@@ -304,10 +321,7 @@ class VideoSelectionSetting(GlobalSetting):
                 GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST.append(self.files_names_absolute_list[i])
                 if Path(os.path.dirname(self.files_names_absolute_list[i])) not in GlobalSetting.VIDEO_SOURCE_PATHS:
                     GlobalSetting.VIDEO_SOURCE_PATHS.append(Path(os.path.dirname(self.files_names_absolute_list[i])))
-        GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST = refresh_tracks("audio")
-        GlobalSetting.MUX_SETTING_SUBTITLE_TRACKS_LIST = refresh_tracks("subtitles")
-        refresh_old_tracks_info("audio")
-        refresh_old_tracks_info("subtitles")
+        update_global_videos_tracks_info()
 
     def update_checked_video(self, video_index):
         if self.files_names_checked_list[video_index]:

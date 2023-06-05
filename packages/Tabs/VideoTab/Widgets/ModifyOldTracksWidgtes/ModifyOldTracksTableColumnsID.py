@@ -1,5 +1,5 @@
 class ModifyOldTracksTableColumnsID:
-    columns_name = ["ID", "Enable", "Set Default", "Set Forced", "Track Name", "Track Language"]
+    columns_name = ["ID", "Copy Track", "Set Default", "Set Forced", "Track Name", "Track Language"]
     ID = 0
     Enable = 1
     Set_Default = 2

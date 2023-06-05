@@ -75,6 +75,9 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
             GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED or \
             GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED or \
             GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_MODIFIED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED or \
             GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
@@ -489,25 +492,30 @@ class MuxSettingTab(QWidget):
                 self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                 self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                 self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-            elif GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
-                self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
-                self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
-                self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
-                self.make_this_subtitle_default_checkBox.setCheckState(Qt.Unchecked)
+            elif GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
+                if GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
+                    disable_reason = "Because you have modifed some subtitle tracks in <b>Modify Old Tracks</b> " \
+                                     "option in Video Tab "
+                    self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
+                    self.only_keep_those_subtitles_checkBox.setEnabled(False)
+                    self.make_this_subtitle_default_checkBox.setEnabled(False)
+                    self.make_this_subtitle_default_checkBox.setCheckState(Qt.Unchecked)
+                    self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                if GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
+                    disable_reason = "Because you have modifed some audio tracks in <b>Modify Old Tracks</b> option " \
+                                     "in Video Tab "
+                    self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
+                    self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
+                    self.only_keep_those_audios_checkBox.setEnabled(False)
+                    self.make_this_audio_default_checkBox.setEnabled(False)
+                    self.only_keep_those_audios_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.make_this_audio_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.make_this_audio_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
 
-                self.only_keep_those_audios_checkBox.setEnabled(False)
-                self.only_keep_those_subtitles_checkBox.setEnabled(False)
-                self.make_this_audio_default_checkBox.setEnabled(False)
-                self.make_this_subtitle_default_checkBox.setEnabled(False)
-                disable_reason = "Because you have used <b>Modify Old Tracks</b> option in Video Tab"
-                self.only_keep_those_audios_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_audio_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_audio_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
             else:
                 self.only_keep_those_audios_checkBox.setEnabled(True)
                 self.only_keep_those_subtitles_checkBox.setEnabled(True)

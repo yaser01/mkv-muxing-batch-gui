@@ -1,6 +1,7 @@
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import QWidget, QHBoxLayout
 
+from packages.Tabs.GlobalSetting import convert_check_state_int_to_check_state
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackCheckBoxCell import TrackCheckBoxCell
 
 
@@ -10,7 +11,7 @@ class CenteredCheckBoxCell(QWidget):
     def __init__(self, row_id, column_id, check_state):
         super().__init__()
         self.check_box = TrackCheckBoxCell(row_id=row_id, column_id=column_id)
-        self.check_box.setChecked(check_state)
+        self.check_box.setCheckState(convert_check_state_int_to_check_state(check_state))
         self.mini_layout = QHBoxLayout()
         self.mini_layout.setAlignment(Qt.AlignCenter)
         self.mini_layout.addWidget(self.check_box)

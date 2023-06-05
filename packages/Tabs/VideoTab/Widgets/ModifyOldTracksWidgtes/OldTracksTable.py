@@ -6,7 +6,8 @@ from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, 
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Tabs.GlobalSetting import convert_string_integer_to_two_digit_string, GlobalSetting
+from packages.Tabs.GlobalSetting import convert_string_integer_to_two_digit_string, GlobalSetting, \
+    convert_check_state_int_to_check_state
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.CenteredCheckBoxCell import CenteredCheckBoxCell
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTableColumnsID import \
     ModifyOldTracksTableColumnsID
@@ -31,6 +32,8 @@ class OldTracksTable(TableWidget):
         self.move_row_down_shortcut = None
         self.need_column_width_set = True
         self.is_there_different_track_setting = False
+        self.is_there_deleted_tracks = False
+        self.is_there_reorder_tracks = False
         self.setColumnCount(len(self.column_ids.columns_name))
         self.setRowCount(0)
         self.force_select_whole_row()
@@ -86,27 +89,35 @@ class OldTracksTable(TableWidget):
 
     def setup_tracks(self):
         is_there_different_track_setting = False
+        is_there_deleted_tracks = False
+        is_there_reorder_tracks = False
         self.setRowCount(len(self.current_setting.keys()))
         for new_row_id, track_id in enumerate(self.current_setting.keys(), start=0):
             new_row_id = self.current_setting[track_id].order
-            is_enabled = self.current_setting[track_id].is_enabled
-            is_default = self.current_setting[track_id].is_default
-            is_forced = self.current_setting[track_id].is_forced
+            is_enabled_state = self.current_setting[track_id].is_enabled
+            is_default_state = self.current_setting[track_id].is_default
+            is_forced_state = self.current_setting[track_id].is_forced
             track_name = self.current_setting[track_id].track_name
             language = self.current_setting[track_id].language
             self.set_row_value_id(track_id, new_row_id)
-            self.set_row_value_is_enabled(is_enabled, new_row_id)
-            self.set_row_value_is_default(is_default, new_row_id)
-            self.set_row_value_is_forced(is_forced, new_row_id)
+            self.set_row_value_is_enabled(is_enabled_state, new_row_id)
+            self.set_row_value_is_default(is_default_state, new_row_id)
+            self.set_row_value_is_forced(is_forced_state, new_row_id)
             self.set_row_value_track_name(track_name, new_row_id)
             self.set_row_value_language(language, new_row_id)
-            self.update_state_of_row(new_row_id, is_enabled)
+            self.update_state_of_row(new_row_id, is_enabled_state)
             if not is_there_different_track_setting and self.current_setting[track_id] != self.original_setting[
                 track_id]:
                 is_there_different_track_setting = True
+            if not self.current_setting[track_id].is_enabled:
+                is_there_deleted_tracks = True
+            if self.current_setting[track_id].order != self.original_setting[track_id].order:
+                is_there_reorder_tracks = True
         self.update_widget()
         self.resize_track_name_column_to_fit_content()
         self.is_there_different_track_setting = is_there_different_track_setting
+        self.is_there_deleted_tracks = is_there_deleted_tracks
+        self.is_there_reorder_tracks = is_there_reorder_tracks
 
     def check_if_job_queue_not_empty(self):
         if not GlobalSetting.JOB_QUEUE_EMPTY:
@@ -124,19 +135,21 @@ class OldTracksTable(TableWidget):
         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
         self.setItem(new_row_id, self.column_ids.ID, item)
 
-    def set_row_value_is_enabled(self, is_enabled, new_row_id):
-        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Enable, check_state=is_enabled)
+    def set_row_value_is_enabled(self, is_enabled_state, new_row_id):
+        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Enable,
+                                         check_state=is_enabled_state)
         self.setCellWidget(new_row_id, self.column_ids.Enable, check_box)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
 
-    def set_row_value_is_default(self, is_default, new_row_id):
+    def set_row_value_is_default(self, is_default_state, new_row_id):
         check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Default,
-                                         check_state=is_default)
+                                         check_state=is_default_state)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
         self.setCellWidget(new_row_id, self.column_ids.Set_Default, check_box)
 
-    def set_row_value_is_forced(self, is_forced, new_row_id):
-        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Forced, check_state=is_forced)
+    def set_row_value_is_forced(self, is_forced_state, new_row_id):
+        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Forced,
+                                         check_state=is_forced_state)
         self.setCellWidget(new_row_id, self.column_ids.Set_Forced, check_box)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
 
@@ -230,7 +243,7 @@ class OldTracksTable(TableWidget):
         self.item(row_id, self.column_ids.Track_Name).setTextColor(self.get_text_color(new_state))
         self.item(row_id, self.column_ids.ID).setTextColor(self.get_text_color(new_state))
         self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(new_state)
-        if new_state:
+        if new_state == Qt.Checked:
             self.item(row_id, self.column_ids.Track_Name).setFlags(
                 self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemIsEditable)
         else:
@@ -246,9 +259,12 @@ class OldTracksTable(TableWidget):
             track_name = self.original_setting[track_id].track_name
             language = self.original_setting[track_id].language
             self.set_row_value_id(track_id, row_id)
-            self.cellWidget(row_id, self.column_ids.Enable).check_box.setChecked(is_enabled)
-            self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setChecked(is_default)
-            self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setChecked(is_forced)
+            self.cellWidget(row_id, self.column_ids.Enable).check_box.setCheckState(
+                convert_check_state_int_to_check_state(is_enabled))
+            self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setCheckState(
+                convert_check_state_int_to_check_state(is_default))
+            self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setCheckState(
+                convert_check_state_int_to_check_state(is_forced))
             self.item(row_id, self.column_ids.Track_Name).setText(track_name)
             self.set_row_value_language(language, row_id)
             self.update_state_of_row(row_id, is_enabled)
@@ -259,14 +275,16 @@ class OldTracksTable(TableWidget):
 
     def save_settings(self):
         is_there_different_track_setting = False
+        is_there_deleted_tracks = False
+        is_there_reorder_tracks = False
         for row_id in range(self.rowCount()):
             track_id = self.get_track_id_as_string_original_from_row(row_id=row_id)
             self.current_setting[track_id].is_enabled = self.cellWidget(row_id,
-                                                                        self.column_ids.Enable).check_box.isChecked()
+                                                                        self.column_ids.Enable).check_box.checkState()
             self.current_setting[track_id].is_default = self.cellWidget(row_id,
-                                                                        self.column_ids.Set_Default).check_box.isChecked()
+                                                                        self.column_ids.Set_Default).check_box.checkState()
             self.current_setting[track_id].is_forced = self.cellWidget(row_id,
-                                                                       self.column_ids.Set_Forced).check_box.isChecked()
+                                                                       self.column_ids.Set_Forced).check_box.checkState()
             self.current_setting[track_id].track_name = self.item(row_id, self.column_ids.Track_Name).text()
             self.current_setting[track_id].language = self.cellWidget(row_id,
                                                                       self.column_ids.Track_Language).currentText()
@@ -274,7 +292,14 @@ class OldTracksTable(TableWidget):
             if not is_there_different_track_setting and self.current_setting[track_id] != self.original_setting[
                 track_id]:
                 is_there_different_track_setting = True
+            if not self.current_setting[track_id].is_enabled:
+                is_there_deleted_tracks = True
+            if self.current_setting[track_id].order != self.original_setting[track_id].order:
+                is_there_reorder_tracks = True
+
         self.is_there_different_track_setting = is_there_different_track_setting
+        self.is_there_deleted_tracks = is_there_deleted_tracks
+        self.is_there_reorder_tracks = is_there_reorder_tracks
 
     def update_selected_track(self, current_row, current_column, previous_row, previous_column):
         current_track = self.get_track_id_as_string_original_from_row(current_row)
@@ -317,22 +342,22 @@ class OldTracksTable(TableWidget):
         self.set_row_value_id(track_id=old_track_id, new_row_id=new_row_id)
 
     def replace_rows_value_is_enabled(self, new_row_id, row_id):
-        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.isChecked()
-        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.isChecked()
-        self.set_row_value_is_enabled(is_enabled=old_is_enable_check_state, new_row_id=new_row_id)
-        self.set_row_value_is_enabled(is_enabled=new_is_enable_check_state, new_row_id=row_id)
+        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState()
+        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.checkState()
+        self.set_row_value_is_enabled(is_enabled_state=old_is_enable_check_state, new_row_id=new_row_id)
+        self.set_row_value_is_enabled(is_enabled_state=new_is_enable_check_state, new_row_id=row_id)
 
     def replace_rows_value_is_default(self, new_row_id, row_id):
-        old_is_default_check_state = self.cellWidget(row_id, self.column_ids.Set_Default).check_box.isChecked()
-        new_is_default_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Default).check_box.isChecked()
-        self.set_row_value_is_default(is_default=old_is_default_check_state, new_row_id=new_row_id)
-        self.set_row_value_is_default(is_default=new_is_default_check_state, new_row_id=row_id)
+        old_is_default_check_state = self.cellWidget(row_id, self.column_ids.Set_Default).check_box.checkState()
+        new_is_default_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Default).check_box.checkState()
+        self.set_row_value_is_default(is_default_state=old_is_default_check_state, new_row_id=new_row_id)
+        self.set_row_value_is_default(is_default_state=new_is_default_check_state, new_row_id=row_id)
 
     def replace_rows_value_is_forced(self, new_row_id, row_id):
-        old_is_forced_check_state = self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.isChecked()
-        new_is_forced_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Forced).check_box.isChecked()
-        self.set_row_value_is_forced(is_forced=old_is_forced_check_state, new_row_id=new_row_id)
-        self.set_row_value_is_forced(is_forced=new_is_forced_check_state, new_row_id=row_id)
+        old_is_forced_check_state = self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.checkState()
+        new_is_forced_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Forced).check_box.checkState()
+        self.set_row_value_is_forced(is_forced_state=old_is_forced_check_state, new_row_id=new_row_id)
+        self.set_row_value_is_forced(is_forced_state=new_is_forced_check_state, new_row_id=row_id)
 
     def replace_rows_value_track_name(self, new_row_id, row_id):
         old_track_name = self.item(row_id, self.column_ids.Track_Name).text()
@@ -347,7 +372,15 @@ class OldTracksTable(TableWidget):
         self.set_row_value_language(language=new_track_language, new_row_id=row_id)
 
     def update_state_of_replaced_rows(self, new_row_id, row_id):
-        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.isChecked()
-        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.isChecked()
+        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState()
+        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.checkState()
         self.update_state_of_row(row_id=row_id, new_state=old_is_enable_check_state)
         self.update_state_of_row(row_id=new_row_id, new_state=new_is_enable_check_state)
+
+    def table_focused(self):
+        if self.rowCount() > 0:
+            current_row = self.currentRow()
+            if current_row == -1:
+                current_row = 0
+            self.selectRow(current_row)
+            self.update_selected_track(current_row, 0, 0, 0)

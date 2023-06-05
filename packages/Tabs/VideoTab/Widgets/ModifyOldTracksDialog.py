@@ -10,15 +10,18 @@ from packages.Widgets.InfoDialog import InfoDialog
 
 
 def show_info_dialog():
-    info_dialog = InfoDialog(window_title="Intersection with other settings",
-                             info_message="Using this window will lead to limits the use of the following options:<br>"
+    info_dialog = InfoDialog(window_title="Conflicting with other settings",
+                             info_message="Using this window will limits/disable the use of the following options:<br>"
                                           "1- <b>Mux After Track</b> in Subtitle/Audio Tabs.<br>"
                                           "2- <b>Only Keep Those Subtitles/Audios</b> By [Track Id, Track Name, "
                                           "Track Language] in Muxing Tab.<br> "
                                           "3- <b>Make This Subtitle/Audio Default</b> By [Track Id, Track Name, "
                                           "Track Language] in Muxing Tab.<br> "
-                                          "This is necessary because above options also [depends on/modify] old track in "
+                                          "This is necessary because above options also [depends on/modify] old track "
+                                          "in "
                                           "someway.<br> "
+                                          "Also Adding new subtitles/audios with options: (set default/forced) "
+                                          "will override options: (set default/forced) shown here.<br> "
                                           "<u>In short</u> you have to know what you are doing :D</div>")
     info_dialog.execute()
 
@@ -32,7 +35,7 @@ class ModifyOldTracksDialog(QDialog):
         self.cancel_button = QPushButton("Cancel")
         self.reset_button = QPushButton("Reset To Default")
         self.old_tracks_tabs = ModifyOldTracksTabsManager()
-        self.track_info_label = QLabel("Information About [] Track")
+        self.track_info_label = QLabel("Information About Tracks:")
         self.info_button = QPushButton(text="")
         self.info_button.setIcon(InfoIcon)
         self.ok_button = QPushButton("OK")
@@ -81,7 +84,8 @@ class ModifyOldTracksDialog(QDialog):
     def setup_instructions_label(self):
         self.instructions_label.setTextFormat(Qt.RichText)
         instructions_text = "Here you can modify/disable old tracks even reorder tracks by using [Ctrl+Up/Down Arrow] " \
-                            "to move track up/down. "
+                            "to move track up/down."
+
         no_editing_text = "<br>Editing is <b>Disabled</b> because job queue has unfinished jobs."
         if not GlobalSetting.JOB_QUEUE_EMPTY:
             instructions_text += no_editing_text
@@ -110,27 +114,33 @@ class ModifyOldTracksDialog(QDialog):
 
     def update_showed_track_info(self, new_info):
         track_type, track_id = new_info
-        if track_type == "subtitle" and self.old_tracks_tabs.currentIndex() == 0:
+        if track_type == "subtitle" and self.old_tracks_tabs.currentIndex() == 1:
             self.track_info_table.update_tracks_info(
                 new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_INFO.copy())
             self.track_info_label.setText(
                 f"Information About Subtitle Track [{convert_string_integer_to_two_digit_string(track_id)}] Across "
                 f"Videos:")
             self.track_info_table.setup_info(track_id=track_id)
-        elif track_type == "audio" and self.old_tracks_tabs.currentIndex() == 1:
+        elif track_type == "audio" and self.old_tracks_tabs.currentIndex() == 2:
             self.track_info_table.update_tracks_info(
                 new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_INFO.copy())
             self.track_info_label.setText(
                 f"Information About Audio Track [{convert_string_integer_to_two_digit_string(track_id)}] Across Videos:")
             self.track_info_table.setup_info(track_id=track_id)
+        elif track_type == "video" and self.old_tracks_tabs.currentIndex() == 0:
+            self.track_info_table.update_tracks_info(
+                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO.copy())
+            self.track_info_label.setText(
+                f"Information About Video Track [{convert_string_integer_to_two_digit_string(track_id)}] Across Videos:")
+            self.track_info_table.setup_info(track_id=track_id)
 
     def update_current_tab(self, tab_id):
         if tab_id == 0:
-            self.old_tracks_tabs.subtitle_tab.selectRow(0)
-            self.old_tracks_tabs.subtitle_tab.update_selected_track(0, 0, 0, 0)
-        else:
-            self.old_tracks_tabs.audio_tab.selectRow(0)
-            self.old_tracks_tabs.audio_tab.update_selected_track(0, 0, 0, 0)
+            self.old_tracks_tabs.video_tab.table_focused()
+        elif tab_id == 1:
+            self.old_tracks_tabs.subtitle_tab.table_focused()
+        elif tab_id == 2:
+            self.old_tracks_tabs.audio_tab.table_focused()
 
     def execute(self):
         self.exec_()

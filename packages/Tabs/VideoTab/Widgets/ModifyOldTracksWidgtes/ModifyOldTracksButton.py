@@ -40,6 +40,5 @@ class ModifyOldTracksButton(QPushButton):
         super().setToolTip(new_tool_tip)
 
     def open_modify_old_tracks_dialog(self):
-        print(GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_BULK_SETTING)
         modify_old_tracks_dialog = ModifyOldTracksDialog()
         modify_old_tracks_dialog.execute()

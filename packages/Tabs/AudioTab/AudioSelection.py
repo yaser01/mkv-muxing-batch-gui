@@ -305,9 +305,10 @@ class AudioSelectionSetting(QGroupBox):
             self.enable_editable_widgets()
             self.check_if_video_modify_old_tracks_activated()
             self.update_audio_set_default_forced_state()
+            self.audio_mux_order_widget.check_current_status()
 
     def check_if_video_modify_old_tracks_activated(self):
-        if GlobalSetting.VIDEO_OLD_TRACKS_ACTIVATED:
+        if GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED:
             self.audio_mux_order_widget.setToolTip(
                 "<nobr><b>[Semi Disabled]</b> Only [At Top] option is available<br>Because you have used <b>Modify Old "
                 "Tracks</b> option in Video Tab")
