@@ -2,12 +2,12 @@ import sys
 
 import PySide2
 from PySide2.QtCore import Signal
-from PySide2.QtGui import Qt, QColor
-from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
+from PySide2.QtGui import Qt, QColor, QKeySequence
+from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem, QShortcut
 
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Tabs.GlobalSetting import sort_names_like_windows
+from packages.Tabs.GlobalSetting import sort_names_like_windows, GlobalSetting
 from packages.Widgets.TableWidget import TableWidget
 
 
@@ -15,6 +15,8 @@ class VideoTable(TableWidget):
     drop_folder_and_files_signal = Signal(list)
     update_unchecked_video_signal = Signal(int)
     update_checked_video_signal = Signal(int)
+    move_video_to_down_signal = Signal(int)
+    move_video_to_up_signal = Signal(int)
 
     def __init__(self):
         super().__init__()
@@ -28,6 +30,8 @@ class VideoTable(TableWidget):
         self.setRowCount(0)
         self.setAcceptDrops(True)
         self.checking_row_updates = True
+        self.move_row_up_shortcut = None
+        self.move_row_down_shortcut = None
         self.disable_table_bold_column()
         self.disable_table_edit()
         self.force_select_whole_row()
@@ -35,8 +39,19 @@ class VideoTable(TableWidget):
         self.make_column_expand_as_possible(column_index=0)
         self.set_row_height(new_height=screen_size.height() // 27)
         self.setup_columns()
+        self.setup_shortcuts()
+        self.connect_signals()
+
+    def setup_shortcuts(self):
+        self.move_row_up_shortcut = QShortcut(QKeySequence("Ctrl+Up"), self)
+        self.move_row_down_shortcut = QShortcut(QKeySequence("Ctrl+Down"), self)
+
+    def connect_signals(self):
         self.itemChanged.connect(self.update_checked_videos_state)
         self.itemClicked.connect(self.update_selected_row)
+        if GlobalSetting.JOB_QUEUE_EMPTY:
+            self.move_row_up_shortcut.activated.connect(self.move_row_up)
+            self.move_row_down_shortcut.activated.connect(self.move_row_down)
 
     def dragEnterEvent(self, event):
         data = event.mimeData()
@@ -177,3 +192,21 @@ class VideoTable(TableWidget):
         for i in reversed(range(self.rowCount())):
             self.item(i, self.column_ids["Name"]).setFlags(
                 self.item(i, self.column_ids["Name"]).flags() | Qt.ItemIsUserCheckable)
+
+    def move_row_down(self):
+        if not GlobalSetting.JOB_QUEUE_EMPTY:
+            return
+        if self.rowCount() == 0:
+            return
+        if self.currentRow() == (self.rowCount() - 1):
+            return
+        self.move_video_to_down_signal.emit(self.currentRow())
+
+    def move_row_up(self):
+        if not GlobalSetting.JOB_QUEUE_EMPTY:
+            return
+        if self.rowCount() == 0:
+            return
+        if self.currentRow() == 0:
+            return
+        self.move_video_to_up_signal.emit(self.currentRow())

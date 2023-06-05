@@ -241,6 +241,42 @@ class VideoSelectionSetting(GlobalSetting):
                     break
         return result
 
+    def move_video_file_down(self, video_index):
+        self.files_names_list[video_index], self.files_names_list[video_index + 1] = self.files_names_list[
+                                                                                         video_index + 1], \
+                                                                                     self.files_names_list[video_index]
+        self.files_names_checked_list[video_index], self.files_names_checked_list[video_index + 1] = \
+            self.files_names_checked_list[
+                video_index + 1], \
+            self.files_names_checked_list[video_index]
+        self.files_size_list[video_index], self.files_size_list[video_index + 1] = self.files_size_list[
+                                                                                       video_index + 1], \
+                                                                                   self.files_size_list[video_index]
+        self.files_names_absolute_list[video_index], self.files_names_absolute_list[video_index + 1] = \
+            self.files_names_absolute_list[
+                video_index + 1], \
+            self.files_names_absolute_list[video_index]
+        self.show_files_list()
+        self.table.selectRow(video_index + 1)
+
+    def move_video_file_up(self, video_index):
+        self.files_names_list[video_index], self.files_names_list[video_index - 1] = self.files_names_list[
+                                                                                         video_index - 1], \
+                                                                                     self.files_names_list[video_index]
+        self.files_names_checked_list[video_index], self.files_names_checked_list[video_index - 1] = \
+            self.files_names_checked_list[
+                video_index - 1], \
+            self.files_names_checked_list[video_index]
+        self.files_size_list[video_index], self.files_size_list[video_index - 1] = self.files_size_list[
+                                                                                       video_index - 1], \
+                                                                                   self.files_size_list[video_index]
+        self.files_names_absolute_list[video_index], self.files_names_absolute_list[video_index - 1] = \
+            self.files_names_absolute_list[
+                video_index - 1], \
+            self.files_names_absolute_list[video_index]
+        self.show_files_list()
+        self.table.selectRow(video_index - 1)
+
     def show_files_list(self):
         self.table.checking_row_updates = False
         self.table.show_files_list(files_names_list=self.files_names_list,
@@ -361,6 +397,8 @@ class VideoSelectionSetting(GlobalSetting):
         self.table.update_checked_video_signal.connect(self.update_checked_video)
         self.table.update_unchecked_video_signal.connect(self.update_unchecked_video)
         self.tab_clicked_signal.connect(self.tab_clicked)
+        self.table.move_video_to_down_signal.connect(self.move_video_file_down)
+        self.table.move_video_to_up_signal.connect(self.move_video_file_up)
 
     def tab_clicked(self):
         if not GlobalSetting.JOB_QUEUE_EMPTY:
