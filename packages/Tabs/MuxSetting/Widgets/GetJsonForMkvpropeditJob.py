@@ -179,7 +179,7 @@ class GetJsonForMkvpropeditJob:
                         break
                 if not found:
                     continue
-                if bulk_track.language != "":
+                if bulk_track.language != "[Old]":
                     old_video_command_list.append(add_json_line("--edit"))
                     old_video_command_list.append(
                         add_json_line("track:" + increase_id_by_one(bulk_track.id)))
@@ -234,7 +234,7 @@ class GetJsonForMkvpropeditJob:
                         break
                 if not found:
                     continue
-                if bulk_track.language != "":
+                if bulk_track.language != "[Old]":
                     old_subtitle_command_list.append(add_json_line("--edit"))
                     old_subtitle_command_list.append(
                         add_json_line("track:" + increase_id_by_one(bulk_track.id)))
@@ -289,7 +289,7 @@ class GetJsonForMkvpropeditJob:
                         break
                 if not found:
                     continue
-                if bulk_track.language != "":
+                if bulk_track.language != "[Old]":
                     old_audio_command_list.append(add_json_line("--edit"))
                     old_audio_command_list.append(
                         add_json_line("track:" + increase_id_by_one(bulk_track.id)))

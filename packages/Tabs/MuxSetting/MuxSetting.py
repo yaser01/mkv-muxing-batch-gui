@@ -473,7 +473,7 @@ class MuxSettingTab(QWidget):
 
     def setup_enable_options_based_on_global_state(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
-            if not  GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
+            if not GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
                 self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
                 self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
                 self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
@@ -492,9 +492,9 @@ class MuxSettingTab(QWidget):
                 self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                 self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                 self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-            elif GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
+            elif GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED or GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
                 if GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
-                    disable_reason = "Because you have modifed some subtitle tracks in <b>Modify Old Tracks</b> " \
+                    disable_reason = "Because you have modified some subtitle tracks in <b>Modify Old Tracks</b> " \
                                      "option in Video Tab "
                     self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
                     self.only_keep_those_subtitles_checkBox.setEnabled(False)
@@ -503,9 +503,10 @@ class MuxSettingTab(QWidget):
                     self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                     self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                     self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                    self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
+                    self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(
+                        f"<b>[Disabled]</b> {disable_reason}")
                 if GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
-                    disable_reason = "Because you have modifed some audio tracks in <b>Modify Old Tracks</b> option " \
+                    disable_reason = "Because you have modified some audio tracks in <b>Modify Old Tracks</b> option " \
                                      "in Video Tab "
                     self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
                     self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)

@@ -279,15 +279,15 @@ class OldTracksTable(TableWidget):
         is_there_reorder_tracks = False
         for row_id in range(self.rowCount()):
             track_id = self.get_track_id_as_string_original_from_row(row_id=row_id)
-            self.current_setting[track_id].is_enabled = self.cellWidget(row_id,
-                                                                        self.column_ids.Enable).check_box.checkState()
-            self.current_setting[track_id].is_default = self.cellWidget(row_id,
-                                                                        self.column_ids.Set_Default).check_box.checkState()
-            self.current_setting[track_id].is_forced = self.cellWidget(row_id,
-                                                                       self.column_ids.Set_Forced).check_box.checkState()
+            self.current_setting[track_id].is_enabled = int(self.cellWidget(row_id,
+                                                                            self.column_ids.Enable).check_box.checkState())
+            self.current_setting[track_id].is_default = int(self.cellWidget(row_id,
+                                                                            self.column_ids.Set_Default).check_box.checkState())
+            self.current_setting[track_id].is_forced = int(self.cellWidget(row_id,
+                                                                           self.column_ids.Set_Forced).check_box.checkState())
             self.current_setting[track_id].track_name = self.item(row_id, self.column_ids.Track_Name).text()
-            self.current_setting[track_id].language = self.cellWidget(row_id,
-                                                                      self.column_ids.Track_Language).currentText()
+            temp_language = self.cellWidget(row_id, self.column_ids.Track_Language).currentText()
+            self.current_setting[track_id].language = ("[Old]" if temp_language == "" else temp_language)
             self.current_setting[track_id].order = row_id
             if not is_there_different_track_setting and self.current_setting[track_id] != self.original_setting[
                 track_id]:

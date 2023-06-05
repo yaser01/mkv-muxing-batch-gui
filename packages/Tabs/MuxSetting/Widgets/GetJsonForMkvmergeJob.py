@@ -223,7 +223,7 @@ class GetJsonForMkvmergeJob:
                 if not found:
                     continue
                 # add video language
-                if bulk_track.language != "":
+                if bulk_track.language != "[Old]":
                     old_video_command_list.append(add_json_line("--language"))
                     old_video_command_list.append(
                         add_json_line(f"{track_id}:" + ISO_639_2_LANGUAGES[bulk_track.language]))
@@ -262,7 +262,7 @@ class GetJsonForMkvmergeJob:
                 if not found:
                     continue
                 # add subtitle language
-                if bulk_track.language != "":
+                if bulk_track.language != "[Old]":
                     old_subtitle_command_list.append(add_json_line("--language"))
                     old_subtitle_command_list.append(
                         add_json_line(f"{track_id}:" + ISO_639_2_LANGUAGES[bulk_track.language]))
@@ -386,7 +386,7 @@ class GetJsonForMkvmergeJob:
                 if not found:
                     continue
                 # add audio language
-                if bulk_track.language != "":
+                if bulk_track.language != "[Old]":
                     old_audio_command_list.append(add_json_line("--language"))
                     old_audio_command_list.append(
                         add_json_line(f"{track_id}:" + ISO_639_2_LANGUAGES[bulk_track.language]))
@@ -528,7 +528,6 @@ class GetJsonForMkvmergeJob:
             change_default_audio_commands_list)
 
     def setup_which_old_videos_to_keep(self):
-        print(GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED)
         if GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED:
             only_keep_those_video_list = []
             for track_id in GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_BULK_SETTING.keys():
