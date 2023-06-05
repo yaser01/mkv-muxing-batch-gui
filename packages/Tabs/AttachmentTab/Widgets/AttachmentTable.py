@@ -168,3 +168,13 @@ class AttachmentTable(TableWidget):
 
     def update_selected_row(self, row_index):
         self.selectRow(row_index)
+
+    def disable_selection(self):
+        for i in reversed(range(self.rowCount())):
+            self.item(i, self.column_ids["Name"]).setFlags(
+                self.item(i, self.column_ids["Name"]).flags() & (~Qt.ItemIsUserCheckable))
+
+    def enable_selection(self):
+        for i in reversed(range(self.rowCount())):
+            self.item(i, self.column_ids["Name"]).setFlags(
+                self.item(i, self.column_ids["Name"]).flags() | Qt.ItemIsUserCheckable)

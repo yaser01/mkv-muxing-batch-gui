@@ -230,6 +230,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_groupBox.setCheckable(False)
         self.attachment_clear_button.setEnabled(False)
         self.table.setAcceptDrops(False)
+        self.table.disable_selection()
 
     def enable_editable_widgets(self):
         self.attachment_source_lineEdit.setEnabled(True)
@@ -238,6 +239,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.allow_duplicate_attachments_checkBox.setEnabled(True)
         self.attachment_clear_button.setEnabled(True)
         self.table.setAcceptDrops(True)
+        self.table.enable_selection()
         if GlobalSetting.ATTACHMENT_ENABLED:
             self.attachment_main_groupBox.setCheckable(True)
         else:
