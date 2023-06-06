@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import time
@@ -383,14 +384,15 @@ class MuxSettingTab(QWidget):
             if temp_destination_path == "" or temp_destination_path.isspace():
                 temp_destination_path = "[Empty Path]"
                 raise Exception(
-                    "[WinError 998] Empty path is Not a valid path : " + temp_destination_path)
+                    f"[WinError 998] Empty path is Not a valid path : '{temp_destination_path}'")
             # check if system is windows so path must have # SOME_LETTER:\
             if os.name == 'nt':
                 if temp_destination_path[1:3] != ":\\" and self.destination_path_lineEdit.text()[
-                                                           1:3] != ":/":
-                    raise Exception("[WinError 999] Not a valid path : " + temp_destination_path)
-            makedirs(temp_destination_path, exist_ok=True)
+                                                           1:3] != ":/" and not temp_destination_path.startswith(
+                    "\\\\"):
+                    raise Exception(f"[WinError 999] Not a valid path : '{temp_destination_path}'")
             ## test if i can write into this path:
+            makedirs(temp_destination_path, exist_ok=True)
             test_file_name = str(time.time()) + ".txt"
             test_file_name_absolute = os.path.join(Path(temp_destination_path), Path(test_file_name))
             try:
@@ -412,6 +414,8 @@ class MuxSettingTab(QWidget):
                 error_message = "Enter a valid destination path"
             else:
                 error_message = temp_destination_path + "\nisn't a valid path!"
+            if str(e).find("WinError 999") == -1 and str(e).find("WinError 998") == -1:
+                error_message = str(e)
             invalid_dialog = InvalidPathDialog(error_message=error_message)
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
@@ -426,21 +430,25 @@ class MuxSettingTab(QWidget):
         return True
 
     def check_available_space(self):
-        free_space = shutil.disk_usage(path=GlobalSetting.DESTINATION_FOLDER_PATH).free
-        needed_space = 0
-        for job in self.job_queue_layout.table.data:
-            if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
-                file_size = get_approximate_size_of_output_of_job(job)
-                needed_space += file_size
-        readable_needed_space = get_readable_filesize(needed_space)
-        readable_free_space = get_readable_filesize(free_space)
-        if free_space - needed_space <= 1024:
-            low_space_warning_dialog = NoSpaceWarningDialog(
-                warning_message=f"You need about [{readable_needed_space}] for muxing your files.\nCurrent free space [{readable_free_space}]",
-                window_title="Low Disk Space")
-            low_space_warning_dialog.execute()
-            return low_space_warning_dialog.result == "Muxing"
-        return True
+        try:
+            free_space = shutil.disk_usage(path=GlobalSetting.DESTINATION_FOLDER_PATH).free
+            needed_space = 0
+            for job in self.job_queue_layout.table.data:
+                if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+                    file_size = get_approximate_size_of_output_of_job(job)
+                    needed_space += file_size
+            readable_needed_space = get_readable_filesize(needed_space)
+            readable_free_space = get_readable_filesize(free_space)
+            if free_space - needed_space <= 1024:
+                low_space_warning_dialog = NoSpaceWarningDialog(
+                    warning_message=f"You need about [{readable_needed_space}] for muxing your files.\nCurrent free space [{readable_free_space}]",
+                    window_title="Low Disk Space")
+                low_space_warning_dialog.execute()
+                return low_space_warning_dialog.result == "Muxing"
+            return True
+        except Exception as e:
+            write_to_log_file(e)
+            return True
 
     def setup_tool_tip_hint(self):
         self.only_keep_those_subtitles_multi_choose_comboBox.set_tool_tip_hint()
