@@ -1,6 +1,7 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QPushButton
 
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.VideoTab.Widgets.VideoInfoDialog import VideoInfoDialog
 
@@ -45,3 +46,9 @@ class VideoInfoButton(QPushButton):
         if len(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST) > 0:
             self.video_info_dialog = VideoInfoDialog()
             self.video_info_dialog.show()
+
+    def update_theme_mode_state(self):
+        if self.video_info_dialog is not None:
+            self.video_info_dialog.set_dark_mode(DefaultOptions.Dark_Mode)
+            self.video_info_dialog.resize(self.video_info_dialog.width(), self.video_info_dialog.height() + 1)
+            self.video_info_dialog.resize(self.video_info_dialog.width(), self.video_info_dialog.height() - 1)

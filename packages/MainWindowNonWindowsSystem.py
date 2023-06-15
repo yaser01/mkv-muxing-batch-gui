@@ -1,6 +1,6 @@
 import PySide2
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QMainWindow, QFrame, QVBoxLayout
+from PySide2.QtWidgets import QFrame, QVBoxLayout
 
 from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
@@ -9,6 +9,7 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.TabsManager import TabsManager
 from packages.Widgets.CloseDialogWhileAtLeastOneOptionSelected import CloseDialogWhileAtLeastOneOptionSelected
 from packages.Widgets.CloseDialogWhileMuxingOn import CloseDialogWhileMuxingOn
+from packages.Widgets.MyMainWindow import MyMainWindow
 
 
 def check_if_exit_when_muxing_on():
@@ -23,9 +24,9 @@ def check_if_exit_while_selected_one_option():
     return close_dialog.result == 'Exit'
 
 
-class MainWindowNonWindowsSystem(QMainWindow):
+class MainWindowNonWindowsSystem(MyMainWindow):
     def __init__(self, args, parent=None):
-        super().__init__(parent=parent)
+        super().__init__(args=args, parent=parent)
         self.resize(int(width_factor * 1100), int(height_factor * 635))
         self.setWindowTitle("MKV Muxing Batch GUI v" + str(Version))
         self.setWindowIcon(GlobalIcons.AppIcon)

@@ -1,6 +1,8 @@
 from PySide2 import QtGui, QtCore
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QApplication, QStyle, QPushButton, QHBoxLayout
+     QApplication, QStyle, QPushButton, QHBoxLayout
+
+from packages.Widgets.MyDialog import MyDialog
 
 
 def get_pixmap_from_info_icon():
@@ -24,7 +26,7 @@ def get_pixmap_from_critical_icon():
     return icon.pixmap(size, size)
 
 
-class ConfirmUsingMkvpropedit(QDialog):
+class ConfirmUsingMkvpropedit(MyDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.fast_muxing_button = QPushButton("Fast Muxing")

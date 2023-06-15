@@ -2,7 +2,7 @@ from PySide2 import QtGui, QtCore
 from PySide2.QtCore import Qt, QSize
 from PySide2.QtGui import QPixmap, QFont
 from PySide2.QtWidgets import QLabel, \
-    QDialog, QPushButton, QHBoxLayout, QVBoxLayout
+     QPushButton, QHBoxLayout, QVBoxLayout
 
 from packages.Startup.GlobalFiles import AppIconPath, MKVMERGE_VERSION, MKVPROPEDIT_VERSION
 from packages.Startup.GlobalIcons import AboutIcon
@@ -11,9 +11,10 @@ from packages.Startup.Version import Version
 from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
 from packages.Tabs.SettingTab.Widgets.TelegramLabel import TelegramLabel
 from packages.Tabs.SettingTab.Widgets.TwitterLabel import TwitterLabel
+from packages.Widgets.MyDialog import MyDialog
 
 
-class AboutDialog(QDialog):
+class AboutDialog(MyDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("About MKV Muxing Batch GUI")

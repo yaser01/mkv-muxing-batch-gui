@@ -1,17 +1,18 @@
 from PySide2 import QtGui
 from PySide2.QtCore import Qt, QSize
-from PySide2.QtWidgets import QDialog, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
+from PySide2.QtWidgets import QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
 
 from packages.Startup.GlobalIcons import LeftArrowIcon, RightArrowIcon
 from packages.Startup.PreDefined import AllSubtitlesLanguages
 from packages.Widgets.ListWidget import ListWidget
+from packages.Widgets.MyDialog import MyDialog
 
 
-class LanguagePreferenceDialog(QDialog):
+class LanguagePreferenceDialog(MyDialog):
     def __init__(self, old_favorite, window_title, parent=None):
         super().__init__(parent)
         self.old_favorite = old_favorite
-        self.current_favorite = []
+        self.current_favorite = self.old_favorite.copy()
         self.setWindowTitle(window_title)
         self.selected_language_layout = QVBoxLayout()
         self.available_language_layout = QVBoxLayout()

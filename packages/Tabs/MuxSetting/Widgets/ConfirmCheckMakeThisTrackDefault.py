@@ -1,12 +1,13 @@
 from PySide2 import QtGui, QtCore
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+    QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class ConfirmCheckMakeThisTrackDefault(QDialog):
+class ConfirmCheckMakeThisTrackDefault(MyDialog):
     def __init__(self, track_type, parent=None):
         super().__init__(parent)
         self.yesButton = QPushButton("OK")

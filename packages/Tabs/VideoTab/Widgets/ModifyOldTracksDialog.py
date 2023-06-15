@@ -1,5 +1,5 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QDialog, QHBoxLayout, QPushButton, QVBoxLayout, QLabel
+from PySide2.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QLabel
 
 from packages.Startup.GlobalIcons import InfoIcon
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -7,6 +7,7 @@ from packages.Tabs.GlobalSetting import GlobalSetting, convert_string_integer_to
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTabsManager import ModifyOldTracksTabsManager
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackInfoTable import TrackInfoTable
 from packages.Widgets.InfoDialog import InfoDialog
+from packages.Widgets.MyDialog import MyDialog
 
 
 def show_info_dialog():
@@ -26,7 +27,7 @@ def show_info_dialog():
     info_dialog.execute()
 
 
-class ModifyOldTracksDialog(QDialog):
+class ModifyOldTracksDialog(MyDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Modify Old Tracks")

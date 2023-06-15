@@ -1,12 +1,13 @@
 from PySide2 import QtGui, QtCore
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class CloseDialog(QDialog):
+class CloseDialog(MyDialog):
     """
     CloseDialog class to create an exit dialog with confirmation button
     You can check for result after calling `CloseDialog.execute()`

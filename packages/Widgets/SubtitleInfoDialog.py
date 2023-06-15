@@ -1,16 +1,17 @@
 from PySide2 import QtGui
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
+     QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
     QFormLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
 from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
+from packages.Widgets.MyDialog import MyDialog
 
 
-class SubtitleInfoDialog(QDialog):
+class SubtitleInfoDialog(MyDialog):
     def __init__(self, subtitles_name,
                  subtitles_delay, subtitles_language, subtitles_track_name,
                  subtitles_set_default, subtitles_set_forced

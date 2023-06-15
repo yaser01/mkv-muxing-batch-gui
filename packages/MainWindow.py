@@ -1,14 +1,16 @@
 import PySide2
 from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QMainWindow, QFrame, QVBoxLayout
+from PySide2.QtWidgets import QFrame, QVBoxLayout
 
 from packages.Startup import GlobalIcons
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
 from packages.Startup.Version import Version
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.TabsManager import TabsManager
 from packages.Widgets.CloseDialogWhileAtLeastOneOptionSelected import CloseDialogWhileAtLeastOneOptionSelected
 from packages.Widgets.CloseDialogWhileMuxingOn import CloseDialogWhileMuxingOn
+from packages.Widgets.MyMainWindow import MyMainWindow
 from packages.Widgets.TaskBarProgress import TaskBarProgress
 
 
@@ -30,9 +32,10 @@ def check_if_exit_while_selected_one_option():
         return False
 
 
-class MainWindow(QMainWindow):
+class MainWindow(MyMainWindow):
+
     def __init__(self, args, parent=None):
-        super().__init__(parent=parent)
+        super().__init__(args=args, parent=parent)
         self.resize(int(width_factor * 1160), int(height_factor * 635))
         self.setWindowTitle("MKV Muxing Batch GUI v" + str(Version))
         self.setWindowIcon(GlobalIcons.AppIcon)
@@ -46,6 +49,7 @@ class MainWindow(QMainWindow):
         self.tabs.set_default_directories()
         self.task_bar_progress = TaskBarProgress(window_handle=self.windowHandle())
         self.connect_signals()
+        self.update_theme()
 
     def connect_signals(self):
         self.tabs.currentChanged.connect(self.update_minimum_size)
@@ -53,6 +57,10 @@ class MainWindow(QMainWindow):
         self.tabs.update_task_bar_progress_signal.connect(self.task_bar_progress.update_progress)
         self.tabs.update_task_bar_paused_signal.connect(self.task_bar_progress.pause_progress)
         self.tabs.update_task_bar_clear_signal.connect(self.task_bar_progress.hide_progress)
+        self.tabs.theme_changed_signal.connect(self.update_theme)
+
+    def update_theme(self):
+        self.set_dark_mode(DefaultOptions.Dark_Mode)
 
     def show_window(self):
         self.showNormal()

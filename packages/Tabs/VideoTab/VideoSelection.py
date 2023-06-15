@@ -519,3 +519,4 @@ class VideoSelectionSetting(GlobalSetting):
     def update_theme_mode_state(self):
         self.table.update_theme_mode_state()
         self.video_default_duration_fps_comboBox.update_theme_mode_state()
+        self.video_info_button.update_theme_mode_state()

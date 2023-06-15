@@ -1,13 +1,14 @@
 from PySide2 import QtGui, QtCore
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+    QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class NoSpaceWarningDialog(QDialog):
+class NoSpaceWarningDialog(MyDialog):
     def __init__(self, window_title, warning_message, parent=None):
         super().__init__(parent)
         self.warning_message = warning_message

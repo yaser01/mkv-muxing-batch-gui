@@ -1,9 +1,11 @@
 from PySide2 import QtGui, QtCore
 from PySide2.QtWidgets import QHBoxLayout, \
-    QDialog, QSpinBox, QGridLayout, QLabel, QPushButton, QAbstractSpinBox
+     QSpinBox, QGridLayout, QLabel, QPushButton, QAbstractSpinBox
+
+from packages.Widgets.MyDialog import MyDialog
 
 
-class MoveToDialog(QDialog):
+class MoveToDialog(MyDialog):
     def __init__(self, parent=None, min=1, max=1):
         super().__init__(parent)
         self.message = QLabel()

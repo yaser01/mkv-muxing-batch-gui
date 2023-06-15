@@ -6,7 +6,7 @@ from packages.Startup import GlobalFiles
 
 
 class GreenTikCell(QLabel):
-    def __init__(self,tool_tip):
+    def __init__(self, tool_tip):
         super().__init__()
         self.pixmap = QPixmap(GlobalFiles.GreenTikMarkIconPath)
         self.setAlignment(Qt.AlignCenter)
@@ -14,6 +14,4 @@ class GreenTikCell(QLabel):
 
     def resizeEvent(self, event: PySide2.QtGui.QResizeEvent):
         super().resizeEvent(event)
-        self.setPixmap(self.pixmap.scaled(self.width(), self.height()-5, Qt.KeepAspectRatio))
-
-
+        self.setPixmap(self.pixmap.scaled(self.width(), self.height() - 5, Qt.KeepAspectRatio))

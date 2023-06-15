@@ -30,7 +30,7 @@ class TabsManager(QTabWidget):
     update_task_bar_progress_signal = Signal(int)
     update_task_bar_paused_signal = Signal()
     update_task_bar_clear_signal = Signal()
-
+    theme_changed_signal=Signal()
     def __init__(self):
         super().__init__()
         self.video_tab = VideoSelectionSetting()
@@ -131,6 +131,7 @@ class TabsManager(QTabWidget):
         self.tabs_status[self.tabs_ids["Chapter"]] = new_state
 
     def update_theme_mode_state(self):
+        self.theme_changed_signal.emit()
         self.video_tab.update_theme_mode_state()
         self.subtitle_tab.update_theme_mode_state()
         self.audio_tab.update_theme_mode_state()

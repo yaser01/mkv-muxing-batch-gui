@@ -1,11 +1,12 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QDialog, QHBoxLayout, QPushButton, QVBoxLayout
+from PySide2.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
 
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.VideoTab.Widgets.MediaInfoTreeWidget import MediaInfoTreeWidget
+from packages.Widgets.MyDialog import MyDialog
 
 
-class VideoInfoDialog(QDialog):
+class VideoInfoDialog(MyDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Media Info")

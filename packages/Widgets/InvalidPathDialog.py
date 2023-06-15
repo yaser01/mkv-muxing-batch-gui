@@ -1,13 +1,14 @@
 from PySide2 import QtGui
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class InvalidPathDialog(QDialog):
+class InvalidPathDialog(MyDialog):
     def __init__(self, window_title="Invalid Path", error_message="Please Enter a Valid Path", parent=None):
         super().__init__(parent)
         self.error_message = error_message

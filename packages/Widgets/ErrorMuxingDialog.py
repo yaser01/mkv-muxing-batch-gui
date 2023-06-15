@@ -2,17 +2,18 @@ import webbrowser
 
 from PySide2 import QtGui, QtCore
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
 def click_show_log_file():
     webbrowser.open(GlobalFiles.MuxingLogFilePath)
 
 
-class ErrorMuxingDialog(QDialog):
+class ErrorMuxingDialog(MyDialog):
     def __init__(self, window_title, info_message, parent=None):
         super().__init__(parent)
         self.info_message = info_message

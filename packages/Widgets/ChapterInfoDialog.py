@@ -1,12 +1,13 @@
 from PySide2 import QtGui, QtCore
 from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout, QFormLayout
+     QPushButton, QHBoxLayout, QFormLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class ChapterInfoDialog(QDialog):
+class ChapterInfoDialog(MyDialog):
     def __init__(self, chapter_name="Test", parent=None):
         super().__init__(parent)
         self.window_title = "Chapter Info"
