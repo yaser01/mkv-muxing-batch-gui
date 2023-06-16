@@ -5,7 +5,7 @@ from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
 from packages.Tabs.VideoTab.Widgets.LoadingVideosInfoDialog import LoadingVideosInfoDialog
-from packages.Tabs.VideoTab.Widgets.RefreshFilesButton import RefreshFilesButton
+from packages.Widgets.RefreshFilesButton import RefreshFilesButton
 from packages.Tabs.VideoTab.Widgets.VideoClearButton import VideoClearButton
 from packages.Tabs.VideoTab.Widgets.VideoDefaultDurationFPSComboBox import VideoDefaultDurationFPSComboBox
 from packages.Tabs.VideoTab.Widgets.VideoExtensionsCheckableComboBox import VideoExtensionsCheckableComboBox
@@ -502,10 +502,13 @@ class VideoSelectionSetting(GlobalSetting):
         self.video_extensions_comboBox.setEnabled(True)
         self.video_source_lineEdit.setEnabled(True)
         self.video_source_button.setEnabled(True)
-        self.video_refresh_files_button.setEnabled(True)
         self.video_clear_button.setEnabled(True)
         self.video_default_duration_fps_comboBox.setEnabled(True)
         self.table.setAcceptDrops(True)
+        if not self.is_drag_and_drop:
+            self.video_refresh_files_button.setEnabled(True)
+        else:
+            self.disable_video_refresh_button_cause_drag_and_drop()
         self.table.enable_selection()
 
     def update_is_drag_and_drop(self, new_state):

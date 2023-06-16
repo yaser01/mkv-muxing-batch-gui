@@ -17,6 +17,7 @@ from packages.Tabs.SubtitleTab.Widgets.SubtitleSetForcedCheckBox import Subtitle
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceButton import SubtitleSourceButton
 from packages.Tabs.SubtitleTab.Widgets.SubtitleSourceLineEdit import SubtitleSourceLineEdit
 from packages.Tabs.SubtitleTab.Widgets.SubtitleTrackNameLineEdit import SubtitleTrackNameLineEdit
+from packages.Widgets.RefreshFilesButton import RefreshFilesButton
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
 from packages.Widgets.YesNoDialog import *
@@ -45,6 +46,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_source_lineEdit = SubtitleSourceLineEdit()
         self.subtitle_source_button = SubtitleSourceButton()
         self.subtitle_clear_button = SubtitleClearButton()
+        self.subtitle_refresh_files_button = RefreshFilesButton()
         self.subtitle_extensions_comboBox = SubtitleExtensionsCheckableComboBox()
         self.subtitle_language_comboBox = SubtitleLanguageComboBox(self.tab_index)
         self.subtitle_track_name_lineEdit = SubtitleTrackNameLineEdit(self.tab_index)
@@ -72,6 +74,7 @@ class SubtitleSelectionSetting(QGroupBox):
         # self.subtitle_main_groupBox.toggled.connect(self.activate_tab)
         self.subtitle_source_button.clicked_signal.connect(self.update_folder_path)
         self.subtitle_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        self.subtitle_refresh_files_button.clicked_signal.connect(self.update_folder_path)
         self.subtitle_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.subtitle_extensions_comboBox.close_list.connect(self.check_extension_changes)
         self.subtitle_match_layout.sync_subtitle_files_with_global_files_after_swap_delete_signal.connect(
@@ -129,22 +132,22 @@ class SubtitleSelectionSetting(QGroupBox):
         self.main_layout.addWidget(self.subtitle_source_label, 0, 0)
         self.main_layout.addWidget(self.subtitle_source_lineEdit, 0, 1, 1, 1)
         self.main_layout.addWidget(self.subtitle_clear_button, 0, 2, 1, 1)
-        self.main_layout.addWidget(self.subtitle_source_button, 0, 3)
+        self.main_layout.addWidget(self.subtitle_refresh_files_button, 0, 3, 1, 1)
+        self.main_layout.addWidget(self.subtitle_source_button, 0, 4)
         self.main_layout.addWidget(self.subtitle_extension_label, 1, 0)
-        self.main_layout.addLayout(self.subtitle_options_layout, 1, 1, 1, 3)
+        self.main_layout.addLayout(self.subtitle_options_layout, 1, 1, 1, 4)
         self.main_layout.addWidget(self.subtitle_match_groupBox, 2, 0, 1, -1)
 
     def setup_subtitle_main_groupBox(self):
         self.setLayout(self.main_layout)
-        # self.subtitle_main_groupBox.setTitle("Subtitles")
-        # self.subtitle_main_groupBox.setCheckable(True)
-        # self.subtitle_main_groupBox.setChecked(True)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
             self.subtitle_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_subtitle_files_list()
+            self.subtitle_refresh_files_button.update_current_path(new_path=new_path)
+            self.subtitle_refresh_files_button.setEnabled(True)
         else:
             if self.is_drag_and_drop:
                 self.subtitle_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
@@ -239,6 +242,8 @@ class SubtitleSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
+        self.subtitle_refresh_files_button.update_current_path(new_path="")
+        self.subtitle_refresh_files_button.setEnabled(True)
         self.subtitle_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.show_subtitle_files_list()
@@ -328,6 +333,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.setCheckable(False)
         self.subtitle_clear_button.setEnabled(False)
         self.subtitle_mux_order_widget.setEnabled(False)
+        self.subtitle_refresh_files_button.setEnabled(False)
         self.subtitle_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -341,6 +347,10 @@ class SubtitleSelectionSetting(QGroupBox):
         self.subtitle_set_forced_checkBox.setEnabled(True)
         self.subtitle_clear_button.setEnabled(True)
         self.subtitle_mux_order_widget.setEnabled(True)
+        if not self.is_drag_and_drop:
+            self.subtitle_refresh_files_button.setEnabled(True)
+        else:
+            self.disable_subtitle_refresh_button_cause_drag_and_drop()
         self.subtitle_match_layout.enable_editable_widgets()
 
     def sync_subtitle_files_with_global_files(self):
@@ -396,6 +406,11 @@ class SubtitleSelectionSetting(QGroupBox):
             warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
+        self.disable_subtitle_refresh_button_cause_drag_and_drop()
+
+    def disable_subtitle_refresh_button_cause_drag_and_drop(self):
+        self.subtitle_refresh_files_button.setEnabled(False)
+        self.subtitle_refresh_files_button.setToolTip("Disabled due to Drag/Drop mode")
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state

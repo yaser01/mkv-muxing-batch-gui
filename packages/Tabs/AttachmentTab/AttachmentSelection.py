@@ -9,6 +9,7 @@ from packages.Tabs.AttachmentTab.Widgets.AttachmentSourceLineEdit import Attachm
 from packages.Tabs.AttachmentTab.Widgets.AttachmentTable import AttachmentTable
 from packages.Tabs.AttachmentTab.Widgets.AttachmentsTotalSizeValueLabel import AttachmentsTotalSizeValueLabel
 from packages.Tabs.AttachmentTab.Widgets.DiscardOldAttachmentsCheckBox import DiscardOldAttachmentsCheckBox
+from packages.Widgets.RefreshFilesButton import RefreshFilesButton
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
@@ -47,6 +48,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_source_lineEdit = AttachmentSourceLineEdit()
         self.attachment_clear_button = AttachmentClearButton()
         self.attachment_source_button = AttachmentSourceButton()
+        self.attachment_refresh_files_button = RefreshFilesButton()
         self.discard_old_attachments_checkBox = DiscardOldAttachmentsCheckBox()
         self.allow_duplicate_attachments_checkBox = AllowDuplicateAttachmentsCheckBox()
         self.table = AttachmentTable()
@@ -82,9 +84,10 @@ class AttachmentSelectionSetting(GlobalSetting):
         if new_path != "":
             self.attachment_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
-
             self.update_total_size()
             self.show_files_list()
+            self.attachment_refresh_files_button.update_current_path(new_path=new_path)
+            self.attachment_refresh_files_button.setEnabled(True)
         else:
             if self.is_drag_and_drop:
                 self.attachment_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
@@ -162,7 +165,8 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_layout.addWidget(self.attachment_source_label, 0, 0)
         self.attachment_main_layout.addWidget(self.attachment_source_lineEdit, 0, 1, 1, 80)
         self.attachment_main_layout.addWidget(self.attachment_clear_button, 0, 81, 1, 1)
-        self.attachment_main_layout.addWidget(self.attachment_source_button, 0, 82, 1, 1)
+        self.attachment_main_layout.addWidget(self.attachment_refresh_files_button, 0, 82, 1, 1)
+        self.attachment_main_layout.addWidget(self.attachment_source_button, 0, 83, 1, 1)
         self.attachment_main_layout.addWidget(self.attachment_total_size_label, 1, 0)
         self.attachment_main_layout.addWidget(self.attachment_total_size_value_label, 1, 1)
         self.attachment_main_layout.addLayout(self.attachments_options_layout, 1, 39, 1, -1,
@@ -174,6 +178,8 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_size_list = []
+        self.attachment_refresh_files_button.update_current_path(new_path="")
+        self.attachment_refresh_files_button.setEnabled(True)
         self.attachment_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
         self.files_checked_list = []
@@ -197,6 +203,7 @@ class AttachmentSelectionSetting(GlobalSetting):
     def connect_signals(self):
         self.attachment_source_button.clicked_signal.connect(self.update_folder_path)
         self.attachment_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        self.attachment_refresh_files_button.clicked_signal.connect(self.update_folder_path)
         self.attachment_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.attachment_main_groupBox.toggled.connect(self.activate_tab)
         self.tab_clicked_signal.connect(self.tab_clicked)
@@ -227,8 +234,10 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_source_button.setEnabled(False)
         self.discard_old_attachments_checkBox.setEnabled(False)
         self.allow_duplicate_attachments_checkBox.setEnabled(False)
-        self.attachment_main_groupBox.setCheckable(False)
         self.attachment_clear_button.setEnabled(False)
+        self.attachment_refresh_files_button.setEnabled(False)
+        self.attachment_main_groupBox.setCheckable(False)
+
         self.table.setAcceptDrops(False)
         self.table.disable_selection()
 
@@ -240,6 +249,10 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_clear_button.setEnabled(True)
         self.table.setAcceptDrops(True)
         self.table.enable_selection()
+        if not self.is_drag_and_drop:
+            self.attachment_refresh_files_button.setEnabled(True)
+        else:
+            self.disable_attachment_refresh_button_cause_drag_and_drop()
         if GlobalSetting.ATTACHMENT_ENABLED:
             self.attachment_main_groupBox.setCheckable(True)
         else:
@@ -309,6 +322,11 @@ class AttachmentSelectionSetting(GlobalSetting):
             warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
+        self.disable_attachment_refresh_button_cause_drag_and_drop()
+
+    def disable_attachment_refresh_button_cause_drag_and_drop(self):
+        self.attachment_refresh_files_button.setEnabled(False)
+        self.attachment_refresh_files_button.setToolTip("Disabled due to Drag/Drop mode")
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state

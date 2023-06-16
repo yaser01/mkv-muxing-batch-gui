@@ -5,7 +5,6 @@ from PySide2.QtWidgets import QPushButton, QFileDialog
 
 from packages.Startup import GlobalIcons
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.VideoTab.Widgets.ReloadVideoFilesDialog import ReloadVideoFilesDialog
 
 
 class RefreshFilesButton(QPushButton):
@@ -29,6 +28,7 @@ class RefreshFilesButton(QPushButton):
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
+            self.hint_when_enabled = "Refresh Files"
             self.setToolTip(self.hint_when_enabled)
 
     def update_current_path(self, new_path):
