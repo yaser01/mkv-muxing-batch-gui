@@ -79,14 +79,14 @@ class TabsManager(QTabWidget):
         self.subtitle_tab.activation_signal.connect(self.change_subtitle_activated_state)
         self.audio_tab.activation_signal.connect(self.change_audio_activated_state)
         self.chapter_tab.activation_signal.connect(self.change_chapter_activated_state)
-        self.mux_setting_tab.start_muxing_signal.connect(self.tt)
+        self.mux_setting_tab.start_muxing_signal.connect(self.start_muxing)
         self.mux_setting_tab.update_task_bar_progress_signal.connect(self.update_task_bar_progress_signal.emit)
         self.mux_setting_tab.update_task_bar_paused_signal.connect(self.update_task_bar_paused_signal.emit)
         self.mux_setting_tab.update_task_bar_clear_signal.connect(self.update_task_bar_clear_signal.emit)
         self.currentChanged.connect(self.current_tab_changed)
         self.theme_button.dark_mode_updated_signal.connect(self.update_theme_mode_state)
 
-    def tt(self):
+    def start_muxing(self):
         self.task_bar_start_muxing_signal.emit()
 
     def setup_tabs_theme(self):
