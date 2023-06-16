@@ -99,6 +99,11 @@ def get_file_name_with_mkv_extension(file_name):
 
 
 # noinspection PyUnresolvedReferences
+def change_file_extension_to_mkv_with_random_suffix(file_name):
+    file_extension_start_index = file_name.rfind(".")
+    new_file_name_with_mkv_extension = file_name[
+                                       :file_extension_start_index] + "#" + GlobalSetting.RANDOM_OUTPUT_SUFFIX + ".mkv "
+    return new_file_name_with_mkv_extension
 
 
 def set_is_job_crc_required(new_job):
@@ -679,7 +684,7 @@ class JobQueueTable(TableWidget):
             return os.path.join(folder_path, output_video_name)
 
     def get_output_file_name_folder_path_absolute(self, job_index):
-        if self.data[job_index].used_mkvpropedit:
+        if self.data[job_index].used_mkvpropedit or GlobalSetting.OVERWRITE_SOURCE_FILES:
             return os.path.dirname(self.data[job_index].video_name_absolute)
 
         else:
@@ -698,6 +703,17 @@ class JobQueueTable(TableWidget):
             self.job_status_widget.update_progress(new_progress=new_progress)
         except:
             pass
+
+    def delete_source_file_if_overwritten_enabled(self, job_index):
+        if GlobalSetting.OVERWRITE_SOURCE_FILES and not self.data[job_index].used_mkvpropedit:
+            os.remove(self.data[job_index].video_name_absolute)
+            folder_path = os.path.dirname(self.data[job_index].video_name_absolute)
+            output_video_name = Path(change_file_extension_to_mkv_with_random_suffix(self.data[job_index].video_name))
+            output_video_name_absolute = os.path.join(folder_path, output_video_name)
+            original_output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+            output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
+            original_file_name_absolute_path = os.path.join(output_file_name_folder_path_absolute, original_output_video_name)
+            rename_file(output_video_name_absolute, original_file_name_absolute_path)
 
     def rename_output_file_if_needed(self, job_index):
         if self.data[job_index].is_crc_calculating_required:
@@ -732,6 +748,7 @@ class JobQueueTable(TableWidget):
         self.number_of_done_jobs += 1
         self.increase_number_of_done_jobs_signal.emit()
         self.set_job_status_ok(row_index=job_index)
+        self.delete_source_file_if_overwritten_enabled(job_index=job_index)
         self.rename_output_file_if_needed(job_index=job_index)
         self.set_row_value_size_after_muxing(self.data[job_index], job_index)
 

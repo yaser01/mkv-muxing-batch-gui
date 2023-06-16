@@ -4,12 +4,19 @@ from os.path import getsize
 
 from PySide2.QtCore import Signal, QObject, QThread
 
-from packages.Tabs.GlobalSetting import write_to_log_file
+from packages.Tabs.GlobalSetting import write_to_log_file, GlobalSetting
 
 
 def get_file_name_with_mkv_extension(file_name):
     file_extension_start_index = file_name.rfind(".")
     new_file_name_with_mkv_extension = file_name[:file_extension_start_index] + ".mkv"
+    return new_file_name_with_mkv_extension
+
+
+def get_file_name_extension_to_mkv_with_random_suffix(file_name):
+    file_extension_start_index = file_name.rfind(".")
+    new_file_name_with_mkv_extension = file_name[
+                                       :file_extension_start_index] + "#" + GlobalSetting.RANDOM_OUTPUT_SUFFIX + ".mkv "
     return new_file_name_with_mkv_extension
 
 
@@ -30,7 +37,10 @@ class CalculateCRCProcessWorker(QObject):
         try:
             while not self.stop:
                 if not self.wait:
-                    file_name = get_file_name_with_mkv_extension(self.file_name)
+                    if GlobalSetting.OVERWRITE_SOURCE_FILES:
+                        file_name = get_file_name_extension_to_mkv_with_random_suffix(self.file_name)
+                    else:
+                        file_name = get_file_name_with_mkv_extension(self.file_name)
                     file_size = getsize(file_name)
                     with open(file_name, "rb") as f:
                         checksum = 0

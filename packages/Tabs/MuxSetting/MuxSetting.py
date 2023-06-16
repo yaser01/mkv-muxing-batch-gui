@@ -17,6 +17,7 @@ from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file, \
     get_readable_filesize
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
+from packages.Tabs.MuxSetting.Widgets.ConfirmUsingMkvpropedit import ConfirmUsingMkvpropedit
 from packages.Tabs.MuxSetting.Widgets.ControlQueueButton import ControlQueueButton
 from packages.Tabs.MuxSetting.Widgets.JobQueueLayout import JobQueueLayout
 from packages.Tabs.MuxSetting.Widgets.MakeThisAudioDefaultCheckBox import MakeThisAudioDefaultCheckBox
@@ -25,6 +26,7 @@ from packages.Tabs.MuxSetting.Widgets.MakeThisTrackDefaultComboBox import MakeTh
 from packages.Tabs.MuxSetting.Widgets.NoSpaceWarningDialog import NoSpaceWarningDialog
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseAudiosCheckBox import OnlyKeepThoseAudiosCheckBox
 from packages.Tabs.MuxSetting.Widgets.OnlyKeepThoseSubtitlesCheckBox import OnlyKeepThoseSubtitlesCheckBox
+from packages.Tabs.MuxSetting.Widgets.OverwriteFilesDialog import OverwriteFilesDialog
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
 from packages.Widgets.FileNotFoundDialog import FileNotFoundDialog
@@ -90,6 +92,37 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
             return True
 
 
+def check_if_mkvpropedit_can_be_used():
+    if check_is_there_subtitle_to_mux() or check_is_there_audio_to_mux() or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
+            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
+            (not GlobalSetting.VIDEO_SOURCE_MKV_ONLY) or \
+            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"] or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED or not GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
+        return False
+    return True
+
+
+def check_if_mkvpropedit_wanted_to_be_used():
+    if check_if_mkvpropedit_can_be_used():
+        confirm_dialog = ConfirmUsingMkvpropedit()
+        confirm_dialog.execute()
+        if confirm_dialog.result == "mkvpropedit":
+            GlobalSetting.USE_MKVPROPEDIT = True
+            return "Yes"
+        elif confirm_dialog.result == "mkvmerge":
+            GlobalSetting.USE_MKVPROPEDIT = False
+            return "No"
+        else:
+            GlobalSetting.USE_MKVPROPEDIT = False
+            return "Cancel"
+    return "No"
+
+
 def check_if_all_input_videos_are_found():
     for video_file in GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST:
         if not Path.is_file(Path(video_file)):
@@ -102,14 +135,15 @@ def check_if_all_input_videos_are_found():
 
 def check_if_want_to_keep_log_file():
     if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
-        try:
-            copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
-        except Exception as e:
-            write_to_log_file(e)
-            error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
-                                             info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
-                                                          "permissions on Destination folder")
-            error_dialog.execute()
+        if not GlobalSetting.OVERWRITE_SOURCE_FILES:
+            try:
+                copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
+            except Exception as e:
+                write_to_log_file(e)
+                error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
+                                                 info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
+                                                              "permissions on Destination folder")
+                error_dialog.execute()
 
 
 def get_approximate_size_of_output_of_job(job):
@@ -251,11 +285,18 @@ class MuxSettingTab(QWidget):
         self.mux_setting_layout.addLayout(self.mux_tools_layout_second_row, 2, 1)
 
     def setup_mux_tools_layout_first_row(self):
+        self.h1 = QHBoxLayout()
+        self.l1 = QLineEdit()
+        self.l1.setPlaceholderText("New Suffix")
+        self.c1 = QCheckBox("")
+        self.h1.addWidget(self.c1)
+        self.h1.addWidget(self.l1)
         self.mux_tools_layout_first_row.addWidget(self.only_keep_those_audios_multi_choose_comboBox, 2)
         self.mux_tools_layout_first_row.addWidget(self.make_this_audio_default_checkBox, 1)
         self.mux_tools_layout_first_row.addWidget(self.make_this_audio_default_comboBox, 2)
         self.mux_tools_layout_first_row.addWidget(self.add_crc_checksum_checkBox)
         self.mux_tools_layout_first_row.addWidget(self.abort_on_errors_checkBox, 1)
+        # self.mux_tools_layout_first_row.addLayout(self.h1, 2)
         self.mux_tools_layout_first_row.addWidget(self.clear_job_queue_button, stretch=0)
 
     def setup_mux_tools_layout_second_row(self):
@@ -296,7 +337,8 @@ class MuxSettingTab(QWidget):
         self.destination_path_button.setIcon(GlobalIcons.SelectFolderIcon)
 
     def setup_destination_path_lineEdit(self):
-        self.destination_path_lineEdit.setPlaceholderText("Enter Destination Folder Path")
+        self.destination_path_lineEdit.setPlaceholderText("Enter Destination Folder Path [Leave Empty For Overwrite "
+                                                          "Source Files]")
         self.destination_path_lineEdit.setClearButtonEnabled(True)
 
     def setup_destination_path_label(self):
@@ -379,12 +421,18 @@ class MuxSettingTab(QWidget):
             GlobalSetting.DESTINATION_FOLDER_PATH = self.destination_path_lineEdit.text()
 
     def check_destination_path(self):
+        GlobalSetting.OVERWRITE_SOURCE_FILES = False
         temp_destination_path = self.destination_path_lineEdit.text()
         try:
             if temp_destination_path == "" or temp_destination_path.isspace():
-                temp_destination_path = "[Empty Path]"
-                raise Exception(
-                    f"[WinError 998] Empty path is Not a valid path : '{temp_destination_path}'")
+                overwrite_dialog = OverwriteFilesDialog()
+                overwrite_dialog.execute()
+                if overwrite_dialog.result == "Overwrite":
+                    GlobalSetting.OVERWRITE_SOURCE_FILES = True
+                    GlobalSetting.RANDOM_OUTPUT_SUFFIX = str(int(time.time()))
+                    return True
+                else:
+                    return False
             # check if system is windows so path must have # SOME_LETTER:\
             if os.name == 'nt':
                 if temp_destination_path[1:3] != ":\\" and self.destination_path_lineEdit.text()[
@@ -430,25 +478,74 @@ class MuxSettingTab(QWidget):
         return True
 
     def check_available_space(self):
-        try:
-            free_space = shutil.disk_usage(path=GlobalSetting.DESTINATION_FOLDER_PATH).free
-            needed_space = 0
-            for job in self.job_queue_layout.table.data:
-                if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
-                    file_size = get_approximate_size_of_output_of_job(job)
-                    needed_space += file_size
-            readable_needed_space = get_readable_filesize(needed_space)
-            readable_free_space = get_readable_filesize(free_space)
-            if free_space - needed_space <= 1024:
-                low_space_warning_dialog = NoSpaceWarningDialog(
-                    warning_message=f"You need about [{readable_needed_space}] for muxing your files.\nCurrent free space [{readable_free_space}]",
-                    window_title="Low Disk Space")
-                low_space_warning_dialog.execute()
-                return low_space_warning_dialog.result == "Muxing"
-            return True
-        except Exception as e:
-            write_to_log_file(e)
-            return True
+        if GlobalSetting.USE_MKVPROPEDIT:
+            try:
+                for job in self.job_queue_layout.table.data:
+                    if not job.done or (
+                            job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+                        file_size = 0
+                        for attachment in GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST:
+                            file_size += os.path.getsize(attachment)
+                        if job.chapter_name_absolute != "":
+                            file_size += os.path.getsize(job.chapter_name_absolute)
+                        needed_space = file_size
+                        free_space = shutil.disk_usage(path=os.path.dirname(job.video_name_absolute)).free
+                        readable_needed_space = get_readable_filesize(needed_space)
+                        readable_free_space = get_readable_filesize(free_space)
+                        if free_space - needed_space <= 1024:
+                            low_space_warning_dialog = NoSpaceWarningDialog(
+                                warning_message=f"You need about [{readable_needed_space}] for muxing file: "
+                                                f"{job.video_name}.\nCurrent free space [{readable_free_space}]",
+                                window_title="Low Disk Space")
+                            low_space_warning_dialog.execute()
+                            if low_space_warning_dialog.result != "Muxing":
+                                return False
+                return True
+            except Exception as e:
+                write_to_log_file(e)
+                return True
+        if GlobalSetting.OVERWRITE_SOURCE_FILES:
+            try:
+                for job in self.job_queue_layout.table.data:
+                    if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+                        file_size = get_approximate_size_of_output_of_job(job)
+                        needed_space = file_size
+                        free_space = shutil.disk_usage(path=os.path.dirname(job.video_name_absolute)).free
+                        readable_needed_space = get_readable_filesize(needed_space)
+                        readable_free_space = get_readable_filesize(free_space)
+                        if free_space - needed_space <= 1024:
+                            low_space_warning_dialog = NoSpaceWarningDialog(
+                                warning_message=f"You need about [{readable_needed_space}] for muxing file: "
+                                                f"{job.video_name}.\nCurrent free space [{readable_free_space}]",
+                                window_title="Low Disk Space")
+                            low_space_warning_dialog.execute()
+                            if low_space_warning_dialog.result != "Muxing":
+                                return False
+                return True
+            except Exception as e:
+                write_to_log_file(e)
+                return True
+        else:
+            try:
+                free_space = shutil.disk_usage(path=GlobalSetting.DESTINATION_FOLDER_PATH).free
+                needed_space = 0
+                for job in self.job_queue_layout.table.data:
+                    if not job.done or (
+                            job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+                        file_size = get_approximate_size_of_output_of_job(job)
+                        needed_space += file_size
+                readable_needed_space = get_readable_filesize(needed_space)
+                readable_free_space = get_readable_filesize(free_space)
+                if free_space - needed_space <= 1024:
+                    low_space_warning_dialog = NoSpaceWarningDialog(
+                        warning_message=f"You need about [{readable_needed_space}] for muxing your files.\nCurrent free space [{readable_free_space}]",
+                        window_title="Low Disk Space")
+                    low_space_warning_dialog.execute()
+                    return low_space_warning_dialog.result == "Muxing"
+                return True
+            except Exception as e:
+                write_to_log_file(e)
+                return True
 
     def setup_tool_tip_hint(self):
         self.only_keep_those_subtitles_multi_choose_comboBox.set_tool_tip_hint()
@@ -644,23 +741,28 @@ class MuxSettingTab(QWidget):
         GlobalSetting.MUX_SETTING_KEEP_LOG_FILE = bool(state)
 
     def start_multiplexing_button_clicked(self):
-        destination_path_valid = self.check_destination_path()
-        if not destination_path_valid:
+        mkvpropedit_wanted_to_be_used = check_if_mkvpropedit_wanted_to_be_used()
+        if mkvpropedit_wanted_to_be_used == "Cancel":
+            return
+        if not GlobalSetting.USE_MKVPROPEDIT:
+            destination_path_valid = self.check_destination_path()
+            if not destination_path_valid:
+                return
+        confirm_muxing = check_if_at_least_one_muxing_setting_has_been_selected()
+        if not confirm_muxing:
             return
         is_there_enough_space = self.check_available_space()
         if not is_there_enough_space:
             return
-        confirm_muxing = check_if_at_least_one_muxing_setting_has_been_selected()
-        if not confirm_muxing:
-            return
         all_input_videos_are_found = check_if_all_input_videos_are_found()
-        if all_input_videos_are_found:
-            self.setup_log_file()
-            self.control_queue_button.set_state_pause_multiplexing()
-            self.disable_muxing_setting()
-            self.job_queue_layout.start_muxing()
-            self.start_muxing_signal.emit()
-            self.clear_job_queue_button.setDisabled(True)
+        if not all_input_videos_are_found:
+            return
+        self.setup_log_file()
+        self.control_queue_button.set_state_pause_multiplexing()
+        self.disable_muxing_setting()
+        self.job_queue_layout.start_muxing()
+        self.start_muxing_signal.emit()
+        self.clear_job_queue_button.setDisabled(True)
 
     def pause_multiplexing_button_clicked(self):
         self.job_queue_layout.pause_muxing()

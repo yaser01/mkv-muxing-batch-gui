@@ -132,22 +132,10 @@ class StartMuxingWorker(QObject):
                 self.job_started_signal.emit(self.current_job)
                 self.start_mkvmerge_muxing()
             else:
-                if check_if_mkvpropedit_good():
-                    self.mkvpropedit_good_signal.emit()
-                    self.waiting_for_mkvpropedit_confirm = True
-                    while self.waiting_for_mkvpropedit_confirm:
-                        time.sleep(0.05)
-                    if self.use_mkvpropedit:
-                        self.always_use_mkvpropedit = True
-                        self.job_started_signal.emit(self.current_job)
-                        self.start_mkvpropedit_muxing()
-                    elif self.use_mkvmerge:
-                        self.always_use_mkvmerge = True
-                        self.job_started_signal.emit(self.current_job)
-                        self.start_mkvmerge_muxing()
-                    else:
-                        self.stop_all_threads()
-                        self.cancel_signal.emit()
+                if GlobalSetting.USE_MKVPROPEDIT:
+                    self.always_use_mkvpropedit = True
+                    self.job_started_signal.emit(self.current_job)
+                    self.start_mkvpropedit_muxing()
                 else:
                     self.always_use_mkvmerge = True
                     self.job_started_signal.emit(self.current_job)
@@ -179,7 +167,7 @@ class StartMuxingWorker(QObject):
 
     def check_if_crc_calculating_needed(self):
         if self.data[self.current_job].is_crc_calculating_required:
-            if self.data[self.current_job].used_mkvpropedit:
+            if self.data[self.current_job].used_mkvpropedit or GlobalSetting.OVERWRITE_SOURCE_FILES:
                 folder_path = os.path.dirname(self.data[self.current_job].video_name_absolute)
             else:
                 folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)

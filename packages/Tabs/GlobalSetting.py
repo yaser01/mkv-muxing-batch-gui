@@ -240,7 +240,7 @@ class GlobalSetting(QWidget):
     VIDEO_FILES_LIST = []
     VIDEO_FILES_SIZE_LIST = []
     VIDEO_FILES_ABSOLUTE_PATH_LIST = []
-    VIDEO_SOURCE_MKV_ONLY = []
+    VIDEO_SOURCE_MKV_ONLY = False
     VIDEO_DEFAULT_DURATION_FPS = ""
     VIDEO_OLD_TRACKS_VIDEOS_INFO: List[List[SingleOldTrackData]] = []
     VIDEO_OLD_TRACKS_AUDIOS_INFO: List[List[SingleOldTrackData]] = []
@@ -325,6 +325,10 @@ class GlobalSetting(QWidget):
     MUX_SETTING_REMOVE_OLD_CRC = False
 
     DESTINATION_FOLDER_PATH = ""
+    OVERWRITE_SOURCE_FILES = False
+    RANDOM_OUTPUT_SUFFIX = ""
+    USE_MKVPROPEDIT = False
+
     JOB_QUEUE_EMPTY = True
     JOB_QUEUE_FINISHED = False
     MUXING_ON = False

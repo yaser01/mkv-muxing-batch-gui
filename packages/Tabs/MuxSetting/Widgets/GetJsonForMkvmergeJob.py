@@ -48,6 +48,13 @@ def change_file_extension_to_mkv(file_name):
     return new_file_name_with_mkv_extension
 
 
+def change_file_extension_to_mkv_with_random_suffix(file_name):
+    file_extension_start_index = file_name.rfind(".")
+    new_file_name_with_mkv_extension = file_name[
+                                       :file_extension_start_index] + "#" + GlobalSetting.RANDOM_OUTPUT_SUFFIX + ".mkv "
+    return new_file_name_with_mkv_extension
+
+
 def check_type_of_track_chosen(track):
     value = ""
     left_bracket_index = track.find("[")
@@ -895,9 +902,14 @@ class GetJsonForMkvmergeJob:
 
     # noinspection PyListCreation
     def setup_output_video_command(self):
-        folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)
-        output_video_name = Path(change_file_extension_to_mkv(self.job.video_name))
-        output_video_name_absolute = os.path.join(folder_path, output_video_name)
+        if GlobalSetting.OVERWRITE_SOURCE_FILES:
+            folder_path = os.path.dirname(self.job.video_name_absolute)
+            output_video_name = Path(change_file_extension_to_mkv_with_random_suffix(self.job.video_name))
+            output_video_name_absolute = os.path.join(folder_path, output_video_name)
+        else:
+            folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)
+            output_video_name = Path(change_file_extension_to_mkv(self.job.video_name))
+            output_video_name_absolute = os.path.join(folder_path, output_video_name)
 
         output_video_commands_list = []
         output_video_commands_list.append(add_json_line("--output"))
