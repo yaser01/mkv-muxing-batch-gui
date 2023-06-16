@@ -578,26 +578,7 @@ class MuxSettingTab(QWidget):
 
     def setup_enable_options_based_on_global_state(self):
         if GlobalSetting.JOB_QUEUE_EMPTY:
-            if not GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
-                self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
-                self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
-                self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
-                self.make_this_subtitle_default_checkBox.setCheckState(Qt.Unchecked)
-
-                self.only_keep_those_audios_checkBox.setEnabled(False)
-                self.only_keep_those_subtitles_checkBox.setEnabled(False)
-                self.make_this_audio_default_checkBox.setEnabled(False)
-                self.make_this_subtitle_default_checkBox.setEnabled(False)
-                disable_reason = "Only works when video files are Mkv only"
-                self.only_keep_those_audios_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_audio_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_audio_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.only_keep_those_audios_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-                self.only_keep_those_subtitles_multi_choose_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
-            elif GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED or GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
+            if GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED or GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
                 if GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
                     disable_reason = "Because you have modified some subtitle tracks in <b>Modify Old Tracks</b> " \
                                      "option in Video Tab "
