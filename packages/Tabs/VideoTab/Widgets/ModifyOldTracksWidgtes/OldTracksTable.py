@@ -251,6 +251,8 @@ class OldTracksTable(TableWidget):
                 self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemIsEditable)
 
     def restore_defaults(self):
+        if self.rowCount() == 0:
+            return
         for row_id, track_id in enumerate(self.original_setting.keys(), start=0):
             row_id = self.original_setting[track_id].order
             is_enabled = self.original_setting[track_id].is_enabled
