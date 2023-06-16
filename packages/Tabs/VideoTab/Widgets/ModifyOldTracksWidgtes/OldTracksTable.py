@@ -254,22 +254,19 @@ class OldTracksTable(TableWidget):
         if self.rowCount() == 0:
             return
         for row_id, track_id in enumerate(self.original_setting.keys(), start=0):
-            row_id = self.original_setting[track_id].order
-            is_enabled = self.original_setting[track_id].is_enabled
-            is_default = self.original_setting[track_id].is_default
-            is_forced = self.original_setting[track_id].is_forced
+            new_row_id = self.original_setting[track_id].order
+            is_enabled_state = self.original_setting[track_id].is_enabled
+            is_default_state = self.original_setting[track_id].is_default
+            is_forced_state = self.original_setting[track_id].is_forced
             track_name = self.original_setting[track_id].track_name
             language = self.original_setting[track_id].language
-            self.set_row_value_id(track_id, row_id)
-            self.cellWidget(row_id, self.column_ids.Enable).check_box.setCheckState(
-                convert_check_state_int_to_check_state(is_enabled))
-            self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setCheckState(
-                convert_check_state_int_to_check_state(is_default))
-            self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setCheckState(
-                convert_check_state_int_to_check_state(is_forced))
-            self.item(row_id, self.column_ids.Track_Name).setText(track_name)
+            self.set_row_value_id(track_id, new_row_id)
+            self.set_row_value_is_enabled(is_enabled_state, new_row_id)
+            self.set_row_value_is_default(is_default_state, new_row_id)
+            self.set_row_value_is_forced(is_forced_state, new_row_id)
+            self.set_row_value_track_name(track_name, new_row_id)
             self.set_row_value_language(language, row_id)
-            self.update_state_of_row(row_id, is_enabled)
+            self.update_state_of_row(row_id, is_enabled_state)
         self.update_widget()
         self.resize_track_name_column_to_fit_content()
         self.selectRow(0)
