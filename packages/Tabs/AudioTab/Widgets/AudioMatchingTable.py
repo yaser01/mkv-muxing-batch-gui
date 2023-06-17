@@ -38,6 +38,7 @@ class AudioMatchingTable(TableFixedHeaderWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         for i in range(len(files_list)):
             item = QTableWidgetItem(" " + files_list[i])
+            item.setToolTip(files_list[i])
             self.table.setItem(i, 0, item)
             item = QTableWidgetItem(str(i + 1))
             item.setTextAlignment(Qt.AlignCenter)
@@ -50,6 +51,7 @@ class AudioMatchingTable(TableFixedHeaderWidget):
         for i in range(len(files_list)):
             if files_list[i] != self.current_files_list[i]:
                 item = QTableWidgetItem(" " + files_list[i])
+                item.setToolTip(files_list[i])
                 self.table.setItem(i, 0, item)
                 item = QTableWidgetItem(str(i + 1))
                 item.setTextAlignment(Qt.AlignCenter)

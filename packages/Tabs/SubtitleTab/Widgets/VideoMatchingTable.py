@@ -29,6 +29,7 @@ class VideoMatchingTable(TableFixedHeaderWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         for i in range(len(video_file_list)):
             item = QTableWidgetItem(video_file_list[i])
+            item.setToolTip(video_file_list[i])
             self.table.setItem(i, 0, item)
             item = QTableWidgetItem(str(i + 1))
             item.setTextAlignment(Qt.AlignCenter)
