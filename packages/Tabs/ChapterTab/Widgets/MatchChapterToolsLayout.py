@@ -12,14 +12,16 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 def update_global_chapter_files_list_order_to_top(index_to_move):
-    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
-    GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[0]
-    GlobalSetting.CHAPTER_FILES_LIST[0] = temp_for_swap
+    while index_to_move > 0:
+        temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
+        GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[index_to_move - 1]
+        GlobalSetting.CHAPTER_FILES_LIST[index_to_move - 1] = temp_for_swap
 
-    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
-    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = \
-        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[0]
-    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[0] = temp_for_swap
+        temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[
+            index_to_move - 1]
+        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move - 1] = temp_for_swap
+        index_to_move -= 1
 
 
 def update_global_chapter_files_list_order_to_up(index_to_move):
@@ -58,15 +60,16 @@ def update_global_chapter_files_list_order_to_down(index_to_move):
 
 
 def update_global_chapter_files_list_order_to_bottom(index_to_move):
-    index_last_file = len(GlobalSetting.CHAPTER_FILES_LIST) - 1
-    temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
-    GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[index_last_file]
-    GlobalSetting.CHAPTER_FILES_LIST[index_last_file] = temp_for_swap
+    while index_to_move < len(GlobalSetting.CHAPTER_FILES_LIST) - 1:
+        temp_for_swap = GlobalSetting.CHAPTER_FILES_LIST[index_to_move]
+        GlobalSetting.CHAPTER_FILES_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_LIST[index_to_move + 1]
+        GlobalSetting.CHAPTER_FILES_LIST[index_to_move + 1] = temp_for_swap
 
-    temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
-    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[
-        index_last_file]
-    GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_last_file] = temp_for_swap
+        temp_for_swap = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move]
+        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move] = GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[
+            index_to_move + 1]
+        GlobalSetting.CHAPTER_FILES_ABSOLUTE_PATH_LIST[index_to_move + 1] = temp_for_swap
+        index_to_move += 1
 
 
 class MatchChapterToolsLayout(QVBoxLayout):
