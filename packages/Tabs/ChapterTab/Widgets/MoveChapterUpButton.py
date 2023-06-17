@@ -2,6 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
+from packages.Startup.DefaultOptions import DefaultOptions
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -18,6 +19,7 @@ class MoveChapterUpButton(QPushButton):
         self.setIcon(GlobalIcons.UpLightIcon)
         self.setup_tool_tip_hint()
         self.clicked.connect(self.clicked_button)
+        self.dark_mode_applied = False
 
     def clicked_button(self):
         current_index = self.current_index
@@ -54,3 +56,12 @@ class MoveChapterUpButton(QPushButton):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        if DefaultOptions.Dark_Mode and not self.dark_mode_applied:
+            self.setIcon(GlobalIcons.UpDarkIcon)
+            self.dark_mode_applied = True
+        if not DefaultOptions.Dark_Mode and self.dark_mode_applied:
+            self.setIcon(GlobalIcons.UpLightIcon)
+            self.dark_mode_applied = False
