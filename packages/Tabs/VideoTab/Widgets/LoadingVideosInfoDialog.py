@@ -30,7 +30,7 @@ class LoadingVideosInfoDialog(MyDialog):
         self.layout.addWidget(self.status_label)
         self.layout.addStretch(3)
         self.layout.setSpacing(0)
-        self.layout.setContentsMargins(8, 12, 8, 12)
+        self.layout.setContentsMargins(12, 16, 12, 16)
         self.setLayout(self.layout)
         self.disable_question_mark_window()
         self.generate_media_info_files()

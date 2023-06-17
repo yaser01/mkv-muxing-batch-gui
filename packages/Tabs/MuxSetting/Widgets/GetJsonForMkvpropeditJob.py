@@ -131,30 +131,28 @@ class GetJsonForMkvpropeditJob:
             self.attachments_json_info.append(new_attachment_info)
 
     def setup_attachments_options(self):
-        if GlobalSetting.ATTACHMENT_ENABLED:
+        if len(self.job.attachments_absolute_path)>0:
             attachments_list_with_attach_command = []
             discard_old_attachments_list_command = []
-            allow_duplicates = GlobalSetting.ATTACHMENT_ALLOW_DUPLICATE
-            discard_old = GlobalSetting.ATTACHMENT_DISCARD_OLD
+            allow_duplicates = self.job.allow_duplicates_attachments
+            discard_old = self.job.discard_old_attachments
             if discard_old:
                 for i in range(self.number_of_old_attachments + 2):
                     attachments_list_with_attach_command.append(add_json_line("--delete-attachment"))
                     attachments_list_with_attach_command.append(add_json_line(str(i)))
-            for i in range(len(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)):
-                if GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[i]:
-                    file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
-                    file_name_to_attach = os.path.basename(file_to_attach)
-                    if not discard_old and not allow_duplicates:
-                        attachment_already_found = False
-                        for attachment in self.attachments_json_info:
-                            if attachment.file_name == file_name_to_attach:
-                                attachment_already_found = True
-                                break
-                        if attachment_already_found:
-                            continue
-                    attachments_list_with_attach_command.append(add_json_line("--add-attachment"))
-                    attachments_list_with_attach_command.append(
-                        add_json_line(check_for_system_backslash_path(file_to_attach)))
+            for file_to_attach in self.job.attachments_absolute_path:
+                file_name_to_attach = os.path.basename(file_to_attach)
+                if not discard_old and not allow_duplicates:
+                    attachment_already_found = False
+                    for attachment in self.attachments_json_info:
+                        if attachment.file_name == file_name_to_attach:
+                            attachment_already_found = True
+                            break
+                    if attachment_already_found:
+                        continue
+                attachments_list_with_attach_command.append(add_json_line("--add-attachment"))
+                attachments_list_with_attach_command.append(
+                    add_json_line(check_for_system_backslash_path(file_to_attach)))
             self.attachments_attach_command = "".join(attachments_list_with_attach_command)
             self.discard_old_attachments_command = "".join(discard_old_attachments_list_command)
 

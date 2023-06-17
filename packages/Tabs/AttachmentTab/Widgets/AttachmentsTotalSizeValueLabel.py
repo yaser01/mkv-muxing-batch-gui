@@ -38,3 +38,7 @@ class AttachmentsTotalSizeValueLabel(QLabel):
         self.total_size_bytes -= file_size
         self.total_size_readable = get_readable_filesize(self.total_size_bytes)
         self.setText(self.total_size_readable)
+
+    def update_total_size_readable_expert_mode(self, total_size_readable):
+        self.total_size_readable = total_size_readable
+        self.setText(self.total_size_readable)

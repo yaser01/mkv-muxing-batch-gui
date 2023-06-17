@@ -69,6 +69,7 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
     if check_is_there_subtitle_to_mux() or \
             check_is_there_audio_to_mux() or \
             len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
+            len(GlobalSetting.ATTACHMENT_PATH_DATA_LIST) > 0 or \
             len(GlobalSetting.CHAPTER_FILES_LIST) > 0 or \
             GlobalSetting.CHAPTER_DISCARD_OLD or \
             GlobalSetting.ATTACHMENT_DISCARD_OLD or \
@@ -145,7 +146,6 @@ def check_if_want_to_keep_log_file():
                                                               "permissions on Destination folder")
                 error_dialog.execute()
 
-
 def get_approximate_size_of_output_of_job(job):
     file_size = 0
     try:
@@ -156,7 +156,7 @@ def get_approximate_size_of_output_of_job(job):
         file_size += os.path.getsize(subtitle_to_add)
     for audio_to_add in job.audio_name_absolute:
         file_size += os.path.getsize(audio_to_add)
-    for attachment in GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST:
+    for attachment in job.attachments_absolute_path:
         file_size += os.path.getsize(attachment)
     if job.chapter_name_absolute != "":
         file_size += os.path.getsize(job.chapter_name_absolute)
@@ -484,7 +484,7 @@ class MuxSettingTab(QWidget):
                     if not job.done or (
                             job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
                         file_size = 0
-                        for attachment in GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST:
+                        for attachment in job.attachments_absolute_path:
                             file_size += os.path.getsize(attachment)
                         if job.chapter_name_absolute != "":
                             file_size += os.path.getsize(job.chapter_name_absolute)

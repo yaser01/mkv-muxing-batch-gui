@@ -111,6 +111,20 @@ def set_is_job_crc_required(new_job):
     new_job.is_crc_removing_required = GlobalSetting.MUX_SETTING_REMOVE_OLD_CRC
 
 
+def set_attachments_setting_for_job(new_job, new_row_id):
+    new_job.discard_old_attachments = GlobalSetting.ATTACHMENT_DISCARD_OLD
+    new_job.allow_duplicates_attachments = GlobalSetting.ATTACHMENT_ALLOW_DUPLICATE
+    new_job.attachments_absolute_path = []
+    if GlobalSetting.ATTACHMENT_EXPERT_MODE:
+        if len(GlobalSetting.ATTACHMENT_PATH_DATA_LIST) > new_row_id:
+            new_job.attachments_absolute_path = GlobalSetting.ATTACHMENT_PATH_DATA_LIST[new_row_id].files_list.copy()
+    else:
+        for i in range(len(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)):
+            if GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[i]:
+                file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
+                new_job.attachments_absolute_path.append(file_to_attach)
+
+
 Valid_CRC_String = "0123456789ABCDEF"
 
 
@@ -388,7 +402,9 @@ class JobQueueTable(TableWidget):
         new_job.video_name_absolute = GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST[new_row_id]
         new_job.video_name_with_spaces = " " + new_job.video_name + "   "
         new_job.video_name_displayed = chr(0x200E) + new_job.video_name_with_spaces
-        self.setCellWidget(new_row_id, self.column_ids["Name"], QLabel(new_job.video_name_displayed))
+        name_label = QLabel(new_job.video_name_displayed)
+        name_label.setToolTip(new_job.video_name)
+        self.setCellWidget(new_row_id, self.column_ids["Name"], name_label)
 
     def check_if_name_need_resize_column_to_fit_content(self):
         new_column_width = 0
@@ -591,6 +607,7 @@ class JobQueueTable(TableWidget):
             self.set_row_value_size_before_muxing(new_job, new_row_id)
             self.set_row_value_progressBar(new_job, new_row_id)
             set_is_job_crc_required(new_job)
+            set_attachments_setting_for_job(new_job, new_row_id)
             self.data.append(new_job)
         self.show()
         self.check_if_name_need_resize_column_to_fit_content()
@@ -712,7 +729,8 @@ class JobQueueTable(TableWidget):
             output_video_name_absolute = os.path.join(folder_path, output_video_name)
             original_output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
             output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
-            original_file_name_absolute_path = os.path.join(output_file_name_folder_path_absolute, original_output_video_name)
+            original_file_name_absolute_path = os.path.join(output_file_name_folder_path_absolute,
+                                                            original_output_video_name)
             rename_file(output_video_name_absolute, original_file_name_absolute_path)
 
     def rename_output_file_if_needed(self, job_index):

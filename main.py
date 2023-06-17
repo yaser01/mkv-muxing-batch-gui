@@ -15,6 +15,7 @@ from packages.Widgets.WarningDialog import WarningDialog
 
 if sys.platform == "win32":
     import ctypes
+
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
     from packages.MainWindow import MainWindow
 else:

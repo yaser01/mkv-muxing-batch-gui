@@ -14,6 +14,7 @@ from PySide2.QtWidgets import QWidget
 
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_SYMBOLS
+from packages.Widgets.PathData import PathData
 from packages.Widgets.SingleOldTrackData import SingleOldTrackData
 
 
@@ -293,6 +294,9 @@ class GlobalSetting(QWidget):
     ATTACHMENT_FILES_ABSOLUTE_PATH_LIST = []
     ATTACHMENT_DISCARD_OLD = False
     ATTACHMENT_ALLOW_DUPLICATE = False
+
+    ATTACHMENT_EXPERT_MODE = False
+    ATTACHMENT_PATH_DATA_LIST: List[PathData] = []
 
     CHAPTER_ENABLED = False
     CHAPTER_FILES_LIST = []

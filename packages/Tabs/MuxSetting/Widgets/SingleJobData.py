@@ -30,6 +30,10 @@ class SingleJobData:
         self.chapter_name = ""
         self.chapter_name_absolute = ""
 
+        self.attachments_absolute_path = []
+        self.discard_old_attachments = False
+        self.allow_duplicates_attachments = False
+
         self.output_video_name = ""
         self.output_video_absolute_path = ""
 
