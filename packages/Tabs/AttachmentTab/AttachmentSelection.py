@@ -1,7 +1,7 @@
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QVBoxLayout, QGroupBox
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Tabs.AttachmentTab.Widgets.AllowDuplicateAttachmentsCheckBox import AllowDuplicateAttachmentsCheckBox
 from packages.Tabs.AttachmentTab.Widgets.AttachmentClearButton import AttachmentClearButton
 from packages.Tabs.AttachmentTab.Widgets.AttachmentSourceButton import AttachmentSourceButton
@@ -392,11 +392,11 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        if DefaultOptions.Default_Attachment_Directory == "":
+        if Options.Default_Attachment_Directory == "":
             return
         self.attachment_main_groupBox.setChecked(True)
-        self.attachment_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Attachment_Directory)
-        self.update_folder_path(DefaultOptions.Default_Attachment_Directory)
+        self.attachment_source_lineEdit.set_text_safe_change(Options.Default_Attachment_Directory)
+        self.update_folder_path(Options.Default_Attachment_Directory)
         self.attachment_source_lineEdit.check_new_path()
 
     def update_theme_mode_state(self):

@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import GlobalSetting, get_file_name_absolute_path, write_to_log_file, \
     get_readable_filesize
 from packages.Tabs.MuxSetting.Widgets.AudioTracksCheckableComboBox import AudioTracksCheckableComboBox
@@ -785,7 +785,7 @@ class MuxSettingTab(QWidget):
             open(GlobalFiles.MuxingLogFilePath, 'w+').close()
 
     def set_default_directory(self):
-        self.destination_path_lineEdit.setText(DefaultOptions.Default_Destination_Directory)
+        self.destination_path_lineEdit.setText(Options.Default_Destination_Directory)
 
     def update_theme_mode_state(self):
         self.make_this_audio_default_comboBox.update_theme_mode_state()

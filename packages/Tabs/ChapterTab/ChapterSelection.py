@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
 from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import ChapterExtensionsCheckableComboBox
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceButton import ChapterSourceButton
@@ -72,7 +72,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_chapter_extensions = DefaultOptions.Default_Chapter_Extensions
+        self.current_chapter_extensions = Options.Default_Chapter_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -226,7 +226,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_chapter_extensions = DefaultOptions.Default_Chapter_Extensions
+            self.current_chapter_extensions = Options.Default_Chapter_Extensions
             self.discard_old_chapters_checkBox.setChecked(False)
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
             self.is_drag_and_drop = False
@@ -359,9 +359,9 @@ class ChapterSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        if DefaultOptions.Default_Chapter_Directory == "":
+        if Options.Default_Chapter_Directory == "":
             return
         self.activate_tab(on=True)
-        self.chapter_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Chapter_Directory)
-        self.update_folder_path(DefaultOptions.Default_Chapter_Directory)
+        self.chapter_source_lineEdit.set_text_safe_change(Options.Default_Chapter_Directory)
+        self.update_folder_path(Options.Default_Chapter_Directory)
         self.chapter_source_lineEdit.check_new_path()

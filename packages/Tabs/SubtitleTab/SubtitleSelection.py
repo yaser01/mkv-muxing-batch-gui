@@ -3,7 +3,7 @@ from PySide2.QtWidgets import (
     QGroupBox,
 )
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleLayout import MatchSubtitleLayout
@@ -93,7 +93,7 @@ class SubtitleSelectionSetting(QGroupBox):
         GlobalSetting.SUBTITLE_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = False
         GlobalSetting.SUBTITLE_SET_ORDER[self.tab_index] = -1
-        GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = DefaultOptions.Default_Subtitle_Language
+        GlobalSetting.SUBTITLE_LANGUAGE[self.tab_index] = Options.Default_Subtitle_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -101,7 +101,7 @@ class SubtitleSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_subtitle_extensions = DefaultOptions.Default_Subtitle_Extensions
+        self.current_subtitle_extensions = Options.Default_Subtitle_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -265,7 +265,7 @@ class SubtitleSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_subtitle_extensions = DefaultOptions.Default_Subtitle_Extensions
+            self.current_subtitle_extensions = Options.Default_Subtitle_Extensions
             self.subtitle_extensions_comboBox.setData(self.current_subtitle_extensions)
             self.subtitle_track_name_lineEdit.setText("")
             self.subtitle_set_forced_checkBox.setChecked(False)
@@ -416,12 +416,12 @@ class SubtitleSelectionSetting(QGroupBox):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.subtitle_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Subtitle_Directory)
-        self.update_folder_path(DefaultOptions.Default_Subtitle_Directory)
+        self.subtitle_source_lineEdit.set_text_safe_change(Options.Default_Subtitle_Directory)
+        self.update_folder_path(Options.Default_Subtitle_Directory)
         self.subtitle_source_lineEdit.check_new_path()
 
     def update_theme_mode_state(self):
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.setPalette(get_dark_palette())
         else:
             self.setPalette(get_light_palette())

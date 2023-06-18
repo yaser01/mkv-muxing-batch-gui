@@ -2,7 +2,7 @@ from PySide2.QtCore import Signal, Qt, QSize, QEvent
 from PySide2.QtWidgets import QComboBox, QStyledItemDelegate
 
 from packages.Startup import GlobalIcons
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -132,7 +132,7 @@ class AudioTabComboBox(QComboBox):
             self.addItem(GlobalIcons.PlusIcon, "New")
 
     def update_theme_mode_state(self):
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.setPalette(get_dark_palette())
         else:
             self.setPalette(get_light_palette())

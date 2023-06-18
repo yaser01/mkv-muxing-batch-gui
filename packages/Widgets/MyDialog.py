@@ -3,7 +3,7 @@ import sys
 
 from PySide2.QtWidgets import QDialog
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 
 if sys.platform == "win32":
     from ctypes import byref, c_bool, sizeof, windll
@@ -26,7 +26,7 @@ class MyDialog(QDialog):
             else:
                 self.dwnwa_use_immersive_dark_mode = 20
             self.dwmSetWindowAttribute = dwm_api.DwmSetWindowAttribute
-        self.set_dark_mode(DefaultOptions.Dark_Mode)
+        self.set_dark_mode(Options.Dark_Mode)
 
     def set_dark_mode(self, on):
         if self.is_os_windows:

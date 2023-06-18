@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
 from packages.Widgets.MyDialog import MyDialog
 
@@ -118,7 +118,7 @@ class AudioInfoDialog(MyDialog):
 
     def setup_ui(self):
         self.disable_question_mark_window()
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             audio_icon_path = GlobalFiles.AudioDarkIconPath
         else:
             audio_icon_path = GlobalFiles.AudioLightIconPath
@@ -183,9 +183,9 @@ class AudioInfoDialog(MyDialog):
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
 
     def setup_audio_language_comboBox(self):
-        self.audio_language_comboBox.addItems(DefaultOptions.Default_Favorite_Audio_Languages)
+        self.audio_language_comboBox.addItems(Options.Default_Favorite_Audio_Languages)
         self.audio_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(
+            Options.Default_Favorite_Audio_Languages.index(
                 self.current_audio_language[self.current_audio_index]))
         self.audio_language_comboBox.setMaxVisibleItems(8)
         self.audio_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
@@ -246,7 +246,7 @@ class AudioInfoDialog(MyDialog):
             self.current_audio_index]
 
         self.audio_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(
+            Options.Default_Favorite_Audio_Languages.index(
                 self.current_audio_language[self.current_audio_index]))
         self.audio_delay_spin.setValue(float(self.current_audio_delay[self.current_audio_index]))
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
@@ -293,7 +293,7 @@ class AudioInfoDialog(MyDialog):
         self.audio_set_forced_checkBox.setChecked(
             bool(self.current_audio_set_forced[self.current_audio_index]))
         self.audio_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(
+            Options.Default_Favorite_Audio_Languages.index(
                 self.current_audio_language[self.current_audio_index]))
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
         self.audio_name_value.setText(str(self.current_audio_name[self.current_audio_index]))

@@ -1,6 +1,6 @@
 from PySide2.QtCore import Signal
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import *
 from packages.Tabs.GlobalSetting import sort_names_like_windows, get_readable_filesize, get_files_names_absolute_list, \
     get_file_name_absolute_path
@@ -89,7 +89,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_checked_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.unsupported_files_list = []
-        self.current_video_extensions = DefaultOptions.Default_Video_Extensions
+        self.current_video_extensions = Options.Default_Video_Extensions
         self.is_drag_and_drop = False
         self.setup_widgets()
         self.connect_signals()
@@ -515,8 +515,8 @@ class VideoSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.video_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Video_Directory)
-        self.update_folder_path(DefaultOptions.Default_Video_Directory)
+        self.video_source_lineEdit.set_text_safe_change(Options.Default_Video_Directory)
+        self.update_folder_path(Options.Default_Video_Directory)
         self.video_source_lineEdit.check_new_path()
 
     def update_theme_mode_state(self):

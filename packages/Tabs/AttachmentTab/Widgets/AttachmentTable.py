@@ -5,7 +5,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt, QColor
 from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, sort_names_like_windows
 from packages.Widgets.TableWidget import TableWidget
@@ -155,7 +155,7 @@ class AttachmentTable(TableWidget):
             self.checking_row_updates = True
 
     def update_row_text_color(self, row_index, status):
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             new_color = QColor(self.text_color["dark"][status])
         else:
             new_color = QColor(self.text_color["light"][status])

@@ -2,7 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -59,9 +59,9 @@ class MoveSubtitleUpButton(QPushButton):
 
     def paintEvent(self, e):
         super().paintEvent(e)
-        if DefaultOptions.Dark_Mode and not self.dark_mode_applied:
+        if Options.Dark_Mode and not self.dark_mode_applied:
             self.setIcon(GlobalIcons.UpDarkIcon)
             self.dark_mode_applied = True
-        if not DefaultOptions.Dark_Mode and self.dark_mode_applied:
+        if not Options.Dark_Mode and self.dark_mode_applied:
             self.setIcon(GlobalIcons.UpLightIcon)
             self.dark_mode_applied = False

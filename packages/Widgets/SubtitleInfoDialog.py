@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QGridLayout, QLabel, \
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
 from packages.Widgets.MyDialog import MyDialog
 
@@ -118,7 +118,7 @@ class SubtitleInfoDialog(MyDialog):
 
     def setup_ui(self):
         self.disable_question_mark_window()
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             subtitle_icon_path = GlobalFiles.SubtitleDarkIconPath
         else:
             subtitle_icon_path = GlobalFiles.SubtitleLightIconPath
@@ -183,9 +183,9 @@ class SubtitleInfoDialog(MyDialog):
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
 
     def setup_subtitle_language_comboBox(self):
-        self.subtitle_language_comboBox.addItems(DefaultOptions.Default_Favorite_Subtitle_Languages)
+        self.subtitle_language_comboBox.addItems(Options.Default_Favorite_Subtitle_Languages)
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+            Options.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setMaxVisibleItems(8)
         self.subtitle_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
@@ -246,7 +246,7 @@ class SubtitleInfoDialog(MyDialog):
             self.current_subtitle_index]
 
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+            Options.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_delay_spin.setValue(float(self.current_subtitle_delay[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
@@ -293,7 +293,7 @@ class SubtitleInfoDialog(MyDialog):
         self.subtitle_set_forced_checkBox.setChecked(
             bool(self.current_subtitle_set_forced[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+            Options.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
         self.subtitle_name_value.setText(str(self.current_subtitle_name[self.current_subtitle_index]))

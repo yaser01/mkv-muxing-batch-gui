@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QComboBox
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllVideoDefaultDurationFPSLanguages
 from packages.Startup.SetupThems import get_dark_palette, get_light_palette
@@ -53,7 +53,7 @@ class VideoDefaultDurationFPSComboBox(QComboBox):
         super().setToolTip(new_tool_tip)
 
     def update_theme_mode_state(self):
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.setPalette(get_dark_palette())
         else:
             self.setPalette(get_light_palette())

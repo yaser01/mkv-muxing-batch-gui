@@ -3,7 +3,7 @@ from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QTabWidget, QHBoxLayout, QWidget
 
 from packages.Startup import ColorThems
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.AttachmentTab.AttachmentSelection import AttachmentSelectionSetting
 from packages.Tabs.AudioTab.AudioTabManager import AudioTabManager
@@ -16,7 +16,7 @@ from packages.Widgets.ThemeButton import ThemeButton
 
 
 def get_activate_and_disabled_color_according_to_current_theme():
-    if DefaultOptions.Dark_Mode:
+    if Options.Dark_Mode:
         activate_color = ColorThems.Dark_Text_Color
         disabled_color = ColorThems.Dark_Text_Color_Disabled
     else:
@@ -138,7 +138,7 @@ class TabsManager(QTabWidget):
         self.attachment_tab.update_theme_mode_state()
         self.mux_setting_tab.update_theme_mode_state()
         self.update_tabs_name_theme_mode_state()
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.setPalette(get_dark_palette())
         else:
             self.setPalette(get_light_palette())

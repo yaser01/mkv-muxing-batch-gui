@@ -3,7 +3,7 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
     QGridLayout, QLabel, QHBoxLayout
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.GlobalFiles import InfoIconPath
 from packages.Startup.MainApplication import get_dark_palette, get_light_palette
 from packages.Startup.PreDefined import AllVideosExtensions, AllSubtitlesExtensions, AllAudiosExtensions, \
@@ -27,36 +27,36 @@ class SettingTabWidget(QWidget):
         self.default_languages_layout = QGridLayout()
         self.setting_info_layout = QHBoxLayout()
         self.default_video_directory_layout = DefaultDirectoryLayout(label_name="Videos Directory: ",
-                                                                     default_directory=DefaultOptions.Default_Video_Directory)
+                                                                     default_directory=Options.Default_Video_Directory)
         self.default_subtitle_directory_layout = DefaultDirectoryLayout(label_name="Subtitles Directory: ",
-                                                                        default_directory=DefaultOptions.Default_Subtitle_Directory)
+                                                                        default_directory=Options.Default_Subtitle_Directory)
         self.default_audio_directory_layout = DefaultDirectoryLayout(label_name="Audios Directory: ",
-                                                                     default_directory=DefaultOptions.Default_Audio_Directory)
+                                                                     default_directory=Options.Default_Audio_Directory)
         self.default_chapter_directory_layout = DefaultDirectoryLayout(label_name="Chapters Directory: ",
-                                                                       default_directory=DefaultOptions.Default_Chapter_Directory)
+                                                                       default_directory=Options.Default_Chapter_Directory)
         self.default_attachment_directory_layout = DefaultDirectoryLayout(label_name="Attachments Directory: ",
-                                                                          default_directory=DefaultOptions.Default_Attachment_Directory)
+                                                                          default_directory=Options.Default_Attachment_Directory)
         self.default_destination_directory_layout = DefaultDirectoryLayout(label_name="Destination Directory: ",
-                                                                           default_directory=DefaultOptions.Default_Destination_Directory)
+                                                                           default_directory=Options.Default_Destination_Directory)
         self.default_video_extensions_layout = DefaultExtensionsLayout(label_name="Video Extensions: ",
                                                                        extensions_list=AllVideosExtensions,
-                                                                       default_extensions_list=DefaultOptions.Default_Video_Extensions)
+                                                                       default_extensions_list=Options.Default_Video_Extensions)
         self.default_subtitle_extensions_layout = DefaultExtensionsLayout(label_name="Subtitle Extensions: ",
                                                                           extensions_list=AllSubtitlesExtensions,
-                                                                          default_extensions_list=DefaultOptions.Default_Subtitle_Extensions)
+                                                                          default_extensions_list=Options.Default_Subtitle_Extensions)
         self.default_audio_extensions_layout = DefaultExtensionsLayout(label_name="Audio Extensions: ",
                                                                        extensions_list=AllAudiosExtensions,
-                                                                       default_extensions_list=DefaultOptions.Default_Audio_Extensions)
+                                                                       default_extensions_list=Options.Default_Audio_Extensions)
         self.default_chapter_extensions_layout = DefaultExtensionsLayout(label_name="Chapter Extensions: ",
                                                                          extensions_list=AllChapterExtensions,
-                                                                         default_extensions_list=DefaultOptions.Default_Chapter_Extensions)
+                                                                         default_extensions_list=Options.Default_Chapter_Extensions)
 
         self.default_subtitle_language_layout = DefaultLanguageLayout(label_name="Subtitle Language: ",
-                                                                      languages_list=DefaultOptions.Default_Favorite_Subtitle_Languages,
-                                                                      default_language=DefaultOptions.Default_Subtitle_Language)
+                                                                      languages_list=Options.Default_Favorite_Subtitle_Languages,
+                                                                      default_language=Options.Default_Subtitle_Language)
         self.default_audio_language_layout = DefaultLanguageLayout(label_name="Audio Language: ",
-                                                                   languages_list=DefaultOptions.Default_Favorite_Audio_Languages,
-                                                                   default_language=DefaultOptions.Default_Audio_Language)
+                                                                   languages_list=Options.Default_Favorite_Audio_Languages,
+                                                                   default_language=Options.Default_Audio_Language)
         self.setting_info_text_icon_label = QLabel()
         self.setting_info_text_icon_label.setPixmap(QPixmap(InfoIconPath))
         self.setting_info_text_label = QLabel("Changes will take effect on next launch")
@@ -87,7 +87,7 @@ class SettingTabWidget(QWidget):
         self.default_directories_groupBox.setStyle(QStyleFactory.create("windowsvista"))
         self.default_directories_groupBox.setTitle("Default Directories")
         self.default_directories_groupBox.setLayout(self.default_directories_layout)
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.default_directories_groupBox.setPalette(get_dark_palette())
         else:
             self.default_directories_groupBox.setPalette(get_light_palette())
@@ -96,7 +96,7 @@ class SettingTabWidget(QWidget):
         self.default_extensions_groupBox.setStyle(QStyleFactory.create("windowsvista"))
         self.default_extensions_groupBox.setTitle("Default Extensions")
         self.default_extensions_groupBox.setLayout(self.default_extensions_layout)
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.default_extensions_groupBox.setPalette(get_dark_palette())
         else:
             self.default_extensions_groupBox.setPalette(get_light_palette())
@@ -105,7 +105,7 @@ class SettingTabWidget(QWidget):
         self.default_languages_groupBox.setStyle(QStyleFactory.create("windowsvista"))
         self.default_languages_groupBox.setTitle("Favorite Languages List")
         self.default_languages_groupBox.setLayout(self.default_languages_layout)
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.default_languages_groupBox.setPalette(get_dark_palette())
         else:
             self.default_languages_groupBox.setPalette(get_light_palette())

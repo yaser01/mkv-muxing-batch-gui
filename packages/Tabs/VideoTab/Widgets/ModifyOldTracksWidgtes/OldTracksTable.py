@@ -4,7 +4,7 @@ from PySide2.QtCore import Qt, Signal
 from PySide2.QtGui import QFontMetrics, QColor, QKeySequence
 from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QComboBox, QShortcut
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import convert_string_integer_to_two_digit_string, GlobalSetting, \
     convert_check_state_int_to_check_state
@@ -210,7 +210,7 @@ class OldTracksTable(TableWidget):
             status = "activate"
         else:
             status = "disable"
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             new_color = QColor(self.text_color["dark"][status])
         else:
             new_color = QColor(self.text_color["light"][status])

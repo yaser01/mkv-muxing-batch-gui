@@ -3,7 +3,7 @@ from PySide2.QtCore import QEvent
 from PySide2.QtGui import Qt, QFontMetrics
 from PySide2.QtWidgets import QComboBox
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosTracks
 from packages.Startup.SetupThems import get_dark_palette, get_light_palette
@@ -230,7 +230,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
             self.setToolTip(self.empty_selection_hint_string)
 
     def update_theme_mode_state(self):
-        if DefaultOptions.Dark_Mode:
+        if Options.Dark_Mode:
             self.setPalette(get_dark_palette())
         else:
             self.setPalette(get_light_palette())

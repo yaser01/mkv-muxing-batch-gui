@@ -4,15 +4,14 @@ import sys
 from PySide2 import QtCore
 from PySide2.QtWidgets import QApplication, QToolTip, QStyleFactory
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options, read_option_file
 from packages.Startup.GlobalFiles import SettingJsonInfoFilePath, LanguagesFilePath
-from packages.Startup.ReadSettingFile import read_setting_file
 from packages.Startup.SetupThems import get_light_palette, get_dark_palette
 
 
 def set_application_style():
     MainApplication.setStyle(QStyleFactory.create("Fusion"))
-    if DefaultOptions.Dark_Mode:
+    if Options.Dark_Mode:
         apply_dark_mode()
     else:
         apply_light_mode()
@@ -38,7 +37,7 @@ def apply_dark_mode():
     QToolTip.setPalette(palette)
 
 
-read_setting_file(setting_json_info_file_path=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
+read_option_file(option_file=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
 keep_screen_resolution_good()
 MainApplication = QApplication(sys.argv)
 set_application_style()

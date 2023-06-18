@@ -3,7 +3,7 @@ from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QFrame, QVBoxLayout
 
 from packages.Startup import GlobalIcons
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
 from packages.Startup.Version import Version
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -60,7 +60,7 @@ class MainWindow(MyMainWindow):
         self.tabs.theme_changed_signal.connect(self.update_theme)
 
     def update_theme(self):
-        self.set_dark_mode(DefaultOptions.Dark_Mode)
+        self.set_dark_mode(Options.Dark_Mode)
 
     def show_window(self):
         self.showNormal()
