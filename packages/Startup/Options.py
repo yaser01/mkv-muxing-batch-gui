@@ -29,6 +29,7 @@ class Options(QWidget):
     Default_Favorite_Subtitle_Languages = ['English', 'Arabic']
     Default_Favorite_Audio_Languages = ['English', 'Arabic']
     Dark_Mode = False
+    Attachment_Expert_Mode_Info_Message_Show = True
 
 
 def save_options():
@@ -46,7 +47,8 @@ def save_options():
                     "Default_Destination_Directory": Options.Default_Destination_Directory,
                     "Default_Favorite_Subtitle_Languages": Options.Default_Favorite_Subtitle_Languages,
                     "Default_Favorite_Audio_Languages": Options.Default_Favorite_Audio_Languages,
-                    "Dark_Mode": Options.Dark_Mode
+                    "Dark_Mode": Options.Dark_Mode,
+                    "Attachment_Expert_Mode_Info_Message_Show": Options.Attachment_Expert_Mode_Info_Message_Show
                     }
     options_file_path = Path(SettingJsonInfoFilePath)
     with open(options_file_path, "w+", encoding="UTF-8") as option_file:
@@ -101,10 +103,7 @@ def read_option_file(option_file, all_languages_file_path):
                                                                           attribute="Default_Favorite_Audio_Languages",
                                                                           default_value=['English', 'Arabic'])
             Options.Dark_Mode = get_data_from_json(json_data=data, attribute="Dark_Mode", default_value=False)
-            if not Options.Default_Favorite_Audio_Languages:
-                Options.Default_Favorite_Audio_Languages = all_languages
-            if not Options.Default_Favorite_Subtitle_Languages:
-                Options.Default_Favorite_Subtitle_Languages = all_languages
-            if not Options.Dark_Mode:
-                Options.Dark_Mode = False
+            Options.Attachment_Expert_Mode_Info_Message_Show = get_data_from_json(json_data=data,
+                                                                                  attribute="Attachment_Expert_Mode_Info_Message_Show",
+                                                                                  default_value=True)
     save_options()
