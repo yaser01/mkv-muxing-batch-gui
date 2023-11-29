@@ -1,3 +1,5 @@
+import time
+
 import PySide2
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QFrame, QVBoxLayout
@@ -50,7 +52,7 @@ class MainWindow(MyMainWindow):
         Options.CurrentPreset = Options.DefaultPresets[Options.FavoritePresetId]
         self.show_window()
         self.update_theme()
-        self.check_if_need_to_show_choose_preset_dialog()
+        self.check_if_need_to_show_choose_preset_dialog(parent=self.window())
         self.tabs.set_preset_options()
         self.task_bar_progress = TaskBarProgress(window_handle=self.windowHandle())
         self.connect_signals()
@@ -68,14 +70,14 @@ class MainWindow(MyMainWindow):
         self.set_dark_mode(Options.Dark_Mode)
 
     def show_window(self):
-        flags = self.window().windowFlags()
-        self.setWindowFlags(flags | Qt.WindowStaysOnTopHint)
+        # flags = self.window().windowFlags()
+        # self.setWindowFlags(flags | Qt.WindowStaysOnTopHint)
         self.showNormal()
         self.raise_()
         self.activateWindow()
-        self.show()
-        self.setWindowFlags(flags)
-        self.show()
+        # self.show()
+        # self.setWindowFlags(flags)
+        # self.show()
 
     def setup_tabs_layout(self):
         self.tabs_frame.setContentsMargins(0, 0, 0, 0)
@@ -106,10 +108,10 @@ class MainWindow(MyMainWindow):
         super().closeEvent(event)
 
     @staticmethod
-    def check_if_need_to_show_choose_preset_dialog():
+    def check_if_need_to_show_choose_preset_dialog(parent):
         if Options.Choose_Preset_On_Startup:
             choose_preset_dialog = ChoosePresetDialog(preset_list=get_names_list_of_presets(),
-                                                      favorite_preset_id=Options.FavoritePresetId)
+                                                      favorite_preset_id=Options.FavoritePresetId, parent=parent)
             choose_preset_dialog.execute()
             selected_preset_id = Options.FavoritePresetId
             if choose_preset_dialog.chosen_index != -1:

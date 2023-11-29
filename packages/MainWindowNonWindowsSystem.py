@@ -39,7 +39,7 @@ class MainWindowNonWindowsSystem(MyMainWindow):
         self.setCentralWidget(self.tabs_frame)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.show_window()
-        self.check_if_need_to_show_choose_preset_dialog()
+        self.check_if_need_to_show_choose_preset_dialog(parent=self.window())
         self.tabs.set_preset_options()
         self.connect_signals()
 
@@ -79,10 +79,10 @@ class MainWindowNonWindowsSystem(MyMainWindow):
             return
         super().closeEvent(event)
     @staticmethod
-    def check_if_need_to_show_choose_preset_dialog():
+    def check_if_need_to_show_choose_preset_dialog(parent):
         if Options.Choose_Preset_On_Startup:
             choose_preset_dialog = ChoosePresetDialog(preset_list=get_names_list_of_presets(),
-                                                      favorite_preset_id=Options.FavoritePresetId)
+                                                      favorite_preset_id=Options.FavoritePresetId,parent=parent)
             choose_preset_dialog.execute()
             selected_preset_id = Options.FavoritePresetId
             if choose_preset_dialog.chosen_index != -1:
