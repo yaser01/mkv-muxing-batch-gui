@@ -785,8 +785,9 @@ class MuxSettingTab(QWidget):
             open(GlobalFiles.MuxingLogFilePath, 'w+').close()
 
     def set_default_directory(self):
-        self.destination_path_lineEdit.setText(Options.Default_Destination_Directory)
-
+        self.destination_path_lineEdit.setText(Options.CurrentPreset.Default_Destination_Directory)
+    def set_preset_options(self):
+        self.set_default_directory()
     def update_theme_mode_state(self):
         self.make_this_audio_default_comboBox.update_theme_mode_state()
         self.make_this_subtitle_default_comboBox.update_theme_mode_state()

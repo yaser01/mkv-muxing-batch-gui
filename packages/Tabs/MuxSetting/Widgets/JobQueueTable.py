@@ -41,7 +41,7 @@ def generate_tool_tip_for_chapter_file(chapter_full_path="C:/Test", chapter_name
 
 
 def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test",
-                                     audio_delay=0.0, audio_language=Options.Default_Audio_Language,
+                                     audio_delay=0.0, audio_language=Options.CurrentPreset.Default_Audio_Language,
                                      audio_track_name="Test",
                                      audio_set_default=False, audio_set_forced=False,
                                      show_full_path=False):
@@ -67,7 +67,7 @@ def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test
 
 
 def generate_tool_tip_for_subtitle_file(subtitle_full_path="C:/Test", subtitle_name="Test",
-                                        subtitle_delay=0.0, subtitle_language=Options.Default_Subtitle_Language,
+                                        subtitle_delay=0.0, subtitle_language=Options.CurrentPreset.Default_Subtitle_Language,
                                         subtitle_track_name="Test",
                                         subtitle_set_default=False, subtitle_set_forced=False,
                                         show_full_path=False):

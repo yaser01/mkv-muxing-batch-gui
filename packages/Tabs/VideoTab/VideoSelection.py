@@ -89,7 +89,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.files_names_checked_list = []
         self.files_names_absolute_list_with_dropped_files = []
         self.unsupported_files_list = []
-        self.current_video_extensions = Options.Default_Video_Extensions
+        self.current_video_extensions = Options.CurrentPreset.Default_Video_Extensions
         self.is_drag_and_drop = False
         self.setup_widgets()
         self.connect_signals()
@@ -515,9 +515,18 @@ class VideoSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.video_source_lineEdit.set_text_safe_change(Options.Default_Video_Directory)
-        self.update_folder_path(Options.Default_Video_Directory)
+        self.video_source_lineEdit.set_text_safe_change(Options.CurrentPreset.Default_Video_Directory)
+        self.update_folder_path(Options.CurrentPreset.Default_Video_Directory)
         self.video_source_lineEdit.check_new_path()
+
+    def set_default_extensions(self):
+        self.current_video_extensions = Options.CurrentPreset.Default_Video_Extensions
+        self.video_extensions_comboBox.set_current_extensions()
+        self.video_extensions_comboBox.make_default_extensions_checked()
+
+    def set_preset_options(self):
+        self.set_default_extensions()
+        self.set_default_directory()
 
     def update_theme_mode_state(self):
         self.table.update_theme_mode_state()

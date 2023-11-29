@@ -118,6 +118,10 @@ class AudioTabManager(GlobalSetting):
     def set_default_directory(self):
         for audio_tab in self.audio_tabs:
             audio_tab.set_default_directory()
+
+    def set_preset_options(self):
+        for audio_tab in self.audio_tabs:
+            audio_tab.set_preset_options()
     def update_theme_mode_state(self):
         self.audio_tab_comboBox.update_theme_mode_state()
         for audio_tab in self.audio_tabs:

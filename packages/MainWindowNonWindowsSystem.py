@@ -4,9 +4,11 @@ from PySide2.QtWidgets import QFrame, QVBoxLayout
 
 from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
+from packages.Startup.Options import Options, save_options, get_names_list_of_presets
 from packages.Startup.Version import Version
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.TabsManager import TabsManager
+from packages.Widgets.ChoosePresetDialog import ChoosePresetDialog
 from packages.Widgets.CloseDialogWhileAtLeastOneOptionSelected import CloseDialogWhileAtLeastOneOptionSelected
 from packages.Widgets.CloseDialogWhileMuxingOn import CloseDialogWhileMuxingOn
 from packages.Widgets.MyMainWindow import MyMainWindow
@@ -37,7 +39,8 @@ class MainWindowNonWindowsSystem(MyMainWindow):
         self.setCentralWidget(self.tabs_frame)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.show_window()
-        self.tabs.set_default_directories()
+        self.check_if_need_to_show_choose_preset_dialog()
+        self.tabs.set_preset_options()
         self.connect_signals()
 
     def connect_signals(self):
@@ -75,3 +78,21 @@ class MainWindowNonWindowsSystem(MyMainWindow):
                 event.ignore()
             return
         super().closeEvent(event)
+    @staticmethod
+    def check_if_need_to_show_choose_preset_dialog():
+        if Options.Choose_Preset_On_Startup:
+            choose_preset_dialog = ChoosePresetDialog(preset_list=get_names_list_of_presets(),
+                                                      favorite_preset_id=Options.FavoritePresetId)
+            choose_preset_dialog.execute()
+            selected_preset_id = Options.FavoritePresetId
+            if choose_preset_dialog.chosen_index != -1:
+                selected_preset_id = choose_preset_dialog.chosen_index
+            Options.CurrentPreset = Options.DefaultPresets[selected_preset_id]
+            if choose_preset_dialog.remember:
+                Options.Choose_Preset_On_Startup = False
+                Options.FavoritePresetId = selected_preset_id
+                save_options()
+            return True
+        else:
+            Options.CurrentPreset = Options.DefaultPresets[Options.FavoritePresetId]
+            return False

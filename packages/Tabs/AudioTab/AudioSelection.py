@@ -93,7 +93,7 @@ class AudioSelectionSetting(QGroupBox):
         GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
         GlobalSetting.AUDIO_SET_ORDER[self.tab_index] = -1
-        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = Options.Default_Audio_Language
+        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = Options.CurrentPreset.Default_Audio_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -101,7 +101,7 @@ class AudioSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_audio_extensions = Options.Default_Audio_Extensions
+        self.current_audio_extensions = Options.CurrentPreset.Default_Audio_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -265,7 +265,7 @@ class AudioSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_audio_extensions = Options.Default_Audio_Extensions
+            self.current_audio_extensions = Options.CurrentPreset.Default_Audio_Extensions
             self.audio_extensions_comboBox.setData(self.current_audio_extensions)
             self.audio_track_name_lineEdit.setText("")
             self.audio_set_forced_checkBox.setChecked(False)
@@ -416,9 +416,16 @@ class AudioSelectionSetting(QGroupBox):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.audio_source_lineEdit.set_text_safe_change(Options.Default_Audio_Directory)
-        self.update_folder_path(Options.Default_Audio_Directory)
+        self.audio_source_lineEdit.set_text_safe_change(Options.CurrentPreset.Default_Audio_Directory)
+        self.update_folder_path(Options.CurrentPreset.Default_Audio_Directory)
         self.audio_source_lineEdit.check_new_path()
+
+    def set_preset_options(self):
+        self.create_properties()
+        self.create_global_properties()
+        self.audio_language_comboBox.set_current_index()
+        self.audio_extensions_comboBox.set_current_extensions()
+        self.set_default_directory()
 
     def update_theme_mode_state(self):
         if Options.Dark_Mode:

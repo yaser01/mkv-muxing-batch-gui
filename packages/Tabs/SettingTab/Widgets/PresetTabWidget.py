@@ -1,3 +1,5 @@
+import faulthandler
+
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
@@ -13,63 +15,89 @@ from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLayout import DefaultDirec
 from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExtensionsLayout
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
 from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
+from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
+
+faulthandler.enable()
 
 
-# faulthandler.enable()
-class SettingTabWidget(QWidget):
-    def __init__(self):
+def try_to_create_windows_vista_style():
+    style = QStyleFactory.create("windowsvista")
+    if str(style.__class__).find("PySide2.QtGui.QStandardItem") != -1:
+        return try_to_create_windows_vista_style()
+    return style
+
+
+class PresetTabWidget(QWidget):
+    def __init__(self, options):
         super().__init__()
+        self.options: SingleDefaultPresetsData = options
         self.default_directories_groupBox = QGroupBox(self)
         self.default_extensions_groupBox = QGroupBox(self)
         self.default_languages_groupBox = QGroupBox(self)
         self.default_directories_layout = QVBoxLayout()
         self.default_extensions_layout = QGridLayout()
         self.default_languages_layout = QGridLayout()
-        self.setting_info_layout = QHBoxLayout()
-        self.default_video_directory_layout = DefaultDirectoryLayout(label_name="Videos Directory: ",
-                                                                     default_directory=Options.Default_Video_Directory)
-        self.default_subtitle_directory_layout = DefaultDirectoryLayout(label_name="Subtitles Directory: ",
-                                                                        default_directory=Options.Default_Subtitle_Directory)
-        self.default_audio_directory_layout = DefaultDirectoryLayout(label_name="Audios Directory: ",
-                                                                     default_directory=Options.Default_Audio_Directory)
-        self.default_chapter_directory_layout = DefaultDirectoryLayout(label_name="Chapters Directory: ",
-                                                                       default_directory=Options.Default_Chapter_Directory)
-        self.default_attachment_directory_layout = DefaultDirectoryLayout(label_name="Attachments Directory: ",
-                                                                          default_directory=Options.Default_Attachment_Directory)
-        self.default_destination_directory_layout = DefaultDirectoryLayout(label_name="Destination Directory: ",
-                                                                           default_directory=Options.Default_Destination_Directory)
-        self.default_video_extensions_layout = DefaultExtensionsLayout(label_name="Video Extensions: ",
-                                                                       extensions_list=AllVideosExtensions,
-                                                                       default_extensions_list=Options.Default_Video_Extensions)
-        self.default_subtitle_extensions_layout = DefaultExtensionsLayout(label_name="Subtitle Extensions: ",
-                                                                          extensions_list=AllSubtitlesExtensions,
-                                                                          default_extensions_list=Options.Default_Subtitle_Extensions)
-        self.default_audio_extensions_layout = DefaultExtensionsLayout(label_name="Audio Extensions: ",
-                                                                       extensions_list=AllAudiosExtensions,
-                                                                       default_extensions_list=Options.Default_Audio_Extensions)
-        self.default_chapter_extensions_layout = DefaultExtensionsLayout(label_name="Chapter Extensions: ",
-                                                                         extensions_list=AllChapterExtensions,
-                                                                         default_extensions_list=Options.Default_Chapter_Extensions)
+        self.default_video_directory_layout = DefaultDirectoryLayout(
+            label_name="Videos Directory: ",
+            default_directory=self.options.Default_Video_Directory
+        )
+        self.default_subtitle_directory_layout = DefaultDirectoryLayout(
+            label_name="Subtitles Directory: ",
+            default_directory=self.options.Default_Subtitle_Directory
+        )
+        self.default_audio_directory_layout = DefaultDirectoryLayout(
+            label_name="Audios Directory: ",
+            default_directory=self.options.Default_Audio_Directory
+        )
+        self.default_chapter_directory_layout = DefaultDirectoryLayout(
+            label_name="Chapters Directory: ",
+            default_directory=self.options.Default_Chapter_Directory
+        )
+        self.default_attachment_directory_layout = DefaultDirectoryLayout(
+            label_name="Attachments Directory: ",
+            default_directory=self.options.Default_Attachment_Directory
+        )
+        self.default_destination_directory_layout = DefaultDirectoryLayout(
+            label_name="Destination Directory: ",
+            default_directory=self.options.Default_Destination_Directory
+        )
+        self.default_video_extensions_layout = DefaultExtensionsLayout(
+            label_name="Video Extensions: ",
+            extensions_list=AllVideosExtensions,
+            default_extensions_list=self.options.Default_Video_Extensions
+        )
+        self.default_subtitle_extensions_layout = DefaultExtensionsLayout(
+            label_name="Subtitle Extensions: ",
+            extensions_list=AllSubtitlesExtensions,
+            default_extensions_list=self.options.Default_Subtitle_Extensions
+        )
+        self.default_audio_extensions_layout = DefaultExtensionsLayout(
+            label_name="Audio Extensions: ",
+            extensions_list=AllAudiosExtensions,
+            default_extensions_list=self.options.Default_Audio_Extensions
+        )
+        self.default_chapter_extensions_layout = DefaultExtensionsLayout(
+            label_name="Chapter Extensions: ",
+            extensions_list=AllChapterExtensions,
+            default_extensions_list=self.options.Default_Chapter_Extensions
+        )
 
-        self.default_subtitle_language_layout = DefaultLanguageLayout(label_name="Subtitle Language: ",
-                                                                      languages_list=Options.Default_Favorite_Subtitle_Languages,
-                                                                      default_language=Options.Default_Subtitle_Language)
-        self.default_audio_language_layout = DefaultLanguageLayout(label_name="Audio Language: ",
-                                                                   languages_list=Options.Default_Favorite_Audio_Languages,
-                                                                   default_language=Options.Default_Audio_Language)
-        self.setting_info_text_icon_label = QLabel()
-        self.setting_info_text_icon_label.setPixmap(QPixmap(InfoIconPath))
-        self.setting_info_text_label = QLabel("Changes will take effect on next launch")
-        self.setting_about_button = AboutButton()
-        self.setting_donate_button = DonateButton()
-        self.setting_info_layout.addWidget(self.setting_info_text_icon_label, stretch=0)
-        self.setting_info_layout.addWidget(self.setting_info_text_label, stretch=1)
-        self.setting_info_layout.addWidget(self.setting_donate_button, stretch=0, alignment=Qt.AlignRight)
-        self.setting_info_layout.addWidget(self.setting_about_button, stretch=0, alignment=Qt.AlignRight)
+        self.default_subtitle_language_layout = DefaultLanguageLayout(
+            label_name="Subtitle Language: ",
+            languages_list=self.options.Default_Favorite_Subtitle_Languages,
+            default_language=self.options.Default_Subtitle_Language
+        )
+        self.default_audio_language_layout = DefaultLanguageLayout(
+            label_name="Audio Language: ",
+            languages_list=self.options.Default_Favorite_Audio_Languages,
+            default_language=self.options.Default_Audio_Language
+        )
         self.main_layout = QVBoxLayout()
         self.setup_main_layout()
         self.setLayout(self.main_layout)
         self.connect_signals()
+        self.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setContentsMargins(0,0,0,0)
 
     def setup_main_layout(self):
         self.setup_default_directories_groupBox()
@@ -81,10 +109,9 @@ class SettingTabWidget(QWidget):
         self.main_layout.addWidget(self.default_directories_groupBox, stretch=0)
         self.main_layout.addWidget(self.default_extensions_groupBox, stretch=0)
         self.main_layout.addWidget(self.default_languages_groupBox, stretch=0)
-        self.main_layout.addLayout(self.setting_info_layout, stretch=0)
 
     def setup_default_directories_groupBox(self):
-        self.default_directories_groupBox.setStyle(QStyleFactory.create("windowsvista"))
+        self.default_directories_groupBox.setStyle(try_to_create_windows_vista_style())
         self.default_directories_groupBox.setTitle("Default Directories")
         self.default_directories_groupBox.setLayout(self.default_directories_layout)
         if Options.Dark_Mode:
@@ -93,7 +120,7 @@ class SettingTabWidget(QWidget):
             self.default_directories_groupBox.setPalette(get_light_palette())
 
     def setup_default_extensions_groupBox(self):
-        self.default_extensions_groupBox.setStyle(QStyleFactory.create("windowsvista"))
+        self.default_extensions_groupBox.setStyle(try_to_create_windows_vista_style())
         self.default_extensions_groupBox.setTitle("Default Extensions")
         self.default_extensions_groupBox.setLayout(self.default_extensions_layout)
         if Options.Dark_Mode:
@@ -102,7 +129,7 @@ class SettingTabWidget(QWidget):
             self.default_extensions_groupBox.setPalette(get_light_palette())
 
     def setup_default_languages_groupBox(self):
-        self.default_languages_groupBox.setStyle(QStyleFactory.create("windowsvista"))
+        self.default_languages_groupBox.setStyle(try_to_create_windows_vista_style())
         self.default_languages_groupBox.setTitle("Favorite Languages List")
         self.default_languages_groupBox.setLayout(self.default_languages_layout)
         if Options.Dark_Mode:
@@ -142,3 +169,23 @@ class SettingTabWidget(QWidget):
 
     def connect_signals(self):
         pass
+
+    def get_current_options_as_option_data(self) -> SingleDefaultPresetsData:
+        self.options.Default_Video_Directory = self.default_video_directory_layout.lineEdit.text()
+        self.options.Default_Subtitle_Directory = self.default_subtitle_directory_layout.lineEdit.text()
+        self.options.Default_Audio_Directory = self.default_audio_directory_layout.lineEdit.text()
+        self.options.Default_Chapter_Directory = self.default_chapter_directory_layout.lineEdit.text()
+        self.options.Default_Attachment_Directory = self.default_attachment_directory_layout.lineEdit.text()
+        self.options.Default_Destination_Directory = self.default_destination_directory_layout.lineEdit.text()
+
+        self.options.Default_Video_Extensions = self.default_video_extensions_layout.extensions_checkable_comboBox.currentData()
+        self.options.Default_Subtitle_Extensions = self.default_subtitle_extensions_layout.extensions_checkable_comboBox.currentData()
+        self.options.Default_Audio_Extensions = self.default_audio_extensions_layout.extensions_checkable_comboBox.currentData()
+        self.options.Default_Chapter_Extensions = self.default_chapter_extensions_layout.extensions_checkable_comboBox.currentData()
+
+        self.options.Default_Subtitle_Language = self.default_subtitle_language_layout.languages_comboBox.currentText()
+        self.options.Default_Audio_Language = self.default_audio_language_layout.languages_comboBox.currentText()
+
+        self.options.Default_Favorite_Subtitle_Languages = self.default_subtitle_language_layout.current_languages_list.copy()
+        self.options.Default_Favorite_Audio_Languages = self.default_audio_language_layout.current_languages_list.copy()
+        return self.options

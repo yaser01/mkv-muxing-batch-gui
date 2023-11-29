@@ -392,12 +392,15 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        if Options.Default_Attachment_Directory == "":
+        if Options.CurrentPreset.Default_Attachment_Directory == "":
             return
         self.attachment_main_groupBox.setChecked(True)
-        self.attachment_source_lineEdit.set_text_safe_change(Options.Default_Attachment_Directory)
-        self.update_folder_path(Options.Default_Attachment_Directory)
+        self.attachment_source_lineEdit.set_text_safe_change(Options.CurrentPreset.Default_Attachment_Directory)
+        self.update_folder_path(Options.CurrentPreset.Default_Attachment_Directory)
         self.attachment_source_lineEdit.check_new_path()
+
+    def set_preset_options(self):
+        self.set_default_directory()
 
     def update_theme_mode_state(self):
         self.table.update_theme_mode_state()

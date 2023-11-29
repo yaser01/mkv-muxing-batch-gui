@@ -37,7 +37,7 @@ def apply_dark_mode():
     QToolTip.setPalette(palette)
 
 
-read_option_file(option_file=SettingJsonInfoFilePath, all_languages_file_path=LanguagesFilePath)
+read_option_file(option_file=SettingJsonInfoFilePath)
 keep_screen_resolution_good()
 MainApplication = QApplication(sys.argv)
 set_application_style()

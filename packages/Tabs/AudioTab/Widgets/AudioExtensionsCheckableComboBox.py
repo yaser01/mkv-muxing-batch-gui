@@ -30,7 +30,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         self.hint_when_enabled = ""
         self.current_folder_path = ""
         self.current_files_list = ""
-        self.current_extensions = Options.Default_Audio_Extensions
+        self.current_extensions = Options.CurrentPreset.Default_Audio_Extensions
         self.is_there_old_files = False
         self.closeOnLineEditClick = False
         # Use custom delegate
@@ -43,7 +43,14 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         self.view().viewport().installEventFilter(self)
         self.setup_ui()
 
+    def set_current_extensions(self):
+        self.clear()
+        self.current_extensions = Options.CurrentPreset.Default_Audio_Extensions
+        self.addItems(AllAudiosExtensions)
+        self.make_default_extensions_checked()
+
     def setup_ui(self):
+        self.clear()
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
@@ -56,7 +63,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
 
     def make_default_extensions_checked(self):
         for i in range(self.model().rowCount()):
-            if self.model().item(i).text() in Options.Default_Audio_Extensions:
+            if self.model().item(i).text() in Options.CurrentPreset.Default_Audio_Extensions:
                 self.model().item(i).setCheckState(Qt.Checked)
         self.updateText()
 
@@ -185,7 +192,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
                 count += 1
         if count == 0:
             for i in range(self.model().rowCount()):
-                if self.model().item(i).text() in Options.Default_Audio_Extensions:
+                if self.model().item(i).text() in Options.CurrentPreset.Default_Audio_Extensions:
                     self.model().item(i).setCheckState(Qt.Checked)
         self.updateText()
 

@@ -12,14 +12,18 @@ class SubtitleLanguageComboBox(QComboBox):
         self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
-        self.addItems(Options.Default_Favorite_Subtitle_Languages)
-        self.setCurrentIndex(
-            Options.Default_Favorite_Subtitle_Languages.index(Options.Default_Subtitle_Language))
-        self.setToolTip("Subtitle Language: " + Options.Default_Subtitle_Language + "\nYou can add/remove "
+        self.addItems(Options.CurrentPreset.Default_Favorite_Subtitle_Languages)
+        self.set_current_index()
+        self.setToolTip("Subtitle Language: " + Options.CurrentPreset.Default_Subtitle_Language + "\nYou can add/remove "
                                                                                            "languages in options")
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.currentTextChanged.connect(self.change_global_subtitle_language)
+
+    def set_current_index(self):
+        self.setCurrentIndex(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
+                Options.CurrentPreset.Default_Subtitle_Language))
 
     def change_global_subtitle_language(self):
         self.setToolTip("Subtitle Language: " + self.currentText() + "\nYou can add/remove languages in options")

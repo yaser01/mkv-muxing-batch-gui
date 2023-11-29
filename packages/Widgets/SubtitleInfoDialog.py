@@ -183,13 +183,12 @@ class SubtitleInfoDialog(MyDialog):
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
 
     def setup_subtitle_language_comboBox(self):
-        self.subtitle_language_comboBox.addItems(Options.Default_Favorite_Subtitle_Languages)
+        self.subtitle_language_comboBox.addItems(Options.CurrentPreset.Default_Favorite_Subtitle_Languages)
         self.subtitle_language_comboBox.setCurrentIndex(
-            Options.Default_Favorite_Subtitle_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setMaxVisibleItems(8)
         self.subtitle_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
-
     def setup_subtitle_delay_spin(self):
         # self.subtitle_delay_spin.setMaximumWidth(screen_size.width() // 16)
         self.subtitle_delay_spin.setDecimals(3)
@@ -246,7 +245,7 @@ class SubtitleInfoDialog(MyDialog):
             self.current_subtitle_index]
 
         self.subtitle_language_comboBox.setCurrentIndex(
-            Options.Default_Favorite_Subtitle_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_delay_spin.setValue(float(self.current_subtitle_delay[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
@@ -293,7 +292,7 @@ class SubtitleInfoDialog(MyDialog):
         self.subtitle_set_forced_checkBox.setChecked(
             bool(self.current_subtitle_set_forced[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setCurrentIndex(
-            Options.Default_Favorite_Subtitle_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
         self.subtitle_name_value.setText(str(self.current_subtitle_name[self.current_subtitle_index]))

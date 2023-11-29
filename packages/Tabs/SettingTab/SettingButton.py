@@ -1,3 +1,4 @@
+import logging
 import time
 
 from PySide2.QtCore import QSize
@@ -22,4 +23,5 @@ class SettingButton(QPushButton):
                 setting_dialog.execute()
                 break
             except Exception as e:
+                logging.error(e)
                 time.sleep(0.003)

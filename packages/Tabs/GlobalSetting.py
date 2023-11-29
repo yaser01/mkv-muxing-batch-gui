@@ -338,6 +338,5 @@ class GlobalSetting(QWidget):
     MUXING_ON = False
     LogFilePath = ""
     DISABLE_TOOLTIP = "<b>[Disabled]</b> because job queue has unfinished job(s)"
-
     def __init__(self):
         super().__init__()

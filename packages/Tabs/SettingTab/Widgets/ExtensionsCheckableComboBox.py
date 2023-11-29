@@ -1,3 +1,6 @@
+import logging
+import time
+
 from PySide2 import QtGui
 from PySide2.QtCore import Qt, QEvent
 from PySide2.QtGui import QFontMetrics
@@ -17,6 +20,8 @@ class ExtensionsCheckableComboBox(QComboBox):
 
     def __init__(self, items_list, default_items_list):
         super().__init__()
+        self.current_model = QtGui.QStandardItemModel(self)
+        self.setModel(self.current_model)
         self.hint = ""
         self.hint_when_enabled = ""
         self.items_list = items_list
@@ -25,28 +30,29 @@ class ExtensionsCheckableComboBox(QComboBox):
         # Use custom delegate
         self.setItemDelegate(ExtensionsCheckableComboBox.Delegate())
         # Update the text when an item is toggled
-        self.model().dataChanged.connect(self.updateText)
         # Hide and show popup when clicking the line edit
         # Prevent popup from closing when clicking on an item
+
+        self.current_model.clear()
         self.view().viewport().installEventFilter(self)
         self.setup_ui()
+        self.current_model.dataChanged.connect(self.updateText)
 
     def setup_ui(self):
+        self.addItems(self.items_list)
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
-        self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
         self.lineEdit().installEventFilter(self)
         self.setMinimumWidth(screen_size.width() // 9)
-        # self.setMaximumWidth(screen_size.width() // 8)
         self.setMaxVisibleItems(6)
-        self.addItems(self.items_list)
         self.make_default_extensions_checked()
+        self.lineEdit().selectionChanged.connect(self.disable_select)
 
     def make_default_extensions_checked(self):
-        for i in range(self.model().rowCount()):
-            if self.model().item(i).text() in self.default_items_list:
-                self.model().item(i).setCheckState(Qt.Checked)
+        for i in range(self.current_model.rowCount()):
+            if self.current_model.item(i).text() in self.default_items_list:
+                self.current_model.item(i).setCheckState(Qt.Checked)
         self.updateText()
 
     def disable_select(self):
@@ -60,8 +66,8 @@ class ExtensionsCheckableComboBox(QComboBox):
     def eventFilter(self, object, event):
         if str(event.__class__).find("Event") == -1:
             return False
-        if self.isEnabled():
-            try:
+        try:
+            if self.isEnabled():
                 if object == self.lineEdit():
                     if event.type() == QEvent.MouseButtonRelease:
                         if self.closeOnLineEditClick:
@@ -74,16 +80,16 @@ class ExtensionsCheckableComboBox(QComboBox):
                 if object == self.view().viewport():
                     if event.type() == QEvent.MouseButtonRelease:
                         index = self.view().indexAt(event.pos())
-                        item = self.model().item(index.row())
+                        item = self.current_model.item(index.row())
                         if item.checkState() == Qt.Checked:
                             item.setCheckState(Qt.Unchecked)
                         else:
                             item.setCheckState(Qt.Checked)
                         return True
                 return False
-            except Exception as e:
+            else:
                 return False
-        else:
+        except Exception as e:
             return False
 
     def showPopup(self):
@@ -107,9 +113,9 @@ class ExtensionsCheckableComboBox(QComboBox):
 
     def updateText(self):
         extensions_text = []
-        for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
-                extensions_text.append(self.model().item(i).text())
+        for i in range(self.current_model.rowCount()):
+            if self.current_model.item(i).checkState() == Qt.Checked:
+                extensions_text.append(self.current_model.item(i).text())
 
         text = ', '.join(extensions_text)
 
@@ -133,7 +139,7 @@ class ExtensionsCheckableComboBox(QComboBox):
             item.setData(data)
         item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
         item.setData(Qt.Unchecked, Qt.CheckStateRole)
-        self.model().appendRow(item)
+        self.current_model.appendRow(item)
 
     def addItems(self, texts, datalist=None):
         for i, text in enumerate(texts):
@@ -146,27 +152,27 @@ class ExtensionsCheckableComboBox(QComboBox):
     def currentData(self):
         # Return the list of selected items data
         res = []
-        for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
-                res.append(self.model().item(i).data())
+        for i in range(self.current_model.rowCount()):
+            if self.current_model.item(i).checkState() == Qt.Checked:
+                res.append(self.current_model.item(i).data())
         return res
 
     def setData(self, texts):
-        for i in range(self.model().rowCount()):
-            if self.model().item(i).data() in texts:
-                self.model().item(i).setCheckState(Qt.Checked)
+        for i in range(self.current_model.rowCount()):
+            if self.current_model.item(i).data() in texts:
+                self.current_model.item(i).setCheckState(Qt.Checked)
             else:
-                self.model().item(i).setCheckState(Qt.Unchecked)
+                self.current_model.item(i).setCheckState(Qt.Unchecked)
 
     def check_if_nothing_selected(self):
         count = 0
-        for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
+        for i in range(self.current_model.rowCount()):
+            if self.current_model.item(i).checkState() == Qt.Checked:
                 count += 1
         if count == 0:
-            for i in range(self.model().rowCount()):
-                if self.model().item(i).text() in self.default_items_list:
-                    self.model().item(i).setCheckState(Qt.Checked)
+            for i in range(self.current_model.rowCount()):
+                if self.current_model.item(i).text() in self.default_items_list:
+                    self.current_model.item(i).setCheckState(Qt.Checked)
         self.updateText()
 
     def check_extensions_changes(self):
