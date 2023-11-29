@@ -68,9 +68,14 @@ class MainWindow(MyMainWindow):
         self.set_dark_mode(Options.Dark_Mode)
 
     def show_window(self):
+        flags = self.window().windowFlags()
+        self.setWindowFlags(flags | Qt.WindowStaysOnTopHint)
         self.showNormal()
         self.raise_()
         self.activateWindow()
+        self.show()
+        self.setWindowFlags(flags)
+        self.show()
 
     def setup_tabs_layout(self):
         self.tabs_frame.setContentsMargins(0, 0, 0, 0)
