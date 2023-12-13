@@ -1,8 +1,3 @@
-import time
-
-import PyTaskbar
-from PySide6.QtGui import QIcon
-
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Widgets.WindowsTaskBar import WindowsTaskBar
