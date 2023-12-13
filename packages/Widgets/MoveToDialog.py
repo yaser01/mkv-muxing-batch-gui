@@ -1,5 +1,5 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QHBoxLayout, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QHBoxLayout, \
      QSpinBox, QGridLayout, QLabel, QPushButton, QAbstractSpinBox
 
 from packages.Widgets.MyDialog import MyDialog
@@ -59,7 +59,7 @@ class MoveToDialog(MyDialog):
         self.close()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()
@@ -73,7 +73,7 @@ class MoveToDialog(MyDialog):
         self.extra_message.setText("")  # determine when use
 
     def disable_spinbox_buttons(self):
-        self.spinBox.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.spinBox.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
 
     def set_default_buttons(self):
         self.yesButton.setDefault(True)

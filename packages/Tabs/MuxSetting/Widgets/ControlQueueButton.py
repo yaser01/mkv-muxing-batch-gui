@@ -1,6 +1,6 @@
-from PySide2 import QtCore
-from PySide2.QtGui import QPaintEvent
-from PySide2.QtWidgets import QPushButton
+from PySide6 import QtCore
+from PySide6.QtGui import QPaintEvent
+from PySide6.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
 

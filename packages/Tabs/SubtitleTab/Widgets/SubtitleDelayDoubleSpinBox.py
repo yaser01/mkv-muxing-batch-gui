@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QDoubleSpinBox
+from PySide6.QtWidgets import QDoubleSpinBox
 
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting

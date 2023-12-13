@@ -1,7 +1,7 @@
-from PySide2 import QtCore, QtGui
-from PySide2.QtCore import Qt, QEvent
-from PySide2.QtGui import QFontMetrics
-from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
+from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Qt, QEvent
+from PySide6.QtGui import QFontMetrics
+from PySide6.QtWidgets import QStyledItemDelegate, QComboBox
 
 # noinspection SpellCheckingInspection
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -27,7 +27,7 @@ class TracksCheckableComboBox(QComboBox):
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.hint_when_enabled = ""
         self.empty_selection_string = "Discard All"
         self.empty_selection_hint_string = ""
@@ -63,17 +63,17 @@ class TracksCheckableComboBox(QComboBox):
         counter_item_unchecked = 0
         for i in range(1, self.model().rowCount()):
             item = self.model().item(i)
-            if item.flags() & Qt.ItemIsUserCheckable:
-                if item.checkState() == Qt.Checked:
+            if item.flags() & Qt.ItemFlag.ItemIsUserCheckable:
+                if item.checkState() == Qt.CheckState.Checked:
                     counter_item_checked += 1
                 else:
                     counter_item_unchecked += 1
         if counter_item_checked == 0:
-            self.model().item(0).setCheckState(Qt.Unchecked)
+            self.model().item(0).setCheckState(Qt.CheckState.Unchecked)
         elif counter_item_unchecked == 0:
-            self.model().item(0).setCheckState(Qt.Checked)
+            self.model().item(0).setCheckState(Qt.CheckState.Checked)
         else:
-            self.model().item(0).setCheckState(Qt.PartiallyChecked)
+            self.model().item(0).setCheckState(Qt.CheckState.PartiallyChecked)
 
     def eventFilter(self, object, event):
         if str(event.__class__).find("Event") == -1:
@@ -94,26 +94,26 @@ class TracksCheckableComboBox(QComboBox):
                         index = self.view().indexAt(event.pos())
                         item = self.model().item(index.row())
                         if item.text().find("All Tracks") != -1:
-                            if item.checkState() == Qt.Checked or item.checkState() == Qt.PartiallyChecked:
+                            if item.checkState() == Qt.CheckState.Checked or item.checkState() == Qt.CheckState.PartiallyChecked:
                                 for i in range(0, self.model().rowCount()):
                                     item = self.model().item(i)
                                     if item.text().find("---Track Id---") == -1 and item.text().find(
                                             "---Language---") == -1 and item.text().find("---Track Name---") == -1:
-                                        item.setCheckState(Qt.Unchecked)
+                                        item.setCheckState(Qt.CheckState.Unchecked)
                             else:
                                 for i in range(0, self.model().rowCount()):
                                     item = self.model().item(i)
                                     if item.text().find("---Track Id---") == -1 and item.text().find(
                                             "---Language---") == -1 and item.text().find("---Track Name---") == -1:
-                                        item.setCheckState(Qt.Checked)
+                                        item.setCheckState(Qt.CheckState.Checked)
                             return True
                         elif item.text().find("---Track Id---") == -1 and item.text().find(
                                 "---Language---") == -1 and item.text().find("---Track Name---") == -1:
-                            if item.checkState() == Qt.Checked:
-                                item.setCheckState(Qt.Unchecked)
+                            if item.checkState() == Qt.CheckState.Checked:
+                                item.setCheckState(Qt.CheckState.Unchecked)
                                 self.update_state_of_select_all_check()
                             else:
-                                item.setCheckState(Qt.Checked)
+                                item.setCheckState(Qt.CheckState.Checked)
                                 self.update_state_of_select_all_check()
                             return True
                         else:
@@ -160,7 +160,7 @@ class TracksCheckableComboBox(QComboBox):
                 current_tracks = "lang"
             elif self.model().item(i).text() == "---Track Name---":
                 current_tracks = "name"
-            if self.model().item(i).checkState() == Qt.Checked:
+            if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 if current_tracks == "id":
                     count_tracks_id += 1
                     tracks.append(self.model().item(i).text())
@@ -223,25 +223,25 @@ class TracksCheckableComboBox(QComboBox):
             item.setData(data)
         if text.find("---Track Id---") == -1 and text.find("---Language---") == -1 and text.find(
                 "---Track Name---") == -1 and text.find("All Tracks") == -1:
-            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
-            item.setData(Qt.Unchecked, Qt.CheckStateRole)
-            item.setData(text, Qt.ToolTipRole)
+            item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setData(Qt.CheckState.Unchecked, Qt.CheckStateRole)
+            item.setData(text, Qt.ItemDataRole.ToolTipRole)
             self.model().appendRow(item)
         elif text.find("All Tracks") != -1:
-            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
-            item.setData(Qt.Unchecked, Qt.CheckStateRole)
-            item.setTextAlignment(Qt.AlignCenter)
+            item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setData(Qt.CheckState.Unchecked, Qt.CheckStateRole)
+            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.model().appendRow(item)
         else:
             # bigger_font=self.lineEdit().font()
             # bigger_font.setPointSize(bigger_font.pointSize()+1)
-            item.setFlags(Qt.ItemIsEnabled)
-            item.setTextAlignment(Qt.AlignCenter)
+            item.setFlags(Qt.ItemFlag.ItemIsEnabled)
+            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # item.setFont(bigger_font)
-            item.setData(Qt.Unchecked)
+            item.setData(Qt.CheckState.Unchecked)
             self.model().appendRow(item)
 
-    def addItems(self, texts, datalist=None):
+    def addItems(self, texts: list, datalist=None):
         self.clear()
         self.addItem("All Tracks      ", None)
         for i, text in enumerate(texts):
@@ -266,16 +266,16 @@ class TracksCheckableComboBox(QComboBox):
         # Return the list of selected items data
         res = []
         for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
+            if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 res.append(self.model().item(i).data())
         return res
 
     def setData(self, texts):
         for i in range(self.model().rowCount()):
             if self.model().item(i).data() in texts:
-                self.model().item(i).setCheckState(Qt.Checked)
+                self.model().item(i).setCheckState(Qt.CheckState.Checked)
             else:
-                self.model().item(i).setCheckState(Qt.Unchecked)
+                self.model().item(i).setCheckState(Qt.CheckState.Unchecked)
 
     def set_tool_tip_hint(self):
         self.setToolTip(self.hint)
@@ -312,7 +312,7 @@ class TracksCheckableComboBox(QComboBox):
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
             self.lineEdit().setFont(non_italic_font)
-            elided_text = metrics.elidedText(self.current_text, Qt.ElideRight, self.lineEdit().width())
+            elided_text = metrics.elidedText(self.current_text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
             self.lineEdit().setText(elided_text)
         else:
             italic_font = self.lineEdit().font()

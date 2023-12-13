@@ -9,8 +9,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import List
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget
 
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_SYMBOLS
@@ -71,18 +71,18 @@ def convert_string_to_boolean(string):
 
 def convert_boolean_to_checked_value(value):
     if value is None:
-        return 1  # Qt.PartiallyChecked
+        return 1  # Qt.CheckState.PartiallyChecked
     if value:
-        return 2  # Qt.Checked
-    return 0  # Qt.Unchecked
+        return 2  # Qt.CheckState.Checked
+    return 0  # Qt.CheckState.Unchecked
 
 
 def convert_check_state_int_to_check_state(value):
     if value == 1:
-        return Qt.PartiallyChecked
+        return Qt.CheckState.PartiallyChecked
     if value == 2:
-        return Qt.Checked
-    return Qt.Unchecked
+        return Qt.CheckState.Checked
+    return Qt.CheckState.Unchecked
 
 
 def write_to_log_file(exception):

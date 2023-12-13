@@ -1,10 +1,10 @@
 import sys
 from typing import List
 
-import PySide2
-from PySide2.QtCore import Signal
-from PySide2.QtGui import Qt, QColor
-from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
+import PySide6
+from PySide6.QtCore import Signal
+from PySide6.QtGui import Qt, QColor
+from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -69,23 +69,23 @@ class AttachmentMatchingTable(TableWidget):
         self.horizontalHeader().setHighlightSections(False)
 
     def disable_table_edit(self):
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
     def force_select_whole_row(self):
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
     def make_column_expand_as_possible(self, column_index):
         header = self.horizontalHeader()
-        header.setSectionResizeMode(column_index, QHeaderView.Stretch)
+        header.setSectionResizeMode(column_index, QHeaderView.ResizeMode.Stretch)
 
     def force_single_row_selection(self):
-        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
     def setup_columns(self):
-        self.set_column_name(column_index=self.column_ids["Name"], name="Folder/File Name", alignment=Qt.AlignCenter)
-        self.set_column_name(column_index=self.column_ids["Size"], name="Size", alignment=Qt.AlignCenter)
+        self.set_column_name(column_index=self.column_ids["Name"], name="Folder/File Name", alignment=Qt.AlignmentFlag.AlignCenter)
+        self.set_column_name(column_index=self.column_ids["Size"], name="Size", alignment=Qt.AlignmentFlag.AlignCenter)
 
-    def set_column_name(self, column_index, name, alignment=Qt.AlignLeft):
+    def set_column_name(self, column_index, name, alignment=Qt.AlignmentFlag.AlignLeft):
         column = QTableWidgetItem(name)
         column.setTextAlignment(alignment)
         self.setHorizontalHeaderItem(column_index, column)
@@ -97,7 +97,7 @@ class AttachmentMatchingTable(TableWidget):
         self.setColumnWidth(self.column_ids["Size"],
                             min(self.columnWidth(self.column_ids["Name"]) // 2, screen_size.width() // 14))
 
-    def resizeEvent(self, event: PySide2.QtGui.QResizeEvent) -> None:
+    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent) -> None:
         super().resizeEvent(event)
         self.resize_2nd_column()
 
@@ -114,7 +114,7 @@ class AttachmentMatchingTable(TableWidget):
 
     def set_row_number(self, row_number, row_index):
         row_number_item = QTableWidgetItem(str(row_number))
-        row_number_item.setTextAlignment(Qt.AlignCenter)
+        row_number_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setVerticalHeaderItem(row_index, row_number_item)
 
     def set_row_file_size(self, file_size, row_index):
@@ -136,12 +136,8 @@ class AttachmentMatchingTable(TableWidget):
             new_color = QColor(self.text_color["dark"][status])
         else:
             new_color = QColor(self.text_color["light"][status])
-        self.item(row_index, self.column_ids["Name"]).setTextColor(new_color)
-        self.item(row_index, self.column_ids["Size"]).setTextColor(new_color)
-
-    def update_theme_mode_state(self):
-        for i in reversed(range(self.rowCount())):
-            self.update_checked_attachments_state(self.item(i, self.column_ids["Name"]))
+        self.item(row_index, self.column_ids["Name"]).setForeground(new_color)
+        self.item(row_index, self.column_ids["Size"]).setForeground(new_color)
 
     def update_selected_row(self, row_index):
         self.selectRow(row_index)

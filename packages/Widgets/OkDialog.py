@@ -1,8 +1,8 @@
 import webbrowser
 
-from PySide2 import QtGui, QtCore
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
      QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
@@ -31,7 +31,7 @@ class OkDialog(MyDialog):
         self.buttons_layout.addWidget(self.show_log_file_button)
 
         self.main_layout = QGridLayout()
-        self.main_layout.addWidget(self.mux_good_photo_label, 0, 0, 3, 4, alignment=Qt.AlignCenter)
+        self.main_layout.addWidget(self.mux_good_photo_label, 0, 0, 3, 4, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addLayout(self.buttons_layout, 3, 1, 1, 2)
         self.main_layout.setContentsMargins(10, 20, 10, 20)
         self.setLayout(self.main_layout)
@@ -62,7 +62,7 @@ class OkDialog(MyDialog):
         self.message.setText(self.info_message)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()

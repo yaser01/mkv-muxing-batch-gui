@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
     QGroupBox,
     QVBoxLayout,
 )
@@ -84,7 +84,7 @@ class ChapterSelectionSetting(GlobalSetting):
     def setup_chapter_options_layout(self):
         self.chapter_options_layout.addWidget(self.chapter_extensions_comboBox)
         self.chapter_options_layout.addStretch()
-        self.chapter_options_layout.addWidget(self.discard_old_chapters_checkBox, alignment=Qt.AlignRight)
+        self.chapter_options_layout.addWidget(self.discard_old_chapters_checkBox, alignment=Qt.AlignmentFlag.AlignRight)
 
     def setup_main_layout(self):
         self.main_layout.addWidget(self.chapter_source_label, 0, 0)

@@ -2,9 +2,9 @@ import os
 import time
 from pathlib import Path
 
-from PySide2.QtCore import QThread, Signal
-from PySide2.QtGui import Qt, QFontMetrics
-from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
+from PySide6.QtCore import QThread, Signal
+from PySide6.QtGui import Qt, QFontMetrics
+from PySide6.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -67,7 +67,8 @@ def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test
 
 
 def generate_tool_tip_for_subtitle_file(subtitle_full_path="C:/Test", subtitle_name="Test",
-                                        subtitle_delay=0.0, subtitle_language=Options.CurrentPreset.Default_Subtitle_Language,
+                                        subtitle_delay=0.0,
+                                        subtitle_language=Options.CurrentPreset.Default_Subtitle_Language,
                                         subtitle_track_name="Test",
                                         subtitle_set_default=False, subtitle_set_forced=False,
                                         show_full_path=False):
@@ -230,8 +231,8 @@ class JobQueueTable(TableWidget):
         }
         self.setColumnCount(len(self.column_ids))
         self.setRowCount(0)
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.create_horizontal_header()
         self.setup_horizontal_header()
         self.setup_columns()
@@ -239,49 +240,49 @@ class JobQueueTable(TableWidget):
 
     def setup_horizontal_header(self):
         self.horizontalHeader().setHighlightSections(False)
-        self.horizontal_header.setSectionResizeMode(0, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(1, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(2, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(3, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(4, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(5, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(6, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(7, QHeaderView.Stretch)
+        self.horizontal_header.setSectionResizeMode(0, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(6, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(7, QHeaderView.ResizeMode.Stretch)
 
     def create_horizontal_header(self):
         self.horizontal_header = self.horizontalHeader()
 
     def setup_columns(self):
         column = QTableWidgetItem("Name")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Name"], column)
 
         column = QTableWidgetItem("Status")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Status"], column)
 
         column = QTableWidgetItem("Audio")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Audio"], column)
 
         column = QTableWidgetItem("Subtitle")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Subtitle"], column)
 
         column = QTableWidgetItem("Chapter")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Chapter"], column)
 
         column = QTableWidgetItem("Size Before")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Size Before"], column)
 
         column = QTableWidgetItem("Progress")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Progress"], column)
 
         column = QTableWidgetItem("Size After")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Size After"], column)
 
     def connect_signals(self):
@@ -292,7 +293,7 @@ class JobQueueTable(TableWidget):
 
     def set_row_value_id(self, new_row_id):
         vertical_header_item = QTableWidgetItem(str(new_row_id + 1))
-        vertical_header_item.setTextAlignment(Qt.AlignCenter)
+        vertical_header_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setVerticalHeaderItem(new_row_id, vertical_header_item)
 
     def set_row_value_size_before_muxing(self, new_job, new_row_id):
@@ -430,17 +431,16 @@ class JobQueueTable(TableWidget):
             self.data[i].video_name_displayed = chr(0x200E) + self.data[i].video_name_with_spaces
             self.cellWidget(i, self.column_ids["Name"]).setText(self.data[i].video_name_displayed)
 
-    def resize_column(self, column_index):
+    def resize_column(self, column_index, old_width, new_width):
         if column_index == self.column_ids["Name"]:
             for i in range(self.rowCount()):
                 metrics = QFontMetrics(
                     self.cellWidget(i, self.column_ids["Name"]).font())
                 elided_text = metrics.elidedText(
-                    self.data[i].video_name_with_spaces, Qt.ElideRight,
+                    self.data[i].video_name_with_spaces, Qt.TextElideMode.ElideRight,
                     self.columnWidth(self.column_ids["Name"]))
                 self.data[i].video_name_displayed = chr(0x200E) + elided_text
                 self.cellWidget(i, self.column_ids["Name"]).setText(self.data[i].video_name_displayed)
-        self.update()
 
     def cell_double_clicked(self, row_index, column_index):
         if column_index == self.column_ids["Subtitle"]:

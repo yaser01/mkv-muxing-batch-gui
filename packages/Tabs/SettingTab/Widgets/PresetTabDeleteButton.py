@@ -1,10 +1,7 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton
-
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options
-from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.SubtitleTab.Widgets.ClearSubtitleTabDialog import ClearSubtitleTabDialog
 
 
 class PresetTabDeleteButton(QPushButton):

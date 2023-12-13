@@ -1,5 +1,5 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QLabel
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QLabel
 
 from packages.Startup.GlobalIcons import InfoIcon
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -93,7 +93,7 @@ class ModifyOldTracksDialog(MyDialog):
         self.instructions_label.setText(instructions_text)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def enable_maximize_mark_window(self):
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, on=True)

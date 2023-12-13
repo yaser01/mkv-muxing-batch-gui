@@ -1,36 +1,37 @@
-from PySide2.QtGui import QIcon
-from PySide2.QtWinExtras import QWinTaskbarButton
+import time
+
+import PyTaskbar
+from PySide6.QtGui import QIcon
 
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Widgets.WindowsTaskBar import WindowsTaskBar
 
 
-class TaskBarProgress(QWinTaskbarButton):
-    def __init__(self, window_handle):
-        super().__init__()
-        self.setWindow(window_handle)
-        self.progress = self.progress()
-        self.progress.setValue(0)
-        self.progress.setVisible(True)
+class TaskBarProgress(WindowsTaskBar):
+    def __init__(self, window_id):
+        super().__init__(hwnd=window_id)
+        self.setState("normal")
+        self.setProgress(0)
+        self.clearOverlayIcon()
 
     def start_muxing(self):
-        self.progress.setVisible(True)
-        self.progress.resume()
-        self.setOverlayIcon(QIcon(GlobalFiles.StartMultiplexingIconPath))
+        self.setState("normal")
+        self.setOverlayIcon(GlobalFiles.StartMultiplexingIconPath)
 
     def update_progress(self, new_progress):
-        self.progress.resume()
         if GlobalSetting.MUXING_ON:
-            self.setOverlayIcon(QIcon(GlobalFiles.StartMultiplexingIconPath))
-        self.progress.setValue(new_progress)
+            self.setOverlayIcon(GlobalFiles.StartMultiplexingIconPath)
+        self.setProgress(new_progress)
         if new_progress == 100:
-            self.hide_progress()
+            self.setProgress(0)
+            self.clearOverlayIcon()
+            self.setState("done")
 
     def hide_progress(self):
-        self.progress.setValue(0)
-        self.progress.setVisible(False)
+        self.setProgress(0)
         self.clearOverlayIcon()
 
     def pause_progress(self):
-        self.progress.pause()
-        self.setOverlayIcon(QIcon(GlobalFiles.PauseMultiplexingIconPath))
+        self.setState("warning")
+        self.setOverlayIcon(GlobalFiles.PauseMultiplexingIconPath)

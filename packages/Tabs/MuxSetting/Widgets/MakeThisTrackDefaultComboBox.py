@@ -1,7 +1,7 @@
-import PySide2
-from PySide2.QtCore import QEvent
-from PySide2.QtGui import Qt, QFontMetrics
-from PySide2.QtWidgets import QComboBox
+import PySide6
+from PySide6.QtCore import QEvent
+from PySide6.QtGui import Qt, QFontMetrics
+from PySide6.QtWidgets import QComboBox
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -31,7 +31,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().installEventFilter(self)
         self.closeOnLineEditClick = False
         # Prevent popup from closing when clicking on an item
@@ -82,21 +82,21 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         for i in range(self.count()):
             if self.itemText(i) == "---Track Id---":
                 self.model().item(i).setEnabled(False)
-                self.model().item(i).setTextAlignment(Qt.AlignCenter)
+                self.model().item(i).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 break
 
     def disable_track_language_text_from_being_selected(self):
         for i in range(self.count()):
             if self.itemText(i) == "---Language---":
                 self.model().item(i).setEnabled(False)
-                self.model().item(i).setTextAlignment(Qt.AlignCenter)
+                self.model().item(i).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 break
 
     def disable_track_name_text_from_being_selected(self):
         for i in range(self.count()):
             if self.itemText(i) == "---Track Name---":
                 self.model().item(i).setEnabled(False)
-                self.model().item(i).setTextAlignment(Qt.AlignCenter)
+                self.model().item(i).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 break
 
     def setEnabled(self, new_state: bool):
@@ -124,19 +124,19 @@ class MakeThisTrackDefaultComboBox(QComboBox):
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
 
-    def addItems(self, texts):
+    def addItems(self, texts: list):
         self.clear()
         super().addItems(texts)
         for i in range(len(texts)):
             if texts[i] != "---Track Id---" and texts[i] != "---Language---" and texts[i] != "---Track Name---":
-                self.setItemData(i, texts[i], Qt.ToolTipRole)
+                self.setItemData(i, texts[i], Qt.ItemDataRole.ToolTipRole)
         self.current_list = texts.copy()
         self.setCurrentIndex(-1)
         self.disable_track_id_text_from_being_selected()
         self.disable_track_language_text_from_being_selected()
         self.disable_track_name_text_from_being_selected()
 
-    def resizeEvent(self, e: PySide2.QtGui.QResizeEvent):
+    def resizeEvent(self, e: PySide6.QtGui.QResizeEvent):
         super().resizeEvent(e)
         self.update_shown_text()
 
@@ -220,7 +220,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
             self.lineEdit().setFont(non_italic_font)
-            elided_text = metrics.elidedText(self.current_text, Qt.ElideRight, self.lineEdit().width())
+            elided_text = metrics.elidedText(self.current_text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
             self.lineEdit().setText(elided_text)
         else:
             italic_font = self.lineEdit().font()

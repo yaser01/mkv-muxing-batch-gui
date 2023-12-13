@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal, Qt
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtWidgets import QComboBox
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 
@@ -41,7 +41,7 @@ class SubtitleMuxAfterTracksComboBox(QComboBox):
         for item_id in range(1, number_of_tracks + 1):
             self.addItem(num_to_ith(item_id) + " Subtitle")
         for i in range(self.count()):
-            self.setItemData(i, self.itemText(i), Qt.ToolTipRole)
+            self.setItemData(i, self.itemText(i), Qt.ItemDataRole.ToolTipRole)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.setCurrentIndex(0)
 

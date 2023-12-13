@@ -1,4 +1,4 @@
-from PySide2.QtGui import QPalette, QColor
+from PySide6.QtGui import QPalette, QColor
 
 from packages.Startup import ColorThems
 
@@ -15,8 +15,8 @@ def get_light_palette():
     palette.setColor(QPalette.Button, QColor(*ColorThems.Light_Button_Color))
     palette.setColor(QPalette.ButtonText, QColor(*ColorThems.Light_ButtonText_Color))
     palette.setColor(QPalette.Link, QColor(*ColorThems.Light_Link_Color))
-    palette.setColor(QPalette.Highlight, QColor(*ColorThems.Light_Highlight_Color))
-    palette.setColor(QPalette.HighlightedText, QColor(*ColorThems.Light_HighlightedText_Color))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(*ColorThems.Light_Highlight_Color))
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor(*ColorThems.Light_HighlightedText_Color))
     palette.setColor(QPalette.PlaceholderText, QColor(*ColorThems.Light_PlaceholderText_Color))
     palette.setColor(QPalette.Active, QPalette.Button, QColor(*ColorThems.Light_Button_Color))
     palette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(*ColorThems.Light_ButtonText_Color_Disabled))
@@ -42,8 +42,8 @@ def get_dark_palette():
     palette.setColor(QPalette.Button, QColor(*ColorThems.Dark_Button_Color))
     palette.setColor(QPalette.ButtonText, QColor(*ColorThems.Dark_ButtonText_Color))
     palette.setColor(QPalette.Link, QColor(*ColorThems.Dark_Link_Color))
-    palette.setColor(QPalette.Highlight, QColor(*ColorThems.Dark_Highlight_Color))
-    palette.setColor(QPalette.HighlightedText, QColor(*ColorThems.Dark_HighlightText_Color))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor(*ColorThems.Dark_Highlight_Color))
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor(*ColorThems.Dark_HighlightText_Color))
     palette.setColor(QPalette.PlaceholderText, QColor(*ColorThems.Dark_PlaceholderText_Color))
     palette.setColor(QPalette.Active, QPalette.Button, QColor(*ColorThems.Dark_Button_Color))
     palette.setColor(QPalette.Disabled, QPalette.Button, QColor(*ColorThems.Dark_Button_Color_Disabled))

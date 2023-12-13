@@ -1,7 +1,5 @@
-from pathlib import Path
-
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
 from packages.Tabs.GlobalSetting import GlobalSetting

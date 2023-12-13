@@ -1,6 +1,6 @@
-from PySide2 import QtGui
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
      QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
@@ -51,7 +51,7 @@ class FileNotFoundDialog(MyDialog):
         self.setWindowIcon(GlobalIcons.ErrorIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()

@@ -1,6 +1,6 @@
-from PySide2.QtCore import Signal
-from PySide2.QtGui import QKeySequence
-from PySide2.QtWidgets import QVBoxLayout, QShortcut
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QKeySequence, QShortcut
+from PySide6.QtWidgets import QVBoxLayout
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.SubtitleTab.Widgets.DeleteSubtitleButton import DeleteSubtitleButton

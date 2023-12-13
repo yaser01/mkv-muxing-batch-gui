@@ -1,8 +1,6 @@
-import PySide2
-from PySide2 import QtGui, QtCore
-from PySide2.QtCore import Qt, QSize
-from PySide2.QtWidgets import QHBoxLayout, \
-    QSpinBox, QGridLayout, QLabel, QPushButton, QAbstractSpinBox, QComboBox, QCheckBox
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import QHBoxLayout,QGridLayout, QLabel, QPushButton, QComboBox, QCheckBox
 
 from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -92,7 +90,7 @@ class ChoosePresetDialog(MyDialog):
         self.close()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
         self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint,on=False)
 
     def increase_message_font_size(self, value):

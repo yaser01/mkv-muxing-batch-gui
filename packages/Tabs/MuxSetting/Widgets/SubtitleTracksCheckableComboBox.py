@@ -1,10 +1,4 @@
-import hashlib
-import json
-import os
-
-from PySide2.QtCore import Qt, Signal
-
-from packages.Startup import GlobalFiles
+from PySide6.QtCore import Qt
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllSubtitlesTracks
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -23,7 +17,7 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
                                            "output video with NO old subtitles<br>[the new subtitle file(s) will exists] "
 
     def check_box_state_changed(self, state):
-        if state == Qt.Checked:
+        if state == Qt.CheckState.Checked:
             self.setDisabled(False)
             self.set_tool_tip_hint()
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED = True

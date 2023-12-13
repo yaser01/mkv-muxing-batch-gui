@@ -1,9 +1,9 @@
 from typing import List
 
-import PySide2
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QFontMetrics
-from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem, QLabel
+import PySide6
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFontMetrics
+from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem, QLabel
 
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackInfoTableColumnsID import TrackInfoTableColumnsID
 from packages.Widgets.GreenTikCell import GreenTikCell
@@ -37,26 +37,26 @@ class TrackInfoTable(TableWidget):
 
     def set_column_name(self, column_index, name):
         column = QTableWidgetItem(name)
-        column.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         self.setHorizontalHeaderItem(column_index, column)
 
     def force_no_selection(self):
-        self.setSelectionMode(QAbstractItemView.NoSelection)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
 
     def create_horizontal_header(self):
         self.horizontal_header = self.horizontalHeader()
 
     def setup_horizontal_header(self):
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Video_Name, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Found, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Is_Default, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Is_Forced, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Name, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Language, QHeaderView.Stretch)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Video_Name, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Found, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Is_Default, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Is_Forced, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Name, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Language, QHeaderView.ResizeMode.Stretch)
 
     def set_row_value_video_name(self, row_id, video_name):
         item = QTableWidgetItem(video_name)
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.setItem(row_id, self.column_ids.Video_Name, item)
 
     def set_row_value_empty_cell(self, row_id, column_id):
@@ -64,7 +64,7 @@ class TrackInfoTable(TableWidget):
 
     def set_row_value_empty_item(self, row_id, column_id):
         item = QTableWidgetItem(" ")
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.setItem(row_id, column_id, item)
 
     def set_row_value_found_track(self, row_id, found):
@@ -87,14 +87,14 @@ class TrackInfoTable(TableWidget):
 
     def set_row_value_track_name(self, new_row_id, track_name):
         item = QTableWidgetItem(track_name)
-        item.setTextAlignment(Qt.AlignCenter)
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.setItem(new_row_id, self.column_ids.Track_Name, item)
 
     def set_row_value_track_language(self, new_row_id, track_language):
         item = QTableWidgetItem(track_language)
-        item.setTextAlignment(Qt.AlignCenter)
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.setItem(new_row_id, self.column_ids.Track_Language, item)
 
     def setup_video_names(self):
@@ -154,7 +154,7 @@ class TrackInfoTable(TableWidget):
         if new_column_width >= self.columnWidth(self.column_ids.Track_Name):
             self.setColumnWidth(self.column_ids.Track_Name, new_column_width)
 
-    def resizeEvent(self, event: PySide2.QtGui.QResizeEvent):
+    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent):
         super().resizeEvent(event)
         self.check_if_video_name_need_resize_column_to_fit_content()
         self.check_if_track_name_need_resize_column_to_fit_content()

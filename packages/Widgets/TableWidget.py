@@ -1,9 +1,9 @@
 import sys
 
-from PySide2 import QtGui
-from PySide2.QtCore import Qt, Signal
-from PySide2.QtGui import QPalette
-from PySide2.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
+from PySide6 import QtGui
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
 
 from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import sort_names_like_windows
@@ -19,16 +19,18 @@ class TableWidget(QTableWidget):
             color_default = QtGui.QColor("#aaedff")  # aaedff: blue Kashef
 
             def paint(self, painter, option, index):
-                if option.state & QStyle.State_Selected:
-                    item_color = index.data(role=Qt.TextColorRole)
+                if option.state & QStyle.StateFlag.State_Selected:
+                    item_color = index.data(role=Qt.ItemDataRole.DecorationRole.ForegroundRole)
                     if item_color is None:
-                        item_color = Qt.black
-                    option.palette.setColor(QPalette.HighlightedText, item_color)
+                        item_color = Qt.GlobalColor.black
+                    else:
+                        item_color = item_color.color()
+                    option.palette.setColor(QPalette.ColorRole.HighlightedText, item_color)
                     if Options.Dark_Mode:
                         color = self.combineColors(self.color_default, self.background(option, index), 3)
                     else:
                         color = self.combineColors(self.color_default, self.background(option, index), 2)
-                    option.palette.setColor(QPalette.Highlight, color)
+                    option.palette.setColor(QPalette.ColorRole.Highlight, color)
                 QStyledItemDelegate.paint(self, painter, option, index)
 
             def background(self, option, index):

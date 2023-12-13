@@ -1,6 +1,6 @@
-from PySide2 import QtGui
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
+from PySide6 import QtGui
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
      QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
     QFormLayout
 
@@ -163,12 +163,7 @@ class SubtitleInfoDialog(MyDialog):
         self.setWindowIcon(GlobalIcons.InfoSettingIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
-
-    def increase_message_font_size(self, value):
-        message_font = self.message.font()
-        message_font.setPointSize(self.message.fontInfo().pointSize() + value)
-        self.message.setFont(message_font)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def set_default_buttons(self):
         self.yes_button.setDefault(True)
@@ -217,7 +212,7 @@ class SubtitleInfoDialog(MyDialog):
         self.current_subtitle_language[self.current_subtitle_index] = str(self.subtitle_language_comboBox.currentText())
 
     def update_current_subtitle_set_default(self):
-        new_state = self.subtitle_set_default_checkBox.checkState() == Qt.Checked
+        new_state = self.subtitle_set_default_checkBox.checkState() == Qt.CheckState.Checked
         self.current_subtitle_set_default[self.current_subtitle_index] = new_state
         if new_state:
             for i in range(len(self.current_subtitle_set_default)):
@@ -225,7 +220,7 @@ class SubtitleInfoDialog(MyDialog):
                     self.current_subtitle_set_default[i] = False
 
     def update_current_subtitle_set_forced(self):
-        new_state = self.subtitle_set_forced_checkBox.checkState() == Qt.Checked
+        new_state = self.subtitle_set_forced_checkBox.checkState() == Qt.CheckState.Checked
         self.current_subtitle_set_forced[self.current_subtitle_index] = new_state
         if new_state:
             for i in range(len(self.current_subtitle_set_forced)):

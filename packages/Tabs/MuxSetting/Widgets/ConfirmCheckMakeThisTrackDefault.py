@@ -1,5 +1,5 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QGridLayout, QLabel, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QGridLayout, QLabel, \
     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
@@ -53,7 +53,7 @@ class ConfirmCheckMakeThisTrackDefault(MyDialog):
         self.close()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()

@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal, Qt, QSize, QEvent
-from PySide2.QtWidgets import QComboBox, QStyledItemDelegate
+from PySide6.QtCore import Signal, Qt, QSize, QEvent
+from PySide6.QtWidgets import QComboBox, QStyledItemDelegate
 
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options
@@ -11,7 +11,7 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super(AlignDelegate, self).initStyleOption(option, index)
-        option.displayAlignment = Qt.AlignJustify | Qt.AlignCenter
+        option.displayAlignment = Qt.AlignmentFlag.AlignJustify | Qt.AlignmentFlag.AlignCenter
 
 
 class SubtitleTabComboBox(QComboBox):
@@ -33,8 +33,8 @@ class SubtitleTabComboBox(QComboBox):
         self.setStyleSheet("QComboBox::pane {border-radius: 5px;}")
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.lineEdit().setReadOnly(True)
-        self.lineEdit().setAlignment(Qt.AlignCenter)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().installEventFilter(self)
 

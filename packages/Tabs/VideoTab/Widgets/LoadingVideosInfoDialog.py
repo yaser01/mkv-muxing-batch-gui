@@ -1,8 +1,8 @@
 import time
 
-from PySide2.QtCore import Qt, QThread, QSize
-from PySide2.QtGui import QMovie
-from PySide2.QtWidgets import QLabel, QHBoxLayout
+from PySide6.QtCore import Qt, QThread, QSize
+from PySide6.QtGui import QMovie
+from PySide6.QtWidgets import QLabel, QHBoxLayout
 
 from packages.Startup.GlobalFiles import SpinnerIconPath
 from packages.Tabs.VideoTab.Widgets.GenerateMediaInfoFilesWorker import GenerateMediaInfoFilesWorker
@@ -53,7 +53,7 @@ class LoadingVideosInfoDialog(MyDialog):
         self.generate_media_info_files_thread.start()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def update_progress(self):
         self.current_video_done_index += 1

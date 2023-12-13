@@ -1,7 +1,7 @@
 import platform
 import sys
 
-from PySide2.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialog
 
 from packages.Startup.Options import Options
 

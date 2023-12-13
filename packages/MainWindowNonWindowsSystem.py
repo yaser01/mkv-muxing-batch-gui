@@ -1,6 +1,6 @@
-import PySide2
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QFrame, QVBoxLayout
+import PySide6
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QFrame, QVBoxLayout
 
 from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import width_factor, height_factor
@@ -37,7 +37,7 @@ class MainWindowNonWindowsSystem(MyMainWindow):
         self.tabs_layout = QVBoxLayout()
         self.setup_tabs_layout()
         self.setCentralWidget(self.tabs_frame)
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self.show_window()
         self.check_if_need_to_show_choose_preset_dialog(parent=self.window())
         self.tabs.set_preset_options()
@@ -60,7 +60,7 @@ class MainWindowNonWindowsSystem(MyMainWindow):
     def update_minimum_size(self):
         self.setMinimumSize(self.minimumSizeHint())
 
-    def closeEvent(self, event: PySide2.QtGui.QCloseEvent):
+    def closeEvent(self, event: PySide6.QtGui.QCloseEvent):
         muxing_on = GlobalSetting.MUXING_ON
         if muxing_on:
             want_to_exit = check_if_exit_when_muxing_on()

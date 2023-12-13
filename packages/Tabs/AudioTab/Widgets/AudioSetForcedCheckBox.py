@@ -1,5 +1,5 @@
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QCheckBox
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QCheckBox
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 
@@ -13,8 +13,8 @@ class AudioSetForcedCheckBox(QCheckBox):
         self.stateChanged.connect(self.change_global_audio_set_forced)
 
     def change_global_audio_set_forced(self):
-        GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = self.checkState() == Qt.Checked
-        if self.checkState() == Qt.Checked:
+        GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = self.checkState() == Qt.CheckState.Checked
+        if self.checkState() == Qt.CheckState.Checked:
             for i in GlobalSetting.AUDIO_SET_FORCED.keys():
                 if i != self.tab_index:
                     GlobalSetting.AUDIO_SET_FORCED[i] = False

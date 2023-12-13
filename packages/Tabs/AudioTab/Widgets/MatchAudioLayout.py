@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QHBoxLayout
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QHBoxLayout
 
 from packages.Tabs.AudioTab.Widgets.AudioMatchingTable import AudioMatchingTable
 from packages.Tabs.AudioTab.Widgets.MatchAudioToolsLayout import MatchAudioToolsLayout

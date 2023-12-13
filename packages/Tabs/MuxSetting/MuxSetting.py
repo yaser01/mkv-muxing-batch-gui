@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 import time
@@ -6,9 +5,9 @@ from os import makedirs
 from pathlib import Path
 from shutil import copy2
 
-from PySide2.QtCore import Signal
-from PySide2.QtGui import QPaintEvent, QResizeEvent
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QPaintEvent, QResizeEvent
+from PySide6.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
     QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )
@@ -30,7 +29,6 @@ from packages.Tabs.MuxSetting.Widgets.OverwriteFilesDialog import OverwriteFiles
 from packages.Tabs.MuxSetting.Widgets.SubtitleTracksCheckableComboBox import SubtitleTracksCheckableComboBox
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
 from packages.Widgets.FileNotFoundDialog import FileNotFoundDialog
-from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.NoSettingToApplyDialog import NoSettingToApplyDialog
 
@@ -145,6 +143,7 @@ def check_if_want_to_keep_log_file():
                                                  info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
                                                               "permissions on Destination folder")
                 error_dialog.execute()
+
 
 def get_approximate_size_of_output_of_job(job):
     file_size = 0
@@ -507,7 +506,8 @@ class MuxSettingTab(QWidget):
         if GlobalSetting.OVERWRITE_SOURCE_FILES:
             try:
                 for job in self.job_queue_layout.table.data:
-                    if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+                    if not job.done or (
+                            job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
                         file_size = get_approximate_size_of_output_of_job(job)
                         needed_space = file_size
                         free_space = shutil.disk_usage(path=os.path.dirname(job.video_name_absolute)).free
@@ -582,10 +582,10 @@ class MuxSettingTab(QWidget):
                 if GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_MODIFIED_ACTIVATED:
                     disable_reason = "Because you have modified some subtitle tracks in <b>Modify Old Tracks</b> " \
                                      "option in Video Tab "
-                    self.only_keep_those_subtitles_checkBox.setCheckState(Qt.Unchecked)
+                    self.only_keep_those_subtitles_checkBox.setCheckState(Qt.CheckState.Unchecked)
                     self.only_keep_those_subtitles_checkBox.setEnabled(False)
                     self.make_this_subtitle_default_checkBox.setEnabled(False)
-                    self.make_this_subtitle_default_checkBox.setCheckState(Qt.Unchecked)
+                    self.make_this_subtitle_default_checkBox.setCheckState(Qt.CheckState.Unchecked)
                     self.only_keep_those_subtitles_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                     self.make_this_subtitle_default_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
                     self.make_this_subtitle_default_comboBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
@@ -594,8 +594,8 @@ class MuxSettingTab(QWidget):
                 if GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_MODIFIED_ACTIVATED:
                     disable_reason = "Because you have modified some audio tracks in <b>Modify Old Tracks</b> option " \
                                      "in Video Tab "
-                    self.only_keep_those_audios_checkBox.setCheckState(Qt.Unchecked)
-                    self.make_this_audio_default_checkBox.setCheckState(Qt.Unchecked)
+                    self.only_keep_those_audios_checkBox.setCheckState(Qt.CheckState.Unchecked)
+                    self.make_this_audio_default_checkBox.setCheckState(Qt.CheckState.Unchecked)
                     self.only_keep_those_audios_checkBox.setEnabled(False)
                     self.make_this_audio_default_checkBox.setEnabled(False)
                     self.only_keep_those_audios_checkBox.setToolTip(f"<b>[Disabled]</b> {disable_reason}")
@@ -786,8 +786,10 @@ class MuxSettingTab(QWidget):
 
     def set_default_directory(self):
         self.destination_path_lineEdit.setText(Options.CurrentPreset.Default_Destination_Directory)
+
     def set_preset_options(self):
         self.set_default_directory()
+
     def update_theme_mode_state(self):
         self.make_this_audio_default_comboBox.update_theme_mode_state()
         self.make_this_subtitle_default_comboBox.update_theme_mode_state()

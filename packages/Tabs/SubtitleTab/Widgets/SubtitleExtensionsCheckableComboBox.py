@@ -1,9 +1,9 @@
 import os
 
-from PySide2 import QtCore, QtGui
-from PySide2.QtCore import Qt, QEvent
-from PySide2.QtGui import QFontMetrics
-from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
+from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Qt, QEvent
+from PySide6.QtGui import QFontMetrics
+from PySide6.QtWidgets import QStyledItemDelegate, QComboBox
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -54,7 +54,7 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
         self.lineEdit().selectionChanged.connect(self.disable_select)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().installEventFilter(self)
         self.setMinimumWidth(screen_size.width() // 14)
         self.addItems(AllSubtitlesExtensions)
@@ -63,7 +63,7 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
     def make_default_extensions_checked(self):
         for i in range(self.model().rowCount()):
             if self.model().item(i).text() in Options.CurrentPreset.Default_Subtitle_Extensions:
-                self.model().item(i).setCheckState(Qt.Checked)
+                self.model().item(i).setCheckState(Qt.CheckState.Checked)
         self.updateText()
 
     def set_is_there_old_file(self, new_state):
@@ -101,10 +101,10 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
                     if event.type() == QEvent.MouseButtonRelease:
                         index = self.view().indexAt(event.pos())
                         item = self.model().item(index.row())
-                        if item.checkState() == Qt.Checked:
-                            item.setCheckState(Qt.Unchecked)
+                        if item.checkState() == Qt.CheckState.Checked:
+                            item.setCheckState(Qt.CheckState.Unchecked)
                         else:
-                            item.setCheckState(Qt.Checked)
+                            item.setCheckState(Qt.CheckState.Checked)
                         return True
                 return False
             else:
@@ -134,14 +134,14 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
     def updateText(self):
         extensions_text = []
         for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
+            if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 extensions_text.append(self.model().item(i).text())
 
         text = ', '.join(extensions_text)
 
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.ElideRight, self.lineEdit().width())
+        elided_text = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
         if elided_text != "":
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
@@ -157,8 +157,8 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
             item.setData(text)
         else:
             item.setData(data)
-        item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
-        item.setData(Qt.Unchecked, Qt.CheckStateRole)
+        item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
+        item.setData(Qt.CheckState.Unchecked, Qt.CheckStateRole)
         self.model().appendRow(item)
 
     def addItems(self, texts, datalist=None):
@@ -173,26 +173,26 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
         # Return the list of selected items data
         res = []
         for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
+            if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 res.append(self.model().item(i).data())
         return res
 
     def setData(self, texts):
         for i in range(self.model().rowCount()):
             if self.model().item(i).data() in texts:
-                self.model().item(i).setCheckState(Qt.Checked)
+                self.model().item(i).setCheckState(Qt.CheckState.Checked)
             else:
-                self.model().item(i).setCheckState(Qt.Unchecked)
+                self.model().item(i).setCheckState(Qt.CheckState.Unchecked)
 
     def check_if_nothing_selected(self):
         count = 0
         for i in range(self.model().rowCount()):
-            if self.model().item(i).checkState() == Qt.Checked:
+            if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 count += 1
         if count == 0:
             for i in range(self.model().rowCount()):
                 if self.model().item(i).text() in Options.CurrentPreset.Default_Subtitle_Extensions:
-                    self.model().item(i).setCheckState(Qt.Checked)
+                    self.model().item(i).setCheckState(Qt.CheckState.Checked)
         self.updateText()
 
     def get_files_list(self, new_extensions):

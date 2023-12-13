@@ -1,11 +1,11 @@
 import os
 import sys
 
-from PySide2 import QtCore
-from PySide2.QtWidgets import QApplication, QToolTip, QStyleFactory
+from PySide6 import QtCore
+from PySide6.QtWidgets import QApplication, QToolTip, QStyleFactory
 
 from packages.Startup.Options import Options, read_option_file
-from packages.Startup.GlobalFiles import SettingJsonInfoFilePath, LanguagesFilePath
+from packages.Startup.GlobalFiles import SettingJsonInfoFilePath
 from packages.Startup.SetupThems import get_light_palette, get_dark_palette
 
 

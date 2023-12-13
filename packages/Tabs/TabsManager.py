@@ -1,6 +1,6 @@
-from PySide2.QtCore import Signal, Qt
-from PySide2.QtGui import QColor
-from PySide2.QtWidgets import QTabWidget, QHBoxLayout, QWidget
+from PySide6.QtCore import Signal, Qt
+from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QTabWidget, QHBoxLayout, QWidget
 
 from packages.Startup import ColorThems
 from packages.Startup.Options import Options
@@ -59,7 +59,6 @@ class TabsManager(QTabWidget):
         self.buttons_widget.setLayout(self.button_layout)
         self.button_layout.setContentsMargins(0, 0, 0, 0)
         self.setCornerWidget(self.buttons_widget, Qt.TopRightCorner)
-        self.setStyleSheet("QTabWidget::right-corner{bottom: 2px;}")
         self.connect_signals()
         self.setup_tabs_theme()
 
@@ -142,7 +141,6 @@ class TabsManager(QTabWidget):
             self.setPalette(get_dark_palette())
         else:
             self.setPalette(get_light_palette())
-        self.setStyleSheet("QTabWidget::right-corner{bottom: 2px;}")
 
     def update_tabs_name_theme_mode_state(self):
         activate_color, disabled_color = get_activate_and_disabled_color_according_to_current_theme()

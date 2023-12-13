@@ -1,4 +1,4 @@
-from PySide2.QtCore import Signal
+from PySide6.QtCore import Signal
 
 from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import *
@@ -338,7 +338,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.main_layout.addWidget(self.video_extensions_comboBox, 1, 1)
         self.main_layout.addWidget(self.video_default_duration_fps_label, 1, 2)
         self.main_layout.addWidget(self.video_default_duration_fps_comboBox, 1, 3)
-        self.main_layout.addLayout(self.side_buttons_layout, 1, 4, 1, -1, alignment=Qt.AlignRight)
+        self.main_layout.addLayout(self.side_buttons_layout, 1, 4, 1, -1, alignment=Qt.AlignmentFlag.AlignRight)
         self.main_layout.addWidget(self.table, 2, 0, 1, -1)
 
     def change_global_last_path_directory(self):

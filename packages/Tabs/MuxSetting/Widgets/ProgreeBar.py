@@ -1,6 +1,6 @@
 from sys import platform
 
-from PySide2.QtWidgets import QProgressBar, QStyleFactory
+from PySide6.QtWidgets import QProgressBar, QStyleFactory
 
 from packages.Startup.SetupThems import get_dark_palette
 

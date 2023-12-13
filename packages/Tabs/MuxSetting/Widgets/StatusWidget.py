@@ -1,6 +1,6 @@
-from PySide2.QtCore import QSize
-from PySide2.QtGui import QMovie
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QLabel
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QMovie
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel
 
 from packages.Startup.GlobalFiles import SpinnerIconPath
 
@@ -20,7 +20,6 @@ class StatusWidget(QWidget):
         self.layout.addWidget(self.status_label)
         self.layout.addStretch(3)
         self.layout.setSpacing(0)
-        self.layout.setMargin(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 

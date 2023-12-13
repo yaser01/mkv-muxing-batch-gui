@@ -1,10 +1,7 @@
-import logging
-import time
-
-from PySide2 import QtGui
-from PySide2.QtCore import Qt, QEvent
-from PySide2.QtGui import QFontMetrics
-from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
+from PySide6 import QtGui
+from PySide6.QtCore import Qt, QEvent
+from PySide6.QtGui import QFontMetrics
+from PySide6.QtWidgets import QStyledItemDelegate, QComboBox
 
 from packages.Startup.InitializeScreenResolution import screen_size
 
@@ -42,7 +39,7 @@ class ExtensionsCheckableComboBox(QComboBox):
         self.addItems(self.items_list)
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().installEventFilter(self)
         self.setMinimumWidth(screen_size.width() // 9)
         self.setMaxVisibleItems(6)
@@ -52,7 +49,7 @@ class ExtensionsCheckableComboBox(QComboBox):
     def make_default_extensions_checked(self):
         for i in range(self.current_model.rowCount()):
             if self.current_model.item(i).text() in self.default_items_list:
-                self.current_model.item(i).setCheckState(Qt.Checked)
+                self.current_model.item(i).setCheckState(Qt.CheckState.Checked)
         self.updateText()
 
     def disable_select(self):
@@ -81,10 +78,10 @@ class ExtensionsCheckableComboBox(QComboBox):
                     if event.type() == QEvent.MouseButtonRelease:
                         index = self.view().indexAt(event.pos())
                         item = self.current_model.item(index.row())
-                        if item.checkState() == Qt.Checked:
-                            item.setCheckState(Qt.Unchecked)
+                        if item.checkState() == Qt.CheckState.Checked:
+                            item.setCheckState(Qt.CheckState.Unchecked)
                         else:
-                            item.setCheckState(Qt.Checked)
+                            item.setCheckState(Qt.CheckState.Checked)
                         return True
                 return False
             else:
@@ -114,14 +111,14 @@ class ExtensionsCheckableComboBox(QComboBox):
     def updateText(self):
         extensions_text = []
         for i in range(self.current_model.rowCount()):
-            if self.current_model.item(i).checkState() == Qt.Checked:
+            if self.current_model.item(i).checkState() == Qt.CheckState.Checked:
                 extensions_text.append(self.current_model.item(i).text())
 
         text = ', '.join(extensions_text)
 
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.ElideRight, self.lineEdit().width())
+        elided_text = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
         if elided_text != "":
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
@@ -137,8 +134,8 @@ class ExtensionsCheckableComboBox(QComboBox):
             item.setData(text)
         else:
             item.setData(data)
-        item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
-        item.setData(Qt.Unchecked, Qt.CheckStateRole)
+        item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable)
+        item.setData(Qt.CheckState.Unchecked, Qt.CheckStateRole)
         self.current_model.appendRow(item)
 
     def addItems(self, texts, datalist=None):
@@ -153,26 +150,26 @@ class ExtensionsCheckableComboBox(QComboBox):
         # Return the list of selected items data
         res = []
         for i in range(self.current_model.rowCount()):
-            if self.current_model.item(i).checkState() == Qt.Checked:
+            if self.current_model.item(i).checkState() == Qt.CheckState.Checked:
                 res.append(self.current_model.item(i).data())
         return res
 
     def setData(self, texts):
         for i in range(self.current_model.rowCount()):
             if self.current_model.item(i).data() in texts:
-                self.current_model.item(i).setCheckState(Qt.Checked)
+                self.current_model.item(i).setCheckState(Qt.CheckState.Checked)
             else:
-                self.current_model.item(i).setCheckState(Qt.Unchecked)
+                self.current_model.item(i).setCheckState(Qt.CheckState.Unchecked)
 
     def check_if_nothing_selected(self):
         count = 0
         for i in range(self.current_model.rowCount()):
-            if self.current_model.item(i).checkState() == Qt.Checked:
+            if self.current_model.item(i).checkState() == Qt.CheckState.Checked:
                 count += 1
         if count == 0:
             for i in range(self.current_model.rowCount()):
                 if self.current_model.item(i).text() in self.default_items_list:
-                    self.current_model.item(i).setCheckState(Qt.Checked)
+                    self.current_model.item(i).setCheckState(Qt.CheckState.Checked)
         self.updateText()
 
     def check_extensions_changes(self):

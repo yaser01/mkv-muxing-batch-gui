@@ -1,13 +1,11 @@
-from collections import defaultdict
-
-from PySide2.QtCore import Qt, Signal
-from PySide2.QtGui import QFontMetrics, QColor, QKeySequence
-from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QComboBox, QShortcut
+import typing
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QFontMetrics, QColor, QKeySequence, QShortcut
+from PySide6.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QComboBox
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Tabs.GlobalSetting import convert_string_integer_to_two_digit_string, GlobalSetting, \
-    convert_check_state_int_to_check_state
+from packages.Tabs.GlobalSetting import convert_string_integer_to_two_digit_string, GlobalSetting
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.CenteredCheckBoxCell import CenteredCheckBoxCell
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTableColumnsID import \
     ModifyOldTracksTableColumnsID
@@ -23,8 +21,8 @@ class OldTracksTable(TableWidget):
         self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
                            "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
         self.column_ids = ModifyOldTracksTableColumnsID()
-        self.original_setting: defaultdict[SingleOldTrackData] = original_setting
-        self.current_setting: defaultdict[SingleOldTrackData] = current_setting
+        self.original_setting: typing.Dict[str, SingleOldTrackData] = original_setting
+        self.current_setting: typing.Dict[str, SingleOldTrackData] = current_setting
         self.all_languages = all_languages
         self.tracks_info = tracks_info
         self.horizontal_header = None
@@ -67,25 +65,25 @@ class OldTracksTable(TableWidget):
 
     def set_column_name(self, column_index, name):
         column = QTableWidgetItem(name)
-        column.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
         self.setHorizontalHeaderItem(column_index, column)
 
     def disable_table_bold_column(self):
         self.horizontalHeader().setHighlightSections(False)
 
     def force_select_whole_row(self):
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
     def force_single_row_selection(self):
-        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
     def setup_horizontal_header(self):
-        self.horizontal_header.setSectionResizeMode(self.column_ids.ID, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Enable, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Set_Default, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Set_Forced, QHeaderView.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Name, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Language, QHeaderView.Stretch)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.ID, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Enable, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Set_Default, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Set_Forced, QHeaderView.ResizeMode.Fixed)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Name, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Language, QHeaderView.ResizeMode.Stretch)
 
     def setup_tracks(self):
         is_there_different_track_setting = False
@@ -126,13 +124,13 @@ class OldTracksTable(TableWidget):
                 self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(False)
                 self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(False)
                 self.item(row_id, self.column_ids.Track_Name).setFlags(
-                    self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemIsEditable)
+                    self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(False)
 
     def set_row_value_id(self, track_id, new_row_id):
         item = QTableWidgetItem("Track " + convert_string_integer_to_two_digit_string(track_id))
-        item.setTextAlignment(Qt.AlignCenter)
-        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.setItem(new_row_id, self.column_ids.ID, item)
 
     def set_row_value_is_enabled(self, is_enabled_state, new_row_id):
@@ -155,7 +153,7 @@ class OldTracksTable(TableWidget):
 
     def set_row_value_track_name(self, track_name, new_row_id):
         item = QTableWidgetItem(track_name)
-        item.setTextAlignment(Qt.AlignCenter)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setItem(new_row_id, self.column_ids.Track_Name, item)
 
     def set_row_value_language(self, language, new_row_id):
@@ -219,36 +217,36 @@ class OldTracksTable(TableWidget):
     def check_box_state_changed(self, new_change_list: list):
         row_id, column_id, new_state = new_change_list
         if column_id == self.column_ids.Enable:
-            if new_state == Qt.Checked:
+            if new_state == Qt.CheckState.Checked:
                 new_state = True
             else:
                 new_state = False
             self.update_state_of_row(row_id, new_state)
         elif column_id == self.column_ids.Set_Default:
-            if new_state == Qt.Checked:
+            if new_state == Qt.CheckState.Checked:
                 for i in range(self.rowCount()):
                     if i == row_id:
                         continue
-                    self.cellWidget(i, column_id).check_box.setCheckState(Qt.Unchecked)
+                    self.cellWidget(i, column_id).check_box.setCheckState(Qt.CheckState.Unchecked)
         elif column_id == self.column_ids.Set_Forced:
-            if new_state == Qt.Checked:
+            if new_state == Qt.CheckState.Checked:
                 for i in range(self.rowCount()):
                     if i == row_id:
                         continue
-                    self.cellWidget(i, column_id).check_box.setCheckState(Qt.Unchecked)
+                    self.cellWidget(i, column_id).check_box.setCheckState(Qt.CheckState.Unchecked)
 
     def update_state_of_row(self, row_id, new_state):
         self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(new_state)
         self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(new_state)
-        self.item(row_id, self.column_ids.Track_Name).setTextColor(self.get_text_color(new_state))
-        self.item(row_id, self.column_ids.ID).setTextColor(self.get_text_color(new_state))
+        self.item(row_id, self.column_ids.Track_Name).setForeground(self.get_text_color(new_state))
+        self.item(row_id, self.column_ids.ID).setForeground(self.get_text_color(new_state))
         self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(new_state)
-        if new_state == Qt.Checked:
+        if new_state == Qt.CheckState.Checked:
             self.item(row_id, self.column_ids.Track_Name).setFlags(
-                self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemIsEditable)
+                self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemFlag.ItemIsEditable)
         else:
             self.item(row_id, self.column_ids.Track_Name).setFlags(
-                self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemIsEditable)
+                self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemFlag.ItemIsEditable)
 
     def restore_defaults(self):
         if self.rowCount() == 0:

@@ -1,6 +1,6 @@
-from PySide2 import QtCore
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QCheckBox, QSizePolicy
+from PySide6 import QtCore
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QCheckBox, QSizePolicy
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.MuxSetting.Widgets.ConfirmCheckMakeThisTrackDefault import ConfirmCheckMakeThisTrackDefault
@@ -50,7 +50,7 @@ class MakeThisSubtitleDefaultCheckBox(QCheckBox):
                 if GlobalSetting.SUBTITLE_SET_FORCED[i]:
                     subtitle_to_be_forced = i
 
-            if state == Qt.Unchecked:
+            if state == Qt.CheckState.Unchecked:
                 self.disable_combo_box.emit(True)
                 self.set_tool_tip_hint_no_check()
                 GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED = False
@@ -59,7 +59,7 @@ class MakeThisSubtitleDefaultCheckBox(QCheckBox):
                 GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED = False
                 GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK = ""
             else:
-                if state == Qt.Checked:
+                if state == Qt.CheckState.Checked:
                     if subtitle_to_be_default != -1 or subtitle_to_be_forced != -1:
                         confirm_dialog = ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(track_type="subtitle")
                         confirm_dialog.execute()
@@ -77,7 +77,7 @@ class MakeThisSubtitleDefaultCheckBox(QCheckBox):
                         elif confirm_dialog.result == "No":
                             self.stop_check = True
                             self.disable_combo_box.emit(False)
-                            self.setCheckState(Qt.PartiallyChecked)
+                            self.setCheckState(Qt.CheckState.PartiallyChecked)
                             self.set_tool_tip_hint_partially_check()
                             if subtitle_to_be_default != -1:
                                 GlobalSetting.SUBTITLE_SET_DEFAULT[subtitle_to_be_default] = False
@@ -88,7 +88,7 @@ class MakeThisSubtitleDefaultCheckBox(QCheckBox):
                             self.stop_check = False
                         else:
                             self.stop_check = True
-                            self.setCheckState(Qt.Unchecked)
+                            self.setCheckState(Qt.CheckState.Unchecked)
                             self.disable_combo_box.emit(True)
                             self.set_tool_tip_hint_no_check()
                             GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED = False
@@ -122,7 +122,7 @@ class MakeThisSubtitleDefaultCheckBox(QCheckBox):
                             GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_SEMI_ENABLED = True
                             GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED = False
                         else:
-                            self.setCheckState(Qt.Unchecked)
+                            self.setCheckState(Qt.CheckState.Unchecked)
                             self.set_tool_tip_hint_no_check()
                             GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED = False
                             GlobalSetting.SUBTITLE_SET_FORCED_DISABLED = False

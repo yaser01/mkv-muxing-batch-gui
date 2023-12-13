@@ -2,8 +2,8 @@ import logging
 import os
 from typing import List
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QHBoxLayout, QWidget
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QHBoxLayout, QWidget
 
 from packages.Tabs.AttachmentTab.Widgets.AttachmentMatchingTable import AttachmentMatchingTable
 from packages.Tabs.AttachmentTab.Widgets.MatchAttachmentToolsLayout import MatchAttachmentToolsLayout
@@ -109,7 +109,7 @@ class MatchAttachmentWidget(QWidget):
         self.attachment_table.clear_table()
 
     def clear_attachment_selection(self):
-        self.attachment_table.clear_selection()
+        self.attachment_table.clear_table()
 
     def disable_editable_widgets(self):
         self.attachment_table.setAcceptDrops(False)

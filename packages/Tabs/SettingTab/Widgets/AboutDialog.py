@@ -1,7 +1,7 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtCore import Qt, QSize
-from PySide2.QtGui import QPixmap, QFont
-from PySide2.QtWidgets import QLabel, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QPixmap, QFont
+from PySide6.QtWidgets import QLabel, \
      QPushButton, QHBoxLayout, QVBoxLayout
 
 from packages.Startup.GlobalFiles import AppIconPath, MKVMERGE_VERSION, MKVPROPEDIT_VERSION
@@ -32,7 +32,7 @@ class AboutDialog(MyDialog):
         self.app_warranty_label = QLabel()
         self.app_warranty_label.setText("it is provided as is with no warranty of any kind, including the \n"
                                         "warranty of design and fitness for a particular purpose")
-        self.app_warranty_label.setAlignment(Qt.AlignCenter)
+        self.app_warranty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.app_bug_report_label = QLabel(
             "You can report issues on the " + GitHubIssuesUrlTag)
         self.app_bug_report_label.setOpenExternalLinks(True)
@@ -57,17 +57,17 @@ class AboutDialog(MyDialog):
         self.social_media_layout.addWidget(QLabel(""), stretch=3)
 
         self.main_layout = QVBoxLayout()
-        self.main_layout.addWidget(self.app_icon_label, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_name_label, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_current_version, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_mkvmerge_current_version, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_mkvpropedit_current_version, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_link_github_label, alignment=Qt.AlignCenter)
-        # self.main_layout.addWidget(self.app_licence_label, alignment=Qt.AlignCenter)
-        # self.main_layout.addWidget(self.app_warranty_label, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_bug_report_label, alignment=Qt.AlignCenter)
-        # self.main_layout.addWidget(self.app_bug_report_issue_link_label, alignment=Qt.AlignCenter)
-        self.main_layout.addWidget(self.app_follow_me_label, alignment=Qt.AlignCenter)
+        self.main_layout.addWidget(self.app_icon_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_name_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_current_version, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_mkvmerge_current_version, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_mkvpropedit_current_version, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_link_github_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        # self.main_layout.addWidget(self.app_licence_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        # self.main_layout.addWidget(self.app_warranty_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_bug_report_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        # self.main_layout.addWidget(self.app_bug_report_issue_link_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.app_follow_me_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addLayout(self.social_media_layout)
         self.main_layout.addLayout(self.buttons_layout)
         # self.main_layout.setContentsMargins(20, 20, 20, 20)
@@ -92,7 +92,7 @@ class AboutDialog(MyDialog):
         self.close()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def showEvent(self, a0: QtGui.QShowEvent) -> None:
         super().showEvent(a0)

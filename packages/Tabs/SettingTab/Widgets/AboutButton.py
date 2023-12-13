@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QPushButton
+from PySide6.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
 from packages.Tabs.SettingTab.Widgets.AboutDialog import AboutDialog

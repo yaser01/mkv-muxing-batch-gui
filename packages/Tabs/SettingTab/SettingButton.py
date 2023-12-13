@@ -1,8 +1,8 @@
 import logging
 import time
 
-from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QPushButton
+from PySide6.QtCore import QSize
+from PySide6.QtWidgets import QPushButton
 
 from packages.Startup.GlobalIcons import SettingIcon
 from packages.Tabs.SettingTab.SettingDialog import SettingDialog

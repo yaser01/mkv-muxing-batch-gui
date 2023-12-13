@@ -1,5 +1,5 @@
-from PySide2.QtCore import Qt, Signal
-from PySide2.QtWidgets import QCheckBox
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QCheckBox
 
 from packages.Startup.Options import Options, save_options
 from packages.Tabs.AttachmentTab.Widgets.SwitchingToExpertModeDialog import SwitchingToExpertModeDialog
@@ -34,7 +34,7 @@ class ExpertModeCheckBox(QCheckBox):
                     self.is_checked_signal.emit(new_state)
                 else:
                     self.skip_state_changed = True
-                    self.setCheckState(Qt.Unchecked)
+                    self.setCheckState(Qt.CheckState.Unchecked)
                     self.skip_state_changed = False
             else:
                 GlobalSetting.ATTACHMENT_EXPERT_MODE = new_state

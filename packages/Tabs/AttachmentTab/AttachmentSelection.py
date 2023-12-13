@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QVBoxLayout, QGroupBox
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QVBoxLayout, QGroupBox
 
 from packages.Startup.Options import Options
 from packages.Tabs.AttachmentTab.Widgets.AllowDuplicateAttachmentsCheckBox import AllowDuplicateAttachmentsCheckBox
@@ -82,7 +82,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_groupBox.setCheckable(True)
         self.attachment_main_groupBox.setChecked(False)
         self.attachment_main_groupBox.setLayout(self.attachment_main_layout)
-        # self.attachment_main_groupBox.setFocusProxy(Qt.NoFocus)
+        # self.attachment_main_groupBox.setFocusProxy(Qt.FocusPolicy.NoFocus)
 
     def update_folder_path(self, new_path: str):
         if self.expert_mode_checkBox.isChecked():
@@ -186,7 +186,7 @@ class AttachmentSelectionSetting(GlobalSetting):
         self.attachment_main_layout.addWidget(self.attachment_total_size_label, 1, 0)
         self.attachment_main_layout.addWidget(self.attachment_total_size_value_label, 1, 1)
         self.attachment_main_layout.addLayout(self.attachments_options_layout, 1, 39, 1, -1,
-                                              alignment=Qt.AlignRight)
+                                              alignment=Qt.AlignmentFlag.AlignRight)
         self.attachment_main_layout.addWidget(self.table, 2, 0, 1, -1)
         self.attachment_main_layout.addWidget(self.expert_mode_widget, 2, 0, 1, -1)
 

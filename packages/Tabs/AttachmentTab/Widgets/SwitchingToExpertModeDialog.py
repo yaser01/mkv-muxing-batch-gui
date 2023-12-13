@@ -1,7 +1,7 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QPushButton, QHBoxLayout, QCheckBox, QSpacerItem, QSizePolicy
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+    QPushButton, QHBoxLayout, QCheckBox
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -32,11 +32,11 @@ class SwitchingToExpertModeDialog(MyDialog):
         self.buttons_layout.addWidget(self.no_button)
         self.buttons_layout.setSpacing(7)
         self.main_layout = QGridLayout()
-        self.main_layout.addWidget(self.messageIcon, 0, 0, 3, 1, alignment=Qt.AlignVCenter)
+        self.main_layout.addWidget(self.messageIcon, 0, 0, 3, 1, alignment=Qt.AlignmentFlag.AlignVCenter)
         self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addWidget(self.show_message_again, 1, 2, 2, 3)
-        self.main_layout.addLayout(self.buttons_layout, 3, 0, 1, -1, alignment=Qt.AlignCenter)
+        self.main_layout.addLayout(self.buttons_layout, 3, 0, 1, -1, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.setContentsMargins(10, 10, 10, 10)
         self.main_layout.setVerticalSpacing(12)
         self.setLayout(self.main_layout)
@@ -79,7 +79,7 @@ class SwitchingToExpertModeDialog(MyDialog):
         self.setWindowIcon(GlobalIcons.InfoIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()

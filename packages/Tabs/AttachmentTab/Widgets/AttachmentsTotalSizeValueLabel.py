@@ -1,6 +1,6 @@
 import os
 
-from PySide2.QtWidgets import QLabel
+from PySide6.QtWidgets import QLabel
 
 from packages.Tabs.GlobalSetting import get_readable_filesize
 

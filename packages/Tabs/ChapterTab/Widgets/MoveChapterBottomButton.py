@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options

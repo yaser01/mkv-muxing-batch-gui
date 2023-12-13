@@ -1,5 +1,5 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QGridLayout, QLabel, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QGridLayout, QLabel, \
      QApplication, QStyle, QPushButton, QHBoxLayout
 
 from packages.Widgets.MyDialog import MyDialog
@@ -7,22 +7,22 @@ from packages.Widgets.MyDialog import MyDialog
 
 def get_pixmap_from_info_icon():
     style = QApplication.style()
-    size = style.pixelMetric(QStyle.PM_MessageBoxIconSize, None, None)
-    icon = style.standardIcon(QStyle.SP_MessageBoxInformation, None, None)
+    size = style.pixelMetric(QStyle.PixelMetric.PM_MessageBoxIconSize, None, None)
+    icon = style.standardIcon(QStyle.StandardPixmap.SP_MessageBoxInformation, None, None)
     return icon.pixmap(size, size)
 
 
 def get_pixmap_from_warning_icon():
     style = QApplication.style()
-    size = style.pixelMetric(QStyle.PM_MessageBoxIconSize, None, None)
-    icon = style.standardIcon(QStyle.SP_MessageBoxWarning, None, None)
+    size = style.pixelMetric(QStyle.PixelMetric.PM_MessageBoxIconSize, None, None)
+    icon = style.standardIcon(QStyle.StandardPixmap.SP_MessageBoxWarning, None, None)
     return icon.pixmap(size, size)
 
 
 def get_pixmap_from_critical_icon():
     style = QApplication.style()
-    size = style.pixelMetric(QStyle.PM_MessageBoxIconSize, None, None)
-    icon = style.standardIcon(QStyle.SP_MessageBoxCritical, None, None)
+    size = style.pixelMetric(QStyle.PixelMetric.PM_MessageBoxIconSize, None, None)
+    icon = style.standardIcon(QStyle.StandardPixmap.SP_MessageBoxCritical, None, None)
     return icon.pixmap(size, size)
 
 
@@ -82,7 +82,7 @@ class ConfirmUsingMkvpropedit(MyDialog):
         self.message.setText("")  # determine when use
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()

@@ -1,6 +1,6 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
@@ -61,7 +61,7 @@ class NoSpaceWarningDialog(MyDialog):
         self.message.setText(self.warning_message)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()
@@ -79,5 +79,5 @@ class NoSpaceWarningDialog(MyDialog):
         self.exec_()
 
     def execute_wth_no_block(self):
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self.show()

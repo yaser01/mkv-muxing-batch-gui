@@ -1,9 +1,6 @@
 import json
-import time
 from pathlib import Path
-
-from PySide2.QtWidgets import QWidget
-
+from PySide6.QtWidgets import QWidget
 from packages.Startup.GlobalFiles import SettingJsonInfoFilePath
 from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
 

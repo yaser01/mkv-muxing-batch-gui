@@ -1,2 +1,3 @@
-PySide2==5.14.0
-psutil==5.8.0
+PySide6==6.6.1
+psutil==5.9.6
+comtypes==1.2.0

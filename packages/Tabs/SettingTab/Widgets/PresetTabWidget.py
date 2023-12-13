@@ -1,20 +1,14 @@
 import faulthandler
-
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
-    QGridLayout, QLabel, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
+    QGridLayout, QLabel
 
 from packages.Startup.Options import Options
-from packages.Startup.GlobalFiles import InfoIconPath
 from packages.Startup.MainApplication import get_dark_palette, get_light_palette
 from packages.Startup.PreDefined import AllVideosExtensions, AllSubtitlesExtensions, AllAudiosExtensions, \
     AllChapterExtensions
-from packages.Tabs.SettingTab.Widgets.AboutButton import AboutButton
 from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLayout import DefaultDirectoryLayout
 from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExtensionsLayout
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
-from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
 from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
 
 faulthandler.enable()
@@ -22,7 +16,7 @@ faulthandler.enable()
 
 def try_to_create_windows_vista_style():
     style = QStyleFactory.create("windowsvista")
-    if str(style.__class__).find("PySide2.QtGui.QStandardItem") != -1:
+    if str(style.__class__).find("PySide6.QtGui.QStandardItem") != -1:
         return try_to_create_windows_vista_style()
     return style
 

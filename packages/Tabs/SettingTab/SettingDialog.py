@@ -1,15 +1,11 @@
 import faulthandler
-import json
-import logging
-from pathlib import Path
-
-from PySide2 import QtGui
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QHBoxLayout, \
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QHBoxLayout, \
     QGridLayout, QLabel, QPushButton, QCheckBox
 from packages.Startup.Options import Options, save_options, get_names_list_of_presets
-from packages.Startup.GlobalFiles import SettingJsonInfoFilePath, create_app_data_folder, InfoIconPath
+from packages.Startup.GlobalFiles import InfoIconPath
 from packages.Startup.GlobalIcons import SettingIcon
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.AboutButton import AboutButton
@@ -71,8 +67,8 @@ class SettingDialog(MyDialog):
         self.setting_info_layout = QHBoxLayout()
         self.setting_info_layout.addWidget(self.setting_info_text_icon_label, stretch=0)
         self.setting_info_layout.addWidget(self.setting_info_text_label, stretch=1)
-        self.setting_info_layout.addWidget(self.setting_donate_button, stretch=0, alignment=Qt.AlignRight)
-        self.setting_info_layout.addWidget(self.setting_about_button, stretch=0, alignment=Qt.AlignRight)
+        self.setting_info_layout.addWidget(self.setting_donate_button, stretch=0, alignment=Qt.AlignmentFlag.AlignRight)
+        self.setting_info_layout.addWidget(self.setting_about_button, stretch=0, alignment=Qt.AlignmentFlag.AlignRight)
 
         self.main_layout = QGridLayout()
         self.main_layout.addLayout(self.preset_tab_setting_layout, 0, 0, 1, 1)
@@ -203,7 +199,7 @@ class SettingDialog(MyDialog):
         self.setFixedHeight(self.size().height())
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def execute(self):
         if self.preset_counter >= 2:

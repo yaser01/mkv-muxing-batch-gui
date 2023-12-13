@@ -1,6 +1,6 @@
-from PySide2.QtCore import Signal, Qt, QSize, QEvent
-from PySide2.QtGui import QFontMetrics
-from PySide2.QtWidgets import QComboBox, QStyledItemDelegate
+from PySide6.QtCore import Signal, Qt, QSize, QEvent
+from PySide6.QtGui import QFontMetrics
+from PySide6.QtWidgets import QComboBox, QStyledItemDelegate
 
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options
@@ -11,7 +11,7 @@ from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super(AlignDelegate, self).initStyleOption(option, index)
-        option.displayAlignment = Qt.AlignJustify | Qt.AlignCenter
+        option.displayAlignment = Qt.AlignmentFlag.AlignJustify | Qt.AlignmentFlag.AlignCenter
 
 
 class PresetTabComboBox(QComboBox):
@@ -33,8 +33,8 @@ class PresetTabComboBox(QComboBox):
         self.setStyleSheet("QComboBox::pane {border-radius: 5px;}")
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.lineEdit().setReadOnly(True)
-        self.lineEdit().setAlignment(Qt.AlignLeft)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().installEventFilter(self)
         # self.setEditable(False)
@@ -134,7 +134,7 @@ class PresetTabComboBox(QComboBox):
         text = new_text
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.ElideRight, self.lineEdit().width())
+        elided_text = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
         if elided_text != "":
             self.lineEdit().setText(elided_text)
             if self.activated_preset_id == self.currentIndex():
