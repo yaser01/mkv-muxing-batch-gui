@@ -149,10 +149,6 @@ def refresh_old_tracks_info_as_bulk(tracks_info: List[List[SingleOldTrackData]])
             single_old_track_data.is_forced = track.is_forced
             single_old_track_data.is_enabled = track.is_enabled
             track_dict[track_id][video_id] = single_old_track_data
-            # print(video_id)
-            # print(single_old_track_data.id, " # ", single_old_track_data.track_name, " # ",
-            #       single_old_track_data.language, " # ", single_old_track_data.is_enabled, " # ",
-            #       single_old_track_data.is_default, " # ", single_old_track_data.is_forced, " # ")
 
     for order_id, track_id in enumerate(track_dict.keys()):
         temp_old_track_data = SingleOldTrackData()

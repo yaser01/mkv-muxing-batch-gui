@@ -53,7 +53,6 @@ class WindowsTaskBar:
             ctypes.windll.user32.FlashWindow(self.window_id, True)
 
     def setProgress(self, value: int):
-        print(value)
         value = min(value, 100)
         value = max(0, value)
         self.taskbar.setProgressValue(self.window_id, value, 100)

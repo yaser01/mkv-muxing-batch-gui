@@ -96,7 +96,7 @@ class ModifyOldTracksDialog(MyDialog):
         self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def enable_maximize_mark_window(self):
-        self.setWindowFlag(Qt.WindowMaximizeButtonHint, on=True)
+        self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, on=True)
 
     def connect_signals(self):
         self.cancel_button.clicked.connect(self.close)

@@ -59,7 +59,7 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
                 GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED = False
                 GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = ""
             else:
-                if state == Qt.CheckState.Checked:
+                if state == Qt.CheckState.Checked.value:
                     if audio_to_be_default != -1 or audio_to_be_forced != -1:
                         confirm_dialog = ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(track_type="audio")
                         confirm_dialog.execute()

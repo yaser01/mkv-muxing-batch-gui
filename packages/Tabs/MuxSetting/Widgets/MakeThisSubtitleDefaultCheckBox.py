@@ -59,7 +59,7 @@ class MakeThisSubtitleDefaultCheckBox(QCheckBox):
                 GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_FULL_ENABLED = False
                 GlobalSetting.MUX_SETTING_MAKE_THIS_SUBTITLE_DEFAULT_TRACK = ""
             else:
-                if state == Qt.CheckState.Checked:
+                if state == Qt.CheckState.Checked.value:
                     if subtitle_to_be_default != -1 or subtitle_to_be_forced != -1:
                         confirm_dialog = ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(track_type="subtitle")
                         confirm_dialog.execute()

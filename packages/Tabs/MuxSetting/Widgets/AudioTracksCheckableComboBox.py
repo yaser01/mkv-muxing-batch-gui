@@ -17,7 +17,7 @@ class AudioTracksCheckableComboBox(TracksCheckableComboBox):
                                            "output video with NO audios<br>[the new audio file(s) will exists]"
 
     def check_box_state_changed(self, new_state):
-        if new_state == Qt.CheckState.Checked:
+        if new_state == Qt.CheckState.Checked.value:
             self.setDisabled(False)
             self.set_tool_tip_hint()
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED = True

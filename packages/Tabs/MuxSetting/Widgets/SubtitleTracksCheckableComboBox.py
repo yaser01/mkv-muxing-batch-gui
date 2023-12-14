@@ -17,7 +17,7 @@ class SubtitleTracksCheckableComboBox(TracksCheckableComboBox):
                                            "output video with NO old subtitles<br>[the new subtitle file(s) will exists] "
 
     def check_box_state_changed(self, state):
-        if state == Qt.CheckState.Checked:
+        if state == Qt.CheckState.Checked.value:
             self.setDisabled(False)
             self.set_tool_tip_hint()
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED = True

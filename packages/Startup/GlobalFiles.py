@@ -1,3 +1,4 @@
+import logging
 import os
 import struct
 import subprocess
@@ -175,24 +176,24 @@ try:
     MKVPROPEDIT_VERSION = get_mkvpropedit_version()
     MKVMERGE_VERSION = get_mkvmerge_version()
     if "mkvmerge" not in MKVMERGE_VERSION:
-        print("Could not use portable mkvmerge. Trying system version...", end="")
+        logging.warning("Could not use portable mkvmerge. Trying system version...", end="")
         MKVMERGE_PATH = "mkvmerge"
         MKVMERGE_VERSION = get_mkvmerge_version()
         if "mkvmerge" not in MKVMERGE_VERSION:
             MKVMERGE_VERSION = "mkvmerge: not found!"
             raise Exception("mkvmerge file! ")
         else:
-            print("OK")
+            logging.info("OK")
     if "mkvpropedit" not in MKVPROPEDIT_VERSION:
-        print("Could not use portable mkvpropedit. Trying system version...", end="")
+        logging.warning("Could not use portable mkvpropedit. Trying system version...", end="")
         MKVPROPEDIT_PATH = "mkvpropedit"
         MKVPROPEDIT_VERSION = get_mkvpropedit_version()
         if "mkvpropedit" not in MKVPROPEDIT_VERSION:
             MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
             raise Exception("mkvpropedit file! ")
         else:
-            print("OK")
+            logging.info("OK")
 except Exception as e:
-    print(e)
+    logging.error(e)
     missing_files_message = MissingFilesMessage(error_message=str(e))
     missing_files_message.execute()
