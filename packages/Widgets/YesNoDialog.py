@@ -53,7 +53,6 @@ class YesNoDialog(MyDialog):
     def reset_dialog_values(self):
         self.setWindowTitle("")  # determine when use
         self.message.setText("")  # determine when use
-        self.setWindowIcon(GlobalIcons.RefreshIcon)
 
     def set_message_icon_warning(self):
         self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.WarningCheckBigIconPath))
