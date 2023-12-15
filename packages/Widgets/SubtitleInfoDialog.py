@@ -293,4 +293,4 @@ class SubtitleInfoDialog(MyDialog):
         self.subtitle_name_value.setText(str(self.current_subtitle_name[self.current_subtitle_index]))
 
     def execute(self):
-        self.exec_()
+        self.exec()

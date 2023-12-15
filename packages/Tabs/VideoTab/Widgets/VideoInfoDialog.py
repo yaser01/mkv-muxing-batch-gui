@@ -51,4 +51,4 @@ class VideoInfoDialog(MyDialog):
         self.tree.collapseAll()
 
     def execute(self):
-        self.exec_()
+        self.exec()

@@ -9,4 +9,4 @@ class ReloadAudioFilesDialog(YesNoDialog):
         self.setWindowTitle("Change Audio Files")
 
     def execute(self):
-        self.exec_()
+        self.exec()

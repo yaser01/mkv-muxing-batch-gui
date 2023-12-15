@@ -70,7 +70,7 @@ class WarningDialog(MyDialog):
         self.setFixedSize(self.size())
 
     def execute(self):
-        self.exec_()
+        self.exec()
 
     def execute_wth_no_block(self):
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)

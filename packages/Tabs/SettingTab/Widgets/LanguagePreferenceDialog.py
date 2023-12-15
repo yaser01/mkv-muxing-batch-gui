@@ -145,4 +145,4 @@ class LanguagePreferenceDialog(MyDialog):
         self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def execute(self):
-        self.exec_()
+        self.exec()

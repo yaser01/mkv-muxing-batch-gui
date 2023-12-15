@@ -11,4 +11,4 @@ class ClearAudioTabDialog(YesNoDialog):
         self.setWindowIcon(GlobalIcons.NoMarkIcon)
 
     def execute(self):
-        self.exec_()
+        self.exec()

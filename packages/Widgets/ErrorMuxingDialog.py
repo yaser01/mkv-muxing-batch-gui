@@ -77,4 +77,4 @@ class ErrorMuxingDialog(MyDialog):
         self.setFixedSize(self.size())
 
     def execute(self):
-        self.exec_()
+        self.exec()

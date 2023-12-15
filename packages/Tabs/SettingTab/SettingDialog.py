@@ -207,4 +207,4 @@ class SettingDialog(MyDialog):
             self.preset_tab_delete_button.show()
         else:
             self.preset_tab_delete_button.hide()
-        self.exec_()
+        self.exec()

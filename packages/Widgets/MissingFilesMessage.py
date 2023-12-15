@@ -10,4 +10,4 @@ class MissingFilesMessage(QMessageBox):
         self.setWindowTitle("Error")
 
     def execute(self):
-        self.exec_()
+        self.exec()

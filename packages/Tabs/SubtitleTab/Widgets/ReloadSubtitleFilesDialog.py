@@ -9,4 +9,4 @@ class ReloadSubtitleFilesDialog(YesNoDialog):
         self.setWindowTitle("Change Subtitle Files")
 
     def execute(self):
-        self.exec_()
+        self.exec()

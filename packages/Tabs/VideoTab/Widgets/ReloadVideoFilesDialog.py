@@ -9,4 +9,4 @@ class ReloadVideoFilesDialog(YesNoDialog):
         self.setWindowTitle("Change Video Files")
 
     def execute(self):
-        self.exec_()
+        self.exec()

@@ -294,4 +294,4 @@ class AudioInfoDialog(MyDialog):
         self.audio_name_value.setText(str(self.current_audio_name[self.current_audio_index]))
 
     def execute(self):
-        self.exec_()
+        self.exec()

@@ -142,4 +142,4 @@ class ModifyOldTracksDialog(MyDialog):
             self.old_tracks_tabs.audio_tab.table_focused()
 
     def execute(self):
-        self.exec_()
+        self.exec()

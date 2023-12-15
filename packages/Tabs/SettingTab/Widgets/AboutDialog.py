@@ -99,4 +99,4 @@ class AboutDialog(MyDialog):
         self.setFixedSize(QSize(self.size().width() + 30, self.size().height()))
 
     def execute(self):
-        self.exec_()
+        self.exec()
