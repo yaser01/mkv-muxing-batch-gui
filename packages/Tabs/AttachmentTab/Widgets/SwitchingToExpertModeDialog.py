@@ -32,8 +32,9 @@ class SwitchingToExpertModeDialog(MyDialog):
         self.buttons_layout.addWidget(self.no_button)
         self.buttons_layout.setSpacing(7)
         self.main_layout = QGridLayout()
+        self.main_layout_spacer_item = QLabel()
         self.main_layout.addWidget(self.messageIcon, 0, 0, 3, 1, alignment=Qt.AlignmentFlag.AlignVCenter)
-        self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
+        self.main_layout.addWidget(self.main_layout_spacer_item, 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addWidget(self.show_message_again, 1, 2, 2, 3)
         self.main_layout.addLayout(self.buttons_layout, 3, 0, 1, -1, alignment=Qt.AlignmentFlag.AlignCenter)

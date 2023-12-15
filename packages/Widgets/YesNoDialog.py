@@ -18,10 +18,10 @@ class YesNoDialog(MyDialog):
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yesButton)
         self.buttons_layout.addWidget(self.noButton)
-
+        self.main_layout_spacer_item = QLabel()
         self.main_layout = QGridLayout()
         self.main_layout.addWidget(self.messageIcon, 0, 0, 2, 1)
-        self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
+        self.main_layout.addWidget(self.main_layout_spacer_item, 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addLayout(self.buttons_layout, 2, 4, 1, 1)
         self.main_layout.setContentsMargins(20, 20, 20, 20)

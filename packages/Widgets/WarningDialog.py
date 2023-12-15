@@ -1,7 +1,7 @@
 from PySide6 import QtGui, QtCore
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QGridLayout, QLabel, \
-     QPushButton, QHBoxLayout
+    QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -18,13 +18,13 @@ class WarningDialog(MyDialog):
         self.yesButton = QPushButton("OK")
 
         self.buttons_layout = QHBoxLayout()
-        self.buttons_layout.addWidget(QLabel(""))
-        self.buttons_layout.addWidget(self.yesButton)
-        self.buttons_layout.addWidget(QLabel(""))
-
+        self.buttons_layout.addStretch(stretch=1)
+        self.buttons_layout.addWidget(self.yesButton, stretch=1)
+        self.buttons_layout.addStretch(stretch=1)
+        self.main_layout_spacer_item = QLabel()
         self.main_layout = QGridLayout()
         self.main_layout.addWidget(self.messageIcon, 0, 0, 2, 1)
-        self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
+        self.main_layout.addWidget(self.main_layout_spacer_item, 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addLayout(self.buttons_layout, 2, 2, 1, -1)
         self.main_layout.setContentsMargins(20, 20, 20, 20)

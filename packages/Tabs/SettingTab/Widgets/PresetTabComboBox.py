@@ -8,12 +8,6 @@ from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 
 
-class AlignDelegate(QStyledItemDelegate):
-    def initStyleOption(self, option, index):
-        super(AlignDelegate, self).initStyleOption(option, index)
-        option.displayAlignment = Qt.AlignmentFlag.AlignJustify | Qt.AlignmentFlag.AlignCenter
-
-
 class PresetTabComboBox(QComboBox):
     create_new_tab_signal = Signal()
     current_tab_changed_signal = Signal(int)
@@ -24,8 +18,6 @@ class PresetTabComboBox(QComboBox):
         self.name = "Preset"
         self.hint_when_enabled = "Preset Name"
         self.closeOnLineEditClick = False
-        # delegate = AlignDelegate(self)
-        # self.setItemDelegate(delegate)
         self.activated_preset_id = activated_preset_id
         self.setup_items(items=items)
         self.setIconSize(QSize(16, 16))
@@ -37,7 +29,6 @@ class PresetTabComboBox(QComboBox):
         self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().installEventFilter(self)
-        # self.setEditable(False)
         self.setToolTip(self.hint_when_enabled)
         self.setMaximumWidth(screen_size.width() // 7)
         self.setMinimumWidth(screen_size.width() // 14)

@@ -176,23 +176,27 @@ try:
     MKVPROPEDIT_VERSION = get_mkvpropedit_version()
     MKVMERGE_VERSION = get_mkvmerge_version()
     if "mkvmerge" not in MKVMERGE_VERSION:
-        logging.warning("Could not use portable mkvmerge. Trying system version...", end="")
+        logging.warning("Could not use portable mkvmerge. Trying system version...")
         MKVMERGE_PATH = "mkvmerge"
         MKVMERGE_VERSION = get_mkvmerge_version()
         if "mkvmerge" not in MKVMERGE_VERSION:
             MKVMERGE_VERSION = "mkvmerge: not found!"
             raise Exception("mkvmerge file! ")
         else:
-            logging.info("OK")
+            logging.info("mkvmerge OK")
+    else:
+        logging.info("mkvmerge OK")
     if "mkvpropedit" not in MKVPROPEDIT_VERSION:
-        logging.warning("Could not use portable mkvpropedit. Trying system version...", end="")
+        logging.warning("Could not use portable mkvpropedit. Trying system version...")
         MKVPROPEDIT_PATH = "mkvpropedit"
         MKVPROPEDIT_VERSION = get_mkvpropedit_version()
         if "mkvpropedit" not in MKVPROPEDIT_VERSION:
             MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
             raise Exception("mkvpropedit file! ")
         else:
-            logging.info("OK")
+            logging.info("mkvpropedit OK")
+    else:
+        logging.info("mkvpropedit OK")
 except Exception as e:
     logging.error(e)
     missing_files_message = MissingFilesMessage(error_message=str(e))

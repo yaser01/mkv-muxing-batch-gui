@@ -241,7 +241,7 @@ class OldTracksTable(TableWidget):
         self.item(row_id, self.column_ids.Track_Name).setForeground(self.get_text_color(new_state))
         self.item(row_id, self.column_ids.ID).setForeground(self.get_text_color(new_state))
         self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(new_state)
-        if new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state==True:
+        if new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True:
             self.item(row_id, self.column_ids.Track_Name).setFlags(
                 self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemFlag.ItemIsEditable)
         else:

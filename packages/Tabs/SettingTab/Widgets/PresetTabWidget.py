@@ -31,6 +31,7 @@ class PresetTabWidget(QWidget):
         self.default_directories_layout = QVBoxLayout()
         self.default_extensions_layout = QGridLayout()
         self.default_languages_layout = QGridLayout()
+        self.default_languages_layout_spacer_item = None
         self.default_video_directory_layout = DefaultDirectoryLayout(
             label_name="Videos Directory: ",
             default_directory=self.options.Default_Video_Directory
@@ -91,7 +92,7 @@ class PresetTabWidget(QWidget):
         self.setLayout(self.main_layout)
         self.connect_signals()
         self.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setContentsMargins(0,0,0,0)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
 
     def setup_main_layout(self):
         self.setup_default_directories_groupBox()
@@ -146,10 +147,11 @@ class PresetTabWidget(QWidget):
         self.default_extensions_layout.addLayout(self.default_chapter_extensions_layout, 1, 1)
 
     def setup_default_languages_layout(self):
+        self.default_languages_layout_spacer_item = QLabel()
         self.default_languages_layout.addWidget(self.default_subtitle_language_layout.label, 0, 0)
         self.default_languages_layout.addWidget(self.default_subtitle_language_layout.languages_comboBox, 0, 1)
         self.default_languages_layout.addWidget(self.default_subtitle_language_layout.setting_button, 0, 2)
-        self.default_languages_layout.addWidget(QLabel(" "), 0, 3)
+        self.default_languages_layout.addWidget(self.default_languages_layout_spacer_item, 0, 3)
         self.default_languages_layout.addWidget(self.default_audio_language_layout.label, 0, 4)
         self.default_languages_layout.addWidget(self.default_audio_language_layout.languages_comboBox, 0, 5)
         self.default_languages_layout.addWidget(self.default_audio_language_layout.setting_button, 0, 6)

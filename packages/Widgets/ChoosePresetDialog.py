@@ -19,10 +19,10 @@ class ChoosePresetDialog(MyDialog):
         self.favorite_preset_id = favorite_preset_id
         self.buttonLayout = QHBoxLayout()
         # self.buttonLayout.addWidget(self.blank_preset_button)
-        self.buttonLayout.addWidget(QLabel(), stretch=1)
+        self.buttonLayout.addStretch(stretch=1)
         self.buttonLayout.addWidget(self.choose_button, stretch=3)
         self.buttonLayout.addWidget(self.default_preset_button, stretch=3)
-        self.buttonLayout.addWidget(QLabel(), stretch=1)
+        self.buttonLayout.addStretch(stretch=1)
 
         self.preset_comboBox = QComboBox()
         self.preset_comboBox.setMaximumWidth(screen_size.width() // 9)

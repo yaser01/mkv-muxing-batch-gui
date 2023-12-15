@@ -65,11 +65,11 @@ class ModifyOldTracksDialog(MyDialog):
         self.info_layout.addWidget(self.instructions_label, stretch=10)
 
     def setup_buttons_layout(self):
-        self.buttons_layout.addWidget(QLabel(""), stretch=3)
+        self.buttons_layout.addStretch(stretch=3)
         self.buttons_layout.addWidget(self.reset_button, stretch=2)
         self.buttons_layout.addWidget(self.ok_button, stretch=2)
         self.buttons_layout.addWidget(self.cancel_button, stretch=2)
-        self.buttons_layout.addWidget(QLabel(""), stretch=3)
+        self.buttons_layout.addStretch(stretch=3)
 
     def setup_window_dimension(self):
         self.setMinimumWidth(screen_size.width() // 1.5)

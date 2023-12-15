@@ -17,11 +17,5 @@ class SettingButton(QPushButton):
         self.clicked.connect(self.open_setting_dialog)
 
     def open_setting_dialog(self):
-        for i in range(2000):
-            try:
-                setting_dialog = SettingDialog()
-                setting_dialog.execute()
-                break
-            except Exception as e:
-                logging.error(e)
-                time.sleep(0.003)
+        setting_dialog = SettingDialog()
+        setting_dialog.execute()

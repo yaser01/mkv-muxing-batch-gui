@@ -18,9 +18,9 @@ class ChapterInfoDialog(MyDialog):
         self.yes_button = QPushButton("OK")
 
         self.buttons_layout = QHBoxLayout()
-        self.buttons_layout.addWidget(QLabel(""), stretch=4)
+        self.buttons_layout.addStretch(stretch=4)
         self.buttons_layout.addWidget(self.yes_button, stretch=3)
-        self.buttons_layout.addWidget(QLabel(""), stretch=4)
+        self.buttons_layout.addStretch(stretch=4)
         self.chapter_setting_layout = QGridLayout()
         self.chapter_editable_setting_layout = QFormLayout()
         self.chapter_editable_setting_layout.addRow(self.chapter_name_label, self.chapter_name_value)
