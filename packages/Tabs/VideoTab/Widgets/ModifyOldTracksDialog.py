@@ -39,9 +39,6 @@ class ModifyOldTracksDialog(MyDialog):
         self.track_info_label = QLabel("Information About Tracks:")
         self.info_button = QPushButton(text="")
         self.info_button.setIcon(InfoIcon)
-        self.ok_button = QPushButton("OK")
-        self.cancel_button = QPushButton("Cancel")
-        self.reset_button = QPushButton("Reset To Default")
         self.track_info_table = TrackInfoTable()
         self.track_info_table.update_video_name(GlobalSetting.VIDEO_FILES_LIST)
         self.main_layout = QVBoxLayout()
@@ -54,6 +51,7 @@ class ModifyOldTracksDialog(MyDialog):
         self.enable_maximize_mark_window()
         self.setLayout(self.main_layout)
         self.connect_signals()
+        self.reset_button.setEnabled(GlobalSetting.JOB_QUEUE_EMPTY)
 
     def setup_layouts(self):
         self.setup_info_layout()
