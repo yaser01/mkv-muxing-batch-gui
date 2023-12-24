@@ -8,8 +8,8 @@ from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackCheckBoxCell imp
 class CenteredCheckBoxCell(QWidget):
     signal_state_changed = Signal(list)
 
-    def __init__(self, row_id, column_id, check_state):
-        super().__init__()
+    def __init__(self, row_id, column_id, check_state,parent=None):
+        super().__init__(parent=parent)
         self.check_box = TrackCheckBoxCell(row_id=row_id, column_id=column_id)
         self.check_box.setCheckState(convert_check_state_int_to_check_state(check_state))
         self.mini_layout = QHBoxLayout()

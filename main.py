@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import faulthandler
+# import faulthandler
 import logging
+import os
 import signal
 import sys
 from traceback import format_exception
@@ -20,9 +21,18 @@ if sys.platform == "win32":
 else:
     from packages.MainWindowNonWindowsSystem import MainWindowNonWindowsSystem as MainWindow
 
-faulthandler.enable()
+# faulthandler.enable()
 window: MainWindow
 app: QApplication
+
+
+def add_linux_lib_path():
+    if sys.platform == "linux" or sys.platform == "darwin":
+        script_path = sys.argv[0]  # get path of this file
+        script_folder = os.path.dirname(script_path)
+        SCRIPT_DIR = script_folder
+        LD_LIBRARY_PATH = "LD_LIBRARY_PATH"
+        os.system(f"export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SCRIPT_DIR}")
 
 
 def setup_application_font():
@@ -82,6 +92,7 @@ def setup_logger():
 
 
 if __name__ == "__main__":
+    add_linux_lib_path()
     setup_logger()
     create_application()
     setup_application_font()

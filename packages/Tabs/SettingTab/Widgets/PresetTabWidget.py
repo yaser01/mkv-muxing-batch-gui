@@ -1,4 +1,4 @@
-import faulthandler
+#import faulthandler
 from PySide6.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
     QGridLayout, QLabel
 
@@ -11,7 +11,7 @@ from packages.Tabs.SettingTab.Widgets.DefaultExtensionsLayout import DefaultExte
 from packages.Tabs.SettingTab.Widgets.DefaultLanguageLayout import DefaultLanguageLayout
 from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
 
-faulthandler.enable()
+#faulthandler.enable()
 
 
 def try_to_create_windows_vista_style():

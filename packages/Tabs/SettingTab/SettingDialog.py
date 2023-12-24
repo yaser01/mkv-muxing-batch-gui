@@ -1,4 +1,4 @@
-import faulthandler
+#import faulthandler
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
@@ -18,7 +18,7 @@ from packages.Tabs.SettingTab.Widgets.PresetTabWidget import PresetTabWidget
 from packages.Widgets.MyDialog import MyDialog
 from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
 
-faulthandler.enable()
+#faulthandler.enable()
 
 
 class SettingDialog(MyDialog):

@@ -135,19 +135,19 @@ class OldTracksTable(TableWidget):
 
     def set_row_value_is_enabled(self, is_enabled_state, new_row_id):
         check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Enable,
-                                         check_state=is_enabled_state)
+                                         check_state=is_enabled_state, parent=self)
         self.setCellWidget(new_row_id, self.column_ids.Enable, check_box)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
 
     def set_row_value_is_default(self, is_default_state, new_row_id):
         check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Default,
-                                         check_state=is_default_state)
+                                         check_state=is_default_state, parent=self)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
         self.setCellWidget(new_row_id, self.column_ids.Set_Default, check_box)
 
     def set_row_value_is_forced(self, is_forced_state, new_row_id):
         check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Forced,
-                                         check_state=is_forced_state)
+                                         check_state=is_forced_state, parent=self)
         self.setCellWidget(new_row_id, self.column_ids.Set_Forced, check_box)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
 
@@ -157,7 +157,7 @@ class OldTracksTable(TableWidget):
         self.setItem(new_row_id, self.column_ids.Track_Name, item)
 
     def set_row_value_language(self, language, new_row_id):
-        combo_box = QComboBox()
+        combo_box = QComboBox(parent=self)
         combo_box.addItems(self.all_languages)
         if language in self.all_languages:
             combo_box.setCurrentIndex(self.all_languages.index(language))

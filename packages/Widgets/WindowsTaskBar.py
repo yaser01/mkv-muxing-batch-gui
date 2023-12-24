@@ -1,12 +1,12 @@
 import ctypes
 from ctypes import wintypes
-import faulthandler
+#import faulthandler
 import comtypes.client as cc
 import comtypes
 from packages.Startup.GlobalFiles import TaskBarLibFilePath
 import comtypes.gen.TaskbarLib as TaskbarLib
 
-faulthandler.enable()
+#faulthandler.enable()
 import packages.Startup.TaskBarComtypeGen
 
 cc.GetModule(TaskBarLibFilePath)
