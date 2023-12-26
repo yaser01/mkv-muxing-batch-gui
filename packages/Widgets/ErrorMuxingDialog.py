@@ -1,16 +1,24 @@
+import subprocess
 import webbrowser
-
+import logging
+import sys
 from PySide6 import QtGui, QtCore
 from PySide6.QtWidgets import QGridLayout, QLabel, \
      QPushButton, QHBoxLayout
-
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
 from packages.Widgets.MyDialog import MyDialog
 
 
 def click_show_log_file():
-    webbrowser.open(GlobalFiles.MuxingLogFilePath)
+    if sys.platform not in ['linux', 'linux2']:
+        webbrowser.open(GlobalFiles.MuxingLogFilePath)
+    else:
+        try:
+            subprocess.Popen(["gedit", GlobalFiles.MuxingLogFilePath])
+        except Exception as e:
+            logging.error(e)
+            webbrowser.open(GlobalFiles.MuxingLogFilePath)
 
 
 class ErrorMuxingDialog(MyDialog):

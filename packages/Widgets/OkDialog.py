@@ -1,7 +1,8 @@
 import os
 import sys
 import webbrowser
-
+import subprocess
+import logging
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QLabel, \
@@ -15,8 +16,12 @@ from packages.Widgets.MyDialog import MyDialog
 def click_show_log_file():
     if sys.platform not in ['linux', 'linux2']:
         webbrowser.open(GlobalFiles.MuxingLogFilePath)
-    elif os.system(f"gedit '{GlobalFiles.MuxingLogFilePath}'") != 0:
-        os.system(f"nano '{GlobalFiles.MuxingLogFilePath}'")
+    else:
+        try:
+            subprocess.Popen(["gedit", GlobalFiles.MuxingLogFilePath])
+        except Exception as e:
+            logging.error(e)
+            webbrowser.open(GlobalFiles.MuxingLogFilePath)
 
 
 class OkDialog(MyDialog):
