@@ -24,7 +24,7 @@ class AudioSourceButton(QPushButton):
     def open_select_folder_dialog(self):
         new_folder_path = ""
         if self.is_there_old_files:
-            reload_dialog = ReloadAudioFilesDialog()
+            reload_dialog = ReloadAudioFilesDialog(parent=self)
             reload_dialog.execute()
             if reload_dialog.result == "Yes":
                 temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Audio Folder",

@@ -22,7 +22,7 @@ class AttachmentClearButton(QPushButton):
 
     def open_clear_files_dialog(self):
         if self.is_there_old_files:
-            clear_files_dialog = ClearAttachmentFilesDialog()
+            clear_files_dialog = ClearAttachmentFilesDialog(parent=self)
             clear_files_dialog.execute()
             if clear_files_dialog.result == "Yes":
                 self.clear_files_signal.emit()

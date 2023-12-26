@@ -44,7 +44,7 @@ class VideoInfoButton(QPushButton):
 
     def open_video_info_dialog(self):
         if len(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST) > 0:
-            self.video_info_dialog = VideoInfoDialog()
+            self.video_info_dialog = VideoInfoDialog(parent=self)
             self.video_info_dialog.show()
 
     def update_theme_mode_state(self):

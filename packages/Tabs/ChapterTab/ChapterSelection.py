@@ -153,7 +153,7 @@ class ChapterSelectionSetting(GlobalSetting):
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
             self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
         except Exception as e:
-            invalid_path_dialog = InvalidPathDialog()
+            invalid_path_dialog = InvalidPathDialog(parent=self)
             invalid_path_dialog.execute()
 
     def check_extension_changes(self, new_extensions):

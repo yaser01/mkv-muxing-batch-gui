@@ -17,5 +17,5 @@ class SettingButton(QPushButton):
         self.clicked.connect(self.open_setting_dialog)
 
     def open_setting_dialog(self):
-        setting_dialog = SettingDialog()
+        setting_dialog = SettingDialog(parent=self)
         setting_dialog.execute()

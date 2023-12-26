@@ -38,11 +38,6 @@ def get_files_size_with_absolute_path_list(files_name_absolute_path):
     return files_size_list
 
 
-def start_loading_new_videos_dialog(new_videos_list):
-    loading_videos_info_dialog = LoadingVideosInfoDialog(new_videos_list)
-    loading_videos_info_dialog.execute()
-    return loading_videos_info_dialog.unsupported_files_list
-
 
 def update_global_videos_tracks_info():
     GlobalSetting.MUX_SETTING_AUDIO_TRACKS_LIST = refresh_tracks("audio")
@@ -156,7 +151,7 @@ class VideoSelectionSetting(GlobalSetting):
                 self.files_names_checked_list = ([True] * len(new_files_absolute_path_list))
                 self.unsupported_files_list = []
                 if len(new_files_absolute_path_list) > 0:
-                    self.unsupported_files_list = start_loading_new_videos_dialog(new_files_absolute_path_list)
+                    self.unsupported_files_list = self.start_loading_new_videos_dialog(new_files_absolute_path_list)
                     if len(self.unsupported_files_list) > 0:
                         new_files_absolute_path_list = []
                         self.files_names_list = []
@@ -192,7 +187,7 @@ class VideoSelectionSetting(GlobalSetting):
             self.files_names_checked_list = ([True] * len(self.files_names_absolute_list))
             self.unsupported_files_list = []
             if len(self.files_names_absolute_list) > 0:
-                self.unsupported_files_list = start_loading_new_videos_dialog(self.files_names_absolute_list)
+                self.unsupported_files_list = self.start_loading_new_videos_dialog(self.files_names_absolute_list)
                 if len(self.unsupported_files_list) > 0:
                     new_files_absolute_path_list = []
                     self.files_names_list = []
@@ -214,7 +209,7 @@ class VideoSelectionSetting(GlobalSetting):
                                                parent=self.window())
                     error_dialog.execute_wth_no_block()
         except Exception as e:
-            invalid_path_dialog = InvalidPathDialog()
+            invalid_path_dialog = InvalidPathDialog(parent=self)
             invalid_path_dialog.execute()
 
     def disable_video_refresh_button_cause_drag_and_drop(self):
@@ -446,7 +441,7 @@ class VideoSelectionSetting(GlobalSetting):
         self.folder_path = ""
         self.unsupported_files_list = []
         if len(not_duplicate_files_absolute_path_list) > 0:
-            self.unsupported_files_list = start_loading_new_videos_dialog(not_duplicate_files_absolute_path_list)
+            self.unsupported_files_list = self.start_loading_new_videos_dialog(not_duplicate_files_absolute_path_list)
             if len(self.unsupported_files_list) > 0:
                 not_duplicate_files_and_supported_absolute_path_list = []
                 for new_file_name in not_duplicate_files_absolute_path_list:
@@ -487,6 +482,11 @@ class VideoSelectionSetting(GlobalSetting):
             warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
+
+    def start_loading_new_videos_dialog(self, new_videos_list):
+        loading_videos_info_dialog = LoadingVideosInfoDialog(new_videos_list, parent=self.window())
+        loading_videos_info_dialog.execute()
+        return loading_videos_info_dialog.unsupported_files_list
 
     def disable_editable_widgets(self):
         self.video_extensions_comboBox.setEnabled(False)

@@ -472,6 +472,7 @@ class JobQueueTable(TableWidget):
                     subtitle_set_default_disabled=GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED,
                     subtitle_set_forced_disabled=GlobalSetting.SUBTITLE_SET_FORCED_DISABLED,
                     disable_edit=GlobalSetting.MUXING_ON,
+                    parent=self
                 )
                 subtitle_info_dialog.execute()
                 if subtitle_info_dialog.state == "yes":
@@ -493,7 +494,8 @@ class JobQueueTable(TableWidget):
                             show_full_path=False))
 
             else:
-                warning_dialog = WarningDialog(window_title="Subtitle Info", info_message="No subtitle found!")
+                warning_dialog = WarningDialog(window_title="Subtitle Info", info_message="No subtitle found!",
+                                               parent=self)
                 warning_dialog.execute()
         elif column_index == self.column_ids["Audio"]:
             if self.data[row_index].audio_found:
@@ -524,6 +526,7 @@ class JobQueueTable(TableWidget):
                     audio_set_default_disabled=GlobalSetting.AUDIO_SET_DEFAULT_DISABLED,
                     audio_set_forced_disabled=GlobalSetting.AUDIO_SET_FORCED_DISABLED,
                     disable_edit=GlobalSetting.MUXING_ON,
+                    parent=self
                 )
                 audio_info_dialog.execute()
                 if audio_info_dialog.state == "yes":
@@ -545,23 +548,24 @@ class JobQueueTable(TableWidget):
                             show_full_path=False))
 
             else:
-                warning_dialog = WarningDialog(window_title="Audio Info", info_message="No audio found!")
+                warning_dialog = WarningDialog(window_title="Audio Info", info_message="No audio found!", parent=self)
                 warning_dialog.execute()
         elif column_index == self.column_ids["Chapter"]:
             if self.data[row_index].chapter_found:
-                chapter_info_dialog = ChapterInfoDialog(chapter_name=self.data[row_index].chapter_name)
+                chapter_info_dialog = ChapterInfoDialog(chapter_name=self.data[row_index].chapter_name, parent=self)
                 chapter_info_dialog.execute()
             else:
-                warning_dialog = WarningDialog(window_title="Chapter Info", info_message="No chapter found!")
+                warning_dialog = WarningDialog(window_title="Chapter Info", info_message="No chapter found!",
+                                               parent=self)
                 warning_dialog.execute()
         elif column_index == self.column_ids["Status"]:
             if self.data[row_index].error_occurred:
                 message = self.data[row_index].muxing_message
                 message += "you can review log file for more details"
-                error_muxing_dialog = ErrorMuxingDialog(window_title="Muxing Error", info_message=message)
+                error_muxing_dialog = ErrorMuxingDialog(window_title="Muxing Error", info_message=message, parent=self)
                 error_muxing_dialog.execute()
             elif self.data[row_index].done:
-                Ok_dialog = OkDialog(window_title="Muxing Done")
+                Ok_dialog = OkDialog(window_title="Muxing Done", parent=self)
                 Ok_dialog.execute()
 
     def show_necessary_columns(self):
@@ -656,7 +660,7 @@ class JobQueueTable(TableWidget):
         GlobalSetting.JOB_QUEUE_EMPTY = True
 
     def show_confirm_using_mkvpropedit(self):
-        confirm_dialog = ConfirmUsingMkvpropedit()
+        confirm_dialog = ConfirmUsingMkvpropedit(parent=self)
         confirm_dialog.execute()
         if confirm_dialog.result == "mkvpropedit":
             self.start_muxing_worker.use_mkvpropedit = True

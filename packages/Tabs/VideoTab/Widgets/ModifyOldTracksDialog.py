@@ -10,26 +10,9 @@ from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.MyDialog import MyDialog
 
 
-def show_info_dialog():
-    info_dialog = InfoDialog(window_title="Conflicting with other settings",
-                             info_message="Using this window will limits/disable the use of the following options:<br>"
-                                          "1- <b>Mux After Track</b> in Subtitle/Audio Tabs.<br>"
-                                          "2- <b>Only Keep Those Subtitles/Audios</b> By [Track Id, Track Name, "
-                                          "Track Language] in Muxing Tab.<br> "
-                                          "3- <b>Make This Subtitle/Audio Default</b> By [Track Id, Track Name, "
-                                          "Track Language] in Muxing Tab.<br> "
-                                          "This is necessary because above options also [depends on/modify] old track "
-                                          "in "
-                                          "someway.<br> "
-                                          "Also Adding new subtitles/audios with options: (set default/forced) "
-                                          "will override options: (set default/forced) shown here.<br> "
-                                          "<u>In short</u> you have to know what you are doing :D</div>")
-    info_dialog.execute()
-
-
 class ModifyOldTracksDialog(MyDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         self.setWindowTitle("Modify Old Tracks")
         self.instructions_label = QLabel()
         self.ok_button = QPushButton("OK")
@@ -102,7 +85,26 @@ class ModifyOldTracksDialog(MyDialog):
         self.reset_button.clicked.connect(self.restore_defaults)
         self.old_tracks_tabs.current_selected_track_changed.connect(self.update_showed_track_info)
         self.old_tracks_tabs.currentChanged.connect(self.update_current_tab)
-        self.info_button.clicked.connect(show_info_dialog)
+        self.info_button.clicked.connect(self.show_info_dialog)
+
+    def show_info_dialog(self):
+        info_dialog = InfoDialog(window_title="Conflicting with other settings",
+                                 info_message="Using this window will limits/disable the use of the following "
+                                              "options:<br> "
+                                              "1- <b>Mux After Track</b> in Subtitle/Audio Tabs.<br>"
+                                              "2- <b>Only Keep Those Subtitles/Audios</b> By [Track Id, Track Name, "
+                                              "Track Language] in Muxing Tab.<br> "
+                                              "3- <b>Make This Subtitle/Audio Default</b> By [Track Id, Track Name, "
+                                              "Track Language] in Muxing Tab.<br> "
+                                              "This is necessary because above options also [depends on/modify] old "
+                                              "track "
+                                              "in "
+                                              "someway.<br> "
+                                              "Also Adding new subtitles/audios with options: (set default/forced) "
+                                              "will override options: (set default/forced) shown here.<br> "
+                                              "<u>In short</u> you have to know what you are doing :D</div>",
+                                 parent=self)
+        info_dialog.execute()
 
     def restore_defaults(self):
         self.old_tracks_tabs.restore_defaults()

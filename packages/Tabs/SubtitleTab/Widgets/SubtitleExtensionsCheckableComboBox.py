@@ -222,7 +222,7 @@ class SubtitleExtensionsCheckableComboBox(QComboBox):
             old_files_list_sorted = sort_names_like_windows(self.current_files_list)
             if new_files_list_sorted != old_files_list_sorted:
                 if self.is_there_old_files:
-                    reload_dialog = ReloadSubtitleFilesDialog()
+                    reload_dialog = ReloadSubtitleFilesDialog(parent=self)
                     reload_dialog.execute()
                     if reload_dialog.result == "No":
                         new_extensions = self.current_extensions

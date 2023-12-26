@@ -219,7 +219,7 @@ class VideoExtensionsCheckableComboBox(QComboBox):
             new_files_list = self.get_files_list(new_extensions=new_extensions)
             if new_files_list != self.current_files_list:
                 if self.is_there_old_files:
-                    reload_dialog = ReloadVideoFilesDialog()
+                    reload_dialog = ReloadVideoFilesDialog(parent=self)
                     reload_dialog.execute()
                     if reload_dialog.result == "No":
                         new_extensions = self.current_extensions

@@ -22,7 +22,7 @@ class StartMuxingProcessWorker(QObject):
             while not self.stop:
                 if not self.wait:
                     with open(GlobalFiles.MuxingLogFilePath, "a+", encoding="UTF-8") as log_file:
-                        mux_process = subprocess.run(self.command, shell=True, stdout=log_file)
+                        mux_process = subprocess.run(self.command, shell=True, stdout=log_file, env=GlobalFiles.ENVIRONMENT)
                     self.finished_job_signal.emit(mux_process.returncode)
                     self.wait = True
                 else:

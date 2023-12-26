@@ -24,7 +24,7 @@ class SubtitleSourceButton(QPushButton):
     def open_select_folder_dialog(self):
         new_folder_path = ""
         if self.is_there_old_files:
-            reload_dialog = ReloadSubtitleFilesDialog()
+            reload_dialog = ReloadSubtitleFilesDialog(parent=self)
             reload_dialog.execute()
             if reload_dialog.result == "Yes":
                 temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Subtitle Folder",

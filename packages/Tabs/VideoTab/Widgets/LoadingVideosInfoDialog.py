@@ -10,8 +10,8 @@ from packages.Widgets.MyDialog import MyDialog
 
 
 class LoadingVideosInfoDialog(MyDialog):
-    def __init__(self, videos_list):
-        super().__init__()
+    def __init__(self, videos_list, parent=None):
+        super().__init__(parent=parent)
         self.setWindowTitle("Loading Media Info")
         self.videos_list = videos_list
         self.videos_count = len(self.videos_list)

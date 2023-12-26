@@ -7,8 +7,8 @@ from packages.Widgets.MyDialog import MyDialog
 
 
 class VideoInfoDialog(MyDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.setWindowTitle("Media Info")
         self.main_layout = QVBoxLayout()
         self.tree = MediaInfoTreeWidget()

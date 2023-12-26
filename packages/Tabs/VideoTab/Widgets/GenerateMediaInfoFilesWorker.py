@@ -56,7 +56,7 @@ class GenerateMediaInfoFilesWorker(QObject):
                 with open(media_info_file_path, 'w+', encoding="UTF-8") as media_info_file:
                     command = add_double_quotation(GlobalFiles.MKVMERGE_PATH) + " -J " + add_double_quotation(
                         file_name)
-                    subprocess.run(command, shell=True, stdout=media_info_file)
+                    subprocess.run(command, shell=True, stdout=media_info_file, env=GlobalFiles.ENVIRONMENT)
                 time.sleep(0.05)
                 if not check_if_valid_video_input(file_name):
                     self.job_unsupported_file_signal.emit(file_name)

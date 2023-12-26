@@ -144,7 +144,7 @@ class AttachmentSelectionSetting(GlobalSetting):
             self.files_size_list = get_files_size_list(files_list=self.files_names_list, folder_path=self.folder_path)
             self.files_checked_list = ([True] * len(self.files_names_absolute_list))
         except Exception as e:
-            invalid_path_dialog = InvalidPathDialog()
+            invalid_path_dialog = InvalidPathDialog(parent=self)
             invalid_path_dialog.execute()
 
     def get_files_list(self, folder_path):

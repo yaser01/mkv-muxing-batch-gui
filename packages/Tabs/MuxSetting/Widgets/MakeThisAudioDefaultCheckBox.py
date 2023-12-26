@@ -61,7 +61,7 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
             else:
                 if state == Qt.CheckState.Checked.value:
                     if audio_to_be_default != -1 or audio_to_be_forced != -1:
-                        confirm_dialog = ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(track_type="audio")
+                        confirm_dialog = ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(track_type="audio" ,parent=self)
                         confirm_dialog.execute()
                         if confirm_dialog.result == "Yes":
                             self.disable_combo_box.emit(False)
@@ -110,7 +110,7 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
                         GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED = True
                 else:
                     if audio_to_be_default != -1:
-                        confirm_dialog = ConfirmCheckMakeThisTrackDefault(track_type="audio")
+                        confirm_dialog = ConfirmCheckMakeThisTrackDefault(track_type="audio", parent=self)
                         confirm_dialog.execute()
                         if confirm_dialog.result == "Yes":
                             self.disable_combo_box.emit(False)

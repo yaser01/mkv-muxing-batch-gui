@@ -98,7 +98,7 @@ class GetJsonForMkvpropeditJob:
         with open(info_file_path, 'w+', encoding="UTF-8") as info_file:
             command = add_double_quotation(GlobalFiles.MKVMERGE_PATH) + " -J " + add_double_quotation(
                 self.job.video_name_absolute)
-            subprocess.run(command, shell=True, stdout=info_file)
+            subprocess.run(command, shell=True, stdout=info_file, env=GlobalFiles.ENVIRONMENT)
         with open(info_file_path, 'r', encoding="UTF-8") as info_file:
             self.json_info = json.load(info_file)
         self.number_of_old_attachments = len(self.json_info["attachments"])

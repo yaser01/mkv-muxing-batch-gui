@@ -24,7 +24,7 @@ class VideoSourceButton(QPushButton):
     def open_select_folder_dialog(self):
         new_folder_path = ""
         if self.is_there_old_files:
-            reload_dialog = ReloadVideoFilesDialog()
+            reload_dialog = ReloadVideoFilesDialog(parent=self)
             reload_dialog.execute()
             if reload_dialog.result == "Yes":
                 temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Video Folder",

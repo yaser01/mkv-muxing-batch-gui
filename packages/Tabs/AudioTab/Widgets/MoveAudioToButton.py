@@ -22,7 +22,7 @@ class MoveAudioToButton(QPushButton):
     def clicked_button(self):
         current_index = self.current_index
         if current_index != -1:
-            move_audio_to_dialog = MoveAudioToDialog(max_index=self.max_index, current_index=current_index)
+            move_audio_to_dialog = MoveAudioToDialog(max_index=self.max_index, current_index=current_index, parent=self)
             move_audio_to_dialog.execute()
             if move_audio_to_dialog.result == "Yes":
                 new_index = move_audio_to_dialog.position - 1

@@ -53,7 +53,7 @@ class AttachmentSourceLineEdit(QLineEdit):
                     self.stop_check_path = True
                     self.setText(self.current_folder_path)
                 else:
-                    invalid_path_dialog = InvalidPathDialog()
+                    invalid_path_dialog = InvalidPathDialog(parent=self)
                     invalid_path_dialog.execute()
                     self.stop_check_path = True
                     self.setText(self.current_folder_path)

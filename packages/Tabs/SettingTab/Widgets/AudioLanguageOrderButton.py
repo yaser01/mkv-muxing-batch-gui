@@ -18,7 +18,7 @@ class AudioLanguageOrderButton(QPushButton):
 
     def open_setting_dialog(self):
         language_preference_dialog = LanguagePreferenceDialog(old_favorite=self.current_language_list,
-                                                              window_title="Audio Language Preference")
+                                                              window_title="Audio Language Preference", parent=self)
         language_preference_dialog.execute()
         self.current_language_list = language_preference_dialog.current_favorite.copy()
         self.new_language_list_signal.emit(self.current_language_list.copy())

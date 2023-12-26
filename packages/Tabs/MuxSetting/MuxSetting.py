@@ -63,7 +63,7 @@ def check_is_there_audio_to_mux():
 
 
 # noinspection PyAttributeOutsideInit
-def check_if_at_least_one_muxing_setting_has_been_selected():
+def check_if_at_least_one_muxing_setting_has_been_selected(window_parent):
     if check_is_there_subtitle_to_mux() or \
             check_is_there_audio_to_mux() or \
             len(GlobalSetting.ATTACHMENT_FILES_LIST) > 0 or \
@@ -83,7 +83,7 @@ def check_if_at_least_one_muxing_setting_has_been_selected():
             GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
         return True
     else:
-        no_setting_to_apply_dialog = NoSettingToApplyDialog()
+        no_setting_to_apply_dialog = NoSettingToApplyDialog(parent=window_parent)
         no_setting_to_apply_dialog.execute()
         if no_setting_to_apply_dialog.result == "Cancel":
             return False
@@ -106,9 +106,9 @@ def check_if_mkvpropedit_can_be_used():
     return True
 
 
-def check_if_mkvpropedit_wanted_to_be_used():
+def check_if_mkvpropedit_wanted_to_be_used(window_parent):
     if check_if_mkvpropedit_can_be_used():
-        confirm_dialog = ConfirmUsingMkvpropedit()
+        confirm_dialog = ConfirmUsingMkvpropedit(parent=window_parent)
         confirm_dialog.execute()
         if confirm_dialog.result == "mkvpropedit":
             GlobalSetting.USE_MKVPROPEDIT = True
@@ -120,29 +120,6 @@ def check_if_mkvpropedit_wanted_to_be_used():
             GlobalSetting.USE_MKVPROPEDIT = False
             return "Cancel"
     return "No"
-
-
-def check_if_all_input_videos_are_found():
-    for video_file in GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST:
-        if not Path.is_file(Path(video_file)):
-            invalid_dialog = FileNotFoundDialog(window_title="File Not Found",
-                                                error_message="File: \"" + video_file + "\" is not found")
-            invalid_dialog.execute()
-            return False
-    return True
-
-
-def check_if_want_to_keep_log_file():
-    if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
-        if not GlobalSetting.OVERWRITE_SOURCE_FILES:
-            try:
-                copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
-            except Exception as e:
-                write_to_log_file(e)
-                error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
-                                                 info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
-                                                              "permissions on Destination folder")
-                error_dialog.execute()
 
 
 def get_approximate_size_of_output_of_job(job):
@@ -411,7 +388,7 @@ class MuxSettingTab(QWidget):
             return
         elif Path(temp_folder_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
-                error_message="Some Source and destination videos are in the same folder")
+                error_message="Some Source and destination videos are in the same folder", parent=self)
             invalid_dialog.execute()
             return
         else:
@@ -424,7 +401,7 @@ class MuxSettingTab(QWidget):
         temp_destination_path = self.destination_path_lineEdit.text()
         try:
             if temp_destination_path == "" or temp_destination_path.isspace():
-                overwrite_dialog = OverwriteFilesDialog()
+                overwrite_dialog = OverwriteFilesDialog(parent=self)
                 overwrite_dialog.execute()
                 if overwrite_dialog.result == "Overwrite":
                     GlobalSetting.OVERWRITE_SOURCE_FILES = True
@@ -450,7 +427,7 @@ class MuxSettingTab(QWidget):
                 write_to_log_file(e)
                 invalid_dialog = InvalidPathDialog(window_title="Permission Denied",
                                                    error_message="MKV Muxing Batch GUI lacks write "
-                                                                 "permissions on Destination folder")
+                                                                 "permissions on Destination folder", parent=self)
                 invalid_dialog.execute()
                 self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
                 return False
@@ -463,13 +440,13 @@ class MuxSettingTab(QWidget):
                 error_message = temp_destination_path + "\nisn't a valid path!"
             if str(e).find("WinError 999") == -1 and str(e).find("WinError 998") == -1:
                 error_message = str(e)
-            invalid_dialog = InvalidPathDialog(error_message=error_message)
+            invalid_dialog = InvalidPathDialog(error_message=error_message, parent=self)
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
         if Path(temp_destination_path) in GlobalSetting.VIDEO_SOURCE_PATHS:
             invalid_dialog = InvalidPathDialog(
-                error_message="Some Source and destination videos are in the same folder")
+                error_message="Some Source and destination videos are in the same folder", parent=self)
             invalid_dialog.execute()
             self.destination_path_lineEdit.setText(GlobalSetting.DESTINATION_FOLDER_PATH)
             return False
@@ -495,7 +472,7 @@ class MuxSettingTab(QWidget):
                             low_space_warning_dialog = NoSpaceWarningDialog(
                                 warning_message=f"You need about [{readable_needed_space}] for muxing file: "
                                                 f"{job.video_name}.\nCurrent free space [{readable_free_space}]",
-                                window_title="Low Disk Space")
+                                window_title="Low Disk Space", parent=self)
                             low_space_warning_dialog.execute()
                             if low_space_warning_dialog.result != "Muxing":
                                 return False
@@ -517,7 +494,7 @@ class MuxSettingTab(QWidget):
                             low_space_warning_dialog = NoSpaceWarningDialog(
                                 warning_message=f"You need about [{readable_needed_space}] for muxing file: "
                                                 f"{job.video_name}.\nCurrent free space [{readable_free_space}]",
-                                window_title="Low Disk Space")
+                                window_title="Low Disk Space", parent=self)
                             low_space_warning_dialog.execute()
                             if low_space_warning_dialog.result != "Muxing":
                                 return False
@@ -539,7 +516,7 @@ class MuxSettingTab(QWidget):
                 if free_space - needed_space <= 1024:
                     low_space_warning_dialog = NoSpaceWarningDialog(
                         warning_message=f"You need about [{readable_needed_space}] for muxing your files.\nCurrent free space [{readable_free_space}]",
-                        window_title="Low Disk Space")
+                        window_title="Low Disk Space", parent=self)
                     low_space_warning_dialog.execute()
                     return low_space_warning_dialog.result == "Muxing"
                 return True
@@ -722,20 +699,20 @@ class MuxSettingTab(QWidget):
         GlobalSetting.MUX_SETTING_KEEP_LOG_FILE = bool(state)
 
     def start_multiplexing_button_clicked(self):
-        mkvpropedit_wanted_to_be_used = check_if_mkvpropedit_wanted_to_be_used()
+        mkvpropedit_wanted_to_be_used = check_if_mkvpropedit_wanted_to_be_used(window_parent=self)
         if mkvpropedit_wanted_to_be_used == "Cancel":
             return
         if not GlobalSetting.USE_MKVPROPEDIT:
             destination_path_valid = self.check_destination_path()
             if not destination_path_valid:
                 return
-        confirm_muxing = check_if_at_least_one_muxing_setting_has_been_selected()
+        confirm_muxing = check_if_at_least_one_muxing_setting_has_been_selected(window_parent=self)
         if not confirm_muxing:
             return
         is_there_enough_space = self.check_available_space()
         if not is_there_enough_space:
             return
-        all_input_videos_are_found = check_if_all_input_videos_are_found()
+        all_input_videos_are_found = self.check_if_all_input_videos_are_found()
         if not all_input_videos_are_found:
             return
         self.setup_log_file()
@@ -744,6 +721,19 @@ class MuxSettingTab(QWidget):
         self.job_queue_layout.start_muxing()
         self.start_muxing_signal.emit()
         self.clear_job_queue_button.setDisabled(True)
+
+    def check_if_want_to_keep_log_file(self):
+        if GlobalSetting.MUX_SETTING_KEEP_LOG_FILE:
+            if not GlobalSetting.OVERWRITE_SOURCE_FILES:
+                try:
+                    copy2(GlobalFiles.MuxingLogFilePath, GlobalSetting.DESTINATION_FOLDER_PATH)
+                except Exception as e:
+                    write_to_log_file(e)
+                    error_dialog = ErrorMuxingDialog(window_title="Permission Denied",
+                                                     info_message="Can't save log file, MKV Muxing Batch GUI lacks write "
+                                                                  "permissions on Destination folder",
+                                                     parent=self)
+                    error_dialog.execute()
 
     def pause_multiplexing_button_clicked(self):
         self.job_queue_layout.pause_muxing()
@@ -778,7 +768,17 @@ class MuxSettingTab(QWidget):
         self.update_task_bar_clear_signal.emit()
         GlobalSetting.JOB_QUEUE_EMPTY = True
         GlobalSetting.JOB_QUEUE_FINISHED = True
-        check_if_want_to_keep_log_file()
+        self.check_if_want_to_keep_log_file()
+
+    def check_if_all_input_videos_are_found(self):
+        for video_file in GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST:
+            if not Path.is_file(Path(video_file)):
+                invalid_dialog = FileNotFoundDialog(window_title="File Not Found",
+                                                    error_message="File: \"" + video_file + "\" is not found",
+                                                    parent=self)
+                invalid_dialog.execute()
+                return False
+        return True
 
     def setup_log_file(self):
         if self.control_queue_button.state == "START":

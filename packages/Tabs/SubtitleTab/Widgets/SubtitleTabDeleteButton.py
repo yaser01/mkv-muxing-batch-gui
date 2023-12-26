@@ -24,7 +24,7 @@ class SubtitleTabDeleteButton(QPushButton):
 
     def open_delete_tab_dialog(self):
         if self.is_there_old_files:
-            clear_files_dialog = ClearSubtitleTabDialog()
+            clear_files_dialog = ClearSubtitleTabDialog(parent=self)
             clear_files_dialog.execute()
             if clear_files_dialog.result == "Yes":
                 self.remove_tab_signal.emit()

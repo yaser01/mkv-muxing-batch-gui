@@ -68,6 +68,7 @@ DLLFolderPath = os.path.join(os.path.abspath(resources_folder), Path('DLL'))
 GlobalToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
 ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx64'))
 LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
+LibFolderPath = ""
 if sys.platform == "win32":
     if struct.calcsize("P") * 8 == 32:
         ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows32'))
@@ -75,6 +76,7 @@ if sys.platform == "win32":
         ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows64'))
 elif sys.platform == "linux" or sys.platform == "linux2":
     ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Linux'))
+    LibFolderPath = os.path.join(os.path.abspath(ToolsFolderPath), Path('lib'))
 else:
     ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Other Systems'))
 AppDataFolderPath = create_app_data_folder()
@@ -88,7 +90,7 @@ delete_old_media_files()
 def get_mkvmerge_version():
     with open(TestMkvmergeFilePath, "w+", encoding="UTF-8") as test_file:
         try:
-            mux_process = subprocess.run([MKVMERGE_PATH, "-V"], shell=False, stdout=test_file)
+            mux_process = subprocess.run([MKVMERGE_PATH, "-V"], shell=False, stdout=test_file, env=ENVIRONMENT)
         except:
             return ""
     with open(TestMkvmergeFilePath, "r+", encoding="UTF-8") as test_file:
@@ -98,11 +100,19 @@ def get_mkvmerge_version():
 def get_mkvpropedit_version():
     with open(TestMkvpropeditFilePath, "w+", encoding="UTF-8") as test_file:
         try:
-            mux_process = subprocess.run([MKVPROPEDIT_PATH, "-V"], shell=False, stdout=test_file)
+            mux_process = subprocess.run([MKVPROPEDIT_PATH, "-V"], shell=False, stdout=test_file, env=ENVIRONMENT)
         except:
             return ""
     with open(TestMkvpropeditFilePath, "r+", encoding="UTF-8") as test_file:
         return test_file.readline().rstrip()
+
+
+def update_enviro_if_not_windows():
+    if "LD_LIBRARY_PATH" not in ENVIRONMENT.keys():
+        ENVIRONMENT["LD_LIBRARY_PATH"] = ""
+    if sys.platform != "win32":
+        ENVIRONMENT["LD_LIBRARY_PATH"] = f"{Path(LibFolderPath).absolute()}:{ENVIRONMENT['LD_LIBRARY_PATH']}"
+    print("LD_LIBRARY_PATH:: ", ENVIRONMENT["LD_LIBRARY_PATH"])
 
 
 try:
@@ -173,6 +183,8 @@ try:
     TaskBarLibFilePath = os.path.join(os.path.abspath(DLLFolderPath), "TaskbarLib.tlb")
     MKVPROPEDIT_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvpropedit")
     MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
+    ENVIRONMENT = os.environ.copy()
+    update_enviro_if_not_windows()
     MKVPROPEDIT_VERSION = get_mkvpropedit_version()
     MKVMERGE_VERSION = get_mkvmerge_version()
     if "mkvmerge" not in MKVMERGE_VERSION:

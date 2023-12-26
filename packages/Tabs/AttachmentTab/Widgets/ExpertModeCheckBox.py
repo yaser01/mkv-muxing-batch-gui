@@ -25,7 +25,7 @@ class ExpertModeCheckBox(QCheckBox):
             return
         if new_state:
             if self.should_show_expert_mode_info_message:
-                confirm_switching_to_expert_mode = SwitchingToExpertModeDialog()
+                confirm_switching_to_expert_mode = SwitchingToExpertModeDialog(parent=self)
                 confirm_switching_to_expert_mode.execute()
                 confirm_enter_expert_mode = confirm_switching_to_expert_mode.result == "Expert"
                 self.should_show_expert_mode_info_message = confirm_switching_to_expert_mode.show_message_result == "Yes"

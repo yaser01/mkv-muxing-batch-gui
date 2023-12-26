@@ -47,7 +47,7 @@ class SubtitleSourceLineEdit(QLineEdit):
                 if Path(new_path) != Path(self.current_folder_path):
                     new_path = str(Path(new_path))
                     if self.is_there_old_files:
-                        reload_dialog = ReloadSubtitleFilesDialog()
+                        reload_dialog = ReloadSubtitleFilesDialog(parent=self)
                         reload_dialog.execute()
                         if reload_dialog.result == "Yes":
                             self.is_drag_and_drop = False
@@ -69,7 +69,7 @@ class SubtitleSourceLineEdit(QLineEdit):
                 if new_path == "" or new_path.isspace() or self.is_drag_and_drop:
                     self.setText(self.current_folder_path)
                 else:
-                    invalid_path_dialog = InvalidPathDialog()
+                    invalid_path_dialog = InvalidPathDialog(parent=self)
                     invalid_path_dialog.execute()
                     self.stop_check_path = True
                     self.setText(self.current_folder_path)

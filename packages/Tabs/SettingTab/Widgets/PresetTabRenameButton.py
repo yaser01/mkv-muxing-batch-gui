@@ -19,7 +19,7 @@ class PresetTabRenameButton(QPushButton):
         self.dark_mode_applied = False
 
     def clicked_button(self):
-        rename_preset_to_dialog = RenamePresetDialog(old_name=self.current_preset_name)
+        rename_preset_to_dialog = RenamePresetDialog(old_name=self.current_preset_name,parent=self)
         rename_preset_to_dialog.execute()
         if rename_preset_to_dialog.result == "Yes":
             self.rename_tab_signal.emit(rename_preset_to_dialog.new_name)
