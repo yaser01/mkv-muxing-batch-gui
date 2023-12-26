@@ -1,5 +1,6 @@
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QPushButton
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QPushButton, QApplication
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksDialog import ModifyOldTracksDialog
@@ -40,5 +41,7 @@ class ModifyOldTracksButton(QPushButton):
         super().setToolTip(new_tool_tip)
 
     def open_modify_old_tracks_dialog(self):
-        modify_old_tracks_dialog = ModifyOldTracksDialog()
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        modify_old_tracks_dialog = ModifyOldTracksDialog(parent=self)
+        QApplication.setOverrideCursor(Qt.CursorShape.ArrowCursor)
         modify_old_tracks_dialog.execute()
