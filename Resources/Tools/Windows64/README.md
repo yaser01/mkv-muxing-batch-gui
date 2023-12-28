@@ -1,4 +1,4 @@
-MKVToolNix 66.0.0
+MKVToolNix 81.0
 =================
 
 # Table of contents
@@ -33,6 +33,7 @@ MKVToolNix 66.0.0
     10. [QtWaitingSpinner](#611-qtwaitingspinner)
     11. [Fancy tab widget](#612-fancy-tab-widget)
     12. [fmt](#613-fmt)
+    13. [QgsCollapsibleGroupBox](#613-qgscollapsiblegroupbox)
 
 -----------------
 
@@ -97,7 +98,8 @@ programs and libraries you absolutely need are:
 - [zlib](http://www.zlib.net/) — a compression library
 
 - [Boost](http://www.boost.org/) — Several of Boost's libraries are
-  used, e.g. `operators`, `multi-precision`. At least v1.66.0 is required.
+  used, e.g. `filesystem`, `multi-precision`, `operators`,
+  `system`. At least v1.66.0 is required.
 
 - [libxslt's xsltproc binary](http://xmlsoft.org/libxslt/) and
   [DocBook XSL stylesheets](https://sourceforge.net/projects/docbook/files/docbook-xsl/)
@@ -124,8 +126,8 @@ These libraries are:
 - [fmt](http://fmtlib.net/) — a small, safe and fast formatting
   library. Version 6.1.0 or later is required.
 
-- [libEBML v1.4.2](http://dl.matroska.org/downloads/libebml/) or later
-  and [libMatroska v1.6.3](http://dl.matroska.org/downloads/libmatroska/)
+- [libEBML v1.4.4](http://dl.matroska.org/downloads/libebml/) or later
+  and [libMatroska v1.7.1](http://dl.matroska.org/downloads/libmatroska/)
   or later for low-level access to Matroska files. Instructions on how to
   compile them are a bit further down in this file.
 
@@ -402,15 +404,9 @@ UTF-8 with C++ in a Portable Way
 
 ## 6.8. Oxygen icons and sound files
 
-Most of the icons included in this package originate from the Oxygen
-Project. These include all files in the `share/icons` sub-directory
-safe for those whose name starts with `mkv`.
-
-The preferred form of modification are the SVG icons. These are not
-part of the binary distribution of MKVToolNix, but they are contained
-in the source code in the `icons/scalable` sub-directory. You can
-obtain the source code from the
-[MKVToolNix website](https://mkvtoolnix.download/).
+A lot of the icons included in this package originate from the Oxygen
+Project. These include all files in the `share/icons/oxygen`
+sub-directory.
 
 All of the sound files in the `share/sounds` sub-directory originate
 from the Oxygen project.
@@ -418,7 +414,7 @@ from the Oxygen project.
   * License: GNU Lesser General Public License v3 (see `doc/licenses/LGPL-3.0.txt`)
   * URL: https://techbase.kde.org/Projects/Oxygen
   * Corresponding files:
-    * `share/icons/*` (except for `share/icons/*/mkv*`)
+    * `share/icons/oxygen/*`
     * `share/sounds/*`
 
 ## 6.9. MKVToolNix icons
@@ -457,5 +453,23 @@ Small, safe and fast formatting library
 
   * Copyright: 2012–present by Victor Zverovich
   * License: BSD (see `doc/licenses/fmt-BSD.txt`)
-  * URL: http://fmtlib.net/latest/
+  * URL: https://fmt.dev/latest/
   * Corresponding files: `lib/fmt/*`
+
+## 6.13. QgsCollapsibleGroupBox
+
+A groupbox that collapses/expands when toggled. Extracted from the QGIS project.
+
+  * Copyright: 2012–present by Etienne Tourigny
+  * License: GNU General Public License v2 or later (see `COPYING`)
+  * URL: https://github.com/qgis/QGIS
+  * Corresponding files: `src/mkvtoolnix-gui/util/qgs_collapsible_group_box.{h,cpp}`
+
+## 6.14. Windows theme
+
+The theme (palette) used on Windows
+
+  * Copyright: 2016 The Qt Company Ltd.
+  * License: GNU General Public License v2 (see `COPYING`)
+  * Corresponding files: `src/mkvtoolnix-gui/app/windows.cpp`
+
