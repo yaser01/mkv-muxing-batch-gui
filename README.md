@@ -79,8 +79,9 @@ https://user-images.githubusercontent.com/52576632/166163331-b8fe2e9c-3f5c-4967-
 - Set your default directories, languages, and file extensions to be remembered for future runs
 
 ## 📝Notes
->**Note**
 
+> [!NOTE]  
+>
 >1. The video destination folder shouldn't be the same as source folder
 >1. When the option [make this subtitle/audio default] is activated with language/track that does not exists in the source, then the option will be ignored
 >1. When the option [keep this subtitle/audio only] is activated with language/track that does not exist in the source video, then the option will lead to output video with only chosen language/track (even if it means to discard all subtitle/audio from the source)
