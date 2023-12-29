@@ -112,7 +112,6 @@ def update_enviro_if_not_windows():
         ENVIRONMENT["LD_LIBRARY_PATH"] = ""
     if sys.platform != "win32":
         ENVIRONMENT["LD_LIBRARY_PATH"] = f"{Path(LibFolderPath).absolute()}:{ENVIRONMENT['LD_LIBRARY_PATH']}"
-    print("LD_LIBRARY_PATH:: ", ENVIRONMENT["LD_LIBRARY_PATH"])
 
 
 try:
