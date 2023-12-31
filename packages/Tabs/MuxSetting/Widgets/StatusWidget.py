@@ -1,6 +1,6 @@
-from PySide6.QtCore import QSize
-from PySide6.QtGui import QMovie
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel
+from PySide2.QtCore import QSize
+from PySide2.QtGui import QMovie
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QLabel
 
 from packages.Startup.GlobalFiles import SpinnerIconPath
 

@@ -1,5 +1,5 @@
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QHBoxLayout
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QHBoxLayout
 
 from packages.Tabs.ChapterTab.Widgets.ChapterMatchingTable import ChapterMatchingTable
 from packages.Tabs.ChapterTab.Widgets.MatchChapterToolsLayout import MatchChapterToolsLayout

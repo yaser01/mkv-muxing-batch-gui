@@ -1,5 +1,5 @@
-from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QHBoxLayout, \
+from PySide2 import QtGui, QtCore
+from PySide2.QtWidgets import QHBoxLayout, \
      QSpinBox, QGridLayout, QLabel, QPushButton, QAbstractSpinBox
 
 from packages.Widgets.MyDialog import MyDialog

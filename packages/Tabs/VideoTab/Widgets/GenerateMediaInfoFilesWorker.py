@@ -5,7 +5,7 @@ import subprocess
 import time
 import traceback
 
-from PySide6.QtCore import QObject, Signal
+from PySide2.QtCore import QObject, Signal
 
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import write_to_log_file

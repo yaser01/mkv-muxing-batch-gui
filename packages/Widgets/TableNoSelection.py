@@ -1,9 +1,9 @@
 import typing
 
-from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
+from PySide2 import QtGui, QtCore
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QPalette
+from PySide2.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
 
 
 class TableWidgetNoSelection(QTableWidget):

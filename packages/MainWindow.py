@@ -1,6 +1,6 @@
-import PySide6
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QFrame, QVBoxLayout
+import PySide2
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QFrame, QVBoxLayout
 
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options, get_names_list_of_presets, save_options
@@ -81,7 +81,7 @@ class MainWindow(MyMainWindow):
     def update_minimum_size(self):
         self.setMinimumSize(self.minimumSizeHint())
 
-    def closeEvent(self, event: PySide6.QtGui.QCloseEvent):
+    def closeEvent(self, event: PySide2.QtGui.QCloseEvent):
         muxing_on = GlobalSetting.MUXING_ON
         if muxing_on:
             want_to_exit = check_if_exit_when_muxing_on()

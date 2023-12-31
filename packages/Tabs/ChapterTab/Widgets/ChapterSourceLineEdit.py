@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QLineEdit
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QLineEdit
 
 from packages.Tabs.ChapterTab.Widgets.ReloadChapterFilesDialog import ReloadChapterFilesDialog
 from packages.Tabs.GlobalSetting import GlobalSetting

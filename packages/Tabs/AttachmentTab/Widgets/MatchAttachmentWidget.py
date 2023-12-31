@@ -2,8 +2,8 @@ import logging
 import os
 from typing import List
 
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QHBoxLayout, QWidget
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QHBoxLayout, QWidget
 
 from packages.Tabs.AttachmentTab.Widgets.AttachmentMatchingTable import AttachmentMatchingTable
 from packages.Tabs.AttachmentTab.Widgets.MatchAttachmentToolsLayout import MatchAttachmentToolsLayout

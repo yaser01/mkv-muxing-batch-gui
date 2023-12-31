@@ -1,6 +1,6 @@
 import webbrowser
 
-from PySide6.QtWidgets import QPushButton
+from PySide2.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
 from packages.Startup.PreDefined import DonationsUrl

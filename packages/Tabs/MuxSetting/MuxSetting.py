@@ -5,9 +5,9 @@ from os import makedirs
 from pathlib import Path
 from shutil import copy2
 
-from PySide6.QtCore import Signal
-from PySide6.QtGui import QPaintEvent, QResizeEvent
-from PySide6.QtWidgets import (
+from PySide2.QtCore import Signal
+from PySide2.QtGui import QPaintEvent, QResizeEvent
+from PySide2.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
     QFileDialog, QCheckBox, QLineEdit, QSizePolicy, QWidget, )

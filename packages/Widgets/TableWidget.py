@@ -1,9 +1,9 @@
 import sys
 
-from PySide6 import QtGui
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
+from PySide2 import QtGui
+from PySide2.QtCore import Qt, Signal
+from PySide2.QtGui import QPalette
+from PySide2.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
 
 from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import sort_names_like_windows

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QLineEdit
+from PySide2.QtWidgets import QLineEdit
 
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting

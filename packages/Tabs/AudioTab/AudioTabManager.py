@@ -1,5 +1,5 @@
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from packages.Tabs.AudioTab.AudioSelection import AudioSelectionSetting
 from packages.Tabs.AudioTab.Widgets.AudioTabComboBox import AudioTabComboBox

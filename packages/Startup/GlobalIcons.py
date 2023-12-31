@@ -1,4 +1,4 @@
-from PySide6.QtGui import QIcon, QPixmap
+from PySide2.QtGui import QIcon, QPixmap
 
 from packages.Startup.GlobalFiles import OkIconPath, ErrorIconPath, ErrorBigIconPath, SubtitleLightIconPath, \
     SwitchIconPath, \

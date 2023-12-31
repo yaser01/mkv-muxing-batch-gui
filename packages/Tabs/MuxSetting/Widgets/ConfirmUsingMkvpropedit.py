@@ -1,5 +1,5 @@
-from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QGridLayout, QLabel, \
+from PySide2 import QtGui, QtCore
+from PySide2.QtWidgets import QGridLayout, QLabel, \
      QApplication, QStyle, QPushButton, QHBoxLayout
 
 from packages.Widgets.MyDialog import MyDialog

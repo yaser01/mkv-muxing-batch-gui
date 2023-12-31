@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QCheckBox
+from PySide2.QtCore import Qt, Signal
+from PySide2.QtWidgets import QCheckBox
 
 from packages.Startup.Options import Options, save_options
 from packages.Tabs.AttachmentTab.Widgets.SwitchingToExpertModeDialog import SwitchingToExpertModeDialog

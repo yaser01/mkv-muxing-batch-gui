@@ -1,8 +1,8 @@
 import time
 
-from PySide6.QtCore import Qt, QThread, QSize
-from PySide6.QtGui import QMovie
-from PySide6.QtWidgets import QLabel, QHBoxLayout
+from PySide2.QtCore import Qt, QThread, QSize
+from PySide2.QtGui import QMovie
+from PySide2.QtWidgets import QLabel, QHBoxLayout
 
 from packages.Startup.GlobalFiles import SpinnerIconPath
 from packages.Tabs.VideoTab.Widgets.GenerateMediaInfoFilesWorker import GenerateMediaInfoFilesWorker

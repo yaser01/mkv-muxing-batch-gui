@@ -1,5 +1,5 @@
 #import faulthandler
-from PySide6.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
+from PySide2.QtWidgets import QWidget, QGroupBox, QVBoxLayout, QStyleFactory, \
     QGridLayout, QLabel
 
 from packages.Startup.Options import Options
@@ -16,7 +16,7 @@ from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
 
 def try_to_create_windows_vista_style():
     style = QStyleFactory.create("windowsvista")
-    if str(style.__class__).find("PySide6.QtGui.QStandardItem") != -1:
+    if str(style.__class__).find("PySide2.QtGui.QStandardItem") != -1:
         return try_to_create_windows_vista_style()
     return style
 

@@ -3,7 +3,7 @@ import time
 import traceback
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QThread, Signal
+from PySide2.QtCore import QObject, QThread, Signal
 
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting, write_to_log_file

@@ -1,4 +1,4 @@
-from PySide6.QtGui import QPalette, QColor
+from PySide2.QtGui import QPalette, QColor
 
 from packages.Startup import ColorThems
 

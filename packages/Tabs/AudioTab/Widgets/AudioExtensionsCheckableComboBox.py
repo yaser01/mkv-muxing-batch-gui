@@ -1,9 +1,9 @@
 import os
 
-from PySide6 import QtCore, QtGui
-from PySide6.QtCore import Qt, QEvent
-from PySide6.QtGui import QFontMetrics
-from PySide6.QtWidgets import QStyledItemDelegate, QComboBox
+from PySide2 import QtCore, QtGui
+from PySide2.QtCore import Qt, QEvent
+from PySide2.QtGui import QFontMetrics
+from PySide2.QtWidgets import QStyledItemDelegate, QComboBox
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size

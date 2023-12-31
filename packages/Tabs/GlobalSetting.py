@@ -9,8 +9,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import List
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QWidget
 
 from packages.Startup import GlobalFiles
 from packages.Startup.PreDefined import ISO_639_2_SYMBOLS

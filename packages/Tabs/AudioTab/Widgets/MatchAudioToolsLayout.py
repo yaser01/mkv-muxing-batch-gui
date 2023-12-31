@@ -1,6 +1,6 @@
-from PySide6.QtCore import Signal
-from PySide6.QtGui import QKeySequence,QShortcut
-from PySide6.QtWidgets import QVBoxLayout
+from PySide2.QtCore import Signal
+from PySide2.QtGui import QKeySequence
+from PySide2.QtWidgets import QVBoxLayout,QShortcut
 
 from packages.Tabs.AudioTab.Widgets.DeleteAudioButton import DeleteAudioButton
 from packages.Tabs.AudioTab.Widgets.MoveAudioBottomButton import MoveAudioBottomButton

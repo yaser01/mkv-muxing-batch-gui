@@ -1,7 +1,7 @@
 import time
 
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QGridLayout, QLabel
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QGridLayout, QLabel
 
 from packages.Tabs.MuxSetting.Widgets.CompletedJobsCounter import CompletedJobsCounter
 from packages.Tabs.MuxSetting.Widgets.JobDividingLine import JobDividingLine

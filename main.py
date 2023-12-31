@@ -9,8 +9,8 @@ import psutil
 from packages.Startup.MainApplication import MainApplication
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
-from PySide6.QtGui import QFont, QFontDatabase
-from PySide6.QtWidgets import QApplication
+from PySide2.QtGui import QFont, QFontDatabase
+from PySide2.QtWidgets import QApplication
 from packages.Widgets.WarningDialog import WarningDialog
 
 if sys.platform == "win32":
@@ -60,7 +60,7 @@ def create_window():
 
 
 def run_application():
-    app_execute = app.exec()
+    app_execute = app.exec_()
     kill_all_children()
     sys.exit(app_execute)
 

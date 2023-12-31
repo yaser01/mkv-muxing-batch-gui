@@ -2,9 +2,9 @@ import os
 import time
 from pathlib import Path
 
-from PySide6.QtCore import QThread, Signal
-from PySide6.QtGui import Qt, QFontMetrics
-from PySide6.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
+from PySide2.QtCore import QThread, Signal
+from PySide2.QtGui import Qt, QFontMetrics
+from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size

@@ -1,9 +1,9 @@
 from typing import List
 
-import PySide6
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFontMetrics
-from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem, QLabel
+import PySide2
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QFontMetrics
+from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem, QLabel
 
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackInfoTableColumnsID import TrackInfoTableColumnsID
 from packages.Widgets.GreenTikCell import GreenTikCell
@@ -154,7 +154,7 @@ class TrackInfoTable(TableWidget):
         if new_column_width >= self.columnWidth(self.column_ids.Track_Name):
             self.setColumnWidth(self.column_ids.Track_Name, new_column_width)
 
-    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent):
+    def resizeEvent(self, event: PySide2.QtGui.QResizeEvent):
         super().resizeEvent(event)
         self.check_if_video_name_need_resize_column_to_fit_content()
         self.check_if_track_name_need_resize_column_to_fit_content()

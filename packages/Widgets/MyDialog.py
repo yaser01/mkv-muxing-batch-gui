@@ -1,9 +1,9 @@
 import platform
 import sys
 
-import PySide6.QtGui
-from PySide6 import QtWidgets
-from PySide6.QtWidgets import QDialog
+import PySide2.QtGui
+from PySide2 import QtWidgets
+from PySide2.QtWidgets import QDialog
 
 from packages.Startup.Options import Options
 

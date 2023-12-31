@@ -1,5 +1,5 @@
-from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QHBoxLayout, QGridLayout, QLabel, QPushButton, QLineEdit
+from PySide2 import QtGui, QtCore
+from PySide2.QtWidgets import QHBoxLayout, QGridLayout, QLabel, QPushButton, QLineEdit
 
 from packages.Startup import GlobalIcons
 from packages.Widgets.MyDialog import MyDialog

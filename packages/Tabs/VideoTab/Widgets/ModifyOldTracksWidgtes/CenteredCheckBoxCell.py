@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QWidget, QHBoxLayout
+from PySide2.QtCore import Qt, Signal
+from PySide2.QtWidgets import QWidget, QHBoxLayout
 
 from packages.Tabs.GlobalSetting import convert_check_state_int_to_check_state
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackCheckBoxCell import TrackCheckBoxCell

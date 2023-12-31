@@ -1,7 +1,7 @@
-from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QPixmap, QFont
-from PySide6.QtWidgets import QLabel, \
+from PySide2 import QtGui, QtCore
+from PySide2.QtCore import Qt, QSize
+from PySide2.QtGui import QPixmap, QFont
+from PySide2.QtWidgets import QLabel, \
      QPushButton, QHBoxLayout, QVBoxLayout
 
 from packages.Startup.GlobalFiles import AppIconPath, MKVMERGE_VERSION, MKVPROPEDIT_VERSION

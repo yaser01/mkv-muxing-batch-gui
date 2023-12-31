@@ -1,7 +1,7 @@
-import PySide6
-from PySide6.QtCore import QEvent
-from PySide6.QtGui import Qt, QFontMetrics
-from PySide6.QtWidgets import QComboBox
+import PySide2
+from PySide2.QtCore import QEvent
+from PySide2.QtGui import Qt, QFontMetrics
+from PySide2.QtWidgets import QComboBox
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -136,7 +136,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.disable_track_language_text_from_being_selected()
         self.disable_track_name_text_from_being_selected()
 
-    def resizeEvent(self, e: PySide6.QtGui.QResizeEvent):
+    def resizeEvent(self, e: PySide2.QtGui.QResizeEvent):
         super().resizeEvent(e)
         self.update_shown_text()
 

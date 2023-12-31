@@ -1,5 +1,5 @@
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QPushButton
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QPushButton
 
 from packages.Tabs.AttachmentTab.Widgets.MoveAttachmentToDialog import MoveAttachmentToDialog
 from packages.Tabs.GlobalSetting import GlobalSetting

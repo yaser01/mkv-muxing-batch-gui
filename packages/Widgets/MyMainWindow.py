@@ -1,7 +1,7 @@
 import platform
 import sys
 
-from PySide6.QtWidgets import QMainWindow
+from PySide2.QtWidgets import QMainWindow
 
 if sys.platform == "win32":
     from ctypes import byref, c_bool, sizeof, windll

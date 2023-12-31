@@ -1,6 +1,6 @@
-from PySide6 import QtCore
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QCheckBox, QSizePolicy
+from PySide2 import QtCore
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QCheckBox, QSizePolicy
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.MuxSetting.Widgets.ConfirmCheckMakeThisTrackDefault import ConfirmCheckMakeThisTrackDefault
@@ -59,7 +59,7 @@ class MakeThisAudioDefaultCheckBox(QCheckBox):
                 GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_FULL_ENABLED = False
                 GlobalSetting.MUX_SETTING_MAKE_THIS_AUDIO_DEFAULT_TRACK = ""
             else:
-                if state == Qt.CheckState.Checked.value:
+                if state == Qt.CheckState.Checked:
                     if audio_to_be_default != -1 or audio_to_be_forced != -1:
                         confirm_dialog = ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(track_type="audio" ,parent=self)
                         confirm_dialog.execute()

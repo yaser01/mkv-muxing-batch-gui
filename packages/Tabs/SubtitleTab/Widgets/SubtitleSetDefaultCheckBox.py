@@ -1,5 +1,5 @@
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QCheckBox
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QCheckBox
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 

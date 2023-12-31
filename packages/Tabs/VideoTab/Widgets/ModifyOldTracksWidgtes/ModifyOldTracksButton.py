@@ -1,6 +1,6 @@
-from PySide6.QtCore import Signal
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QPushButton, QApplication
+from PySide2.QtCore import Signal
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QPushButton, QApplication
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.VideoTab.Widgets.ModifyOldTracksDialog import ModifyOldTracksDialog

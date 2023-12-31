@@ -1,9 +1,9 @@
 import sys
 
-import PySide6
-from PySide6.QtCore import Signal
-from PySide6.QtGui import Qt, QColor, QKeySequence, QShortcut
-from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem
+import PySide2
+from PySide2.QtCore import Signal
+from PySide2.QtGui import Qt, QColor, QKeySequence
+from PySide2.QtWidgets import QAbstractItemView, QHeaderView, QTableWidgetItem, QShortcut
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -113,7 +113,7 @@ class VideoTable(TableWidget):
     def resize_2nd_column(self):
         self.setColumnWidth(1, min(self.columnWidth(0) // 2, screen_size.width() // 14))
 
-    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent) -> None:
+    def resizeEvent(self, event: PySide2.QtGui.QResizeEvent) -> None:
         super().resizeEvent(event)
         self.resize_2nd_column()
 

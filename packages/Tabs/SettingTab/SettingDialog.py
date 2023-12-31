@@ -1,8 +1,8 @@
 # import faulthandler
-from PySide6 import QtGui
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QHBoxLayout, \
+from PySide2 import QtGui
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QPixmap
+from PySide2.QtWidgets import QHBoxLayout, \
     QGridLayout, QLabel, QPushButton, QCheckBox
 from packages.Startup.Options import Options, save_options, get_names_list_of_presets
 from packages.Startup.GlobalFiles import InfoIconPath

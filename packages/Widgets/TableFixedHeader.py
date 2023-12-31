@@ -1,7 +1,7 @@
-import PySide6
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFontMetrics, QPaintEvent
-from PySide6.QtWidgets import QGridLayout, QTableWidgetItem, \
+import PySide2
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QFontMetrics, QPaintEvent
+from PySide2.QtWidgets import QGridLayout, QTableWidgetItem, \
     QHeaderView, QAbstractItemView, QTableWidget
 
 from packages.Widgets.TableNoSelection import TableWidgetNoSelection
@@ -70,7 +70,7 @@ class TableFixedHeaderWidget(QTableWidget):
         self.update_row_size()
         self.takeupdate()
 
-    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent):
+    def resizeEvent(self, event: PySide2.QtGui.QResizeEvent):
         self.takeupdate()
         super().resizeEvent(event)
         self.takeupdate()

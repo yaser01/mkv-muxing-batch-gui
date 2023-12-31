@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide2.QtCore import Qt
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosTracks
 from packages.Tabs.GlobalSetting import GlobalSetting
@@ -17,7 +17,7 @@ class AudioTracksCheckableComboBox(TracksCheckableComboBox):
                                            "output video with NO audios<br>[the new audio file(s) will exists]"
 
     def check_box_state_changed(self, new_state):
-        if new_state == Qt.CheckState.Checked.value:
+        if new_state == Qt.CheckState.Checked:
             self.setDisabled(False)
             self.set_tool_tip_hint()
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED = True

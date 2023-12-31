@@ -1,6 +1,6 @@
-from PySide6 import QtGui
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, \
+from PySide2 import QtGui
+from PySide2.QtGui import Qt
+from PySide2.QtWidgets import QGridLayout, QLabel, \
      QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
     QFormLayout
 

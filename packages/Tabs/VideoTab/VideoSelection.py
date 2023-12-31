@@ -1,4 +1,4 @@
-from PySide6.QtCore import Signal
+from PySide2.QtCore import Signal
 
 from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import *

@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
 
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.VideoTab.Widgets.MediaInfoTreeWidget import MediaInfoTreeWidget

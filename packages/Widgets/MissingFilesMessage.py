@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMessageBox
+from PySide2.QtWidgets import QMessageBox
 
 
 class MissingFilesMessage(QMessageBox):

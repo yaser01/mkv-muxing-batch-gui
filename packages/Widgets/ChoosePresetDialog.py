@@ -1,6 +1,6 @@
-from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import QHBoxLayout,QGridLayout, QLabel, QPushButton, QComboBox, QCheckBox
+from PySide2 import QtGui, QtCore
+from PySide2.QtCore import Qt, QSize
+from PySide2.QtWidgets import QHBoxLayout,QGridLayout, QLabel, QPushButton, QComboBox, QCheckBox
 
 from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import screen_size

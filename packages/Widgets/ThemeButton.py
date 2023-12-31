@@ -1,5 +1,5 @@
-from PySide6.QtCore import QSize, Signal
-from PySide6.QtWidgets import QPushButton
+from PySide2.QtCore import QSize, Signal
+from PySide2.QtWidgets import QPushButton
 from packages.Startup.Options import Options, save_options
 from packages.Startup.GlobalIcons import ThemeIcon
 from packages.Startup.MainApplication import apply_dark_mode, apply_light_mode

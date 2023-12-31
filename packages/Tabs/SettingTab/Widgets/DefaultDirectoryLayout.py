@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QHBoxLayout, QLabel
+from PySide2.QtWidgets import QHBoxLayout, QLabel
 
 from packages.Tabs.SettingTab.Widgets.ClearSourceButton import ClearSourceButton
 from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLineEdit import DefaultDirectoryLineEdit

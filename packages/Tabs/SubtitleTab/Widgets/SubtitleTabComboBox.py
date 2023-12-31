@@ -1,5 +1,5 @@
-from PySide6.QtCore import Signal, Qt, QSize, QEvent
-from PySide6.QtWidgets import QComboBox, QStyledItemDelegate
+from PySide2.QtCore import Signal, Qt, QSize, QEvent
+from PySide2.QtWidgets import QComboBox, QStyledItemDelegate
 
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options

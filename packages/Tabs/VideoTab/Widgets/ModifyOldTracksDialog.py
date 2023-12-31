@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QLabel
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QLabel
 
 from packages.Startup.GlobalIcons import InfoIcon
 from packages.Startup.InitializeScreenResolution import screen_size
