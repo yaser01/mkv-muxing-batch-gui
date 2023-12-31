@@ -90,7 +90,8 @@ delete_old_media_files()
 def get_mkvmerge_version():
     with open(TestMkvmergeFilePath, "w+", encoding="UTF-8") as test_file:
         try:
-            mux_process = subprocess.run([MKVMERGE_PATH, "-V"], shell=False, stdout=test_file, env=ENVIRONMENT)
+            command = add_double_quotation(MKVMERGE_PATH) + " -V"
+            mux_process = subprocess.run(command, shell=True, stdout=test_file, env=ENVIRONMENT)
         except:
             return ""
     with open(TestMkvmergeFilePath, "r+", encoding="UTF-8") as test_file:
@@ -100,7 +101,8 @@ def get_mkvmerge_version():
 def get_mkvpropedit_version():
     with open(TestMkvpropeditFilePath, "w+", encoding="UTF-8") as test_file:
         try:
-            mux_process = subprocess.run([MKVPROPEDIT_PATH, "-V"], shell=False, stdout=test_file, env=ENVIRONMENT)
+            command = add_double_quotation(MKVPROPEDIT_PATH) + " -V"
+            mux_process = subprocess.run(command, shell=True, stdout=test_file, env=ENVIRONMENT)
         except:
             return ""
     with open(TestMkvpropeditFilePath, "r+", encoding="UTF-8") as test_file:
