@@ -2,12 +2,9 @@ import ctypes
 from ctypes import wintypes
 import comtypes
 import comtypes.client as cc
-from packages.Startup.GlobalFiles import TaskBarLibFilePath
-comtypes.client.GetModule(TaskBarLibFilePath)
-import packages.Startup.TaskBarComtypeGen
 TaskBarGUID = "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 comtypes.CoInitializeEx()
-import comtypes.gen.TaskbarLib as TaskbarLib
+from packages.Widgets.WindowsTaskBarLib import ITaskbarList3
 
 
 def create_icon(icon_path):
@@ -28,7 +25,7 @@ class WindowsTaskBar:
         self.window_id = hwnd
         self.taskbar = cc.CreateObject(
             TaskBarGUID,
-            interface=TaskbarLib.ITaskbarList3, clsctx=comtypes.CLSCTX_ALL)
+            interface=ITaskbarList3, clsctx=comtypes.CLSCTX_ALL)
         self.taskbar.HrInit()
 
     def setState(self, value):

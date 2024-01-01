@@ -1,16 +1,13 @@
 # -*- coding: mbcs -*-
-import ctypes.wintypes
+
 from ctypes import *
 from comtypes import CoClass, COMMETHOD, GUID, IUnknown, wireHWND
 from ctypes import HRESULT
-from ctypes.wintypes import tagRECT
-
-from packages.Startup import GlobalFiles
-
+from ctypes.wintypes import tagRECT, HICON
+from packages.Startup.GlobalFiles import TaskBarLibFilePath
 _lcid = 0  # change this if required
-typelib_path = GlobalFiles.TaskBarLibFilePath
+typelib_path = TaskBarLibFilePath
 WSTRING = c_wchar_p
-
 
 
 class ITaskbarList(IUnknown):
@@ -189,7 +186,7 @@ ITaskbarList3._methods_ = [
         HRESULT,
         'SetOverlayIcon',
         (['in'], c_int, 'hwnd'),
-        (['in'], ctypes.wintypes.HICON, 'hIcon'),
+        (['in'], HICON, 'hIcon'),
         (['in'], WSTRING, 'pszDescription')
     ),
     COMMETHOD(
@@ -207,6 +204,7 @@ ITaskbarList3._methods_ = [
         (['in'], POINTER(tagRECT), 'prcClip')
     ),
 ]
+
 
 ################################################################
 # code template for ITaskbarList3 implementation
@@ -261,6 +259,11 @@ ITaskbarList3._methods_ = [
 #
 
 
+class Library(object):
+    name = 'TaskbarLib'
+    _reg_typelib_ = ('{683BF642-E9CA-4124-BE43-67065B2FA653}', 1, 0)
+
+
 class TaskbarList(CoClass):
     _reg_clsid_ = GUID('{56FDF344-FD6D-11D0-958A-006097C9A090}')
     _idlflags_ = []
@@ -269,6 +272,10 @@ class TaskbarList(CoClass):
 
 
 TaskbarList._com_interfaces_ = [ITaskbarList3]
+
+
+class _RemotableHandle(Structure):
+    pass
 
 
 class __MIDL_IWinTypes_0009(Union):
@@ -282,6 +289,15 @@ __MIDL_IWinTypes_0009._fields_ = [
 
 # The size provided by the typelib is incorrect.
 # The size and alignment check for __MIDL_IWinTypes_0009 is skipped.
+
+_RemotableHandle._fields_ = [
+    ('fContext', c_int),
+    ('u', __MIDL_IWinTypes_0009),
+]
+
+
+# The size provided by the typelib is incorrect.
+# The size and alignment check for _RemotableHandle is skipped.
 
 
 class __MIDL___MIDL_itf_taskbarlib_0006_0001_0001(Structure):
@@ -298,12 +314,6 @@ __MIDL___MIDL_itf_taskbarlib_0006_0001_0001._fields_ = [
 # The size provided by the typelib is incorrect.
 # The size and alignment check for __MIDL___MIDL_itf_taskbarlib_0006_0001_0001 is skipped.
 
-
-class Library(object):
-    name = 'TaskbarLib'
-    _reg_typelib_ = ('{683BF642-E9CA-4124-BE43-67065B2FA653}', 1, 0)
-
-
 tagTHUMBBUTTON._fields_ = [
     ('dwMask', c_ulong),
     ('iId', c_uint),
@@ -316,27 +326,11 @@ tagTHUMBBUTTON._fields_ = [
 # The size provided by the typelib is incorrect.
 # The size and alignment check for tagTHUMBBUTTON is skipped.
 
-
-class _RemotableHandle(Structure):
-    pass
-
-
-_RemotableHandle._fields_ = [
-    ('fContext', c_int),
-    ('u', __MIDL_IWinTypes_0009),
-]
-
-# The size provided by the typelib is incorrect.
-# The size and alignment check for _RemotableHandle is skipped.
-
 __all__ = [
-    'ITaskbarList2', 'tagTHUMBBUTTON', 'TBPFLAG', 'ITaskbarList3',
-    'ITaskbarList', 'TBATFLAG', '_RemotableHandle', 'TBPF_NORMAL',
-    'TBPF_NOPROGRESS', 'TBPF_INDETERMINATE',
-    'TBATF_USEMDILIVEPREVIEW',
-    '__MIDL___MIDL_itf_taskbarlib_0006_0001_0001', 'TBPF_ERROR',
-    'TBPF_PAUSED', '__MIDL_IWinTypes_0009', 'TBATF_USEMDITHUMBNAIL',
-    'TaskbarList'
+    'ITaskbarList', '__MIDL___MIDL_itf_taskbarlib_0006_0001_0001',
+    '_RemotableHandle', 'TBPF_PAUSED', 'TBPFLAG', 'tagTHUMBBUTTON',
+    'TaskbarList', 'TBPF_NOPROGRESS', 'ITaskbarList3',
+    'TBPF_INDETERMINATE', 'TBATF_USEMDITHUMBNAIL', 'TBPF_ERROR',
+    'TBPF_NORMAL', 'ITaskbarList2', 'TBATF_USEMDILIVEPREVIEW',
+    'TBATFLAG', '__MIDL_IWinTypes_0009'
 ]
-
-
