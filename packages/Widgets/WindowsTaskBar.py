@@ -1,21 +1,16 @@
 import ctypes
 from ctypes import wintypes
-#import faulthandler
-import comtypes.client as cc
 import comtypes
+import comtypes.client as cc
 from packages.Startup.GlobalFiles import TaskBarLibFilePath
-import comtypes.gen.TaskbarLib as TaskbarLib
-
-#faulthandler.enable()
+comtypes.client.GetModule(TaskBarLibFilePath)
 import packages.Startup.TaskBarComtypeGen
-
-cc.GetModule(TaskBarLibFilePath)
 TaskBarGUID = "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 comtypes.CoInitializeEx()
-p = ctypes.POINTER(comtypes.IUnknown)()
+import comtypes.gen.TaskbarLib as TaskbarLib
 
 
-def create_icon(icon_path, old_icon=None, old_pointer=None):
+def create_icon(icon_path):
     CreateIconFromResourceEx = ctypes.windll.user32.CreateIconFromResourceEx
     CreateIconFromResourceEx.restype = ctypes.wintypes.HICON
     size_x, size_y = 32, 32
