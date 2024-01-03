@@ -236,11 +236,14 @@ class OldTracksTable(TableWidget):
                     self.cellWidget(i, column_id).check_box.setCheckState(Qt.CheckState.Unchecked)
 
     def update_state_of_row(self, row_id, new_state):
-        self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(new_state)
-        self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(new_state)
+        self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(True if (
+                new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True) else False)
+        self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(True if (
+                new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True) else False)
         self.item(row_id, self.column_ids.Track_Name).setForeground(self.get_text_color(new_state))
         self.item(row_id, self.column_ids.ID).setForeground(self.get_text_color(new_state))
-        self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(new_state)
+        self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(True if (
+                new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True) else False)
         if new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True:
             self.item(row_id, self.column_ids.Track_Name).setFlags(
                 self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemFlag.ItemIsEditable)
@@ -339,20 +342,21 @@ class OldTracksTable(TableWidget):
         self.set_row_value_id(track_id=old_track_id, new_row_id=new_row_id)
 
     def replace_rows_value_is_enabled(self, new_row_id, row_id):
-        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState()
-        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.checkState()
+        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState().value
+        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.checkState().value
         self.set_row_value_is_enabled(is_enabled_state=old_is_enable_check_state, new_row_id=new_row_id)
         self.set_row_value_is_enabled(is_enabled_state=new_is_enable_check_state, new_row_id=row_id)
 
     def replace_rows_value_is_default(self, new_row_id, row_id):
-        old_is_default_check_state = self.cellWidget(row_id, self.column_ids.Set_Default).check_box.checkState()
-        new_is_default_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Default).check_box.checkState()
+        old_is_default_check_state = self.cellWidget(row_id, self.column_ids.Set_Default).check_box.checkState().value
+        new_is_default_check_state = self.cellWidget(new_row_id,
+                                                     self.column_ids.Set_Default).check_box.checkState().value
         self.set_row_value_is_default(is_default_state=old_is_default_check_state, new_row_id=new_row_id)
         self.set_row_value_is_default(is_default_state=new_is_default_check_state, new_row_id=row_id)
 
     def replace_rows_value_is_forced(self, new_row_id, row_id):
-        old_is_forced_check_state = self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.checkState()
-        new_is_forced_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Forced).check_box.checkState()
+        old_is_forced_check_state = self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.checkState().value
+        new_is_forced_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Forced).check_box.checkState().value
         self.set_row_value_is_forced(is_forced_state=old_is_forced_check_state, new_row_id=new_row_id)
         self.set_row_value_is_forced(is_forced_state=new_is_forced_check_state, new_row_id=row_id)
 
@@ -369,8 +373,8 @@ class OldTracksTable(TableWidget):
         self.set_row_value_language(language=new_track_language, new_row_id=row_id)
 
     def update_state_of_replaced_rows(self, new_row_id, row_id):
-        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState()
-        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.checkState()
+        old_is_enable_check_state = self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState().value
+        new_is_enable_check_state = self.cellWidget(new_row_id, self.column_ids.Enable).check_box.checkState().value
         self.update_state_of_row(row_id=row_id, new_state=old_is_enable_check_state)
         self.update_state_of_row(row_id=new_row_id, new_state=new_is_enable_check_state)
 
