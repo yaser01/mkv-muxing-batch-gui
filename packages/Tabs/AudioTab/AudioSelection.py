@@ -1,23 +1,23 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
     QGroupBox,
-    QVBoxLayout,
 )
 
-from packages.Startup.DefaultOptions import DefaultOptions
-from packages.Tabs.GlobalSetting import *
-from packages.Tabs.AudioTab.Widgets.MatchAudioLayout import MatchAudioLayout
+from packages.Startup.Options import Options
+from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.AudioTab.Widgets.AudioClearButton import AudioClearButton
 from packages.Tabs.AudioTab.Widgets.AudioDelayDoubleSpinBox import AudioDelayDoubleSpinBox
 from packages.Tabs.AudioTab.Widgets.AudioExtensionsCheckableComboBox import AudioExtensionsCheckableComboBox
 from packages.Tabs.AudioTab.Widgets.AudioLanguageComboBox import AudioLanguageComboBox
-from packages.Tabs.AudioTab.Widgets.AudioMuxAtTop import AudioMuxAtTop
+from packages.Tabs.AudioTab.Widgets.AudioMuxOrderWidget import AudioMuxOrderWidget
 from packages.Tabs.AudioTab.Widgets.AudioSetDefaultCheckBox import AudioSetDefaultCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSetForcedCheckBox import AudioSetForcedCheckBox
 from packages.Tabs.AudioTab.Widgets.AudioSourceButton import AudioSourceButton
 from packages.Tabs.AudioTab.Widgets.AudioSourceLineEdit import AudioSourceLineEdit
-from packages.Tabs.AudioTab.Widgets.AudioTabComboBox import AudioTabComboBox
 from packages.Tabs.AudioTab.Widgets.AudioTrackNameLineEdit import AudioTrackNameLineEdit
+from packages.Tabs.AudioTab.Widgets.MatchAudioLayout import MatchAudioLayout
+from packages.Widgets.RefreshFilesButton import RefreshFilesButton
+from packages.Tabs.GlobalSetting import *
 from packages.Widgets.InvalidPathDialog import *
 from packages.Widgets.WarningDialog import WarningDialog
 from packages.Widgets.YesNoDialog import *
@@ -43,17 +43,17 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_language_label = QLabel("Language:")
         self.audio_extension_label = QLabel("Audio Extension:")
         self.audio_delay_label = QLabel("Delay:")
-        # self.audio_tab_comboBox = AudioTabComboBox()
         self.audio_source_lineEdit = AudioSourceLineEdit()
         self.audio_source_button = AudioSourceButton()
         self.audio_clear_button = AudioClearButton()
+        self.audio_refresh_files_button = RefreshFilesButton()
         self.audio_extensions_comboBox = AudioExtensionsCheckableComboBox()
         self.audio_language_comboBox = AudioLanguageComboBox(self.tab_index)
         self.audio_track_name_lineEdit = AudioTrackNameLineEdit(self.tab_index)
         self.audio_delay_spin = AudioDelayDoubleSpinBox(self.tab_index)
         self.audio_set_forced_checkBox = AudioSetForcedCheckBox(self.tab_index)
         self.audio_set_default_checkBox = AudioSetDefaultCheckBox(self.tab_index)
-        self.audio_mux_at_top_checkBox = AudioMuxAtTop(self.tab_index)
+        self.audio_mux_order_widget = AudioMuxOrderWidget(self.tab_index)
         self.audio_match_layout = MatchAudioLayout(parent=self, tab_index=self.tab_index)
         self.audio_options_layout = QHBoxLayout()
         self.audio_set_default_forced_layout = QHBoxLayout()
@@ -74,6 +74,7 @@ class AudioSelectionSetting(QGroupBox):
         # self.audio_main_groupBox.toggled.connect(self.activate_tab)
         self.audio_source_button.clicked_signal.connect(self.update_folder_path)
         self.audio_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
+        self.audio_refresh_files_button.clicked_signal.connect(self.update_folder_path)
         self.audio_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
         self.audio_extensions_comboBox.close_list.connect(self.check_extension_changes)
         self.audio_match_layout.sync_audio_files_with_global_files_after_swap_delete_signal.connect(
@@ -91,8 +92,8 @@ class AudioSelectionSetting(QGroupBox):
         GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = False
         GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
         GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
-        GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
-        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = DefaultOptions.Default_Audio_Language
+        GlobalSetting.AUDIO_SET_ORDER[self.tab_index] = -1
+        GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = Options.CurrentPreset.Default_Audio_Language
 
     def create_properties(self):
         self.folder_path = ""
@@ -100,7 +101,7 @@ class AudioSelectionSetting(QGroupBox):
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
-        self.current_audio_extensions = DefaultOptions.Default_Audio_Extensions
+        self.current_audio_extensions = Options.CurrentPreset.Default_Audio_Extensions
         self.is_drag_and_drop = False
 
     def setup_layouts(self):
@@ -112,19 +113,18 @@ class AudioSelectionSetting(QGroupBox):
         # self.MainLayout.addWidget(self.audio_main_groupBox)
 
     def setup_audio_check_default_forced_layout(self):
-        self.audio_set_default_forced_layout.addWidget(self.audio_set_default_checkBox)
-        self.audio_set_default_forced_layout.addWidget(self.audio_set_forced_checkBox)
-        self.audio_set_default_forced_layout.addWidget(self.audio_mux_at_top_checkBox)
+        self.audio_set_default_forced_layout.addWidget(self.audio_set_default_checkBox, stretch=0)
+        self.audio_set_default_forced_layout.addWidget(self.audio_set_forced_checkBox, stretch=0)
+        self.audio_set_default_forced_layout.addWidget(self.audio_mux_order_widget, stretch=3)
 
     def setup_audio_options_layout(self):
         self.audio_options_layout.addWidget(self.audio_extensions_comboBox, 2)
         self.audio_options_layout.addWidget(self.audio_language_label)
-        self.audio_options_layout.addWidget(self.audio_language_comboBox, 4)
+        self.audio_options_layout.addWidget(self.audio_language_comboBox, 5)
         self.audio_options_layout.addWidget(self.audio_track_name_lineEdit, 2)
         self.audio_options_layout.addWidget(self.audio_delay_label)
         self.audio_options_layout.addWidget(self.audio_delay_spin)
-        self.audio_options_layout.addSpacing(10)
-        self.audio_options_layout.addLayout(self.audio_set_default_forced_layout)
+        self.audio_options_layout.addLayout(self.audio_set_default_forced_layout, 7)
         self.audio_options_layout.addStretch()
 
     def setup_main_layout(self):
@@ -132,22 +132,22 @@ class AudioSelectionSetting(QGroupBox):
         self.main_layout.addWidget(self.audio_source_label, 0, 0)
         self.main_layout.addWidget(self.audio_source_lineEdit, 0, 1, 1, 1)
         self.main_layout.addWidget(self.audio_clear_button, 0, 2, 1, 1)
-        self.main_layout.addWidget(self.audio_source_button, 0, 3)
+        self.main_layout.addWidget(self.audio_refresh_files_button, 0, 3, 1, 1)
+        self.main_layout.addWidget(self.audio_source_button, 0, 4)
         self.main_layout.addWidget(self.audio_extension_label, 1, 0)
-        self.main_layout.addLayout(self.audio_options_layout, 1, 1, 1, 3)
+        self.main_layout.addLayout(self.audio_options_layout, 1, 1, 1, 4)
         self.main_layout.addWidget(self.audio_match_groupBox, 2, 0, 1, -1)
 
     def setup_audio_main_groupBox(self):
         self.setLayout(self.main_layout)
-        # self.audio_main_groupBox.setTitle("Audios")
-        # self.audio_main_groupBox.setCheckable(True)
-        # self.audio_main_groupBox.setChecked(True)
 
     def update_folder_path(self, new_path: str):
         if new_path != "":
             self.audio_source_lineEdit.set_text_safe_change(new_path)
             self.update_files_lists(new_path)
             self.show_audio_files_list()
+            self.audio_refresh_files_button.update_current_path(new_path=new_path)
+            self.audio_refresh_files_button.setEnabled(True)
         else:
             if self.is_drag_and_drop:
                 self.audio_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
@@ -191,7 +191,7 @@ class AudioSelectionSetting(QGroupBox):
             self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
             self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
         except Exception as e:
-            invalid_path_dialog = InvalidPathDialog()
+            invalid_path_dialog = InvalidPathDialog(parent=self)
             invalid_path_dialog.execute()
 
     def check_extension_changes(self, new_extensions):
@@ -241,6 +241,8 @@ class AudioSelectionSetting(QGroupBox):
         self.folder_path = ""
         self.files_names_list = []
         self.files_names_absolute_list = []
+        self.audio_refresh_files_button.update_current_path(new_path="")
+        self.audio_refresh_files_button.setEnabled(True)
         self.files_names_absolute_list_with_dropped_files = []
         self.audio_source_lineEdit.set_text_safe_change("")
         self.is_drag_and_drop = False
@@ -263,7 +265,7 @@ class AudioSelectionSetting(QGroupBox):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_audio_extensions = DefaultOptions.Default_Audio_Extensions
+            self.current_audio_extensions = Options.CurrentPreset.Default_Audio_Extensions
             self.audio_extensions_comboBox.setData(self.current_audio_extensions)
             self.audio_track_name_lineEdit.setText("")
             self.audio_set_forced_checkBox.setChecked(False)
@@ -277,7 +279,7 @@ class AudioSelectionSetting(QGroupBox):
             GlobalSetting.AUDIO_DELAY[self.tab_index] = 0.0
             GlobalSetting.AUDIO_SET_DEFAULT[self.tab_index] = False
             GlobalSetting.AUDIO_SET_FORCED[self.tab_index] = False
-            GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = False
+            GlobalSetting.AUDIO_SET_ORDER[self.tab_index] = -1
             GlobalSetting.AUDIO_TAB_ENABLED[self.tab_index] = False
             GlobalSetting.AUDIO_LANGUAGE[self.tab_index] = ""
 
@@ -305,7 +307,15 @@ class AudioSelectionSetting(QGroupBox):
             self.disable_editable_widgets()
         else:
             self.enable_editable_widgets()
+            self.check_if_video_modify_old_tracks_activated()
             self.update_audio_set_default_forced_state()
+            self.audio_mux_order_widget.check_current_status()
+
+    def check_if_video_modify_old_tracks_activated(self):
+        if GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED:
+            self.audio_mux_order_widget.setToolTip(
+                "<nobr><b>[Semi Disabled]</b> Only [At Top] option is available<br>Because you have used <b>Modify Old "
+                "Tracks</b> option in Video Tab")
 
     def update_audio_set_default_forced_state(self):
         self.audio_set_default_checkBox.update_check_state()
@@ -322,7 +332,8 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_set_forced_checkBox.setEnabled(False)
         self.setCheckable(False)
         self.audio_clear_button.setEnabled(False)
-        self.audio_mux_at_top_checkBox.setEnabled(False)
+        self.audio_mux_order_widget.setEnabled(False)
+        self.audio_refresh_files_button.setEnabled(False)
         self.audio_match_layout.disable_editable_widgets()
 
     def enable_editable_widgets(self):
@@ -335,7 +346,11 @@ class AudioSelectionSetting(QGroupBox):
         self.audio_set_default_checkBox.setEnabled(True)
         self.audio_set_forced_checkBox.setEnabled(True)
         self.audio_clear_button.setEnabled(True)
-        self.audio_mux_at_top_checkBox.setEnabled(True)
+        self.audio_mux_order_widget.setEnabled(True)
+        if not self.is_drag_and_drop:
+            self.audio_refresh_files_button.setEnabled(True)
+        else:
+            self.disable_audio_refresh_button_cause_drag_and_drop()
         self.audio_match_layout.enable_editable_widgets()
 
     def sync_audio_files_with_global_files(self):
@@ -391,11 +406,31 @@ class AudioSelectionSetting(QGroupBox):
             warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
                                            parent=self.window())
             warning_dialog.execute_wth_no_block()
+        self.disable_audio_refresh_button_cause_drag_and_drop()
+
+    def disable_audio_refresh_button_cause_drag_and_drop(self):
+        self.audio_refresh_files_button.setEnabled(False)
+        self.audio_refresh_files_button.setToolTip("Disabled due to Drag/Drop mode")
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
 
     def set_default_directory(self):
-        self.audio_source_lineEdit.set_text_safe_change(DefaultOptions.Default_Audio_Directory)
-        self.update_folder_path(DefaultOptions.Default_Audio_Directory)
+        self.audio_source_lineEdit.set_text_safe_change(Options.CurrentPreset.Default_Audio_Directory)
+        self.update_folder_path(Options.CurrentPreset.Default_Audio_Directory)
         self.audio_source_lineEdit.check_new_path()
+
+    def set_preset_options(self):
+        self.create_properties()
+        self.create_global_properties()
+        self.audio_language_comboBox.set_current_index()
+        self.audio_extensions_comboBox.set_current_extensions()
+        self.set_default_directory()
+
+    def update_theme_mode_state(self):
+        if Options.Dark_Mode:
+            self.setPalette(get_dark_palette())
+        else:
+            self.setPalette(get_light_palette())
+        self.setStyleSheet(
+            "QGroupBox#main_groupBox {subcontrol-origin: margin;left: 3px;padding: 3px 0px 3px 0px;}")

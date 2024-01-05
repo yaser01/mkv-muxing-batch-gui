@@ -1,11 +1,13 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+    QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class YesNoDialog(QDialog):
+class YesNoDialog(MyDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.message = QLabel()
@@ -16,10 +18,10 @@ class YesNoDialog(QDialog):
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yesButton)
         self.buttons_layout.addWidget(self.noButton)
-
+        self.main_layout_spacer_item = QLabel()
         self.main_layout = QGridLayout()
         self.main_layout.addWidget(self.messageIcon, 0, 0, 2, 1)
-        self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
+        self.main_layout.addWidget(self.main_layout_spacer_item, 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addLayout(self.buttons_layout, 2, 4, 1, 1)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
@@ -51,13 +53,12 @@ class YesNoDialog(QDialog):
     def reset_dialog_values(self):
         self.setWindowTitle("")  # determine when use
         self.message.setText("")  # determine when use
-        self.setWindowIcon(GlobalFiles.RefreshIcon)
 
     def set_message_icon_warning(self):
         self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.WarningCheckBigIconPath))
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()

@@ -1,5 +1,4 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QLineEdit
 
 
 class DefaultDirectoryLineEdit(QLineEdit):

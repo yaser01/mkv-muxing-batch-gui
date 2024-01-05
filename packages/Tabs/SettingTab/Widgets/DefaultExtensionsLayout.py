@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QHBoxLayout, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QLabel
 
 from packages.Tabs.SettingTab.Widgets.ExtensionsCheckableComboBox import ExtensionsCheckableComboBox
 
@@ -9,7 +9,7 @@ class DefaultExtensionsLayout(QHBoxLayout):
         self.all_labels_first_column_list = []
         self.all_labels_second_column_list = []
         self.label = QLabel(label_name)
-        self.extensions_checkable_comboBox = ExtensionsCheckableComboBox(items_list=extensions_list.copy(),
+        self.extensions_checkable_comboBox = ExtensionsCheckableComboBox(items_list=extensions_list,
                                                                          default_items_list=default_extensions_list.copy())
         self.setup_all_labels_list()
         self.setup_layout()

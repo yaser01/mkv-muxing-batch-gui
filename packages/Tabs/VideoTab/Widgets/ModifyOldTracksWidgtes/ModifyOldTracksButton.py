@@ -1,27 +1,19 @@
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QCheckBox
+from PySide6.QtCore import Signal
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QPushButton, QApplication
 
 from packages.Tabs.GlobalSetting import GlobalSetting
+from packages.Tabs.VideoTab.Widgets.ModifyOldTracksDialog import ModifyOldTracksDialog
 
 
-class AudioMuxAtTop(QCheckBox):
-    def __init__(self, tab_index):
+class ModifyOldTracksButton(QPushButton):
+    clicked_signal = Signal(str)
+
+    def __init__(self):
         super().__init__()
-        self.tab_index = tab_index
-        self.hint_when_enabled = "<nobr>checking this will lead to make this the <b>*</b>First audio  in the " \
-                                 "output file <br>Only check it if you really know what you are doing <br><b>*</b>[" \
-                                 "Respecting other audios with the same option] "
-        self.setText("Mux At Top")
-        self.setToolTip(self.hint_when_enabled)
-        self.stateChanged.connect(self.change_global_audio_set_at_top)
-
-    def change_global_audio_set_at_top(self):
-        GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index] = self.checkState() == Qt.Checked
-
-    def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.AUDIO_SET_AT_TOP[self.tab_index]))
-        self.setToolTip(self.hint_when_enabled)
-        self.setToolTipDuration(12000)
+        self.setText("Modify Old Tracks")
+        self.hint_when_enabled = "[Expert Mode]"
+        self.clicked.connect(self.open_modify_old_tracks_dialog)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
@@ -47,3 +39,9 @@ class AudioMuxAtTop(QCheckBox):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def open_modify_old_tracks_dialog(self):
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        modify_old_tracks_dialog = ModifyOldTracksDialog(parent=self)
+        QApplication.setOverrideCursor(Qt.CursorShape.ArrowCursor)
+        modify_old_tracks_dialog.execute()

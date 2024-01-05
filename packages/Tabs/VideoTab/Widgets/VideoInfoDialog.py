@@ -1,15 +1,14 @@
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QColor, QPalette, qRgba
-from PySide2.QtWidgets import QDialog, QTreeWidgetItem, QHBoxLayout, QTreeWidget, QPushButton, QVBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout
 
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.VideoTab.Widgets.MediaInfoTreeWidget import MediaInfoTreeWidget
-from packages.Widgets.TreeWidget import TreeWidget
+from packages.Widgets.MyDialog import MyDialog
 
 
-class VideoInfoDialog(QDialog):
-    def __init__(self):
-        super().__init__()
+class VideoInfoDialog(MyDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.setWindowTitle("Media Info")
         self.main_layout = QVBoxLayout()
         self.tree = MediaInfoTreeWidget()
@@ -35,11 +34,11 @@ class VideoInfoDialog(QDialog):
 
     def setup_button_layout(self):
         self.button_layout.addStretch(5)
-        self.button_layout.addWidget(self.expand_all_button, alignment=Qt.AlignRight, stretch=0)
-        self.button_layout.addWidget(self.collapse_all_button, alignment=Qt.AlignRight, stretch=0)
+        self.button_layout.addWidget(self.expand_all_button, alignment=Qt.AlignmentFlag.AlignRight, stretch=0)
+        self.button_layout.addWidget(self.collapse_all_button, alignment=Qt.AlignmentFlag.AlignRight, stretch=0)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def connect_signals(self):
         self.expand_all_button.clicked.connect(self.expand_tree)
@@ -52,4 +51,4 @@ class VideoInfoDialog(QDialog):
         self.tree.collapseAll()
 
     def execute(self):
-        self.exec_()
+        self.exec()

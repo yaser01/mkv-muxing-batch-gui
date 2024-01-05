@@ -1,7 +1,9 @@
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllVideoDefaultDurationFPSLanguages
+from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -49,3 +51,11 @@ class VideoDefaultDurationFPSComboBox(QComboBox):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def update_theme_mode_state(self):
+        if Options.Dark_Mode:
+            self.setPalette(get_dark_palette())
+        else:
+            self.setPalette(get_light_palette())
+        self.setStyleSheet("QComboBox { combobox-popup: 0; }")
+

@@ -1,20 +1,21 @@
+import os
 import time
 from pathlib import Path
-import os
-from PySide2.QtCore import QThread, Signal
-from PySide2.QtGui import Qt, QFontMetrics
-from PySide2.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from PySide6.QtCore import QThread, Signal
+from PySide6.QtGui import Qt, QFontMetrics
+from PySide6.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, QLabel
+
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import GlobalSetting, get_readable_filesize
-from packages.Tabs.MuxSetting.Widgets.CRCData import CRCData
 from packages.Tabs.MuxSetting.Widgets.ConfirmUsingMkvpropedit import ConfirmUsingMkvpropedit
 from packages.Tabs.MuxSetting.Widgets.MuxingParams import MuxingParams
 from packages.Tabs.MuxSetting.Widgets.ProgreeBar import ProgressBar
 from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
 from packages.Tabs.MuxSetting.Widgets.StartMuxingWorker import StartMuxingWorker
 from packages.Tabs.MuxSetting.Widgets.StatusWidget import StatusWidget
+from packages.Widgets.AudioInfoDialog import AudioInfoDialog
 from packages.Widgets.ChapterInfoDialog import ChapterInfoDialog
 from packages.Widgets.ErrorCell import ErrorCell
 from packages.Widgets.ErrorMuxingDialog import ErrorMuxingDialog
@@ -23,7 +24,6 @@ from packages.Widgets.InfoWithOptionsCell import InfoWithOptionsCell
 from packages.Widgets.OkCell import OkCell
 from packages.Widgets.OkDialog import OkDialog
 from packages.Widgets.SubtitleInfoDialog import SubtitleInfoDialog
-from packages.Widgets.AudioInfoDialog import AudioInfoDialog
 from packages.Widgets.TableWidget import TableWidget
 from packages.Widgets.WarningCell import WarningCell
 from packages.Widgets.WarningDialog import WarningDialog
@@ -41,7 +41,7 @@ def generate_tool_tip_for_chapter_file(chapter_full_path="C:/Test", chapter_name
 
 
 def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test",
-                                     audio_delay=0.0, audio_language=DefaultOptions.Default_Audio_Language,
+                                     audio_delay=0.0, audio_language=Options.CurrentPreset.Default_Audio_Language,
                                      audio_track_name="Test",
                                      audio_set_default=False, audio_set_forced=False,
                                      show_full_path=False):
@@ -67,7 +67,8 @@ def generate_tool_tip_for_audio_file(audio_full_path="C:/Test", audio_name="Test
 
 
 def generate_tool_tip_for_subtitle_file(subtitle_full_path="C:/Test", subtitle_name="Test",
-                                        subtitle_delay=0.0, subtitle_language=DefaultOptions.Default_Subtitle_Language,
+                                        subtitle_delay=0.0,
+                                        subtitle_language=Options.CurrentPreset.Default_Subtitle_Language,
                                         subtitle_track_name="Test",
                                         subtitle_set_default=False, subtitle_set_forced=False,
                                         show_full_path=False):
@@ -99,11 +100,30 @@ def get_file_name_with_mkv_extension(file_name):
 
 
 # noinspection PyUnresolvedReferences
+def change_file_extension_to_mkv_with_random_suffix(file_name):
+    file_extension_start_index = file_name.rfind(".")
+    new_file_name_with_mkv_extension = file_name[
+                                       :file_extension_start_index] + "#" + GlobalSetting.RANDOM_OUTPUT_SUFFIX + ".mkv "
+    return new_file_name_with_mkv_extension
 
 
 def set_is_job_crc_required(new_job):
     new_job.is_crc_calculating_required = GlobalSetting.MUX_SETTING_ADD_CRC
     new_job.is_crc_removing_required = GlobalSetting.MUX_SETTING_REMOVE_OLD_CRC
+
+
+def set_attachments_setting_for_job(new_job, new_row_id):
+    new_job.discard_old_attachments = GlobalSetting.ATTACHMENT_DISCARD_OLD
+    new_job.allow_duplicates_attachments = GlobalSetting.ATTACHMENT_ALLOW_DUPLICATE
+    new_job.attachments_absolute_path = []
+    if GlobalSetting.ATTACHMENT_EXPERT_MODE:
+        if len(GlobalSetting.ATTACHMENT_PATH_DATA_LIST) > new_row_id:
+            new_job.attachments_absolute_path = GlobalSetting.ATTACHMENT_PATH_DATA_LIST[new_row_id].files_list.copy()
+    else:
+        for i in range(len(GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST)):
+            if GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[i]:
+                file_to_attach = GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[i]
+                new_job.attachments_absolute_path.append(file_to_attach)
 
 
 Valid_CRC_String = "0123456789ABCDEF"
@@ -211,8 +231,8 @@ class JobQueueTable(TableWidget):
         }
         self.setColumnCount(len(self.column_ids))
         self.setRowCount(0)
-        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.create_horizontal_header()
         self.setup_horizontal_header()
         self.setup_columns()
@@ -220,49 +240,49 @@ class JobQueueTable(TableWidget):
 
     def setup_horizontal_header(self):
         self.horizontalHeader().setHighlightSections(False)
-        self.horizontal_header.setSectionResizeMode(0, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(1, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(2, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(3, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(4, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(5, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(6, QHeaderView.Interactive)
-        self.horizontal_header.setSectionResizeMode(7, QHeaderView.Stretch)
+        self.horizontal_header.setSectionResizeMode(0, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(6, QHeaderView.ResizeMode.Interactive)
+        self.horizontal_header.setSectionResizeMode(7, QHeaderView.ResizeMode.Stretch)
 
     def create_horizontal_header(self):
         self.horizontal_header = self.horizontalHeader()
 
     def setup_columns(self):
         column = QTableWidgetItem("Name")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Name"], column)
 
         column = QTableWidgetItem("Status")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Status"], column)
 
         column = QTableWidgetItem("Audio")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Audio"], column)
 
         column = QTableWidgetItem("Subtitle")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Subtitle"], column)
 
         column = QTableWidgetItem("Chapter")
-        column.setTextAlignment(Qt.AlignCenter)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setHorizontalHeaderItem(self.column_ids["Chapter"], column)
 
         column = QTableWidgetItem("Size Before")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Size Before"], column)
 
         column = QTableWidgetItem("Progress")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Progress"], column)
 
         column = QTableWidgetItem("Size After")
-        column.setTextAlignment(Qt.AlignLeft)
+        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setHorizontalHeaderItem(self.column_ids["Size After"], column)
 
     def connect_signals(self):
@@ -273,7 +293,7 @@ class JobQueueTable(TableWidget):
 
     def set_row_value_id(self, new_row_id):
         vertical_header_item = QTableWidgetItem(str(new_row_id + 1))
-        vertical_header_item.setTextAlignment(Qt.AlignCenter)
+        vertical_header_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setVerticalHeaderItem(new_row_id, vertical_header_item)
 
     def set_row_value_size_before_muxing(self, new_job, new_row_id):
@@ -315,7 +335,7 @@ class JobQueueTable(TableWidget):
                 new_job.subtitle_track_name.append(GlobalSetting.SUBTITLE_TRACK_NAME[i])
                 new_job.subtitle_set_default.append(GlobalSetting.SUBTITLE_SET_DEFAULT[i])
                 new_job.subtitle_set_forced.append(GlobalSetting.SUBTITLE_SET_FORCED[i])
-                new_job.subtitle_set_at_top.append(GlobalSetting.SUBTITLE_SET_AT_TOP[i])
+                new_job.subtitle_set_at_top.append(GlobalSetting.SUBTITLE_SET_ORDER[i])
 
                 subtitles_count += 1
         if subtitles_count == 1:
@@ -351,7 +371,7 @@ class JobQueueTable(TableWidget):
                 new_job.audio_track_name.append(GlobalSetting.AUDIO_TRACK_NAME[i])
                 new_job.audio_set_default.append(GlobalSetting.AUDIO_SET_DEFAULT[i])
                 new_job.audio_set_forced.append(GlobalSetting.AUDIO_SET_FORCED[i])
-                new_job.audio_set_at_top.append(GlobalSetting.AUDIO_SET_AT_TOP[i])
+                new_job.audio_set_at_top.append(GlobalSetting.AUDIO_SET_ORDER[i])
                 audios_count += 1
         if audios_count == 1:
             new_job.audio_found = True
@@ -383,7 +403,9 @@ class JobQueueTable(TableWidget):
         new_job.video_name_absolute = GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST[new_row_id]
         new_job.video_name_with_spaces = " " + new_job.video_name + "   "
         new_job.video_name_displayed = chr(0x200E) + new_job.video_name_with_spaces
-        self.setCellWidget(new_row_id, self.column_ids["Name"], QLabel(new_job.video_name_displayed))
+        name_label = QLabel(new_job.video_name_displayed)
+        name_label.setToolTip(new_job.video_name)
+        self.setCellWidget(new_row_id, self.column_ids["Name"], name_label)
 
     def check_if_name_need_resize_column_to_fit_content(self):
         new_column_width = 0
@@ -409,17 +431,16 @@ class JobQueueTable(TableWidget):
             self.data[i].video_name_displayed = chr(0x200E) + self.data[i].video_name_with_spaces
             self.cellWidget(i, self.column_ids["Name"]).setText(self.data[i].video_name_displayed)
 
-    def resize_column(self, column_index):
+    def resize_column(self, column_index, old_width, new_width):
         if column_index == self.column_ids["Name"]:
             for i in range(self.rowCount()):
                 metrics = QFontMetrics(
                     self.cellWidget(i, self.column_ids["Name"]).font())
                 elided_text = metrics.elidedText(
-                    self.data[i].video_name_with_spaces, Qt.ElideRight,
+                    self.data[i].video_name_with_spaces, Qt.TextElideMode.ElideRight,
                     self.columnWidth(self.column_ids["Name"]))
                 self.data[i].video_name_displayed = chr(0x200E) + elided_text
                 self.cellWidget(i, self.column_ids["Name"]).setText(self.data[i].video_name_displayed)
-        self.update()
 
     def cell_double_clicked(self, row_index, column_index):
         if column_index == self.column_ids["Subtitle"]:
@@ -451,6 +472,7 @@ class JobQueueTable(TableWidget):
                     subtitle_set_default_disabled=GlobalSetting.SUBTITLE_SET_DEFAULT_DISABLED,
                     subtitle_set_forced_disabled=GlobalSetting.SUBTITLE_SET_FORCED_DISABLED,
                     disable_edit=GlobalSetting.MUXING_ON,
+                    parent=self
                 )
                 subtitle_info_dialog.execute()
                 if subtitle_info_dialog.state == "yes":
@@ -472,7 +494,8 @@ class JobQueueTable(TableWidget):
                             show_full_path=False))
 
             else:
-                warning_dialog = WarningDialog(window_title="Subtitle Info", info_message="No subtitle found!")
+                warning_dialog = WarningDialog(window_title="Subtitle Info", info_message="No subtitle found!",
+                                               parent=self)
                 warning_dialog.execute()
         elif column_index == self.column_ids["Audio"]:
             if self.data[row_index].audio_found:
@@ -503,6 +526,7 @@ class JobQueueTable(TableWidget):
                     audio_set_default_disabled=GlobalSetting.AUDIO_SET_DEFAULT_DISABLED,
                     audio_set_forced_disabled=GlobalSetting.AUDIO_SET_FORCED_DISABLED,
                     disable_edit=GlobalSetting.MUXING_ON,
+                    parent=self
                 )
                 audio_info_dialog.execute()
                 if audio_info_dialog.state == "yes":
@@ -524,23 +548,24 @@ class JobQueueTable(TableWidget):
                             show_full_path=False))
 
             else:
-                warning_dialog = WarningDialog(window_title="Audio Info", info_message="No audio found!")
+                warning_dialog = WarningDialog(window_title="Audio Info", info_message="No audio found!", parent=self)
                 warning_dialog.execute()
         elif column_index == self.column_ids["Chapter"]:
             if self.data[row_index].chapter_found:
-                chapter_info_dialog = ChapterInfoDialog(chapter_name=self.data[row_index].chapter_name)
+                chapter_info_dialog = ChapterInfoDialog(chapter_name=self.data[row_index].chapter_name, parent=self)
                 chapter_info_dialog.execute()
             else:
-                warning_dialog = WarningDialog(window_title="Chapter Info", info_message="No chapter found!")
+                warning_dialog = WarningDialog(window_title="Chapter Info", info_message="No chapter found!",
+                                               parent=self)
                 warning_dialog.execute()
         elif column_index == self.column_ids["Status"]:
             if self.data[row_index].error_occurred:
                 message = self.data[row_index].muxing_message
                 message += "you can review log file for more details"
-                error_muxing_dialog = ErrorMuxingDialog(window_title="Muxing Error", info_message=message)
+                error_muxing_dialog = ErrorMuxingDialog(window_title="Muxing Error", info_message=message, parent=self)
                 error_muxing_dialog.execute()
             elif self.data[row_index].done:
-                Ok_dialog = OkDialog(window_title="Muxing Done")
+                Ok_dialog = OkDialog(window_title="Muxing Done", parent=self)
                 Ok_dialog.execute()
 
     def show_necessary_columns(self):
@@ -586,6 +611,7 @@ class JobQueueTable(TableWidget):
             self.set_row_value_size_before_muxing(new_job, new_row_id)
             self.set_row_value_progressBar(new_job, new_row_id)
             set_is_job_crc_required(new_job)
+            set_attachments_setting_for_job(new_job, new_row_id)
             self.data.append(new_job)
         self.show()
         self.check_if_name_need_resize_column_to_fit_content()
@@ -634,7 +660,7 @@ class JobQueueTable(TableWidget):
         GlobalSetting.JOB_QUEUE_EMPTY = True
 
     def show_confirm_using_mkvpropedit(self):
-        confirm_dialog = ConfirmUsingMkvpropedit()
+        confirm_dialog = ConfirmUsingMkvpropedit(parent=self)
         confirm_dialog.execute()
         if confirm_dialog.result == "mkvpropedit":
             self.start_muxing_worker.use_mkvpropedit = True
@@ -679,7 +705,7 @@ class JobQueueTable(TableWidget):
             return os.path.join(folder_path, output_video_name)
 
     def get_output_file_name_folder_path_absolute(self, job_index):
-        if self.data[job_index].used_mkvpropedit:
+        if self.data[job_index].used_mkvpropedit or GlobalSetting.OVERWRITE_SOURCE_FILES:
             return os.path.dirname(self.data[job_index].video_name_absolute)
 
         else:
@@ -698,6 +724,18 @@ class JobQueueTable(TableWidget):
             self.job_status_widget.update_progress(new_progress=new_progress)
         except:
             pass
+
+    def delete_source_file_if_overwritten_enabled(self, job_index):
+        if GlobalSetting.OVERWRITE_SOURCE_FILES and not self.data[job_index].used_mkvpropedit:
+            os.remove(self.data[job_index].video_name_absolute)
+            folder_path = os.path.dirname(self.data[job_index].video_name_absolute)
+            output_video_name = Path(change_file_extension_to_mkv_with_random_suffix(self.data[job_index].video_name))
+            output_video_name_absolute = os.path.join(folder_path, output_video_name)
+            original_output_video_name = Path(get_file_name_with_mkv_extension(self.data[job_index].video_name))
+            output_file_name_folder_path_absolute = self.get_output_file_name_folder_path_absolute(job_index)
+            original_file_name_absolute_path = os.path.join(output_file_name_folder_path_absolute,
+                                                            original_output_video_name)
+            rename_file(output_video_name_absolute, original_file_name_absolute_path)
 
     def rename_output_file_if_needed(self, job_index):
         if self.data[job_index].is_crc_calculating_required:
@@ -732,6 +770,7 @@ class JobQueueTable(TableWidget):
         self.number_of_done_jobs += 1
         self.increase_number_of_done_jobs_signal.emit()
         self.set_job_status_ok(row_index=job_index)
+        self.delete_source_file_if_overwritten_enabled(job_index=job_index)
         self.rename_output_file_if_needed(job_index=job_index)
         self.set_row_value_size_after_muxing(self.data[job_index], job_index)
 

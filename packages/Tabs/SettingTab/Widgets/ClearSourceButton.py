@@ -1,7 +1,7 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 
 
 class ClearSourceButton(QPushButton):
@@ -9,7 +9,7 @@ class ClearSourceButton(QPushButton):
 
     def __init__(self):
         super().__init__()
-        self.setIcon(GlobalFiles.NoMarkIcon)
+        self.setIcon(GlobalIcons.NoMarkIcon)
         self.hint_when_enabled = "Clear"
         self.setToolTip(self.hint_when_enabled)
         self.clicked.connect(self.emit_clear_signal)

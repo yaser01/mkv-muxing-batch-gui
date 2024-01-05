@@ -1,18 +1,18 @@
-from PySide2 import QtGui
-from PySide2.QtCore import Qt, QSize
-from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QDialog, QListWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
+from PySide6 import QtGui
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtWidgets import QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
 
-from packages.Startup.GlobalFiles import LeftArrowIcon, RightArrowIcon
+from packages.Startup.GlobalIcons import LeftArrowIcon, RightArrowIcon
 from packages.Startup.PreDefined import AllSubtitlesLanguages
 from packages.Widgets.ListWidget import ListWidget
+from packages.Widgets.MyDialog import MyDialog
 
 
-class LanguagePreferenceDialog(QDialog):
+class LanguagePreferenceDialog(MyDialog):
     def __init__(self, old_favorite, window_title, parent=None):
         super().__init__(parent)
         self.old_favorite = old_favorite
-        self.current_favorite = []
+        self.current_favorite = self.old_favorite.copy()
         self.setWindowTitle(window_title)
         self.selected_language_layout = QVBoxLayout()
         self.available_language_layout = QVBoxLayout()
@@ -54,12 +54,12 @@ class LanguagePreferenceDialog(QDialog):
     def setup_selected_language_layout(self):
         self.selected_language_layout.addWidget(self.selected_language_label)
         self.selected_language_layout.addWidget(self.selected_language_list)
-        self.selected_language_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.selected_language_list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def setup_available_language_layout(self):
         self.available_language_layout.addWidget(self.available_language_label)
         self.available_language_layout.addWidget(self.available_language_list)
-        self.available_language_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.available_language_list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def setup_language_preference_layout(self):
         self.language_preference_layout.addLayout(self.selected_language_layout)
@@ -142,7 +142,7 @@ class LanguagePreferenceDialog(QDialog):
         self.setFixedSize(QSize(self.size().width() + 30, self.size().height()))
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def execute(self):
-        self.exec_()
+        self.exec()

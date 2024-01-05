@@ -1,6 +1,6 @@
 import os
 
-from PySide2.QtWidgets import QLabel
+from PySide6.QtWidgets import QLabel
 
 from packages.Tabs.GlobalSetting import get_readable_filesize
 
@@ -37,4 +37,8 @@ class AttachmentsTotalSizeValueLabel(QLabel):
         file_size = os.path.getsize(file_absolute_name)
         self.total_size_bytes -= file_size
         self.total_size_readable = get_readable_filesize(self.total_size_bytes)
+        self.setText(self.total_size_readable)
+
+    def update_total_size_readable_expert_mode(self, total_size_readable):
+        self.total_size_readable = total_size_readable
         self.setText(self.total_size_readable)

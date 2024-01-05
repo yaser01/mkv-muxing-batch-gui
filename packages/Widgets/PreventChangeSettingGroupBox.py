@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QHBoxLayout, QGroupBox, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QGroupBox, QLabel
 
 from packages.Startup import GlobalFiles
 

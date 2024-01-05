@@ -1,18 +1,17 @@
-from pathlib import Path
+from PySide6.QtCore import Signal, Qt, QSize, QEvent
+from PySide6.QtWidgets import QComboBox, QStyledItemDelegate
 
-from PySide2.QtCore import Signal, Qt, QSize, QEvent
-from PySide2.QtWidgets import QPushButton, QFileDialog, QComboBox, QStyledItemDelegate
-
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
+from packages.Startup.SetupThems import get_dark_palette, get_light_palette
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.ChapterTab.Widgets.ClearChapterFilesDialog import ClearChapterFilesDialog
 
 
 class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super(AlignDelegate, self).initStyleOption(option, index)
-        option.displayAlignment = Qt.AlignJustify | Qt.AlignCenter
+        option.displayAlignment = Qt.AlignmentFlag.AlignJustify | Qt.AlignmentFlag.AlignCenter
 
 
 class AudioTabComboBox(QComboBox):
@@ -28,14 +27,14 @@ class AudioTabComboBox(QComboBox):
         # delegate = AlignDelegate(self)
         # self.setItemDelegate(delegate)
         self.addItem(self.name + " #1")
-        self.addItem(GlobalFiles.PlusIcon, "New")
+        self.addItem(GlobalIcons.PlusIcon, "New")
         self.setIconSize(QSize(13, 13))
         self.setEditable(True)
         self.setStyleSheet("QComboBox::pane {border-radius: 5px;}")
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.lineEdit().setReadOnly(True)
-        self.lineEdit().setAlignment(Qt.AlignCenter)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().installEventFilter(self)
 
@@ -75,7 +74,7 @@ class AudioTabComboBox(QComboBox):
             self.create_new_tab_signal.emit()
             self.removeItem(self.count() - 1)
             self.addItem(self.name + " #" + str(self.count() + 1))
-            self.addItem(GlobalFiles.PlusIcon, "New")
+            self.addItem(GlobalIcons.PlusIcon, "New")
             self.setCurrentIndex(self.count() - 2)
 
         else:
@@ -130,4 +129,12 @@ class AudioTabComboBox(QComboBox):
 
     def show_new_tab_option(self):
         if self.itemText(self.count() - 1).find("New") == -1:
-            self.addItem(GlobalFiles.PlusIcon, "New")
+            self.addItem(GlobalIcons.PlusIcon, "New")
+
+    def update_theme_mode_state(self):
+        if Options.Dark_Mode:
+            self.setPalette(get_dark_palette())
+        else:
+            self.setPalette(get_light_palette())
+        self.setStyleSheet("QComboBox::pane {border-radius: 5px;}")
+        self.setStyleSheet("QComboBox { combobox-popup: 0; }")

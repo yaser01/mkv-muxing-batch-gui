@@ -1,27 +1,22 @@
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QCheckBox
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 
+from packages.Startup import GlobalIcons
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
-class SubtitleMuxAtTop(QCheckBox):
-    def __init__(self, tab_index):
+class RefreshFilesButton(QPushButton):
+    clicked_signal = Signal(str)
+
+    def __init__(self):
         super().__init__()
-        self.tab_index = tab_index
-        self.hint_when_enabled = "<nobr>checking this will lead to make this the <b>*</b>First subtitle  in the " \
-                                 "output file <br>Only check it if you really know what you are doing <br><b>*</b>[" \
-                                 "Respecting other subtitles with the same option] "
-        self.setText("Mux At Top")
-        self.setToolTip(self.hint_when_enabled)
-        self.stateChanged.connect(self.change_global_subtitle_set_at_top)
+        self.setIcon(GlobalIcons.RefreshIcon)
+        self.hint_when_enabled = "Refresh Files"
+        self.current_path = ""
+        self.clicked.connect(self.refresh_files)
 
-    def change_global_subtitle_set_at_top(self):
-        GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index] = self.checkState() == Qt.Checked
-
-    def update_check_state(self):
-        self.setChecked(bool(GlobalSetting.SUBTITLE_SET_AT_TOP[self.tab_index]))
-        self.setToolTip(self.hint_when_enabled)
-        self.setToolTipDuration(12000)
+    def refresh_files(self):
+        self.clicked_signal.emit(self.current_path)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
@@ -31,7 +26,11 @@ class SubtitleMuxAtTop(QCheckBox):
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
+            self.hint_when_enabled = "Refresh Files"
             self.setToolTip(self.hint_when_enabled)
+
+    def update_current_path(self, new_path):
+        self.current_path = new_path
 
     def setDisabled(self, new_state: bool):
         super().setDisabled(new_state)

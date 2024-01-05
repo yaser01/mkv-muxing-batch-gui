@@ -1,11 +1,13 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout, QFormLayout
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+     QPushButton, QHBoxLayout, QFormLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class ChapterInfoDialog(QDialog):
+class ChapterInfoDialog(MyDialog):
     def __init__(self, chapter_name="Test", parent=None):
         super().__init__(parent)
         self.window_title = "Chapter Info"
@@ -16,9 +18,9 @@ class ChapterInfoDialog(QDialog):
         self.yes_button = QPushButton("OK")
 
         self.buttons_layout = QHBoxLayout()
-        self.buttons_layout.addWidget(QLabel(""), stretch=4)
+        self.buttons_layout.addStretch(stretch=4)
         self.buttons_layout.addWidget(self.yes_button, stretch=3)
-        self.buttons_layout.addWidget(QLabel(""), stretch=4)
+        self.buttons_layout.addStretch(stretch=4)
         self.chapter_setting_layout = QGridLayout()
         self.chapter_editable_setting_layout = QFormLayout()
         self.chapter_editable_setting_layout.addRow(self.chapter_name_label, self.chapter_name_value)
@@ -49,15 +51,10 @@ class ChapterInfoDialog(QDialog):
 
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
-        self.setWindowIcon(GlobalFiles.InfoIcon)
+        self.setWindowIcon(GlobalIcons.InfoIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
-
-    def increase_message_font_size(self, value):
-        message_font = self.message.font()
-        message_font.setPointSize(self.message.fontInfo().pointSize() + value)
-        self.message.setFont(message_font)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def set_default_buttons(self):
         self.yes_button.setDefault(True)
@@ -68,4 +65,4 @@ class ChapterInfoDialog(QDialog):
         self.setFixedSize(self.size())
 
     def execute(self):
-        self.exec_()
+        self.exec()

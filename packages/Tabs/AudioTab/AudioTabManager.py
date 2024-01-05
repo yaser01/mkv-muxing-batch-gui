@@ -1,10 +1,10 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 
-from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.AudioTab.AudioSelection import AudioSelectionSetting
 from packages.Tabs.AudioTab.Widgets.AudioTabComboBox import AudioTabComboBox
 from packages.Tabs.AudioTab.Widgets.AudioTabDeleteButton import AudioTabDeleteButton
+from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class AudioTabManager(GlobalSetting):
@@ -89,7 +89,7 @@ class AudioTabManager(GlobalSetting):
         GlobalSetting.AUDIO_TRACK_NAME.pop(index_to_delete, None)
         GlobalSetting.AUDIO_SET_DEFAULT.pop(index_to_delete, None)
         GlobalSetting.AUDIO_SET_FORCED.pop(index_to_delete, None)
-        GlobalSetting.AUDIO_SET_AT_TOP.pop(index_to_delete, None)
+        GlobalSetting.AUDIO_SET_ORDER.pop(index_to_delete, None)
         GlobalSetting.AUDIO_TAB_ENABLED.pop(index_to_delete, None)
         GlobalSetting.AUDIO_LANGUAGE.pop(index_to_delete, None)
         self.current_tab_index = self.audio_tabs_indices[previous_tab_index]
@@ -118,3 +118,11 @@ class AudioTabManager(GlobalSetting):
     def set_default_directory(self):
         for audio_tab in self.audio_tabs:
             audio_tab.set_default_directory()
+
+    def set_preset_options(self):
+        for audio_tab in self.audio_tabs:
+            audio_tab.set_preset_options()
+    def update_theme_mode_state(self):
+        self.audio_tab_comboBox.update_theme_mode_state()
+        for audio_tab in self.audio_tabs:
+            audio_tab.update_theme_mode_state()

@@ -1,6 +1,6 @@
-from PySide2 import QtGui
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import (
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QSizePolicy, QLabel
 )
 
@@ -12,7 +12,7 @@ class OkCell(QLabel):
         super().__init__(parent)
         self.setPixmap(QtGui.QPixmap(GlobalFiles.TrueCheckIconPath))
         self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.setAlignment(Qt.AlignCenter)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.update_tool_tip(tool_tip)
         self.setToolTipDuration(10000)
 

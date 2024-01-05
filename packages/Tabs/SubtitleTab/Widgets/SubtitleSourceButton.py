@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton, QFileDialog
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.SubtitleTab.Widgets.ReloadSubtitleFilesDialog import ReloadSubtitleFilesDialog
 
@@ -14,7 +14,7 @@ class SubtitleSourceButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.hint_when_enabled = ""
-        self.setIcon(GlobalFiles.SelectFolderIcon)
+        self.setIcon(GlobalIcons.SelectFolderIcon)
         self.is_there_old_files = False
         self.clicked.connect(self.open_select_folder_dialog)
 
@@ -24,7 +24,7 @@ class SubtitleSourceButton(QPushButton):
     def open_select_folder_dialog(self):
         new_folder_path = ""
         if self.is_there_old_files:
-            reload_dialog = ReloadSubtitleFilesDialog()
+            reload_dialog = ReloadSubtitleFilesDialog(parent=self)
             reload_dialog.execute()
             if reload_dialog.result == "Yes":
                 temp_folder_path = QFileDialog.getExistingDirectory(self, caption="Choose Subtitle Folder",

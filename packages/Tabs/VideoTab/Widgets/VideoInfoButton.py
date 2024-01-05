@@ -1,18 +1,9 @@
-from pathlib import Path
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
-
-from packages.Startup import GlobalFiles
+from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.VideoTab.Widgets.ReloadVideoFilesDialog import ReloadVideoFilesDialog
 from packages.Tabs.VideoTab.Widgets.VideoInfoDialog import VideoInfoDialog
-
-
-def open_video_info_dialog():
-    if len(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST) > 0:
-        video_info_dialog = VideoInfoDialog()
-        video_info_dialog.execute()
 
 
 class VideoInfoButton(QPushButton):
@@ -22,8 +13,9 @@ class VideoInfoButton(QPushButton):
         super().__init__()
         self.setText("Media Info")
         self.hint_when_enabled = ""
+        self.video_info_dialog = None
         self.is_there_old_files = False
-        self.clicked.connect(open_video_info_dialog)
+        self.clicked.connect(self.open_video_info_dialog)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
@@ -49,3 +41,14 @@ class VideoInfoButton(QPushButton):
         if self.isEnabled() or GlobalSetting.JOB_QUEUE_EMPTY:
             self.hint_when_enabled = new_tool_tip
         super().setToolTip(new_tool_tip)
+
+    def open_video_info_dialog(self):
+        if len(GlobalSetting.VIDEO_FILES_ABSOLUTE_PATH_LIST) > 0:
+            self.video_info_dialog = VideoInfoDialog(parent=self)
+            self.video_info_dialog.show()
+
+    def update_theme_mode_state(self):
+        if self.video_info_dialog is not None:
+            self.video_info_dialog.set_dark_mode(Options.Dark_Mode)
+            self.video_info_dialog.resize(self.video_info_dialog.width(), self.video_info_dialog.height() + 1)
+            self.video_info_dialog.resize(self.video_info_dialog.width(), self.video_info_dialog.height() - 1)

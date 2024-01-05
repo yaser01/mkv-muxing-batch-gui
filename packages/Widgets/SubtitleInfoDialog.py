@@ -1,15 +1,17 @@
-from PySide2 import QtGui
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
+from PySide6 import QtGui
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+     QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
     QFormLayout
 
 from packages.Startup import GlobalFiles
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup import GlobalIcons
+from packages.Startup.Options import Options
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
+from packages.Widgets.MyDialog import MyDialog
 
 
-class SubtitleInfoDialog(QDialog):
+class SubtitleInfoDialog(MyDialog):
     def __init__(self, subtitles_name,
                  subtitles_delay, subtitles_language, subtitles_track_name,
                  subtitles_set_default, subtitles_set_forced
@@ -84,11 +86,11 @@ class SubtitleInfoDialog(QDialog):
         self.subtitle_track_name_layout = QHBoxLayout()
         self.subtitle_set_default_layout = QHBoxLayout()
         self.subtitle_set_forced_layout = QHBoxLayout()
-        self.buttons_layout.addWidget(QLabel(""), stretch=3)
+        self.buttons_layout.addStretch(stretch=3)
         self.buttons_layout.addWidget(self.reset_button, stretch=2)
         self.buttons_layout.addWidget(self.yes_button, stretch=2)
         self.buttons_layout.addWidget(self.no_button, stretch=2)
-        self.buttons_layout.addWidget(QLabel(""), stretch=3)
+        self.buttons_layout.addStretch(stretch=3)
         self.subtitle_setting_layout = QGridLayout()
         self.subtitle_editable_setting_layout = QFormLayout()
         self.subtitle_editable_setting_layout.addRow(self.subtitle_name_label, self.subtitle_name_value)
@@ -116,7 +118,11 @@ class SubtitleInfoDialog(QDialog):
 
     def setup_ui(self):
         self.disable_question_mark_window()
-        self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.SubtitleIconPath).scaledToHeight(100))
+        if Options.Dark_Mode:
+            subtitle_icon_path = GlobalFiles.SubtitleDarkIconPath
+        else:
+            subtitle_icon_path = GlobalFiles.SubtitleLightIconPath
+        self.messageIcon.setPixmap(QtGui.QPixmap(subtitle_icon_path).scaledToHeight(100))
         self.set_dialog_values()
         self.set_default_buttons()
         if self.subtitle_set_default_disabled:
@@ -154,15 +160,10 @@ class SubtitleInfoDialog(QDialog):
 
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
-        self.setWindowIcon(GlobalFiles.InfoSettingIcon)
+        self.setWindowIcon(GlobalIcons.InfoSettingIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
-
-    def increase_message_font_size(self, value):
-        message_font = self.message.font()
-        message_font.setPointSize(self.message.fontInfo().pointSize() + value)
-        self.message.setFont(message_font)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def set_default_buttons(self):
         self.yes_button.setDefault(True)
@@ -177,13 +178,12 @@ class SubtitleInfoDialog(QDialog):
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
 
     def setup_subtitle_language_comboBox(self):
-        self.subtitle_language_comboBox.addItems(DefaultOptions.Default_Favorite_Subtitle_Languages)
+        self.subtitle_language_comboBox.addItems(Options.CurrentPreset.Default_Favorite_Subtitle_Languages)
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setMaxVisibleItems(8)
         self.subtitle_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
-
     def setup_subtitle_delay_spin(self):
         # self.subtitle_delay_spin.setMaximumWidth(screen_size.width() // 16)
         self.subtitle_delay_spin.setDecimals(3)
@@ -212,7 +212,7 @@ class SubtitleInfoDialog(QDialog):
         self.current_subtitle_language[self.current_subtitle_index] = str(self.subtitle_language_comboBox.currentText())
 
     def update_current_subtitle_set_default(self):
-        new_state = self.subtitle_set_default_checkBox.checkState() == Qt.Checked
+        new_state = self.subtitle_set_default_checkBox.checkState() == Qt.CheckState.Checked
         self.current_subtitle_set_default[self.current_subtitle_index] = new_state
         if new_state:
             for i in range(len(self.current_subtitle_set_default)):
@@ -220,7 +220,7 @@ class SubtitleInfoDialog(QDialog):
                     self.current_subtitle_set_default[i] = False
 
     def update_current_subtitle_set_forced(self):
-        new_state = self.subtitle_set_forced_checkBox.checkState() == Qt.Checked
+        new_state = self.subtitle_set_forced_checkBox.checkState() == Qt.CheckState.Checked
         self.current_subtitle_set_forced[self.current_subtitle_index] = new_state
         if new_state:
             for i in range(len(self.current_subtitle_set_forced)):
@@ -240,7 +240,7 @@ class SubtitleInfoDialog(QDialog):
             self.current_subtitle_index]
 
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_delay_spin.setValue(float(self.current_subtitle_delay[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
@@ -287,10 +287,10 @@ class SubtitleInfoDialog(QDialog):
         self.subtitle_set_forced_checkBox.setChecked(
             bool(self.current_subtitle_set_forced[self.current_subtitle_index]))
         self.subtitle_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Subtitle_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Subtitle_Languages.index(
                 self.current_subtitle_language[self.current_subtitle_index]))
         self.subtitle_track_name_lineEdit.setText(self.current_subtitle_track_name[self.current_subtitle_index])
         self.subtitle_name_value.setText(str(self.current_subtitle_name[self.current_subtitle_index]))
 
     def execute(self):
-        self.exec_()
+        self.exec()

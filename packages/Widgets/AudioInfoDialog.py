@@ -1,15 +1,17 @@
-from PySide2 import QtGui
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
+from PySide6 import QtGui
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+    QPushButton, QHBoxLayout, QDoubleSpinBox, QComboBox, QLineEdit, QCheckBox, \
     QFormLayout
 
 from packages.Startup import GlobalFiles
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup import GlobalIcons
+from packages.Startup.Options import Options
 from packages.Widgets.InfoCellDialogTabComboBox import InfoCellDialogTabComboBox
+from packages.Widgets.MyDialog import MyDialog
 
 
-class AudioInfoDialog(QDialog):
+class AudioInfoDialog(MyDialog):
     def __init__(self, audios_name,
                  audios_delay, audios_language, audios_track_name,
                  audios_set_default, audios_set_forced
@@ -84,11 +86,11 @@ class AudioInfoDialog(QDialog):
         self.audio_track_name_layout = QHBoxLayout()
         self.audio_set_default_layout = QHBoxLayout()
         self.audio_set_forced_layout = QHBoxLayout()
-        self.buttons_layout.addWidget(QLabel(""), stretch=3)
+        self.buttons_layout.addStretch(stretch=3)
         self.buttons_layout.addWidget(self.reset_button, stretch=2)
         self.buttons_layout.addWidget(self.yes_button, stretch=2)
         self.buttons_layout.addWidget(self.no_button, stretch=2)
-        self.buttons_layout.addWidget(QLabel(""), stretch=3)
+        self.buttons_layout.addStretch(stretch=3)
         self.audio_setting_layout = QGridLayout()
         self.audio_editable_setting_layout = QFormLayout()
         self.audio_editable_setting_layout.addRow(self.audio_name_label, self.audio_name_value)
@@ -116,7 +118,11 @@ class AudioInfoDialog(QDialog):
 
     def setup_ui(self):
         self.disable_question_mark_window()
-        self.messageIcon.setPixmap(QtGui.QPixmap(GlobalFiles.AudioIconPath).scaledToHeight(100))
+        if Options.Dark_Mode:
+            audio_icon_path = GlobalFiles.AudioDarkIconPath
+        else:
+            audio_icon_path = GlobalFiles.AudioLightIconPath
+        self.messageIcon.setPixmap(QtGui.QPixmap(audio_icon_path).scaledToHeight(100))
         self.set_dialog_values()
         self.set_default_buttons()
         if self.audio_set_default_disabled:
@@ -154,15 +160,10 @@ class AudioInfoDialog(QDialog):
 
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
-        self.setWindowIcon(GlobalFiles.InfoSettingIcon)
+        self.setWindowIcon(GlobalIcons.InfoSettingIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
-
-    def increase_message_font_size(self, value):
-        message_font = self.message.font()
-        message_font.setPointSize(self.message.fontInfo().pointSize() + value)
-        self.message.setFont(message_font)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def set_default_buttons(self):
         self.yes_button.setDefault(True)
@@ -177,9 +178,9 @@ class AudioInfoDialog(QDialog):
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
 
     def setup_audio_language_comboBox(self):
-        self.audio_language_comboBox.addItems(DefaultOptions.Default_Favorite_Audio_Languages)
+        self.audio_language_comboBox.addItems(Options.CurrentPreset.Default_Favorite_Audio_Languages)
         self.audio_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Audio_Languages.index(
                 self.current_audio_language[self.current_audio_index]))
         self.audio_language_comboBox.setMaxVisibleItems(8)
         self.audio_language_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
@@ -212,7 +213,7 @@ class AudioInfoDialog(QDialog):
         self.current_audio_language[self.current_audio_index] = str(self.audio_language_comboBox.currentText())
 
     def update_current_audio_set_default(self):
-        new_state = self.audio_set_default_checkBox.checkState() == Qt.Checked
+        new_state = self.audio_set_default_checkBox.checkState() == Qt.CheckState.Checked
         self.current_audio_set_default[self.current_audio_index] = new_state
         if new_state:
             for i in range(len(self.current_audio_set_default)):
@@ -220,7 +221,7 @@ class AudioInfoDialog(QDialog):
                     self.current_audio_set_default[i] = False
 
     def update_current_audio_set_forced(self):
-        new_state = self.audio_set_forced_checkBox.checkState() == Qt.Checked
+        new_state = self.audio_set_forced_checkBox.checkState() == Qt.CheckState.Checked
         self.current_audio_set_forced[self.current_audio_index] = new_state
         if new_state:
             for i in range(len(self.current_audio_set_forced)):
@@ -240,7 +241,7 @@ class AudioInfoDialog(QDialog):
             self.current_audio_index]
 
         self.audio_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Audio_Languages.index(
                 self.current_audio_language[self.current_audio_index]))
         self.audio_delay_spin.setValue(float(self.current_audio_delay[self.current_audio_index]))
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
@@ -287,10 +288,10 @@ class AudioInfoDialog(QDialog):
         self.audio_set_forced_checkBox.setChecked(
             bool(self.current_audio_set_forced[self.current_audio_index]))
         self.audio_language_comboBox.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(
+            Options.CurrentPreset.Default_Favorite_Audio_Languages.index(
                 self.current_audio_language[self.current_audio_index]))
         self.audio_track_name_lineEdit.setText(self.current_audio_track_name[self.current_audio_index])
         self.audio_name_value.setText(str(self.current_audio_name[self.current_audio_index]))
 
     def execute(self):
-        self.exec_()
+        self.exec()

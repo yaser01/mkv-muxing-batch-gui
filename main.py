@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+# import faulthandler
+import logging
 import signal
 import sys
 from traceback import format_exception
-from datetime import datetime
 import psutil
-from PySide2.QtGui import QFont, QFontDatabase
-from PySide2.QtWidgets import QApplication
-from packages.Startup import GlobalFiles
 from packages.Startup.MainApplication import MainApplication
+from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
+from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtWidgets import QApplication
 from packages.Widgets.WarningDialog import WarningDialog
-import faulthandler
 
 if sys.platform == "win32":
     import ctypes
@@ -26,10 +27,10 @@ app: QApplication
 
 def setup_application_font():
     try:
-        id = QFontDatabase.addApplicationFont(GlobalFiles.MyFontPath)
-        _fontstr = QFontDatabase.applicationFontFamilies(id)[0]
-        _font = QFont(_fontstr, 10)
-        app.setFont(_font)
+        font_id = QFontDatabase.addApplicationFont(GlobalFiles.MyFontPath)
+        font_name = QFontDatabase.applicationFontFamilies(font_id)[0]
+        font = QFont(font_name, 10)
+        app.setFont(font)
     except Exception as e:
         warning_dialog = WarningDialog(window_title="Missing Fonts", info_message="Can't find 'OpenSans' font at "
                                                                                   "../Resources/Fonts/OpenSans.ttf\n" +
@@ -40,7 +41,7 @@ def setup_application_font():
 def create_application():
     global app
     app = MainApplication
-    app.setWindowIcon(GlobalFiles.AppIcon)
+    app.setWindowIcon(GlobalIcons.AppIcon)
 
 
 def create_window():
@@ -49,7 +50,7 @@ def create_window():
 
 
 def run_application():
-    app_execute = app.exec_()
+    app_execute = app.exec()
     kill_all_children()
     sys.exit(app_execute)
 
@@ -62,13 +63,21 @@ def kill_all_children():
 
 
 def logger_exception(exception_type, exception_value, exception_trace_back):
-    with open(GlobalFiles.AppLogFilePath, 'a+', encoding="UTF-8") as log_file:
-        log_file.write(str(datetime.utcnow()) + '\n')
-        for string in format_exception(exception_type, exception_value, exception_trace_back):
-            log_file.write(string)
+    for string in format_exception(exception_type, exception_value, exception_trace_back):
+        logging.error(string)
 
 
 def setup_logger():
+    logging.basicConfig(
+        format='(%(asctime)s): %(name)s [%(levelname)s]: %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler(filename=GlobalFiles.AppLogFilePath,
+                                encoding='utf-8', mode='a+'),
+            logging.StreamHandler()
+        ]
+    )
     sys.excepthook = logger_exception
 
 

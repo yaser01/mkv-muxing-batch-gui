@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QLineEdit
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QLineEdit
 
 from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Widgets.InvalidPathDialog import InvalidPathDialog
@@ -53,7 +53,7 @@ class AttachmentSourceLineEdit(QLineEdit):
                     self.stop_check_path = True
                     self.setText(self.current_folder_path)
                 else:
-                    invalid_path_dialog = InvalidPathDialog()
+                    invalid_path_dialog = InvalidPathDialog(parent=self)
                     invalid_path_dialog.execute()
                     self.stop_check_path = True
                     self.setText(self.current_folder_path)

@@ -1,5 +1,5 @@
-from PySide2.QtCore import Qt, QEvent
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtCore import Qt, QEvent
+from PySide6.QtWidgets import QComboBox
 
 from packages.Startup.InitializeScreenResolution import screen_size
 
@@ -13,8 +13,8 @@ class InfoCellDialogTabComboBox(QComboBox):
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.setEditable(True)
         self.lineEdit().setReadOnly(True)
-        self.lineEdit().setAlignment(Qt.AlignCenter)
-        self.lineEdit().setContextMenuPolicy(Qt.PreventContextMenu)
+        self.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit().setContextMenuPolicy(Qt.ContextMenuPolicy.PreventContextMenu)
         self.lineEdit().selectionChanged.connect(self.disable_select)
         self.lineEdit().installEventFilter(self)
         self.setMaximumWidth(screen_size.width() // 12)

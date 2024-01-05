@@ -3,7 +3,7 @@ import time
 import traceback
 from pathlib import Path
 
-from PySide2.QtCore import QObject, QThread, Signal
+from PySide6.QtCore import QObject, QThread, Signal
 
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting, write_to_log_file
@@ -33,8 +33,14 @@ def check_if_mkvpropedit_good():
             return False
     if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
             GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
-            not GlobalSetting.VIDEO_SOURCE_MKV_ONLY or \
-            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]:
+            (not GlobalSetting.VIDEO_SOURCE_MKV_ONLY) or \
+            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"] or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED or \
+            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED:
         return False
     else:
         return True
@@ -113,7 +119,7 @@ class StartMuxingWorker(QObject):
             return
 
         job = self.data[self.current_job]
-        if not job.done:
+        if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
             GetJsonForMkvmergeJob(job)
             if GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
                 GetJsonForMkvpropeditJob(job)
@@ -126,22 +132,10 @@ class StartMuxingWorker(QObject):
                 self.job_started_signal.emit(self.current_job)
                 self.start_mkvmerge_muxing()
             else:
-                if check_if_mkvpropedit_good():
-                    self.mkvpropedit_good_signal.emit()
-                    self.waiting_for_mkvpropedit_confirm = True
-                    while self.waiting_for_mkvpropedit_confirm:
-                        time.sleep(0.05)
-                    if self.use_mkvpropedit:
-                        self.always_use_mkvpropedit = True
-                        self.job_started_signal.emit(self.current_job)
-                        self.start_mkvpropedit_muxing()
-                    elif self.use_mkvmerge:
-                        self.always_use_mkvmerge = True
-                        self.job_started_signal.emit(self.current_job)
-                        self.start_mkvmerge_muxing()
-                    else:
-                        self.stop_all_threads()
-                        self.cancel_signal.emit()
+                if GlobalSetting.USE_MKVPROPEDIT:
+                    self.always_use_mkvpropedit = True
+                    self.job_started_signal.emit(self.current_job)
+                    self.start_mkvpropedit_muxing()
                 else:
                     self.always_use_mkvmerge = True
                     self.job_started_signal.emit(self.current_job)
@@ -173,7 +167,7 @@ class StartMuxingWorker(QObject):
 
     def check_if_crc_calculating_needed(self):
         if self.data[self.current_job].is_crc_calculating_required:
-            if self.data[self.current_job].used_mkvpropedit:
+            if self.data[self.current_job].used_mkvpropedit or GlobalSetting.OVERWRITE_SOURCE_FILES:
                 folder_path = os.path.dirname(self.data[self.current_job].video_name_absolute)
             else:
                 folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)

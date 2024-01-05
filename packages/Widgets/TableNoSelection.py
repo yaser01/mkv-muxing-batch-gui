@@ -1,9 +1,9 @@
 import typing
 
-from PySide2 import QtGui, QtCore
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QPalette
-from PySide2.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QStyledItemDelegate, QTableWidget, QStyle
 
 
 class TableWidgetNoSelection(QTableWidget):
@@ -15,10 +15,10 @@ class TableWidgetNoSelection(QTableWidget):
             color_default = QtGui.QColor("#aaedff")  # aaedff: blue Kashef
 
             def paint(self, painter, option, index):
-                if option.state & QStyle.State_Selected:
-                    option.palette.setColor(QPalette.HighlightedText, Qt.black)
+                if option.state & QStyle.StateFlag.State_Selected:
+                    option.palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black)
                     color = self.combineColors(self.color_default, self.background(option, index))
-                    option.palette.setColor(QPalette.Highlight, color)
+                    option.palette.setColor(QPalette.ColorRole.Highlight, color)
                 QStyledItemDelegate.paint(self, painter, option, index)
 
             def background(self, option, index):
@@ -42,11 +42,11 @@ class TableWidgetNoSelection(QTableWidget):
         self.setItemDelegate(StyleDelegateForQTableWidget(self))
 
     def selectionCommand(self, index: QtCore.QModelIndex,
-                         event: typing.Optional[QtCore.QEvent] = ...) -> QtCore.QItemSelectionModel.SelectionFlags:
-        if (self.preventSelect == False):
+                         event: typing.Optional[QtCore.QEvent] = ...) -> QtCore.QItemSelectionModel.SelectionFlag:
+        if self.preventSelect == False:
             return super().selectionCommand(index, event)
-        if (event is None):  # when selecting programitcally or press on header
-            return QtCore.QItemSelectionModel.NoUpdate
+        if event is None:  # when selecting programmatically or press on header
+            return QtCore.QItemSelectionModel.SelectionFlag.NoUpdate
         else:
             return super().selectionCommand(index, event)
 

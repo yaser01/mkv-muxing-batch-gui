@@ -1,9 +1,8 @@
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QComboBox
 
-from packages.Startup.DefaultOptions import DefaultOptions
+from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Startup.PreDefined import AllAudiosLanguages
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -13,14 +12,17 @@ class AudioLanguageComboBox(QComboBox):
         self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
-        self.addItems(DefaultOptions.Default_Favorite_Audio_Languages)
-        self.setCurrentIndex(
-            DefaultOptions.Default_Favorite_Audio_Languages.index(DefaultOptions.Default_Audio_Language))
-        self.setToolTip("Audio Language: " + DefaultOptions.Default_Audio_Language + "\nYou can add/remove "
+        self.addItems(Options.CurrentPreset.Default_Favorite_Audio_Languages)
+        self.set_current_index()
+        self.setToolTip("Audio Language: " + Options.CurrentPreset.Default_Audio_Language + "\nYou can add/remove "
                                                                                      "languages in options")
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.currentTextChanged.connect(self.change_global_audio_language)
+
+    def set_current_index(self):
+        self.setCurrentIndex(
+            Options.CurrentPreset.Default_Favorite_Audio_Languages.index(Options.CurrentPreset.Default_Audio_Language))
 
     def change_global_audio_language(self):
         self.setToolTip("Audio Language: " + self.currentText() + "\nYou can add/remove languages in options")
@@ -54,4 +56,4 @@ class AudioLanguageComboBox(QComboBox):
     def addItems(self, texts):
         super().addItems(texts)
         for i in range(len(texts)):
-            self.setItemData(i, texts[i], Qt.ToolTipRole)
+            self.setItemData(i, texts[i], Qt.ItemDataRole.ToolTipRole)

@@ -1,33 +1,36 @@
 import time
 
-from PySide2.QtCore import Qt, QThread
-from PySide2.QtGui import QMovie
-from PySide2.QtWidgets import QDialog, QLabel, QHBoxLayout
+from PySide6.QtCore import Qt, QThread, QSize
+from PySide6.QtGui import QMovie
+from PySide6.QtWidgets import QLabel, QHBoxLayout
 
 from packages.Startup.GlobalFiles import SpinnerIconPath
 from packages.Tabs.VideoTab.Widgets.GenerateMediaInfoFilesWorker import GenerateMediaInfoFilesWorker
+from packages.Widgets.MyDialog import MyDialog
 
 
-class LoadingVideosInfoDialog(QDialog):
-    def __init__(self, videos_list):
-        super().__init__()
+class LoadingVideosInfoDialog(MyDialog):
+    def __init__(self, videos_list, parent=None):
+        super().__init__(parent=parent)
         self.setWindowTitle("Loading Media Info")
         self.videos_list = videos_list
         self.videos_count = len(self.videos_list)
         self.current_video_done_index = 0
         self.unsupported_files_list = []
         self.status_label = QLabel(
-            "Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
+            "  Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
         self.load_icon_movie = QMovie(SpinnerIconPath)
+        self.load_icon_movie.setScaledSize(QSize(32, 32))
         self.load_icon_label = QLabel()
         self.load_icon_label.setMovie(self.load_icon_movie)
+        self.load_icon_movie.setSpeed(120)
         self.layout = QHBoxLayout()
         self.layout.addStretch(2)
         self.layout.addWidget(self.load_icon_label)
         self.layout.addWidget(self.status_label)
         self.layout.addStretch(3)
         self.layout.setSpacing(0)
-        self.layout.setContentsMargins(8, 12, 8, 12)
+        self.layout.setContentsMargins(12, 16, 12, 16)
         self.setLayout(self.layout)
         self.disable_question_mark_window()
         self.generate_media_info_files()
@@ -50,12 +53,12 @@ class LoadingVideosInfoDialog(QDialog):
         self.generate_media_info_files_thread.start()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def update_progress(self):
         self.current_video_done_index += 1
         self.status_label.setText(
-            " Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
+            "  Scanning Video " + str(self.current_video_done_index) + "/" + str(self.videos_count))
 
     def add_new_unsupported_file(self, file_name):
         self.unsupported_files_list.append(file_name)

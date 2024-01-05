@@ -1,8 +1,8 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton
 
-from packages.Tabs.GlobalSetting import GlobalSetting
 from packages.Tabs.AudioTab.Widgets.MoveAudioToDialog import MoveAudioToDialog
+from packages.Tabs.GlobalSetting import GlobalSetting
 
 
 class MoveAudioToButton(QPushButton):
@@ -22,7 +22,7 @@ class MoveAudioToButton(QPushButton):
     def clicked_button(self):
         current_index = self.current_index
         if current_index != -1:
-            move_audio_to_dialog = MoveAudioToDialog(max_index=self.max_index, current_index=current_index)
+            move_audio_to_dialog = MoveAudioToDialog(max_index=self.max_index, current_index=current_index, parent=self)
             move_audio_to_dialog.execute()
             if move_audio_to_dialog.result == "Yes":
                 new_index = move_audio_to_dialog.position - 1

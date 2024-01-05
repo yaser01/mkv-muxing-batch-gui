@@ -1,12 +1,14 @@
-from PySide2 import QtGui
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class FileNotFoundDialog(QDialog):
+class FileNotFoundDialog(MyDialog):
     def __init__(self, window_title="", error_message="", parent=None):
         super().__init__(parent)
         self.error_message = error_message
@@ -18,10 +20,10 @@ class FileNotFoundDialog(QDialog):
 
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yesButton)
-
+        self.main_layout_spacer_item = QLabel()
         self.main_layout = QGridLayout()
         self.main_layout.addWidget(self.messageIcon, 0, 0, 2, 1)
-        self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
+        self.main_layout.addWidget(self.main_layout_spacer_item, 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addLayout(self.buttons_layout, 2, 2, 1, 1)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
@@ -46,10 +48,10 @@ class FileNotFoundDialog(QDialog):
     def set_dialog_values(self):
         self.setWindowTitle(self.window_title)
         self.message.setText(self.error_message)
-        self.setWindowIcon(GlobalFiles.ErrorIcon)
+        self.setWindowIcon(GlobalIcons.ErrorIcon)
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()
@@ -67,4 +69,4 @@ class FileNotFoundDialog(QDialog):
         self.setFixedSize(self.size())
 
     def execute(self):
-        self.exec_()
+        self.exec()

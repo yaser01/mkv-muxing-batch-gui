@@ -1,7 +1,7 @@
-import PySide2
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QFontMetrics, QPaintEvent
-from PySide2.QtWidgets import QGridLayout, QTableWidgetItem, \
+import PySide6
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFontMetrics, QPaintEvent
+from PySide6.QtWidgets import QGridLayout, QTableWidgetItem, \
     QHeaderView, QAbstractItemView, QTableWidget
 
 from packages.Widgets.TableNoSelection import TableWidgetNoSelection
@@ -12,22 +12,22 @@ class TableFixedHeaderWidget(QTableWidget):
         QTableWidget.__init__(self)
         self.table = primarytable
         self.table.setColumnCount(numberofcolumn)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.table.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.column0 = QTableWidgetItem(headername)
-        self.column0.setTextAlignment(Qt.AlignCenter)
+        self.column0.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.table.setHorizontalHeaderItem(0, self.column0)
 
         self.tableHeader = TableWidgetNoSelection()
         self.column1 = QTableWidgetItem(headername)
-        self.column1.setTextAlignment(Qt.AlignCenter)
+        self.column1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.tableHeader.setColumnCount(numberofcolumn)
         self.tableHeader.setHorizontalHeaderItem(0, self.column1)
-        self.tableHeader.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.tableHeader.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.tableHeader.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.tableHeader.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.tableHeader.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.tableHeader.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableHeader.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.tableHeader.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.tableHeader.horizontalHeader().setHighlightSections(False)
 
         self.tableLayout = QGridLayout(self)
@@ -54,7 +54,7 @@ class TableFixedHeaderWidget(QTableWidget):
 
     def update_row_size(self):
         new_column_width = self.tableHeader.width()
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         for i in range(self.table.rowCount()):
             column_font = self.table.item(i, 0).font()
             column_font_metrics = QFontMetrics(column_font)
@@ -70,7 +70,7 @@ class TableFixedHeaderWidget(QTableWidget):
         self.update_row_size()
         self.takeupdate()
 
-    def resizeEvent(self, event: PySide2.QtGui.QResizeEvent):
+    def resizeEvent(self, event: PySide6.QtGui.QResizeEvent):
         self.takeupdate()
         super().resizeEvent(event)
         self.takeupdate()

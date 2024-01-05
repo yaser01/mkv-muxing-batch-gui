@@ -1,11 +1,13 @@
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QGridLayout, QLabel, \
-    QDialog, QPushButton, QHBoxLayout
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QGridLayout, QLabel, \
+     QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
+from packages.Widgets.MyDialog import MyDialog
 
 
-class ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(QDialog):
+class ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(MyDialog):
     def __init__(self, track_type, parent=None):
         super().__init__(parent)
         self.track_type = track_type
@@ -13,7 +15,7 @@ class ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(QDialog):
         self.noButton = QPushButton("Cancel")
         self.thirdButton = QPushButton("Uncheck this one")
         self.setWindowTitle("Confirm Check")
-        self.setWindowIcon(GlobalFiles.QuestionIcon)
+        self.setWindowIcon(GlobalIcons.QuestionIcon)
         self.message = QLabel("<nobr>Are you sure?<br>This will <b>uncheck</b> set default and set forced options "
                               "from " + self.track_type + " tab")
         self.messageIcon = QLabel()
@@ -22,10 +24,10 @@ class ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(QDialog):
         self.buttons_layout.addWidget(self.thirdButton)
         self.buttons_layout.addWidget(self.yesButton)
         self.buttons_layout.addWidget(self.noButton)
-
+        self.main_layout_spacer_item = QLabel()
         self.main_layout = QGridLayout()
         self.main_layout.addWidget(self.messageIcon, 0, 0, 2, 1)
-        self.main_layout.addWidget(QLabel(), 0, 1, 1, 1)  # add space
+        self.main_layout.addWidget(self.main_layout_spacer_item, 0, 1, 1, 1)  # add space
         self.main_layout.addWidget(self.message, 0, 2, 2, 3)
         self.main_layout.addLayout(self.buttons_layout, 2, 4, 1, 1)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
@@ -59,7 +61,7 @@ class ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(QDialog):
         self.close()
 
     def disable_question_mark_window(self):
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, on=False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()
@@ -78,4 +80,4 @@ class ConfirmCheckMakeThisTrackDefaultWithUnCheckOption(QDialog):
         self.setFixedSize(self.size())
 
     def execute(self):
-        self.exec_()
+        self.exec()

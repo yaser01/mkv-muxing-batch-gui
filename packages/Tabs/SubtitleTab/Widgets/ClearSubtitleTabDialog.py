@@ -1,14 +1,14 @@
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Widgets.YesNoDialog import YesNoDialog
 
 
 class ClearSubtitleTabDialog(YesNoDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         self.message.setText(
             "Are you sure ?\nThis will remove current tab")
         self.setWindowTitle("Remove Tab")
-        self.setWindowIcon(GlobalFiles.NoMarkIcon)
+        self.setWindowIcon(GlobalIcons.NoMarkIcon)
 
     def execute(self):
-        self.exec_()
+        self.exec()

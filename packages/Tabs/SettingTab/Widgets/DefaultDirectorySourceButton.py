@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QPushButton, QFileDialog
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QPushButton, QFileDialog
 
-from packages.Startup import GlobalFiles
+from packages.Startup import GlobalIcons
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -12,7 +12,7 @@ class DefaultDirectorySourceButton(QPushButton):
 
     def __init__(self):
         super().__init__()
-        self.setIcon(GlobalFiles.SelectFolderIcon)
+        self.setIcon(GlobalIcons.SelectFolderIcon)
         self.clicked.connect(self.open_select_folder_dialog)
 
     def open_select_folder_dialog(self):
