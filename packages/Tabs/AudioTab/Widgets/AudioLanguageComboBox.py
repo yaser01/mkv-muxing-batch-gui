@@ -12,13 +12,17 @@ class AudioLanguageComboBox(QComboBox):
         self.tab_index = tab_index
         self.hint_when_enabled = ""
         self.setMinimumWidth(screen_size.width() // 13)
-        self.addItems(Options.CurrentPreset.Default_Favorite_Audio_Languages)
+        self.initialize()
         self.set_current_index()
         self.setToolTip("Audio Language: " + Options.CurrentPreset.Default_Audio_Language + "\nYou can add/remove "
-                                                                                     "languages in options")
+                                                                                            "languages in options")
         self.setMaxVisibleItems(8)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
         self.currentTextChanged.connect(self.change_global_audio_language)
+
+    def initialize(self):
+        self.clear()
+        self.addItems(Options.CurrentPreset.Default_Favorite_Audio_Languages)
 
     def set_current_index(self):
         self.setCurrentIndex(
