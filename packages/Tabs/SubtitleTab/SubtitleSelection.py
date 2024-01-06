@@ -423,6 +423,7 @@ class SubtitleSelectionSetting(QGroupBox):
     def set_preset_options(self):
         self.create_properties()
         self.create_global_properties()
+        self.subtitle_language_comboBox.initialize()
         self.subtitle_language_comboBox.set_current_index()
         self.subtitle_extensions_comboBox.set_current_extensions()
         self.set_default_directory()
