@@ -163,12 +163,12 @@ class GetJsonForMkvmergeJob:
             self.attachments_json_info.append(new_attachment_info)
 
     def setup_attachments_options(self):
+        discard_old = self.job.discard_old_attachments
+        if discard_old:
+            self.discard_old_attachments_command = add_json_line("--no-attachments")
         if len(self.job.attachments_absolute_path) > 0:
             allow_duplicates = self.job.allow_duplicates_attachments
-            discard_old = self.job.discard_old_attachments
             attachments_list_with_attach_command = []
-            if discard_old:
-                self.discard_old_attachments_command = add_json_line("--no-attachments")
             for file_to_attach in self.job.attachments_absolute_path:
                 file_name_to_attach = os.path.basename(file_to_attach)
                 if not discard_old and not allow_duplicates:

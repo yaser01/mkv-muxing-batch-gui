@@ -131,15 +131,16 @@ class GetJsonForMkvpropeditJob:
             self.attachments_json_info.append(new_attachment_info)
 
     def setup_attachments_options(self):
-        if len(self.job.attachments_absolute_path)>0:
-            attachments_list_with_attach_command = []
-            discard_old_attachments_list_command = []
+        discard_old_attachments_list_command = []
+        attachments_list_with_attach_command = []
+        discard_old = self.job.discard_old_attachments
+        print(self.number_of_old_attachments)
+        if discard_old:
+            for i in range(self.number_of_old_attachments + 2):
+                discard_old_attachments_list_command.append(add_json_line("--delete-attachment"))
+                discard_old_attachments_list_command.append(add_json_line(str(i)))
+        if len(self.job.attachments_absolute_path) > 0:
             allow_duplicates = self.job.allow_duplicates_attachments
-            discard_old = self.job.discard_old_attachments
-            if discard_old:
-                for i in range(self.number_of_old_attachments + 2):
-                    attachments_list_with_attach_command.append(add_json_line("--delete-attachment"))
-                    attachments_list_with_attach_command.append(add_json_line(str(i)))
             for file_to_attach in self.job.attachments_absolute_path:
                 file_name_to_attach = os.path.basename(file_to_attach)
                 if not discard_old and not allow_duplicates:
@@ -153,8 +154,8 @@ class GetJsonForMkvpropeditJob:
                 attachments_list_with_attach_command.append(add_json_line("--add-attachment"))
                 attachments_list_with_attach_command.append(
                     add_json_line(check_for_system_backslash_path(file_to_attach)))
-            self.attachments_attach_command = "".join(attachments_list_with_attach_command)
-            self.discard_old_attachments_command = "".join(discard_old_attachments_list_command)
+        self.attachments_attach_command = "".join(attachments_list_with_attach_command)
+        self.discard_old_attachments_command = "".join(discard_old_attachments_list_command)
 
     def setup_chapter_options(self):
         if GlobalSetting.CHAPTER_ENABLED:
