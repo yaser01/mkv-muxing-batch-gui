@@ -134,7 +134,6 @@ class GetJsonForMkvpropeditJob:
         discard_old_attachments_list_command = []
         attachments_list_with_attach_command = []
         discard_old = self.job.discard_old_attachments
-        print(self.number_of_old_attachments)
         if discard_old:
             for i in range(self.number_of_old_attachments + 2):
                 discard_old_attachments_list_command.append(add_json_line("--delete-attachment"))
