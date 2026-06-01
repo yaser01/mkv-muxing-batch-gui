@@ -5,7 +5,9 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QLineEdit
 
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.SubtitleTab.Widgets.ReloadSubtitleFilesDialog import ReloadSubtitleFilesDialog
+from packages.Tabs.SubtitleTab.Widgets.ReloadSubtitleFilesDialog import (
+    ReloadSubtitleFilesDialog,
+)
 from packages.Widgets.InvalidPathDialog import InvalidPathDialog
 
 
@@ -15,7 +17,7 @@ class SubtitleSourceLineEdit(QLineEdit):
 
     def __init__(self):
         super().__init__()
-        self.setPlaceholderText("Enter Subtitle Folder Path")
+        self.setPlaceholderText("Ingresa la ruta de la carpeta de subtítulos")
         self.setClearButtonEnabled(True)
         self.setText("")
         self.stop_check_path = False
@@ -81,7 +83,12 @@ class SubtitleSourceLineEdit(QLineEdit):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -91,7 +98,12 @@ class SubtitleSourceLineEdit(QLineEdit):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

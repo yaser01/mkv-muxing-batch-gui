@@ -1,7 +1,6 @@
 from PySide6 import QtGui, QtCore
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-    QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -15,7 +14,7 @@ class WarningDialog(MyDialog):
         self.window_title = window_title
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.yesButton = QPushButton("OK")
+        self.yesButton = QPushButton("Aceptar")
 
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addStretch(stretch=1)

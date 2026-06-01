@@ -15,8 +15,12 @@ def get_file_name_with_mkv_extension(file_name):
 
 def get_file_name_extension_to_mkv_with_random_suffix(file_name):
     file_extension_start_index = file_name.rfind(".")
-    new_file_name_with_mkv_extension = file_name[
-                                       :file_extension_start_index] + "#" + GlobalSetting.RANDOM_OUTPUT_SUFFIX + ".mkv "
+    new_file_name_with_mkv_extension = (
+        file_name[:file_extension_start_index]
+        + "#"
+        + GlobalSetting.RANDOM_OUTPUT_SUFFIX
+        + ".mkv "
+    )
     return new_file_name_with_mkv_extension
 
 
@@ -38,7 +42,9 @@ class CalculateCRCProcessWorker(QObject):
             while not self.stop:
                 if not self.wait:
                     if GlobalSetting.OVERWRITE_SOURCE_FILES:
-                        file_name = get_file_name_extension_to_mkv_with_random_suffix(self.file_name)
+                        file_name = get_file_name_extension_to_mkv_with_random_suffix(
+                            self.file_name
+                        )
                     else:
                         file_name = get_file_name_with_mkv_extension(self.file_name)
                     file_size = getsize(file_name)
@@ -48,14 +54,16 @@ class CalculateCRCProcessWorker(QObject):
                         current_percent = 0
                         while chunk := f.read(self.chunk_size):
                             current_read += self.chunk_size
-                            current_percent = int(min(100 * current_read / file_size, 100))
+                            current_percent = int(
+                                min(100 * current_read / file_size, 100)
+                            )
                             self.crc_progress_signal.emit(current_percent)
                             checksum = zlib.crc32(chunk, checksum)
-                        crc_string = format(checksum & 0xFFFFFFFF, '08x').upper()
+                        crc_string = format(checksum & 0xFFFFFFFF, "08x").upper()
                         self.crc_result_signal.emit(crc_string)
                     self.wait = True
                 else:
                     QThread.msleep(50)
             self.all_finished.emit()
-        except Exception as e:
+        except Exception:
             write_to_log_file(traceback.format_exc())

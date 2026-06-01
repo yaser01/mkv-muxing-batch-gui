@@ -3,9 +3,16 @@ from PySide6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QLabel
 
 from packages.Startup.GlobalIcons import InfoIcon
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Tabs.GlobalSetting import GlobalSetting, convert_string_integer_to_two_digit_string
-from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTabsManager import ModifyOldTracksTabsManager
-from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackInfoTable import TrackInfoTable
+from packages.Tabs.GlobalSetting import (
+    GlobalSetting,
+    convert_string_integer_to_two_digit_string,
+)
+from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTabsManager import (
+    ModifyOldTracksTabsManager,
+)
+from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.TrackInfoTable import (
+    TrackInfoTable,
+)
 from packages.Widgets.InfoDialog import InfoDialog
 from packages.Widgets.MyDialog import MyDialog
 
@@ -13,13 +20,13 @@ from packages.Widgets.MyDialog import MyDialog
 class ModifyOldTracksDialog(MyDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.setWindowTitle("Modify Old Tracks")
+        self.setWindowTitle("Modificar pistas antiguas")
         self.instructions_label = QLabel()
-        self.ok_button = QPushButton("OK")
-        self.cancel_button = QPushButton("Cancel")
-        self.reset_button = QPushButton("Reset To Default")
+        self.ok_button = QPushButton("Aceptar")
+        self.cancel_button = QPushButton("Cancelar")
+        self.reset_button = QPushButton("Restablecer a valores predeterminados")
         self.old_tracks_tabs = ModifyOldTracksTabsManager()
-        self.track_info_label = QLabel("Information About Tracks:")
+        self.track_info_label = QLabel("Información sobre pistas:")
         self.info_button = QPushButton(text="")
         self.info_button.setIcon(InfoIcon)
         self.track_info_table = TrackInfoTable()
@@ -35,6 +42,19 @@ class ModifyOldTracksDialog(MyDialog):
         self.setLayout(self.main_layout)
         self.connect_signals()
         self.reset_button.setEnabled(GlobalSetting.JOB_QUEUE_EMPTY)
+        try:
+            self.old_tracks_tabs.setCurrentIndex(1)
+            self.update_showed_track_info(
+                ("subtitle", GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_INFO[0][0].id)
+            )  # ensure subtitle track is shown when open dialog first time
+        except IndexError:
+            try:
+                self.old_tracks_tabs.setCurrentIndex(0)
+                self.update_showed_track_info(
+                    ("video", GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO[0][0].id)
+                )  # ensure video track is shown when open dialog first time if not have subtitle
+            except IndexError:
+                pass
 
     def setup_layouts(self):
         self.setup_info_layout()
@@ -64,11 +84,15 @@ class ModifyOldTracksDialog(MyDialog):
         self.main_layout.addLayout(self.buttons_layout)
 
     def setup_instructions_label(self):
-        self.instructions_label.setTextFormat(Qt.RichText)
-        instructions_text = "Here you can modify/disable old tracks even reorder tracks by using [Ctrl+Up/Down Arrow] " \
-                            "to move track up/down."
+        self.instructions_label.setTextFormat(Qt.TextFormat.RichText)
+        instructions_text = (
+            "Aquí puedes modificar/deshabilitar pistas antiguas e incluso reordenarlas usando [Ctrl+Flecha arriba/abajo] "
+            "para mover la pista hacia arriba/abajo."
+        )
 
-        no_editing_text = "<br>Editing is <b>Disabled</b> because job queue has unfinished jobs."
+        no_editing_text = (
+            "<br>La edición está <b>Deshabilitada</b> porque la cola de trabajos tiene trabajos pendientes."
+        )
         if not GlobalSetting.JOB_QUEUE_EMPTY:
             instructions_text += no_editing_text
         self.instructions_label.setText(instructions_text)
@@ -83,31 +107,46 @@ class ModifyOldTracksDialog(MyDialog):
         self.cancel_button.clicked.connect(self.close)
         self.ok_button.clicked.connect(self.save_settings)
         self.reset_button.clicked.connect(self.restore_defaults)
-        self.old_tracks_tabs.current_selected_track_changed.connect(self.update_showed_track_info)
+        self.old_tracks_tabs.current_selected_track_changed.connect(
+            self.update_showed_track_info
+        )
         self.old_tracks_tabs.currentChanged.connect(self.update_current_tab)
         self.info_button.clicked.connect(self.show_info_dialog)
 
     def show_info_dialog(self):
-        info_dialog = InfoDialog(window_title="Conflicting with other settings",
-                                 info_message="Using this window will limits/disable the use of the following "
-                                              "options:<br> "
-                                              "1- <b>Mux After Track</b> in Subtitle/Audio Tabs.<br>"
-                                              "2- <b>Only Keep Those Subtitles/Audios</b> By [Track Id, Track Name, "
-                                              "Track Language] in Muxing Tab.<br> "
-                                              "3- <b>Make This Subtitle/Audio Default</b> By [Track Id, Track Name, "
-                                              "Track Language] in Muxing Tab.<br> "
-                                              "This is necessary because above options also [depends on/modify] old "
-                                              "track "
-                                              "in "
-                                              "someway.<br> "
-                                              "Also Adding new subtitles/audios with options: (set default/forced) "
-                                              "will override options: (set default/forced) shown here.<br> "
-                                              "<u>In short</u> you have to know what you are doing :D</div>",
-                                 parent=self)
+        info_dialog = InfoDialog(
+            window_title="Conflicto con otras configuraciones",
+            info_message="Usar esta ventana limitará/deshabilitará el uso de las siguientes "
+            "opciones:<br> "
+            "1- <b>Multiplexar después de pista</b> en pestañas de Subtítulos/Audio.<br>"
+            "2- <b>Conservar solo estos subtítulos/audios</b> por [ID de pista, Nombre de pista, "
+            "Idioma de pista] en la pestaña de Multiplexado.<br> "
+            "3- <b>Hacer este subtítulo/audio predeterminado</b> por [ID de pista, Nombre de pista, "
+            "Idioma de pista] en la pestaña de Multiplexado.<br> "
+            "Esto es necesario porque las opciones anteriores también [dependen/modifican] la pista "
+            "antigua de alguna manera.<br> "
+            "Además, agregar nuevos subtítulos/audios con opciones: (establecer como predeterminado/forzado) "
+            "anulará las opciones: (establecer como predeterminado/forzado) que se muestran aquí.<br> "
+            "<u>En resumen</u> tienes que saber lo que estás haciendo :D</div>",
+            parent=self,
+        )
         info_dialog.execute()
 
     def restore_defaults(self):
         self.old_tracks_tabs.restore_defaults()
+        # ensure track info show when restore default
+        # not sure if there a better way to do this
+        if self.old_tracks_tabs.currentIndex() == 1:
+            track_type = "subtitle"
+            track_id = GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_INFO[0][0].id
+        elif self.old_tracks_tabs.currentIndex() == 2:
+            track_type = "audio"
+            track_id = GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_INFO[0][0].id
+        elif self.old_tracks_tabs.currentIndex() == 0:
+            track_type = "video"
+            track_id = GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO[0][0].id
+
+        self.update_showed_track_info((track_type, track_id))
 
     def save_settings(self):
         self.old_tracks_tabs.save_settings()
@@ -117,23 +156,26 @@ class ModifyOldTracksDialog(MyDialog):
         track_type, track_id = new_info
         if track_type == "subtitle" and self.old_tracks_tabs.currentIndex() == 1:
             self.track_info_table.update_tracks_info(
-                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_INFO.copy())
+                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_INFO.copy()
+            )
             self.track_info_label.setText(
-                f"Information About Subtitle Track [{convert_string_integer_to_two_digit_string(track_id)}] Across "
-                f"Videos:")
-            self.track_info_table.setup_info(track_id=track_id)
+                f"Información sobre la pista de subtítulo [{convert_string_integer_to_two_digit_string(track_id)}] entre videos:"
+            )
         elif track_type == "audio" and self.old_tracks_tabs.currentIndex() == 2:
             self.track_info_table.update_tracks_info(
-                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_INFO.copy())
+                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_INFO.copy()
+            )
             self.track_info_label.setText(
-                f"Information About Audio Track [{convert_string_integer_to_two_digit_string(track_id)}] Across Videos:")
-            self.track_info_table.setup_info(track_id=track_id)
+                f"Información sobre la pista de audio [{convert_string_integer_to_two_digit_string(track_id)}] entre videos:"
+            )
         elif track_type == "video" and self.old_tracks_tabs.currentIndex() == 0:
             self.track_info_table.update_tracks_info(
-                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO.copy())
+                new_tracks_info_list=GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_INFO.copy()
+            )
             self.track_info_label.setText(
-                f"Information About Video Track [{convert_string_integer_to_two_digit_string(track_id)}] Across Videos:")
-            self.track_info_table.setup_info(track_id=track_id)
+                f"Información sobre la pista de video [{convert_string_integer_to_two_digit_string(track_id)}] entre videos:"
+            )
+        self.track_info_table.setup_info(track_id=track_id)
 
     def update_current_tab(self, tab_id):
         if tab_id == 0:

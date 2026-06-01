@@ -1,7 +1,6 @@
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-     QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -9,13 +8,18 @@ from packages.Widgets.MyDialog import MyDialog
 
 
 class InvalidPathDialog(MyDialog):
-    def __init__(self, window_title="Invalid Path", error_message="Please Enter a Valid Path", parent=None):
+    def __init__(
+        self,
+        window_title="Ruta no válida",
+        error_message="Por favor, ingresa una ruta válida",
+        parent=None,
+    ):
         super().__init__(parent)
         self.error_message = error_message
         self.window_title = window_title
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.yesButton = QPushButton("OK")
+        self.yesButton = QPushButton("Aceptar")
 
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yesButton)

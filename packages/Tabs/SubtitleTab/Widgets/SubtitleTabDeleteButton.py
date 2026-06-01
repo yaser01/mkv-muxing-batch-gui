@@ -4,7 +4,9 @@ from PySide6.QtWidgets import QPushButton
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.SubtitleTab.Widgets.ClearSubtitleTabDialog import ClearSubtitleTabDialog
+from packages.Tabs.SubtitleTab.Widgets.ClearSubtitleTabDialog import (
+    ClearSubtitleTabDialog,
+)
 
 
 class SubtitleTabDeleteButton(QPushButton):
@@ -13,7 +15,7 @@ class SubtitleTabDeleteButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.TrashLightIcon)
-        self.hint_when_enabled = "Remove Tab"
+        self.hint_when_enabled = "Eliminar pestaña"
         self.setToolTip(self.hint_when_enabled)
         self.clicked.connect(self.open_delete_tab_dialog)
         self.is_there_old_files = False
@@ -35,7 +37,12 @@ class SubtitleTabDeleteButton(QPushButton):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -45,7 +52,12 @@ class SubtitleTabDeleteButton(QPushButton):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

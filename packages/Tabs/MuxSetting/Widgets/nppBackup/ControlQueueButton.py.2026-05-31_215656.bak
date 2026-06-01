@@ -1,0 +1,75 @@
+from PySide6 import QtCore
+from PySide6.QtGui import QPaintEvent
+from PySide6.QtWidgets import QPushButton
+
+from packages.Startup import GlobalIcons
+
+
+class ControlQueueButton(QPushButton):
+    add_to_queue_clicked_signal = QtCore.Signal()
+    start_multiplexing_clicked_signal = QtCore.Signal()
+    pause_multiplexing_clicked_signal = QtCore.Signal()
+
+    def __init__(self):
+        super().__init__()
+        self.state = ""
+        self.set_state_add_to_queue()
+        self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        self.clicked.connect(self.button_clicked)
+        self.states = [
+            " Añadir a cola",
+            " Iniciar multiplexado",
+            " Pausar multiplexado",
+            " Esperando trabajo actual",
+            " Reanudar multiplexado",
+        ]
+
+    def set_state_add_to_queue(self):
+        self.state = "ADD"
+        self.setText(" Añadir a cola")
+        self.setIcon(GlobalIcons.AddToQueueIcon)
+        self.setToolTip("")
+        self.setDisabled(False)
+
+    def set_state_start_multiplexing(self):
+        self.state = "START"
+        self.setText(" Iniciar multiplexado")
+        self.setIcon(GlobalIcons.StartMultiplexingIcon)
+        self.setToolTip("")
+        self.setDisabled(False)
+
+    def set_state_pause_multiplexing(self):
+        self.state = "PAUSE"
+        self.setText(" Pausar multiplexado")
+        self.setIcon(GlobalIcons.PauseMultiplexingIcon)
+        self.setToolTip("")
+        self.setDisabled(False)
+
+    def set_state_pausing_multiplexing(self):
+        self.state = "PAUSING"
+        self.setText(" Esperando trabajo actual")
+        self.setIcon(GlobalIcons.PauseMultiplexingIcon)
+        self.setToolTip("pausará el multiplexado después de que termine el trabajo actual")
+        self.setDisabled(True)
+
+    def set_state_resume_multiplexing(self):
+        self.state = "RESUME"
+        self.setText(" Reanudar multiplexado")
+        self.setIcon(GlobalIcons.StartMultiplexingIcon)
+        self.setToolTip("")
+
+    def paintEvent(self, event: QPaintEvent):
+        width = 0
+        for text in self.states:
+            width = max(width, self.fontMetrics().boundingRect(text).width())
+        width += 25
+        self.setMinimumWidth(width)
+        super().paintEvent(event)
+
+    def button_clicked(self):
+        if self.state == "ADD":
+            self.add_to_queue_clicked_signal.emit()
+        elif self.state == "START" or self.state == "RESUME":
+            self.start_multiplexing_clicked_signal.emit()
+        elif self.state == "PAUSE":
+            self.pause_multiplexing_clicked_signal.emit()

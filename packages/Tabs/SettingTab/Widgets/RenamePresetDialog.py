@@ -6,14 +6,14 @@ from packages.Widgets.MyDialog import MyDialog
 
 
 class RenamePresetDialog(MyDialog):
-    def __init__(self, parent=None, old_name="Preset"):
+    def __init__(self, parent=None, old_name="Preajuste"):
         super().__init__(parent)
-        self.setWindowTitle("Rename Preset")
+        self.setWindowTitle("Renombrar preajuste")
         self.setWindowIcon(GlobalIcons.RenameIcon)
         self.message = QLabel()
-        self.message.setText("Rename Preset To: ")
-        self.yes_button = QPushButton("OK")
-        self.no_button = QPushButton("Cancel")
+        self.message.setText("Renombrar preajuste a:")
+        self.yes_button = QPushButton("Aceptar")
+        self.no_button = QPushButton("Cancelar")
         self.new_name = old_name
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.no_button)

@@ -1,6 +1,5 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-    QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -10,13 +9,15 @@ from packages.Widgets.MyDialog import MyDialog
 class ConfirmCheckMakeThisTrackDefault(MyDialog):
     def __init__(self, track_type, parent=None):
         super().__init__(parent)
-        self.yesButton = QPushButton("OK")
-        self.noButton = QPushButton("Cancel")
-        self.setWindowTitle("Confirm Check")
+        self.yesButton = QPushButton("Aceptar")
+        self.noButton = QPushButton("Cancelar")
+        self.setWindowTitle("Confirmar marcado")
         self.setWindowIcon(GlobalIcons.QuestionIcon)
         self.track_type = track_type
         self.message = QLabel(
-            "<nobr>Are you sure?<br>This will <b>uncheck</b> set default option from " + self.track_type + " tab")
+            "<nobr>¿Estás seguro?<br>Esto <b>desmarcará</b> la opción establecer como predeterminado de la pestaña de "
+            + self.track_type
+        )
         self.messageIcon = QLabel()
 
         self.buttons_layout = QHBoxLayout()

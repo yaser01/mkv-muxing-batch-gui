@@ -9,7 +9,7 @@ class StatusWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.status_label = QLabel("  0%")
-        self.load_icon_movie = QMovie(SpinnerIconPath)
+        self.load_icon_movie = QMovie(str(SpinnerIconPath))
         self.load_icon_movie.setScaledSize(QSize(26, 26))
         self.load_icon_label = QLabel()
         self.load_icon_label.setMovie(self.load_icon_movie)
@@ -24,7 +24,7 @@ class StatusWidget(QWidget):
         self.setLayout(self.layout)
 
     def update_progress(self, new_progress):
-        self.status_label.setText("  "+str(new_progress) + "%")
+        self.status_label.setText("  " + str(new_progress) + "%")
 
     def start_loading(self):
         self.load_icon_movie.start()

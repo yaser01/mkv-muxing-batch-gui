@@ -1,1 +1,2 @@
-Version = "2.4.2"
+VERSION = "3.0.0"
+RELEASE_SUFFIX = "b0"

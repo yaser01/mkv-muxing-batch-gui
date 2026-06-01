@@ -16,8 +16,12 @@ class TableWidgetNoSelection(QTableWidget):
 
             def paint(self, painter, option, index):
                 if option.state & QStyle.StateFlag.State_Selected:
-                    option.palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black)
-                    color = self.combineColors(self.color_default, self.background(option, index))
+                    option.palette.setColor(
+                        QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black
+                    )
+                    color = self.combineColors(
+                        self.color_default, self.background(option, index)
+                    )
                     option.palette.setColor(QPalette.ColorRole.Highlight, color)
                 QStyledItemDelegate.paint(self, painter, option, index)
 
@@ -41,9 +45,10 @@ class TableWidgetNoSelection(QTableWidget):
 
         self.setItemDelegate(StyleDelegateForQTableWidget(self))
 
-    def selectionCommand(self, index: QtCore.QModelIndex,
-                         event: typing.Optional[QtCore.QEvent] = ...) -> QtCore.QItemSelectionModel.SelectionFlag:
-        if self.preventSelect == False:
+    def selectionCommand(
+        self, index: QtCore.QModelIndex, event: typing.Optional[QtCore.QEvent] = ...
+    ) -> QtCore.QItemSelectionModel.SelectionFlag:
+        if not self.preventSelect:
             return super().selectionCommand(index, event)
         if event is None:  # when selecting programmatically or press on header
             return QtCore.QItemSelectionModel.SelectionFlag.NoUpdate

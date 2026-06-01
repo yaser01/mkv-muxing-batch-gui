@@ -1,15 +1,53 @@
 from PySide6.QtGui import QIcon, QPixmap
 
-from packages.Startup.GlobalFiles import OkIconPath, ErrorIconPath, ErrorBigIconPath, SubtitleLightIconPath, \
-    SwitchIconPath, \
-    RefreshIconPath, QuestionIconPath, NoMarkIconPath, PlusIconPath, TrashLightIconPath, TrashDarkIconPath, \
-    RedDashIconPath, InfoIconPath, AboutIconPath, InfoSettingIconPath, WarningCheckBigIconPath, WarningCheckIconPath, \
-    StartMultiplexingIconPath, PauseMultiplexingIconPath, AddToQueueIconPath, ClearIconPath, TopLightIconPath, \
-    DownLightIconPath, UpLightIconPath, BottomLightIconPath, TopDarkIconPath, DownDarkIconPath, UpDarkIconPath, \
-    BottomDarkIconPath, FolderIconPath, SettingIconPath, TelegramIconPath, TwitterIconPath, LeftArrowIconPath, \
-    RightArrowIconPath, DonationsIconPath, ThemeIconPath, AppIconPath, SubtitleDarkIconPath, RenameIconPath, \
-    EmptyIconPath, TrueCheckIconPath, PresetLightIconPath, PresetDarkIconPath, SelectedItemIconPath, \
-    UnSelectedItemIconPath
+from packages.Startup.GlobalFiles import (
+    OkIconPath,
+    ErrorIconPath,
+    ErrorBigIconPath,
+    SubtitleLightIconPath,
+    SwitchIconPath,
+    RefreshIconPath,
+    QuestionIconPath,
+    NoMarkIconPath,
+    PlusIconPath,
+    TrashLightIconPath,
+    TrashDarkIconPath,
+    RedDashIconPath,
+    InfoIconPath,
+    AboutIconPath,
+    InfoSettingIconPath,
+    WarningCheckBigIconPath,
+    WarningCheckIconPath,
+    StartMultiplexingIconPath,
+    PauseMultiplexingIconPath,
+    AddToQueueIconPath,
+    ClearIconPath,
+    TopLightIconPath,
+    DownLightIconPath,
+    UpLightIconPath,
+    BottomLightIconPath,
+    TopDarkIconPath,
+    DownDarkIconPath,
+    UpDarkIconPath,
+    BottomDarkIconPath,
+    FolderIconPath,
+    SettingIconPath,
+    TelegramIconPath,
+    TwitterIconPath,
+    LeftArrowIconPath,
+    RightArrowIconPath,
+    DonationsIconPath,
+    ThemeIconPath,
+    AppIconPath,
+    SubtitleDarkIconPath,
+    RenameIconPath,
+    EmptyIconPath,
+    TrueCheckIconPath,
+    PresetLightIconPath,
+    PresetDarkIconPath,
+    SelectedItemIconPath,
+    UnSelectedItemIconPath,
+)
 
 OkIcon = QIcon(QPixmap(OkIconPath))
 EmptyIcon = QIcon(QPixmap(EmptyIconPath))

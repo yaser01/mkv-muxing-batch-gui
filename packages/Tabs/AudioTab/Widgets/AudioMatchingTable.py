@@ -12,7 +12,7 @@ class AudioMatchingTable(TableFixedHeaderWidget):
     drop_folder_and_files_signal = Signal(list)
 
     def __init__(self, tab_index):
-        super().__init__(primarytable=TableWidget(), headername="Audio Name")
+        super().__init__(primarytable=TableWidget(), headername="Nombre del audio")
         self.tab_index = tab_index
         self.current_files_list = []
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -35,7 +35,9 @@ class AudioMatchingTable(TableFixedHeaderWidget):
     def show_files(self):
         files_list = GlobalSetting.AUDIO_FILES_LIST[self.tab_index]
         self.table.setRowCount(len(files_list))
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.ResizeToContents
+        )
         for i in range(len(files_list)):
             item = QTableWidgetItem(" " + files_list[i])
             item.setToolTip(files_list[i])

@@ -14,4 +14,8 @@ class GreenTikCell(QLabel):
 
     def resizeEvent(self, event: PySide6.QtGui.QResizeEvent):
         super().resizeEvent(event)
-        self.setPixmap(self.pixmap.scaled(self.width(), self.height() - 5, Qt.AspectRatioMode.KeepAspectRatio))
+        self.setPixmap(
+            self.pixmap.scaled(
+                self.width(), self.height() - 5, Qt.AspectRatioMode.KeepAspectRatio
+            )
+        )

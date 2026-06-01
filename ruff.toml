@@ -1,0 +1,9 @@
+line-length = 90
+indent-width = 4
+exclude = ["test*.*"]
+fix = false
+respect-gitignore = true
+
+[analyze]
+detect-string-imports = true
+direction = "dependencies"

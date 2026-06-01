@@ -11,7 +11,7 @@ class VideoInfoButton(QPushButton):
 
     def __init__(self):
         super().__init__()
-        self.setText("Media Info")
+        self.setText("Información del medio")
         self.hint_when_enabled = ""
         self.video_info_dialog = None
         self.is_there_old_files = False
@@ -21,7 +21,12 @@ class VideoInfoButton(QPushButton):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -31,7 +36,12 @@ class VideoInfoButton(QPushButton):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -50,5 +60,9 @@ class VideoInfoButton(QPushButton):
     def update_theme_mode_state(self):
         if self.video_info_dialog is not None:
             self.video_info_dialog.set_dark_mode(Options.Dark_Mode)
-            self.video_info_dialog.resize(self.video_info_dialog.width(), self.video_info_dialog.height() + 1)
-            self.video_info_dialog.resize(self.video_info_dialog.width(), self.video_info_dialog.height() - 1)
+            self.video_info_dialog.resize(
+                self.video_info_dialog.width(), self.video_info_dialog.height() + 1
+            )
+            self.video_info_dialog.resize(
+                self.video_info_dialog.width(), self.video_info_dialog.height() - 1
+            )

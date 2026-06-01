@@ -15,12 +15,12 @@ class OverwriteFilesDialog(MyDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.info_message = "<nobr>You are going to overwrite your source files this <b>can't be undone</b><br>There is no back, you will lost your source files"
-        self.window_title = "Empty Destination Path"
+        self.info_message = "<nobr>Vas a sobrescribir tus archivos de origen, esto <b>no se puede deshacer</b><br>No hay vuelta atrás, perderás tus archivos de origen"
+        self.window_title = "Ruta de destino vacía"
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.yes_button = QPushButton("Overwrite Files")
-        self.no_button = QPushButton("Cancel")
+        self.yes_button = QPushButton("Sobrescribir archivos")
+        self.no_button = QPushButton("Cancelar")
         self.result = "Cancel"
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addStretch(stretch=1)

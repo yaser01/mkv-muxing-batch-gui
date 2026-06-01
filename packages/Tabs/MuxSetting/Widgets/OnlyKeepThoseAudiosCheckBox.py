@@ -7,14 +7,19 @@ class OnlyKeepThoseAudiosCheckBox(QCheckBox):
     def __init__(self):
         super().__init__()
         self.hint_when_enabled = ""
-        self.setText("Only Keep Those Audios :")
+        self.setText("Conservar solo estos audios :")
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -24,7 +29,12 @@ class OnlyKeepThoseAudiosCheckBox(QCheckBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

@@ -1,12 +1,10 @@
-import os
 import sys
 import webbrowser
 import subprocess
 import logging
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-    QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -14,7 +12,7 @@ from packages.Widgets.MyDialog import MyDialog
 
 
 def click_show_log_file():
-    if sys.platform not in ['linux', 'linux2']:
+    if sys.platform not in ["linux", "linux2"]:
         webbrowser.open(GlobalFiles.MuxingLogFilePath)
     else:
         try:
@@ -33,15 +31,17 @@ class OkDialog(MyDialog):
         self.mux_good_photo_label = QLabel()
         self.mux_good_photo_label.setPixmap(QtGui.QPixmap(GlobalFiles.GoodJobIconPath))
         self.messageIcon = QLabel()
-        self.yes_button = QPushButton("OK")
-        self.show_log_file_button = QPushButton("Open log file")
+        self.yes_button = QPushButton("Aceptar")
+        self.show_log_file_button = QPushButton("Abrir archivo de registro")
 
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yes_button)
         self.buttons_layout.addWidget(self.show_log_file_button)
 
         self.main_layout = QGridLayout()
-        self.main_layout.addWidget(self.mux_good_photo_label, 0, 0, 3, 4, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(
+            self.mux_good_photo_label, 0, 0, 3, 4, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         self.main_layout.addLayout(self.buttons_layout, 3, 1, 1, 2)
         self.main_layout.setContentsMargins(10, 20, 10, 20)
         self.setLayout(self.main_layout)

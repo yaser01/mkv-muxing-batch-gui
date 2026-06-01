@@ -18,11 +18,11 @@ def set_application_style():
 
 
 def keep_screen_resolution_good():
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
         QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
         QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '2'
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "2"
 
 
 def apply_light_mode():

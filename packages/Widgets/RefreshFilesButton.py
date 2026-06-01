@@ -11,7 +11,7 @@ class RefreshFilesButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.RefreshIcon)
-        self.hint_when_enabled = "Refresh Files"
+        self.hint_when_enabled = "Actualizar archivos"
         self.current_path = ""
         self.clicked.connect(self.refresh_files)
 
@@ -22,11 +22,16 @@ class RefreshFilesButton(QPushButton):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
-            self.hint_when_enabled = "Refresh Files"
+            self.hint_when_enabled = "Actualizar archivos"
             self.setToolTip(self.hint_when_enabled)
 
     def update_current_path(self, new_path):
@@ -36,7 +41,12 @@ class RefreshFilesButton(QPushButton):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

@@ -12,7 +12,7 @@ class ChapterMatchingTable(TableFixedHeaderWidget):
     drop_folder_and_files_signal = Signal(list)
 
     def __init__(self):
-        super().__init__(primarytable=TableWidget(), headername="Chapter Name")
+        super().__init__(primarytable=TableWidget(), headername="Nombre del capítulo")
         self.current_files_list = []
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)

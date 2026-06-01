@@ -15,7 +15,7 @@ class DeleteAudioButton(QPushButton):
         self.current_index = -1
         self.max_index = -1
         self.hint_when_enabled = ""
-        self.setText("Remove")
+        self.setText("Eliminar")
         self.setIcon(GlobalIcons.TrashLightIcon)
         self.setup_tool_tip_hint()
         self.clicked.connect(self.clicked_button)
@@ -28,14 +28,19 @@ class DeleteAudioButton(QPushButton):
             self.selected_row_after_delete.emit(current_index)
 
     def setup_tool_tip_hint(self):
-        self.setToolTip("Remove Audio (Delete)")
+        self.setToolTip("Eliminar audio (Suprimir)")
         self.setToolTipDuration(3000)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -45,7 +50,12 @@ class DeleteAudioButton(QPushButton):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

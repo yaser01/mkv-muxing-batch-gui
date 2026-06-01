@@ -15,40 +15,45 @@ class ControlQueueButton(QPushButton):
         self.state = ""
         self.set_state_add_to_queue()
         self.clicked.connect(self.button_clicked)
-        self.states = [" Add To Queue", " Start Multiplexing", " Pause Multiplexing", " Waiting Current Job", " Resume "
-                                                                                                              "Multiplexing"]
+        self.states = [
+            " Añadir a cola",
+            " Iniciar multiplexado",
+            " Pausar multiplexado",
+            " Esperando trabajo actual",
+            " Reanudar multiplexado",
+        ]
 
     def set_state_add_to_queue(self):
         self.state = "ADD"
-        self.setText(" Add To Queue")
+        self.setText(" Añadir a cola")
         self.setIcon(GlobalIcons.AddToQueueIcon)
         self.setToolTip("")
         self.setDisabled(False)
 
     def set_state_start_multiplexing(self):
         self.state = "START"
-        self.setText(" Start Multiplexing")
+        self.setText(" Iniciar multiplexado")
         self.setIcon(GlobalIcons.StartMultiplexingIcon)
         self.setToolTip("")
         self.setDisabled(False)
 
     def set_state_pause_multiplexing(self):
         self.state = "PAUSE"
-        self.setText(" Pause Multiplexing")
+        self.setText(" Pausar multiplexado")
         self.setIcon(GlobalIcons.PauseMultiplexingIcon)
         self.setToolTip("")
         self.setDisabled(False)
 
     def set_state_pausing_multiplexing(self):
         self.state = "PAUSING"
-        self.setText(" Waiting Current Job")
+        self.setText(" Esperando trabajo actual")
         self.setIcon(GlobalIcons.PauseMultiplexingIcon)
-        self.setToolTip("will pause muxing after current job finished")
+        self.setToolTip("pausará el multiplexado después de que termine el trabajo actual")
         self.setDisabled(True)
 
     def set_state_resume_multiplexing(self):
         self.state = "RESUME"
-        self.setText(" Resume Multiplexing")
+        self.setText(" Reanudar multiplexado")
         self.setIcon(GlobalIcons.StartMultiplexingIcon)
         self.setToolTip("")
 

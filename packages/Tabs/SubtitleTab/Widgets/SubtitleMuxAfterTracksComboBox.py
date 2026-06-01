@@ -7,17 +7,17 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 def append_int(num):
     if num > 9:
         secondToLastDigit = str(num)[-2]
-        if secondToLastDigit == '1':
-            return 'th'
+        if secondToLastDigit == "1":
+            return "th"
     lastDigit = num % 10
     if lastDigit == 1:
-        return 'st'
+        return "er"
     elif lastDigit == 2:
-        return 'nd'
+        return "do"
     elif lastDigit == 3:
-        return 'rd'
+        return "er"
     else:
-        return 'th'
+        return "o"
 
 
 def num_to_ith(num):
@@ -37,9 +37,9 @@ class SubtitleMuxAfterTracksComboBox(QComboBox):
 
     def update_tracks(self, number_of_tracks):
         self.clear()
-        self.addItem("[At Top]")
+        self.addItem("[Al principio]")
         for item_id in range(1, number_of_tracks + 1):
-            self.addItem(num_to_ith(item_id) + " Subtitle")
+            self.addItem(num_to_ith(item_id) + " subtítulo")
         for i in range(self.count()):
             self.setItemData(i, self.itemText(i), Qt.ItemDataRole.ToolTipRole)
         self.setStyleSheet("QComboBox { combobox-popup: 0; }")
@@ -49,7 +49,12 @@ class SubtitleMuxAfterTracksComboBox(QComboBox):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -59,7 +64,12 @@ class SubtitleMuxAfterTracksComboBox(QComboBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

@@ -1,0 +1,22 @@
+[project]
+name = "mkv-muxing-batch-gui"
+version = "v3.0.0"
+description = "Batch gui program to mux mkv files"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "comtypes>=1.4.11",
+    "psutil>=7.0.0",
+    "pyside6>=6.9.2",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "cx-freeze>=8.4.1",
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.10",
+]
+
+[tool.black]
+line-length = 90

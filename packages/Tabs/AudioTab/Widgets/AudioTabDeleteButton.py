@@ -13,12 +13,11 @@ class AudioTabDeleteButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.TrashLightIcon)
-        self.hint_when_enabled = "Remove Tab"
+        self.hint_when_enabled = "Eliminar pestaña"
         self.setToolTip(self.hint_when_enabled)
         self.clicked.connect(self.open_delete_tab_dialog)
         self.is_there_old_files = False
         self.dark_mode_applied = False
-
 
     def set_is_there_old_file(self, new_state):
         self.is_there_old_files = new_state
@@ -36,7 +35,12 @@ class AudioTabDeleteButton(QPushButton):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -46,7 +50,12 @@ class AudioTabDeleteButton(QPushButton):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

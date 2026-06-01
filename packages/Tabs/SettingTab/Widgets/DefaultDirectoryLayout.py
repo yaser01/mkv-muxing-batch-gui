@@ -1,8 +1,12 @@
 from PySide6.QtWidgets import QHBoxLayout, QLabel
 
 from packages.Tabs.SettingTab.Widgets.ClearSourceButton import ClearSourceButton
-from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLineEdit import DefaultDirectoryLineEdit
-from packages.Tabs.SettingTab.Widgets.DefaultDirectorySourceButton import DefaultDirectorySourceButton
+from packages.Tabs.SettingTab.Widgets.DefaultDirectoryLineEdit import (
+    DefaultDirectoryLineEdit,
+)
+from packages.Tabs.SettingTab.Widgets.DefaultDirectorySourceButton import (
+    DefaultDirectorySourceButton,
+)
 
 
 class DefaultDirectoryLayout(QHBoxLayout):
@@ -19,18 +23,20 @@ class DefaultDirectoryLayout(QHBoxLayout):
         self.connect_signals()
 
     def setup_all_labels_list(self):
-        self.all_labels_list.append("Videos Directory: ")
-        self.all_labels_list.append("Subtitles Directory: ")
-        self.all_labels_list.append("Audios Directory: ")
-        self.all_labels_list.append("Attachments Directory: ")
-        self.all_labels_list.append("Chapters Directory: ")
-        self.all_labels_list.append("Destination Directory: ")
+        self.all_labels_list.append("Directorio de videos: ")
+        self.all_labels_list.append("Directorio de subtítulos: ")
+        self.all_labels_list.append("Directorio de audios: ")
+        self.all_labels_list.append("Directorio de adjuntos: ")
+        self.all_labels_list.append("Directorio de capítulos: ")
+        self.all_labels_list.append("Directorio de destino: ")
 
     def setup_label_width(self):
         width_to_be_fixed = 0
         for i in range(len(self.all_labels_list)):
-            width_to_be_fixed = max(width_to_be_fixed, self.label.fontMetrics().boundingRect(
-                self.all_labels_list[i]).width())
+            width_to_be_fixed = max(
+                width_to_be_fixed,
+                self.label.fontMetrics().boundingRect(self.all_labels_list[i]).width(),
+            )
         self.label.setMinimumWidth(width_to_be_fixed + 5)
 
     def setup_layout(self):

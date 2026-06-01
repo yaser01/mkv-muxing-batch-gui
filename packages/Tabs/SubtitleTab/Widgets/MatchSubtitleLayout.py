@@ -2,7 +2,9 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QHBoxLayout
 
 from packages.Tabs.GlobalSetting import GlobalSetting
-from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleToolsLayout import MatchSubtitleToolsLayout
+from packages.Tabs.SubtitleTab.Widgets.MatchSubtitleToolsLayout import (
+    MatchSubtitleToolsLayout,
+)
 from packages.Tabs.SubtitleTab.Widgets.SubtitleMatchingTable import SubtitleMatchingTable
 from packages.Tabs.SubtitleTab.Widgets.VideoMatchingTable import VideoMatchingTable
 
@@ -15,7 +17,9 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.tab_index = tab_index
         self.video_table = VideoMatchingTable()
         self.subtitle_table = SubtitleMatchingTable(self.tab_index)
-        self.match_tools_layout = MatchSubtitleToolsLayout(parent=parent, tab_index=self.tab_index)
+        self.match_tools_layout = MatchSubtitleToolsLayout(
+            parent=parent, tab_index=self.tab_index
+        )
         self.setup_layout()
         self.sync_slideBar_check = False
         self.connect_signals()
@@ -27,8 +31,12 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.subtitle_table.table.selectionModel().selectionChanged.connect(
             self.send_selection_to_tools_layout
         )
-        self.match_tools_layout.refresh_subtitle_table_signal.connect(self.show_subtitle_files_after_swapping_deleting)
-        self.match_tools_layout.selected_subtitle_row_signal.connect(self.change_selected_subtitle_row)
+        self.match_tools_layout.refresh_subtitle_table_signal.connect(
+            self.show_subtitle_files_after_swapping_deleting
+        )
+        self.match_tools_layout.selected_subtitle_row_signal.connect(
+            self.change_selected_subtitle_row
+        )
 
     def setup_layout(self):
         self.addWidget(self.video_table, 50)
@@ -38,7 +46,10 @@ class MatchSubtitleLayout(QHBoxLayout):
         self.addWidget(self.subtitle_table, 50)
 
     def sync_slideBar(self):
-        if self.sync_slideBar_check == True or self.subtitle_table.table.verticalScrollBar().isSliderDown():
+        if (
+            self.sync_slideBar_check
+            or self.subtitle_table.table.verticalScrollBar().isSliderDown()
+        ):
             self.video_table.table.verticalScrollBar().setValue(
                 self.subtitle_table.table.verticalScrollBar().value()
             )
@@ -73,7 +84,9 @@ class MatchSubtitleLayout(QHBoxLayout):
         list_of_selected_rows = self.subtitle_table.table.selectionModel().selectedRows()
         if len(list_of_selected_rows) > 0:
             selected_row = list_of_selected_rows[0].row()
-        self.match_tools_layout.set_selected_row(selected_row=selected_row, max_index=max_index)
+        self.match_tools_layout.set_selected_row(
+            selected_row=selected_row, max_index=max_index
+        )
 
     def show_video_files(self):
         self.video_table.show_files()

@@ -13,7 +13,7 @@ class AudioTabManager(GlobalSetting):
 
     def __init__(self):
         super().__init__()
-        self.audio_tabs = []
+        self.audio_tabs: list[AudioSelectionSetting] = []
         self.audio_tabs_indices = []
         self.current_index_counter = 0
         self.current_tab_index = 0
@@ -26,8 +26,12 @@ class AudioTabManager(GlobalSetting):
         self.audio_tabs_indices.append(self.current_index_counter)
         self.current_index_counter += 1
         self.current_audio_tab = self.audio_tabs[-1]
-        self.current_audio_tab.is_there_old_files_signal.connect(self.update_is_there_old_files)
-        self.current_audio_tab.is_there_old_files_signal.connect(self.update_is_audio_enabled)
+        self.current_audio_tab.is_there_old_files_signal.connect(
+            self.update_is_there_old_files
+        )
+        self.current_audio_tab.is_there_old_files_signal.connect(
+            self.update_is_audio_enabled
+        )
         self.audio_tab_setting_layout.addWidget(self.audio_tab_comboBox)
         self.audio_tab_setting_layout.addWidget(self.audio_tab_delete_button)
         self.audio_tab_setting_layout.addStretch(1)
@@ -38,12 +42,14 @@ class AudioTabManager(GlobalSetting):
         self.connect_signals()
 
     def connect_signals(self):
-        self.audio_tab_comboBox.current_tab_changed_signal.connect(self.change_current_tab)
+        self.audio_tab_comboBox.current_tab_changed_signal.connect(
+            self.change_current_tab
+        )
         self.audio_tab_comboBox.create_new_tab_signal.connect(self.create_new_tab)
         self.audio_tab_delete_button.remove_tab_signal.connect(self.delete_current_tab)
         self.tab_clicked_signal.connect(self.tab_clicked)
 
-    def change_current_tab(self, tab_index):
+    def change_current_tab(self, tab_index: int):
         real_index = self.audio_tabs_indices[tab_index]
         self.MainLayout.replaceWidget(self.current_audio_tab, self.audio_tabs[tab_index])
         self.current_audio_tab.hide()
@@ -54,7 +60,9 @@ class AudioTabManager(GlobalSetting):
             self.audio_tab_delete_button.hide()
         else:
             self.audio_tab_delete_button.show()
-        self.audio_tab_delete_button.set_is_there_old_file(len(GlobalSetting.AUDIO_FILES_LIST[real_index]) > 0)
+        self.audio_tab_delete_button.set_is_there_old_file(
+            len(GlobalSetting.AUDIO_FILES_LIST[real_index]) > 0
+        )
         self.current_audio_tab.tab_clicked_signal.emit()
 
     def create_new_tab(self):
@@ -66,8 +74,12 @@ class AudioTabManager(GlobalSetting):
         self.current_audio_tab.hide()
         self.audio_tabs[-1].show()
         self.current_audio_tab = self.audio_tabs[-1]
-        self.current_audio_tab.is_there_old_files_signal.connect(self.update_is_there_old_files)
-        self.current_audio_tab.is_there_old_files_signal.connect(self.update_is_audio_enabled)
+        self.current_audio_tab.is_there_old_files_signal.connect(
+            self.update_is_there_old_files
+        )
+        self.current_audio_tab.is_there_old_files_signal.connect(
+            self.update_is_audio_enabled
+        )
         self.audio_tab_delete_button.show()
         self.current_audio_tab.tab_clicked_signal.emit()
 
@@ -75,7 +87,9 @@ class AudioTabManager(GlobalSetting):
         index_to_delete = self.current_tab_index
         index_in_list = self.audio_tabs_indices.index(self.current_tab_index)
         previous_tab_index = index_in_list - 1
-        self.MainLayout.replaceWidget(self.audio_tabs[index_in_list], self.audio_tabs[previous_tab_index])
+        self.MainLayout.replaceWidget(
+            self.audio_tabs[index_in_list], self.audio_tabs[previous_tab_index]
+        )
         self.audio_tab_comboBox.delete_tab(index_in_list)
         self.audio_tabs[index_in_list].hide()
         self.audio_tabs[index_in_list].deleteLater()
@@ -122,6 +136,7 @@ class AudioTabManager(GlobalSetting):
     def set_preset_options(self):
         for audio_tab in self.audio_tabs:
             audio_tab.set_preset_options()
+
     def update_theme_mode_state(self):
         self.audio_tab_comboBox.update_theme_mode_state()
         for audio_tab in self.audio_tabs:

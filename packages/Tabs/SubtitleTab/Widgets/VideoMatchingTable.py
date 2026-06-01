@@ -9,7 +9,7 @@ from packages.Widgets.TableNoSelection import TableWidgetNoSelection
 
 class VideoMatchingTable(TableFixedHeaderWidget):
     def __init__(self):
-        super().__init__(primarytable=TableWidgetNoSelection(), headername="Video Name")
+        super().__init__(primarytable=TableWidgetNoSelection(), headername="Nombre del video")
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -26,10 +26,12 @@ class VideoMatchingTable(TableFixedHeaderWidget):
     def show_files(self):
         video_file_list = GlobalSetting.VIDEO_FILES_LIST
         self.table.setRowCount(len(video_file_list))
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.ResizeToContents
+        )
         for i in range(len(video_file_list)):
-            item = QTableWidgetItem(video_file_list[i])
-            item.setToolTip(video_file_list[i])
+            item = QTableWidgetItem(str(video_file_list[i]))
+            item.setToolTip(str(video_file_list[i]))
             self.table.setItem(i, 0, item)
             item = QTableWidgetItem(str(i + 1))
             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)

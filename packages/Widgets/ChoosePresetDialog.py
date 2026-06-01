@@ -1,6 +1,13 @@
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import QHBoxLayout,QGridLayout, QLabel, QPushButton, QComboBox, QCheckBox
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QGridLayout,
+    QLabel,
+    QPushButton,
+    QComboBox,
+    QCheckBox,
+)
 
 from packages.Startup import GlobalIcons
 from packages.Startup.InitializeScreenResolution import screen_size
@@ -12,10 +19,10 @@ class ChoosePresetDialog(MyDialog):
     def __init__(self, preset_list, favorite_preset_id, parent=None):
         super().__init__(parent)
         self.message = QLabel()
-        self.message.setText("Presets: ")
+        self.message.setText("Preajustes: ")
         self.extra_message = QLabel()
-        self.choose_button = QPushButton("Choose Preset")
-        self.default_preset_button = QPushButton("Use Default")
+        self.choose_button = QPushButton("Elegir preajuste")
+        self.default_preset_button = QPushButton("Usar predeterminado")
         self.favorite_preset_id = favorite_preset_id
         self.buttonLayout = QHBoxLayout()
         # self.buttonLayout.addWidget(self.blank_preset_button)
@@ -32,17 +39,25 @@ class ChoosePresetDialog(MyDialog):
         self.preset_comboBox.setMaxVisibleItems(8)
         self.preset_comboBox.setStyleSheet("QComboBox { combobox-popup: 0; }")
 
-        self.remember_my_choice_checkbox = QCheckBox("Remember this choice")
+        self.remember_my_choice_checkbox = QCheckBox("Recordar esta elección")
 
         self.preset_layout = QHBoxLayout()
         self.preset_layout.addWidget(self.message)
         self.preset_layout.addWidget(self.preset_comboBox, stretch=3)
         self.main_layout = QGridLayout()
         self.main_layout.addLayout(self.preset_layout, 0, 0, 1, -1)
-        self.main_layout.addWidget(self.remember_my_choice_checkbox, 2, 0, 1, -1,
-                                   alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(
+            self.remember_my_choice_checkbox,
+            2,
+            0,
+            1,
+            -1,
+            alignment=Qt.AlignmentFlag.AlignCenter,
+        )
         # self.main_layout.addWidget(self.extra_message, 1, 0, 1, 2)
-        self.main_layout.addLayout(self.buttonLayout, 3, 0, -1, -1, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addLayout(
+            self.buttonLayout, 3, 0, -1, -1, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         self.main_layout.setContentsMargins(13, 13, 13, 13)
         self.setLayout(self.main_layout)
 
@@ -62,9 +77,13 @@ class ChoosePresetDialog(MyDialog):
         self.preset_comboBox.setIconSize(QSize(16, 16))
         for item_index in range(len(items)):
             if self.favorite_preset_id == item_index:
-                self.preset_comboBox.addItem(GlobalIcons.SelectedItemIcon, items[item_index])
+                self.preset_comboBox.addItem(
+                    GlobalIcons.SelectedItemIcon, items[item_index]
+                )
             else:
-                self.preset_comboBox.addItem(GlobalIcons.UnSelectedItemIcon, items[item_index])
+                self.preset_comboBox.addItem(
+                    GlobalIcons.UnSelectedItemIcon, items[item_index]
+                )
 
     def setup_ui(self):
         self.disable_question_mark_window()
@@ -91,7 +110,7 @@ class ChoosePresetDialog(MyDialog):
 
     def disable_question_mark_window(self):
         self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, on=False)
-        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint,on=False)
+        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, on=False)
 
     def increase_message_font_size(self, value):
         message_font = self.message.font()
@@ -100,7 +119,7 @@ class ChoosePresetDialog(MyDialog):
         self.extra_message.setFont(message_font)
 
     def reset_dialog_values(self):
-        self.setWindowTitle("Startup Preset")  # determine when use
+        self.setWindowTitle("Preajuste de inicio")  # determine when use
         self.extra_message.setText("")  # determine when use
 
     def set_default_buttons(self):

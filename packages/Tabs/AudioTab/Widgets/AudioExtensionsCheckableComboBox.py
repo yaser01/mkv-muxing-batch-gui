@@ -9,7 +9,11 @@ from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Startup.PreDefined import AllAudiosExtensions
 from packages.Tabs.AudioTab.Widgets.ReloadAudioFilesDialog import ReloadAudioFilesDialog
-from packages.Tabs.GlobalSetting import GlobalSetting, get_files_names_absolute_list, sort_names_like_windows
+from packages.Tabs.GlobalSetting import (
+    GlobalSetting,
+    get_files_names_absolute_list,
+    sort_names_like_windows,
+)
 
 
 class AudioExtensionsCheckableComboBox(QComboBox):
@@ -63,7 +67,10 @@ class AudioExtensionsCheckableComboBox(QComboBox):
 
     def make_default_extensions_checked(self):
         for i in range(self.model().rowCount()):
-            if self.model().item(i).text() in Options.CurrentPreset.Default_Audio_Extensions:
+            if (
+                self.model().item(i).text()
+                in Options.CurrentPreset.Default_Audio_Extensions
+            ):
                 self.model().item(i).setCheckState(Qt.CheckState.Checked)
         self.updateText()
 
@@ -110,7 +117,7 @@ class AudioExtensionsCheckableComboBox(QComboBox):
                 return False
             else:
                 return False
-        except Exception as e:
+        except Exception:
             return False
 
     def showPopup(self):
@@ -138,17 +145,19 @@ class AudioExtensionsCheckableComboBox(QComboBox):
             if self.model().item(i).checkState() == Qt.CheckState.Checked:
                 extensions_text.append(self.model().item(i).text())
 
-        text = ', '.join(extensions_text)
+        text = ", ".join(extensions_text)
 
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
+        elided_text = metrics.elidedText(
+            text, Qt.TextElideMode.ElideRight, self.lineEdit().width()
+        )
         if elided_text != "":
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
             self.lineEdit().setFont(non_italic_font)
             self.lineEdit().setText(elided_text)
-            self.hint = "<nobr>Extensions: [" + text + "]"
+            self.hint = "<nobr>Extensiones: [" + text + "]"
         self.setToolTip(self.hint)
 
     def addItem(self, text, data=None):
@@ -192,13 +201,20 @@ class AudioExtensionsCheckableComboBox(QComboBox):
                 count += 1
         if count == 0:
             for i in range(self.model().rowCount()):
-                if self.model().item(i).text() in Options.CurrentPreset.Default_Audio_Extensions:
+                if (
+                    self.model().item(i).text()
+                    in Options.CurrentPreset.Default_Audio_Extensions
+                ):
                     self.model().item(i).setCheckState(Qt.CheckState.Checked)
         self.updateText()
 
     def get_files_list(self, new_extensions):
-        temp_files_names = sort_names_like_windows(names_list=os.listdir(self.current_folder_path))
-        temp_files_names_absolute = get_files_names_absolute_list(temp_files_names, self.current_folder_path)
+        temp_files_names = sort_names_like_windows(
+            names_list=os.listdir(self.current_folder_path)
+        )
+        temp_files_names_absolute = get_files_names_absolute_list(
+            temp_files_names, self.current_folder_path
+        )
         result = []
         for i in range(len(temp_files_names)):
             if os.path.isdir(temp_files_names_absolute[i]):
@@ -207,7 +223,9 @@ class AudioExtensionsCheckableComboBox(QComboBox):
                 temp_file_extension_start_index = temp_files_names[i].rfind(".")
                 if temp_file_extension_start_index == -1:
                     continue
-                temp_file_extension = temp_files_names[i][temp_file_extension_start_index + 1:]
+                temp_file_extension = temp_files_names[i][
+                    temp_file_extension_start_index + 1 :
+                ]
                 if temp_file_extension.lower() == new_extensions[j].lower():
                     result.append(temp_files_names[i])
                     break
@@ -235,7 +253,12 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -245,7 +268,12 @@ class AudioExtensionsCheckableComboBox(QComboBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

@@ -1,23 +1,24 @@
 import logging
-import os
 import struct
 import subprocess
 import sys
-from os import listdir
 from pathlib import Path
+import os
+from shutil import which
 
 from packages.Widgets.MissingFilesMessage import MissingFilesMessage
+from packages.Startup.Debug import USE_PG_PORTABLE
 
 
 def create_app_data_folder():
     """
-        Returns a parent directory path
-        where persistent application data can be stored.
+    Returns a parent directory path
+    where persistent application data can be stored.
 
-        # linux: ~/.local/share
-        # macOS: ~/Library/Application Support
-        # windows: C:/Users/<USER>/AppData/Roaming
-        """
+    # linux: ~/.local/share
+    # macOS: ~/Library/Application Support
+    # windows: C:/Users/<USER>/AppData/Roaming
+    """
     home = Path.home()
     app_data = ""
     if sys.platform == "win32":
@@ -28,188 +29,234 @@ def create_app_data_folder():
         app_data = home / "Library/Application Support"
     my_app_data_folder = app_data / "MKV Muxing Batch GUI"
     try:
-        os.makedirs(my_app_data_folder, exist_ok=True)
-    except Exception as e:
+        my_app_data_folder.mkdir(exist_ok=True)
+    except Exception:
         pass
     return my_app_data_folder
 
 
 def add_double_quotation(string):
-    return "\"" + str(string) + "\""
+    return '"' + str(string) + '"'
 
 
-def get_file_name_absolute_path(file_name, folder_path):
-    return os.path.join(Path(folder_path), file_name)
+def get_file_name_absolute_path(file_name: str, folder_path) -> Path:
+    return Path(folder_path) / file_name
 
 
-def get_files_names_absolute_list(files_names, folder_path):
+def get_files_names_absolute_list(files_names, folder_path) -> list[Path]:
     result = []
     for i in range(len(files_names)):
-        result.append(get_file_name_absolute_path(file_name=files_names[i], folder_path=folder_path))
+        result.append(
+            get_file_name_absolute_path(file_name=files_names[i], folder_path=folder_path)
+        )
     return result
 
 
 def delete_old_media_files():
-    only_media_info_files = get_files_names_absolute_list(files_names=listdir(MediaInfoFolderPath),
-                                                          folder_path=MediaInfoFolderPath)
+    only_media_info_files = MediaInfoFolderPath.iterdir()
     for file_name in only_media_info_files:
-        try:
-            os.remove(file_name)
-        except Exception as e:
-            pass
+        file_name.unlink(missing_ok=True)
 
 
-script_path = sys.argv[0]  # get path of the this file
-script_folder = os.path.dirname(script_path)
-resources_folder = os.path.join(os.path.abspath(script_folder), Path('Resources'))
-FontFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Fonts'))
-IconFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Icons'))
-DLLFolderPath = os.path.join(os.path.abspath(resources_folder), Path('DLL'))
-GlobalToolsFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Tools'))
-ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windowsx64'))
-LanguagesFolderPath = os.path.join(os.path.abspath(resources_folder), Path('Languages'))
-LibFolderPath = ""
+script_path = Path(sys.argv[0])  # get path of the this file
+script_folder = script_path.parent
+resources_folder = script_folder.resolve() / "Resources"
+FontFolderPath = resources_folder.resolve() / "Fonts"
+IconFolderPath = resources_folder.resolve() / "Icons"
+DLLFolderPath = resources_folder.resolve() / "DLL"
+GlobalToolsFolderPath = resources_folder.resolve() / "Tools"
+ToolsFolderPath = GlobalToolsFolderPath.resolve() / "Windowsx64"
+LanguagesFolderPath = resources_folder.resolve() / "Languages"
+LibFolderPath = Path()
 if sys.platform == "win32":
     if struct.calcsize("P") * 8 == 32:
-        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows32'))
+        ToolsFolderPath = GlobalToolsFolderPath.resolve() / "Windows32"
     else:
-        ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Windows64'))
+        ToolsFolderPath = GlobalToolsFolderPath.resolve() / "Windows64"
+
 elif sys.platform == "linux" or sys.platform == "linux2":
-    ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Linux'))
-    LibFolderPath = os.path.join(os.path.abspath(ToolsFolderPath), Path('lib'))
+    ToolsFolderPath = GlobalToolsFolderPath.resolve() / "Linux"
+    LibFolderPath = ToolsFolderPath.resolve() / "lib"
 else:
-    ToolsFolderPath = os.path.join(os.path.abspath(GlobalToolsFolderPath), Path('Other Systems'))
+    ToolsFolderPath = GlobalToolsFolderPath.resolve() / "Other Systems"
+
 AppDataFolderPath = create_app_data_folder()
-MergeLogsFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('Logs'))
-MediaInfoFolderPath = os.path.join(os.path.abspath(AppDataFolderPath), Path('MediaInfo'))
-os.makedirs(MergeLogsFolderPath, exist_ok=True)
-os.makedirs(MediaInfoFolderPath, exist_ok=True)
+MergeLogsFolderPath = AppDataFolderPath.resolve() / "Logs"
+MediaInfoFolderPath = AppDataFolderPath.resolve() / "MediaInfo"
+MergeLogsFolderPath.mkdir(exist_ok=True, parents=True)
+MediaInfoFolderPath.mkdir(exist_ok=True, parents=True)
 delete_old_media_files()
 
 
-def get_mkvmerge_version():
-    with open(TestMkvmergeFilePath, "w+", encoding="UTF-8") as test_file:
+def get_program_version(program_path: Path) -> str:
+    def run_version(path: Path) -> str | None:
+        command = add_double_quotation(path) + " -V"
         try:
-            command = add_double_quotation(MKVMERGE_PATH) + " -V"
-            mux_process = subprocess.run(command, shell=True, stdout=test_file, env=ENVIRONMENT)
-        except:
-            return ""
-    with open(TestMkvmergeFilePath, "r+", encoding="UTF-8") as test_file:
-        return test_file.readline().rstrip()
+            result = subprocess.run(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                env=ENVIRONMENT,
+                text=True,
+                check=True,
+                shell=True,
+            )
+            output = result.stdout.strip()
+            logging.debug(output)
+            if path.stem in output:
+                return output
+        except subprocess.CalledProcessError:
+            return None
+        return None
+
+    # Try system path
+    version = run_version(program_path)
+    if version:
+        logging.info(f"{program_path.stem} OK")
+        return version
+
+    # Try portable fallback
+    logging.warning(
+        f"Could not use system {program_path.stem}. Trying portable version..."
+    )
+    suffix = ".exe" if sys.platform == "win32" else ""
+    fallback = ToolsFolderPath.resolve() / f"{program_path.stem}{suffix}"
+
+    version = run_version(fallback)
+    if version:
+        logging.info(f"{fallback.stem} OK")
+        return version
+
+    # If both fail
+    msg = f"Cannot use {program_path.stem} from system or portable path"
+    logging.error(msg)
+    raise subprocess.CalledProcessError(msg)
 
 
-def get_mkvpropedit_version():
-    with open(TestMkvpropeditFilePath, "w+", encoding="UTF-8") as test_file:
-        try:
-            command = add_double_quotation(MKVPROPEDIT_PATH) + " -V"
-            mux_process = subprocess.run(command, shell=True, stdout=test_file, env=ENVIRONMENT)
-        except:
-            return ""
-    with open(TestMkvpropeditFilePath, "r+", encoding="UTF-8") as test_file:
-        return test_file.readline().rstrip()
+def get_program_path(program: str) -> Path:
+    found = which(program)
+    if found and not USE_PG_PORTABLE:
+        global Use_System_PG
+        Use_System_PG = True
+        return Path(found).resolve()
+
+    # Decide suffix
+    suffix = ".exe" if sys.platform == "win32" else ""
+    candidate = None
+
+    if sys.platform == "win32" and not USE_PG_PORTABLE:
+        system_drive = Path(os.environ.get("SystemDrive", "C:"))
+        pf_candidate = (
+            system_drive / "Program Files" / "MKVToolNix" / f"{program}{suffix}"
+        )
+        if pf_candidate.exists():
+            candidate = pf_candidate
+
+    if not candidate or USE_PG_PORTABLE:
+        if not USE_PG_PORTABLE:
+            logging.warning(
+                f"Could not find system {program}. Trying portable version..."
+            )
+        else:
+            logging.warning("Force Use portable version")
+        candidate = ToolsFolderPath.resolve() / f"{program}{suffix}"
+
+    candidate = candidate.resolve()
+
+    if not candidate.exists():
+        logging.error(f"{program} not found in path, Program Files, or Tools folder!")
+        raise FileNotFoundError(f"{program} not found!")
+
+    return candidate
 
 
 def update_enviro_if_not_windows():
     if "LD_LIBRARY_PATH" not in ENVIRONMENT.keys():
         ENVIRONMENT["LD_LIBRARY_PATH"] = ""
-    if sys.platform != "win32":
-        ENVIRONMENT["LD_LIBRARY_PATH"] = f"{Path(LibFolderPath).absolute()}:{ENVIRONMENT['LD_LIBRARY_PATH']}"
+    if sys.platform != "win32" and not Use_System_PG:
+        ENVIRONMENT["LD_LIBRARY_PATH"] = (
+            f"{LibFolderPath.resolve()}:{ENVIRONMENT['LD_LIBRARY_PATH']}"
+        )
 
 
 try:
-    MyFontPath = os.path.join(os.path.abspath(FontFolderPath), 'OpenSans.ttf')
-    WarningCheckBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'WarningCheckBig.png')
-    WarningCheckIconPath = os.path.join(os.path.abspath(IconFolderPath), 'WarningCheck.png')
-    TrueCheckIconPath = os.path.join(os.path.abspath(IconFolderPath), 'TrueCheck.png')
-    GreenTikMarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'GreenTikMark.png')
-    RedCrossMarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'RedCrossMark.png')
-    ChapterIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Chapter.svg')
-    SubtitleLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Subtitle_Light.svg')
-    AudioLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Audio_Light.svg')
-    SubtitleDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Subtitle_Dark.svg')
-    AudioDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Audio_Dark.svg')
-    StartMultiplexingIconPath = os.path.join(os.path.abspath(IconFolderPath), 'StartMultiplexing.png')
-    PauseMultiplexingIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Pause.png')
-    AddToQueueIconPath = os.path.join(os.path.abspath(IconFolderPath), 'AddToQueue.svg')
-    InfoSettingIconPath = os.path.join(os.path.abspath(IconFolderPath), 'InfoSetting.svg')
-    InfoIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Info.svg')
-    AboutIconPath = os.path.join(os.path.abspath(IconFolderPath), 'About.svg')
-    NoMarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'NoMark.svg')
-    RedDashIconPath = os.path.join(os.path.abspath(IconFolderPath), 'RedDash.svg')
-    PlusIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Plus.svg')
-    TrashLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Trash_Light.svg')
-    TrashDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Trash_Dark.svg')
-    RenameIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Rename.png')
-    SwitchIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Switch.svg')
-    QuestionIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Question.svg')
-    InfoBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'InfoBig.png')
-    OkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Ok.png')
-    PresetLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Preset_Light.png')
-    PresetDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Preset_Dark.png')
-    SelectedItemIconPath = os.path.join(os.path.abspath(IconFolderPath), 'SelectedItemIcon.png')
-    UnSelectedItemIconPath = os.path.join(os.path.abspath(IconFolderPath), 'UnSelectedItemIcon.png')
-    EmptyIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Empty.png')
-    ErrorIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Error.png')
-    LeftArrowIconPath = os.path.join(os.path.abspath(IconFolderPath), 'LeftArrow.png')
-    RightArrowIconPath = os.path.join(os.path.abspath(IconFolderPath), 'RightArrow.png')
-    ErrorBigIconPath = os.path.join(os.path.abspath(IconFolderPath), 'ErrorBig.png')
-    DonationsIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Donations.png')
-    ClearIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Clear.svg')
-    RefreshIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Refresh.png')
-    TopLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Top_Light.svg')
-    DownLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Down_Light.svg')
-    UpLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Up_Light.svg')
-    BottomLightIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Bottom_Light.svg')
-    TopDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Top_Dark.svg')
-    DownDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Down_Dark.svg')
-    UpDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Up_Dark.svg')
-    BottomDarkIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Bottom_Dark.svg')
-    FolderIconPath = os.path.join(os.path.abspath(IconFolderPath), 'SelectFolder.svg')
-    SpinnerIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Spinner.gif')
-    GoodJobIconPath = os.path.join(os.path.abspath(IconFolderPath), 'GoodJob.png')
-    SettingIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Setting.svg')
-    TelegramIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Telegram.svg')
-    TwitterIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Twitter.svg')
-    ThemeIconPath = os.path.join(os.path.abspath(IconFolderPath), 'Day_And_Night.png')
-    AppIconPath = os.path.join(os.path.abspath(IconFolderPath), 'App.ico')
-    LanguagesFilePath = os.path.join(os.path.abspath(LanguagesFolderPath), "iso639_language_list.json")
-    AppLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "app_log.txt")
-    MuxingLogFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "muxing_log_file.txt")
-    TestMkvmergeFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "test_mkvmerge.txt")
-    TestMkvpropeditFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "test_mkvpropedit.txt")
-    mkvpropeditJsonJobFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "mkvpropeditJob.json")
-    mkvmergeJsonJobFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "MkvmergeJob.json")
-    mkvmergeJsonInfoFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "MkvmergeInfo.json")
-    SettingJsonInfoFilePath = os.path.join(os.path.abspath(AppDataFolderPath), "setting.json")
-    TaskBarLibFilePath = os.path.join(os.path.abspath(DLLFolderPath), "TaskbarLib.tlb")
-    MKVPROPEDIT_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvpropedit")
-    MKVMERGE_PATH = os.path.join(os.path.abspath(ToolsFolderPath), "mkvmerge")
+    MyFontPath = FontFolderPath.resolve() / "OpenSans.ttf"
+    WarningCheckBigIconPath = IconFolderPath.resolve() / "WarningCheckBig.png"
+    WarningCheckIconPath = IconFolderPath.resolve() / "WarningCheck.png"
+    TrueCheckIconPath = IconFolderPath.resolve() / "TrueCheck.png"
+    GreenTikMarkIconPath = IconFolderPath.resolve() / "GreenTikMark.png"
+    RedCrossMarkIconPath = IconFolderPath.resolve() / "RedCrossMark.png"
+    ChapterIconPath = IconFolderPath.resolve() / "Chapter.svg"
+    SubtitleLightIconPath = IconFolderPath.resolve() / "Subtitle_Light.svg"
+    AudioLightIconPath = IconFolderPath.resolve() / "Audio_Light.svg"
+    SubtitleDarkIconPath = IconFolderPath.resolve() / "Subtitle_Dark.svg"
+    AudioDarkIconPath = IconFolderPath.resolve() / "Audio_Dark.svg"
+    StartMultiplexingIconPath = IconFolderPath.resolve() / "StartMultiplexing.png"
+    PauseMultiplexingIconPath = IconFolderPath.resolve() / "Pause.png"
+    AddToQueueIconPath = IconFolderPath.resolve() / "AddToQueue.svg"
+    InfoSettingIconPath = IconFolderPath.resolve() / "InfoSetting.svg"
+    InfoIconPath = IconFolderPath.resolve() / "Info.svg"
+    AboutIconPath = IconFolderPath.resolve() / "About.svg"
+    NoMarkIconPath = IconFolderPath.resolve() / "NoMark.svg"
+    RedDashIconPath = IconFolderPath.resolve() / "RedDash.svg"
+    PlusIconPath = IconFolderPath.resolve() / "Plus.svg"
+    TrashLightIconPath = IconFolderPath.resolve() / "Trash_Light.svg"
+    TrashDarkIconPath = IconFolderPath.resolve() / "Trash_Dark.svg"
+    RenameIconPath = IconFolderPath.resolve() / "Rename.png"
+    SwitchIconPath = IconFolderPath.resolve() / "Switch.svg"
+    QuestionIconPath = IconFolderPath.resolve() / "Question.svg"
+    InfoBigIconPath = IconFolderPath.resolve() / "InfoBig.png"
+    OkIconPath = IconFolderPath.resolve() / "Ok.png"
+    PresetLightIconPath = IconFolderPath.resolve() / "Preset_Light.png"
+    PresetDarkIconPath = IconFolderPath.resolve() / "Preset_Dark.png"
+    SelectedItemIconPath = IconFolderPath.resolve() / "SelectedItemIcon.png"
+    UnSelectedItemIconPath = IconFolderPath.resolve() / "UnSelectedItemIcon.png"
+    EmptyIconPath = IconFolderPath.resolve() / "Empty.png"
+    ErrorIconPath = IconFolderPath.resolve() / "Error.png"
+    LeftArrowIconPath = IconFolderPath.resolve() / "LeftArrow.png"
+    RightArrowIconPath = IconFolderPath.resolve() / "RightArrow.png"
+    ErrorBigIconPath = IconFolderPath.resolve() / "ErrorBig.png"
+    DonationsIconPath = IconFolderPath.resolve() / "Donations.png"
+    ClearIconPath = IconFolderPath.resolve() / "Clear.svg"
+    RefreshIconPath = IconFolderPath.resolve() / "Refresh.png"
+    TopLightIconPath = IconFolderPath.resolve() / "Top_Light.svg"
+    DownLightIconPath = IconFolderPath.resolve() / "Down_Light.svg"
+    UpLightIconPath = IconFolderPath.resolve() / "Up_Light.svg"
+    BottomLightIconPath = IconFolderPath.resolve() / "Bottom_Light.svg"
+    TopDarkIconPath = IconFolderPath.resolve() / "Top_Dark.svg"
+    DownDarkIconPath = IconFolderPath.resolve() / "Down_Dark.svg"
+    UpDarkIconPath = IconFolderPath.resolve() / "Up_Dark.svg"
+    BottomDarkIconPath = IconFolderPath.resolve() / "Bottom_Dark.svg"
+    FolderIconPath = IconFolderPath.resolve() / "SelectFolder.svg"
+    SpinnerIconPath = IconFolderPath.resolve() / "Spinner.gif"
+    GoodJobIconPath = IconFolderPath.resolve() / "GoodJob.png"
+    SettingIconPath = IconFolderPath.resolve() / "Setting.svg"
+    TelegramIconPath = IconFolderPath.resolve() / "Telegram.svg"
+    TwitterIconPath = IconFolderPath.resolve() / "Twitter.svg"
+    ThemeIconPath = IconFolderPath.resolve() / "Day_And_Night.png"
+    AppIconPath = IconFolderPath.resolve() / "App.ico"
+
+    LanguagesFilePath = LanguagesFolderPath.resolve() / "iso639_language_list.json"
+    AppLogFilePath = AppDataFolderPath.resolve() / "app_log.txt"
+    MuxingLogFilePath = AppDataFolderPath.resolve() / "muxing_log_file.txt"
+    TestMkvmergeFilePath = AppDataFolderPath.resolve() / "test_mkvmerge.txt"
+    TestMkvpropeditFilePath = AppDataFolderPath.resolve() / "test_mkvpropedit.txt"
+    mkvpropeditJsonJobFilePath = AppDataFolderPath.resolve() / "mkvpropeditJob.json"
+    mkvmergeJsonJobFilePath = AppDataFolderPath.resolve() / "MkvmergeJob.json"
+    mkvmergeJsonInfoFilePath = AppDataFolderPath.resolve() / "MkvmergeInfo.json"
+    SettingJsonInfoFilePath = AppDataFolderPath.resolve() / "setting.json"
+
+    TaskBarLibFilePath = DLLFolderPath.resolve() / "TaskbarLib.tlb"
+    # not sure why logging set in main not work in here
+    # this use to check mkvtoolnix tool
+    logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
+    Use_System_PG = False
+    MKVPROPEDIT_PATH = get_program_path("mkvpropedit")
+    MKVMERGE_PATH = get_program_path("mkvmerge")
     ENVIRONMENT = os.environ.copy()
     update_enviro_if_not_windows()
-    MKVPROPEDIT_VERSION = get_mkvpropedit_version()
-    MKVMERGE_VERSION = get_mkvmerge_version()
-    if "mkvmerge" not in MKVMERGE_VERSION:
-        logging.warning("Could not use portable mkvmerge. Trying system version...")
-        MKVMERGE_PATH = "mkvmerge"
-        MKVMERGE_VERSION = get_mkvmerge_version()
-        if "mkvmerge" not in MKVMERGE_VERSION:
-            MKVMERGE_VERSION = "mkvmerge: not found!"
-            raise Exception("mkvmerge file! ")
-        else:
-            logging.info("mkvmerge OK")
-    else:
-        logging.info("mkvmerge OK")
-    if "mkvpropedit" not in MKVPROPEDIT_VERSION:
-        logging.warning("Could not use portable mkvpropedit. Trying system version...")
-        MKVPROPEDIT_PATH = "mkvpropedit"
-        MKVPROPEDIT_VERSION = get_mkvpropedit_version()
-        if "mkvpropedit" not in MKVPROPEDIT_VERSION:
-            MKVPROPEDIT_VERSION = "mkvpropedit: not found!"
-            raise Exception("mkvpropedit file! ")
-        else:
-            logging.info("mkvpropedit OK")
-    else:
-        logging.info("mkvpropedit OK")
+    MKVPROPEDIT_VERSION = get_program_version(MKVPROPEDIT_PATH)
+    MKVMERGE_VERSION = get_program_version(MKVMERGE_PATH)
 except Exception as e:
     logging.error(e)
     missing_files_message = MissingFilesMessage(error_message=str(e))

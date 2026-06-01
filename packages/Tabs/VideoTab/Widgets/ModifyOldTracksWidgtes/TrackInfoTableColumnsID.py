@@ -1,5 +1,12 @@
 class TrackInfoTableColumnsID:
-    columns_name = ["Video Name", "Found", "Is Default", "Is Forced", "Track Name", "Track Language"]
+    columns_name = [
+        "Nombre del video",
+        "Encontrada",
+        "Es predeterminada",
+        "Es forzada",
+        "Nombre de pista",
+        "Idioma de pista",
+    ]
     Video_Name = 0
     Found = 1
     Is_Default = 2

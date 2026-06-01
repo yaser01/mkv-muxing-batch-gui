@@ -15,7 +15,7 @@ class AudioDelayDoubleSpinBox(QDoubleSpinBox):
         self.setMaximum(9999.0)
         self.setSingleStep(0.5)
         self.setMaximumWidth(screen_size.width() // 16)
-        self.setToolTip("Audio Delay in second(s)")
+        self.setToolTip("Retraso de audio en segundo(s)")
         self.editingFinished.connect(self.change_global_audio_delay)
 
     def change_global_audio_delay(self):
@@ -25,7 +25,12 @@ class AudioDelayDoubleSpinBox(QDoubleSpinBox):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -35,7 +40,12 @@ class AudioDelayDoubleSpinBox(QDoubleSpinBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

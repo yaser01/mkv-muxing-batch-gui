@@ -1,7 +1,6 @@
 from PySide6 import QtGui, QtCore
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-    QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -15,8 +14,8 @@ class NoSpaceWarningDialog(MyDialog):
         self.window_title = window_title
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.yes_button = QPushButton("Confirm Muxing")
-        self.no_button = QPushButton("Cancel")
+        self.yes_button = QPushButton("Confirmar multiplexado")
+        self.no_button = QPushButton("Cancelar")
         self.result = ""
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yes_button)

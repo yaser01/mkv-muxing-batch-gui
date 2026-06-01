@@ -9,6 +9,7 @@ from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.GlobalSetting import sort_names_like_windows, GlobalSetting
 from packages.Widgets.TableWidget import TableWidget
+from pathlib import Path
 
 
 class VideoTable(TableWidget):
@@ -24,8 +25,10 @@ class VideoTable(TableWidget):
             "Name": 0,
             "Size": 1,
         }
-        self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
-                           "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
+        self.text_color = {
+            "light": {"activate": "#000000", "disable": "#787878"},
+            "dark": {"activate": "#FFFFFF", "disable": "#878787"},
+        }
         self.setColumnCount(2)
         self.setRowCount(0)
         self.setAcceptDrops(True)
@@ -99,12 +102,14 @@ class VideoTable(TableWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
     def setup_columns(self):
-        self.set_column_name(column_index=0, name="Name")
-        self.set_column_name(column_index=1, name="Size")
+        self.set_column_name(column_index=0, name="Nombre")
+        self.set_column_name(column_index=1, name="Tamaño")
 
     def set_column_name(self, column_index, name):
         column = QTableWidgetItem(name)
-        column.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        column.setTextAlignment(
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        )
         self.setHorizontalHeaderItem(column_index, column)
 
     def set_row_height(self, new_height):
@@ -117,12 +122,19 @@ class VideoTable(TableWidget):
         super().resizeEvent(event)
         self.resize_2nd_column()
 
-    def show_files_list(self, files_names_list, files_names_checked_list, files_size_list):
+    def show_files_list(
+        self,
+        files_names_list: list[Path],
+        files_names_checked_list: list[bool],
+        files_size_list: list[str],
+    ):
         self.setRowCount(len(files_names_list))
         self.set_row_height(new_height=screen_size.height() // 27)
         for i in range(len(files_names_list)):
             self.set_row_number(row_number=i + 1, row_index=i)
-            self.set_row_file_name(file_name=files_names_list[i], row_index=i, is_checked=files_names_checked_list[i])
+            self.set_row_file_name(
+                str(files_names_list[i]), i, files_names_checked_list[i]
+            )
             self.set_row_file_size(file_size=files_size_list[i], row_index=i)
             if files_names_checked_list[i]:
                 self.update_row_text_color(row_index=i, status="activate")
@@ -130,16 +142,16 @@ class VideoTable(TableWidget):
                 self.update_row_text_color(row_index=i, status="disable")
         self.show()
 
-    def set_row_number(self, row_number, row_index):
+    def set_row_number(self, row_number: int, row_index: int):
         row_number_item = QTableWidgetItem(str(row_number))
         row_number_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setVerticalHeaderItem(row_index, row_number_item)
 
-    def set_row_file_size(self, file_size, row_index):
+    def set_row_file_size(self, file_size: str, row_index: int):
         file_size_item = QTableWidgetItem(file_size)
         self.setItem(row_index, 1, file_size_item)
 
-    def set_row_file_name(self, file_name, row_index, is_checked=True):
+    def set_row_file_name(self, file_name: str, row_index: int, is_checked=True):
         file_name_item = QTableWidgetItem(" " + file_name)
         if is_checked:
             file_name_item.setCheckState(Qt.CheckState.Checked)
@@ -186,12 +198,16 @@ class VideoTable(TableWidget):
     def disable_selection(self):
         for i in reversed(range(self.rowCount())):
             self.item(i, self.column_ids["Name"]).setFlags(
-                self.item(i, self.column_ids["Name"]).flags() & (~Qt.ItemFlag.ItemIsUserCheckable))
+                self.item(i, self.column_ids["Name"]).flags()
+                & (~Qt.ItemFlag.ItemIsUserCheckable)
+            )
 
     def enable_selection(self):
         for i in reversed(range(self.rowCount())):
             self.item(i, self.column_ids["Name"]).setFlags(
-                self.item(i, self.column_ids["Name"]).flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                self.item(i, self.column_ids["Name"]).flags()
+                | Qt.ItemFlag.ItemIsUserCheckable
+            )
 
     def move_row_down(self):
         if not GlobalSetting.JOB_QUEUE_EMPTY:

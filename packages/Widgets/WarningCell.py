@@ -1,7 +1,8 @@
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QSizePolicy, QLabel,
+    QSizePolicy,
+    QLabel,
 )
 
 from packages.Startup import GlobalFiles

@@ -25,8 +25,10 @@ class AttachmentTable(TableWidget):
             "Name": 0,
             "Size": 1,
         }
-        self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
-                           "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
+        self.text_color = {
+            "light": {"activate": "#000000", "disable": "#787878"},
+            "dark": {"activate": "#FFFFFF", "disable": "#878787"},
+        }
         self.disable_table_bold_column()
         self.disable_table_edit()
         self.force_select_whole_row()
@@ -81,8 +83,8 @@ class AttachmentTable(TableWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
     def setup_columns(self):
-        self.set_column_name(column_index=self.column_ids["Name"], name="Name")
-        self.set_column_name(column_index=self.column_ids["Size"], name="Size")
+        self.set_column_name(column_index=self.column_ids["Name"], name="Nombre")
+        self.set_column_name(column_index=self.column_ids["Size"], name="Tamaño")
 
     def set_column_name(self, column_index, name, alignment=Qt.AlignmentFlag.AlignLeft):
         column = QTableWidgetItem(name)
@@ -93,20 +95,30 @@ class AttachmentTable(TableWidget):
         self.verticalHeader().setDefaultSectionSize(new_height)
 
     def resize_2nd_column(self):
-        self.setColumnWidth(self.column_ids["Size"],
-                            min(self.columnWidth(self.column_ids["Name"]) // 2, screen_size.width() // 14))
+        self.setColumnWidth(
+            self.column_ids["Size"],
+            min(
+                self.columnWidth(self.column_ids["Name"]) // 2, screen_size.width() // 14
+            ),
+        )
 
     def resizeEvent(self, event: PySide6.QtGui.QResizeEvent) -> None:
         super().resizeEvent(event)
         self.resize_2nd_column()
 
-    def show_files_list(self, files_names_list, files_names_checked_list, files_size_list):
+    def show_files_list(
+        self, files_names_list, files_names_checked_list, files_size_list
+    ):
         self.checking_row_updates = False
         self.setRowCount(len(files_names_list))
         self.set_row_height(new_height=screen_size.height() // 27)
         for i in range(len(files_names_list)):
             self.set_row_number(row_number=i + 1, row_index=i)
-            self.set_row_file_name(file_name=files_names_list[i], row_index=i, is_checked=files_names_checked_list[i])
+            self.set_row_file_name(
+                file_name=files_names_list[i],
+                row_index=i,
+                is_checked=files_names_checked_list[i],
+            )
             self.set_row_file_size(file_size=files_size_list[i], row_index=i)
             if files_names_checked_list[i]:
                 self.update_row_text_color(row_index=i, status="activate")
@@ -144,14 +156,24 @@ class AttachmentTable(TableWidget):
             if attachment_index < len(GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST):
                 if item.checkState() == Qt.CheckState.Unchecked:
                     GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[attachment_index] = False
-                    self.update_row_text_color(row_index=attachment_index, status="disable")
+                    self.update_row_text_color(
+                        row_index=attachment_index, status="disable"
+                    )
                     self.update_unchecked_attachment_signal.emit(
-                        GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[attachment_index])
+                        GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[
+                            attachment_index
+                        ]
+                    )
                 elif item.checkState() == Qt.CheckState.Checked:
                     GlobalSetting.ATTACHMENT_FILES_CHECKING_LIST[attachment_index] = True
-                    self.update_row_text_color(row_index=attachment_index, status="activate")
+                    self.update_row_text_color(
+                        row_index=attachment_index, status="activate"
+                    )
                     self.update_checked_attachment_signal.emit(
-                        GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[attachment_index])
+                        GlobalSetting.ATTACHMENT_FILES_ABSOLUTE_PATH_LIST[
+                            attachment_index
+                        ]
+                    )
             self.checking_row_updates = True
 
     def update_row_text_color(self, row_index, status):
@@ -172,9 +194,13 @@ class AttachmentTable(TableWidget):
     def disable_selection(self):
         for i in reversed(range(self.rowCount())):
             self.item(i, self.column_ids["Name"]).setFlags(
-                self.item(i, self.column_ids["Name"]).flags() & (~Qt.ItemFlag.ItemIsUserCheckable))
+                self.item(i, self.column_ids["Name"]).flags()
+                & (~Qt.ItemFlag.ItemIsUserCheckable)
+            )
 
     def enable_selection(self):
         for i in reversed(range(self.rowCount())):
             self.item(i, self.column_ids["Name"]).setFlags(
-                self.item(i, self.column_ids["Name"]).flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                self.item(i, self.column_ids["Name"]).flags()
+                | Qt.ItemFlag.ItemIsUserCheckable
+            )

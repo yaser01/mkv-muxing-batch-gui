@@ -11,7 +11,9 @@ from packages.Tabs.GlobalSetting import GlobalSetting
 class AlignDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super(AlignDelegate, self).initStyleOption(option, index)
-        option.displayAlignment = Qt.AlignmentFlag.AlignJustify | Qt.AlignmentFlag.AlignCenter
+        option.displayAlignment = (
+            Qt.AlignmentFlag.AlignJustify | Qt.AlignmentFlag.AlignCenter
+        )
 
 
 class SubtitleTabComboBox(QComboBox):
@@ -20,14 +22,14 @@ class SubtitleTabComboBox(QComboBox):
 
     def __init__(self):
         super().__init__()
-        self.hint_when_enabled = "Subtitles Groups"
-        self.name = "Subtitle"
-        self.hint_when_enabled = "Subtitle ID"
+        self.hint_when_enabled = "Grupos de subtítulos"
+        self.name = "Subtítulo"
+        self.hint_when_enabled = "ID de subtítulo"
         self.closeOnLineEditClick = False
         # delegate = AlignDelegate(self)
         # self.setItemDelegate(delegate)
         self.addItem(self.name + " #1")
-        self.addItem(GlobalIcons.PlusIcon, "New")
+        self.addItem(GlobalIcons.PlusIcon, "Nuevo")
         self.setIconSize(QSize(13, 13))
         self.setEditable(True)
         self.setStyleSheet("QComboBox::pane {border-radius: 5px;}")
@@ -48,7 +50,12 @@ class SubtitleTabComboBox(QComboBox):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -58,7 +65,12 @@ class SubtitleTabComboBox(QComboBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -70,11 +82,11 @@ class SubtitleTabComboBox(QComboBox):
         super().setToolTip(new_tool_tip)
 
     def check_selected(self, new_selected):
-        if self.itemText(new_selected).find("New") != -1:
+        if self.itemText(new_selected).find("Nuevo") != -1:
             self.create_new_tab_signal.emit()
             self.removeItem(self.count() - 1)
             self.addItem(self.name + " #" + str(self.count() + 1))
-            self.addItem(GlobalIcons.PlusIcon, "New")
+            self.addItem(GlobalIcons.PlusIcon, "Nuevo")
             self.setCurrentIndex(self.count() - 2)
 
         else:
@@ -96,7 +108,7 @@ class SubtitleTabComboBox(QComboBox):
                             self.showPopup()
                         return True
                     return False
-        except Exception as e:
+        except Exception:
             return False
 
     def hidePopup(self):
@@ -122,12 +134,12 @@ class SubtitleTabComboBox(QComboBox):
             self.setItemText(i, self.name + " #" + str(i + 1))
 
     def hide_new_tab_option(self):
-        if self.itemText(self.count() - 1).find("New") != -1:
+        if self.itemText(self.count() - 1).find("Nuevo") != -1:
             self.removeItem(self.count() - 1)
 
     def show_new_tab_option(self):
-        if self.itemText(self.count() - 1).find("New") == -1:
-            self.addItem(GlobalIcons.PlusIcon, "New")
+        if self.itemText(self.count() - 1).find("Nuevo") == -1:
+            self.addItem(GlobalIcons.PlusIcon, "Nuevo")
 
     def update_theme_mode_state(self):
         if Options.Dark_Mode:

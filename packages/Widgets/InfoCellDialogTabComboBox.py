@@ -37,7 +37,7 @@ class InfoCellDialogTabComboBox(QComboBox):
                             self.showPopup()
                         return True
                     return False
-        except Exception as e:
+        except Exception:
             return False
 
     def hidePopup(self):

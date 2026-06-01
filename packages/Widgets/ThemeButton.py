@@ -31,9 +31,9 @@ class ThemeButton(QPushButton):
         self.dark_mode_updated_signal.emit()
 
     def set_tool_tip_when_dark(self):
-        self.setToolTip("Switch To Light Mode")
+        self.setToolTip("Cambiar a modo claro")
         self.setToolTipDuration(1500)
 
     def set_tool_tip_when_light(self):
-        self.setToolTip("Switch To Dark Mode")
+        self.setToolTip("Cambiar a modo oscuro")
         self.setToolTipDuration(1500)

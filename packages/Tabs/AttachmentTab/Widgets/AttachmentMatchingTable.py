@@ -27,8 +27,10 @@ class AttachmentMatchingTable(TableWidget):
             "Name": 0,
             "Size": 1,
         }
-        self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
-                           "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
+        self.text_color = {
+            "light": {"activate": "#000000", "disable": "#787878"},
+            "dark": {"activate": "#FFFFFF", "disable": "#878787"},
+        }
         self.disable_table_bold_column()
         self.disable_table_edit()
         self.force_select_whole_row()
@@ -82,8 +84,16 @@ class AttachmentMatchingTable(TableWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
     def setup_columns(self):
-        self.set_column_name(column_index=self.column_ids["Name"], name="Folder/File Name", alignment=Qt.AlignmentFlag.AlignCenter)
-        self.set_column_name(column_index=self.column_ids["Size"], name="Size", alignment=Qt.AlignmentFlag.AlignCenter)
+        self.set_column_name(
+            column_index=self.column_ids["Name"],
+            name="Nombre de carpeta/archivo",
+            alignment=Qt.AlignmentFlag.AlignCenter,
+        )
+        self.set_column_name(
+            column_index=self.column_ids["Size"],
+            name="Tamaño",
+            alignment=Qt.AlignmentFlag.AlignCenter,
+        )
 
     def set_column_name(self, column_index, name, alignment=Qt.AlignmentFlag.AlignLeft):
         column = QTableWidgetItem(name)
@@ -94,8 +104,12 @@ class AttachmentMatchingTable(TableWidget):
         self.verticalHeader().setDefaultSectionSize(new_height)
 
     def resize_2nd_column(self):
-        self.setColumnWidth(self.column_ids["Size"],
-                            min(self.columnWidth(self.column_ids["Name"]) // 2, screen_size.width() // 14))
+        self.setColumnWidth(
+            self.column_ids["Size"],
+            min(
+                self.columnWidth(self.column_ids["Name"]) // 2, screen_size.width() // 14
+            ),
+        )
 
     def resizeEvent(self, event: PySide6.QtGui.QResizeEvent) -> None:
         super().resizeEvent(event)

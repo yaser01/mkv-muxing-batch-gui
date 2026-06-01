@@ -5,11 +5,19 @@ from typing import List
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QHBoxLayout, QWidget
 
-from packages.Tabs.AttachmentTab.Widgets.AttachmentMatchingTable import AttachmentMatchingTable
-from packages.Tabs.AttachmentTab.Widgets.MatchAttachmentToolsLayout import MatchAttachmentToolsLayout
+from packages.Tabs.AttachmentTab.Widgets.AttachmentMatchingTable import (
+    AttachmentMatchingTable,
+)
+from packages.Tabs.AttachmentTab.Widgets.MatchAttachmentToolsLayout import (
+    MatchAttachmentToolsLayout,
+)
 from packages.Widgets.PathData import PathData
 from packages.Tabs.AttachmentTab.Widgets.VideoMatchingTable import VideoMatchingTable
-from packages.Tabs.GlobalSetting import GlobalSetting, get_readable_filesize, sort_names_like_windows
+from packages.Tabs.GlobalSetting import (
+    GlobalSetting,
+    get_readable_filesize,
+    sort_names_like_windows,
+)
 
 
 class MatchAttachmentWidget(QWidget):
@@ -39,9 +47,14 @@ class MatchAttachmentWidget(QWidget):
             self.send_selection_to_tools_layout
         )
         self.match_tools_layout.refresh_attachment_table_signal.connect(
-            self.show_attachment_files_after_swapping_deleting)
-        self.match_tools_layout.selected_attachment_row_signal.connect(self.change_selected_attachment_row)
-        self.attachment_table.drop_folder_and_files_signal.connect(self.update_paths_with_drag_and_drop)
+            self.show_attachment_files_after_swapping_deleting
+        )
+        self.match_tools_layout.selected_attachment_row_signal.connect(
+            self.change_selected_attachment_row
+        )
+        self.attachment_table.drop_folder_and_files_signal.connect(
+            self.update_paths_with_drag_and_drop
+        )
 
     def setup_layout(self):
         self.main_layout.addWidget(self.video_table, 50)
@@ -52,7 +65,10 @@ class MatchAttachmentWidget(QWidget):
         self.setLayout(self.main_layout)
 
     def sync_slideBar(self):
-        if self.sync_slideBar_check or self.attachment_table.verticalScrollBar().isSliderDown():
+        if (
+            self.sync_slideBar_check
+            or self.attachment_table.verticalScrollBar().isSliderDown()
+        ):
             self.video_table.table.verticalScrollBar().setValue(
                 self.attachment_table.verticalScrollBar().value()
             )
@@ -87,7 +103,9 @@ class MatchAttachmentWidget(QWidget):
         list_of_selected_rows = self.attachment_table.selectionModel().selectedRows()
         if len(list_of_selected_rows) > 0:
             selected_row = list_of_selected_rows[0].row()
-        self.match_tools_layout.set_selected_row(selected_row=selected_row, max_index=max_index)
+        self.match_tools_layout.set_selected_row(
+            selected_row=selected_row, max_index=max_index
+        )
 
     def show_video_files(self):
         self.video_table.show_files()
@@ -129,9 +147,14 @@ class MatchAttachmentWidget(QWidget):
                     temp_path = PathData()
                     temp_path.name = os.path.basename(path)
                     temp_path.absolute_name = path
-                    temp_path.files_list = [os.path.join(path, file) for file in os.listdir(path)]
-                    temp_path.files_list = [file for file in temp_path.files_list if
-                                            os.path.isfile(file) and os.path.getsize(file) != 0]
+                    temp_path.files_list = [
+                        os.path.join(path, file) for file in os.listdir(path)
+                    ]
+                    temp_path.files_list = [
+                        file
+                        for file in temp_path.files_list
+                        if os.path.isfile(file) and os.path.getsize(file) != 0
+                    ]
                     total_size = 0
                     for file in temp_path.files_list:
                         file_name_absolute = file
@@ -167,9 +190,14 @@ class MatchAttachmentWidget(QWidget):
                     temp_path = PathData()
                     temp_path.name = os.path.basename(path)
                     temp_path.absolute_name = path
-                    temp_path.files_list = [os.path.join(path, file) for file in os.listdir(path)]
-                    temp_path.files_list = [file for file in temp_path.files_list if
-                                            os.path.isfile(file) and os.path.getsize(file) != 0]
+                    temp_path.files_list = [
+                        os.path.join(path, file) for file in os.listdir(path)
+                    ]
+                    temp_path.files_list = [
+                        file
+                        for file in temp_path.files_list
+                        if os.path.isfile(file) and os.path.getsize(file) != 0
+                    ]
                     total_size = 0
                     for file in temp_path.files_list:
                         file_name_absolute = file
@@ -207,7 +235,9 @@ class MatchAttachmentWidget(QWidget):
         self.total_size_bytes = 0
         for path in self.paths_list:
             self.total_size_bytes += path.total_size
-        self.update_total_size_readable_signal.emit(get_readable_filesize(self.total_size_bytes))
+        self.update_total_size_readable_signal.emit(
+            get_readable_filesize(self.total_size_bytes)
+        )
 
     def clear_paths(self):
         self.paths_list.clear()

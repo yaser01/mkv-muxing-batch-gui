@@ -1,6 +1,6 @@
 from PySide6.QtCore import Signal, Qt, QSize, QEvent
 from PySide6.QtGui import QFontMetrics
-from PySide6.QtWidgets import QComboBox, QStyledItemDelegate
+from PySide6.QtWidgets import QComboBox
 
 from packages.Startup import GlobalIcons
 from packages.Startup.Options import Options
@@ -14,9 +14,9 @@ class PresetTabComboBox(QComboBox):
 
     def __init__(self, items, activated_preset_id):
         super().__init__()
-        self.hint_when_enabled = "Preset Groups"
-        self.name = "Preset"
-        self.hint_when_enabled = "Preset Name"
+        self.hint_when_enabled = "Grupos de preajustes"
+        self.name = "Preajuste"
+        self.hint_when_enabled = "Nombre del preajuste"
         self.closeOnLineEditClick = False
         self.activated_preset_id = activated_preset_id
         self.setup_items(items=items)
@@ -43,7 +43,7 @@ class PresetTabComboBox(QComboBox):
                 self.addItem(GlobalIcons.SelectedItemIcon, items[item_index])
             else:
                 self.addItem(GlobalIcons.UnSelectedItemIcon, items[item_index])
-        self.addItem(GlobalIcons.PlusIcon, "New Preset")
+        self.addItem(GlobalIcons.PlusIcon, "Nuevo preajuste")
 
     def check_selected(self, new_selected):
         new_text = self.itemText(new_selected)
@@ -52,7 +52,7 @@ class PresetTabComboBox(QComboBox):
             self.removeItem(self.count() - 1)
             self.addItem(self.name + " #" + str(self.count() + 1))
             new_text = self.name + " #" + str(self.count() + 1)
-            self.addItem(GlobalIcons.PlusIcon, "New Preset")
+            self.addItem(GlobalIcons.PlusIcon, "Nuevo preajuste")
             self.setCurrentIndex(self.count() - 2)
         self.current_tab_changed_signal.emit(new_selected)
 
@@ -74,7 +74,7 @@ class PresetTabComboBox(QComboBox):
                             self.showPopup()
                         return True
                     return False
-        except Exception as e:
+        except Exception:
             return False
 
     def hidePopup(self):
@@ -106,12 +106,12 @@ class PresetTabComboBox(QComboBox):
             self.activated_preset_id -= 1
 
     def hide_new_tab_option(self):
-        if self.itemText(self.count() - 1).find("New") != -1:
+        if self.itemText(self.count() - 1).find("Nuevo") != -1:
             self.removeItem(self.count() - 1)
 
     def show_new_tab_option(self):
-        if self.itemText(self.count() - 1).find("New") == -1:
-            self.addItem(GlobalIcons.PlusIcon, "New Preset")
+        if self.itemText(self.count() - 1).find("Nuevo") == -1:
+            self.addItem(GlobalIcons.PlusIcon, "Nuevo preajuste")
 
     def update_theme_mode_state(self):
         if Options.Dark_Mode:
@@ -125,7 +125,9 @@ class PresetTabComboBox(QComboBox):
         text = new_text
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
+        elided_text = metrics.elidedText(
+            text, Qt.TextElideMode.ElideRight, self.lineEdit().width()
+        )
         if elided_text != "":
             self.lineEdit().setText(elided_text)
             if self.activated_preset_id == self.currentIndex():

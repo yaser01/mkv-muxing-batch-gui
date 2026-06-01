@@ -5,10 +5,16 @@ from PySide6.QtWidgets import QAbstractItemView, QTableWidgetItem, QHeaderView, 
 
 from packages.Startup.Options import Options
 from packages.Startup.InitializeScreenResolution import screen_size
-from packages.Tabs.GlobalSetting import convert_string_integer_to_two_digit_string, GlobalSetting
-from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.CenteredCheckBoxCell import CenteredCheckBoxCell
-from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTableColumnsID import \
-    ModifyOldTracksTableColumnsID
+from packages.Tabs.GlobalSetting import (
+    convert_string_integer_to_two_digit_string,
+    GlobalSetting,
+)
+from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.CenteredCheckBoxCell import (
+    CenteredCheckBoxCell,
+)
+from packages.Tabs.VideoTab.Widgets.ModifyOldTracksWidgtes.ModifyOldTracksTableColumnsID import (
+    ModifyOldTracksTableColumnsID,
+)
 from packages.Widgets.SingleOldTrackData import SingleOldTrackData
 from packages.Widgets.TableWidget import TableWidget
 
@@ -18,8 +24,10 @@ class OldTracksTable(TableWidget):
 
     def __init__(self, original_setting, current_setting, tracks_info, all_languages):
         super().__init__()
-        self.text_color = {"light": {"activate": "#000000", "disable": "#787878"},
-                           "dark": {"activate": "#FFFFFF", "disable": "#878787"}}
+        self.text_color = {
+            "light": {"activate": "#000000", "disable": "#787878"},
+            "dark": {"activate": "#FFFFFF", "disable": "#878787"},
+        }
         self.column_ids = ModifyOldTracksTableColumnsID()
         self.original_setting: typing.Dict[str, SingleOldTrackData] = original_setting
         self.current_setting: typing.Dict[str, SingleOldTrackData] = current_setting
@@ -44,6 +52,19 @@ class OldTracksTable(TableWidget):
         self.setup_tracks()
         self.check_if_job_queue_not_empty()
         self.connect_signals()
+        # Ajustar anchos después de que la tabla se muestre
+        self.adjust_column_widths()
+
+    def adjust_column_widths(self):
+        """Ajusta el ancho de las columnas según el contenido de los encabezados y los datos"""
+        header = self.horizontalHeader()
+        # Configurar modo de redimensionamiento
+        for col in range(self.columnCount()):
+            header.setSectionResizeMode(col, QHeaderView.ResizeMode.ResizeToContents)
+        # Para la última columna (Idioma de pista) se puede estirar si hay espacio extra
+        header.setSectionResizeMode(self.column_ids.Track_Language, QHeaderView.ResizeMode.Stretch)
+        # También forzar un ancho mínimo razonable para la columna de nombre de pista
+        self.setColumnWidth(self.column_ids.Track_Name, max(150, self.columnWidth(self.column_ids.Track_Name)))
 
     def create_horizontal_header(self):
         self.horizontal_header = self.horizontalHeader()
@@ -61,11 +82,15 @@ class OldTracksTable(TableWidget):
 
     def setup_columns(self):
         for column_id in range(len(self.column_ids.columns_name)):
-            self.set_column_name(column_index=column_id, name=self.column_ids.columns_name[column_id])
+            self.set_column_name(
+                column_index=column_id, name=self.column_ids.columns_name[column_id]
+            )
 
     def set_column_name(self, column_index, name):
         column = QTableWidgetItem(name)
-        column.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+        column.setTextAlignment(
+            Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter
+        )
         self.setHorizontalHeaderItem(column_index, column)
 
     def disable_table_bold_column(self):
@@ -78,12 +103,25 @@ class OldTracksTable(TableWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
     def setup_horizontal_header(self):
-        self.horizontal_header.setSectionResizeMode(self.column_ids.ID, QHeaderView.ResizeMode.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Enable, QHeaderView.ResizeMode.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Set_Default, QHeaderView.ResizeMode.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Set_Forced, QHeaderView.ResizeMode.Fixed)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Name, QHeaderView.ResizeMode.Interactive)
-        self.horizontal_header.setSectionResizeMode(self.column_ids.Track_Language, QHeaderView.ResizeMode.Stretch)
+        # Configuración inicial (se sobrescribirá en adjust_column_widths)
+        self.horizontal_header.setSectionResizeMode(
+            self.column_ids.ID, QHeaderView.ResizeMode.Fixed
+        )
+        self.horizontal_header.setSectionResizeMode(
+            self.column_ids.Enable, QHeaderView.ResizeMode.Fixed
+        )
+        self.horizontal_header.setSectionResizeMode(
+            self.column_ids.Set_Default, QHeaderView.ResizeMode.Fixed
+        )
+        self.horizontal_header.setSectionResizeMode(
+            self.column_ids.Set_Forced, QHeaderView.ResizeMode.Fixed
+        )
+        self.horizontal_header.setSectionResizeMode(
+            self.column_ids.Track_Name, QHeaderView.ResizeMode.Interactive
+        )
+        self.horizontal_header.setSectionResizeMode(
+            self.column_ids.Track_Language, QHeaderView.ResizeMode.Stretch
+        )
 
     def setup_tracks(self):
         is_there_different_track_setting = False
@@ -104,18 +142,25 @@ class OldTracksTable(TableWidget):
             self.set_row_value_track_name(track_name, new_row_id)
             self.set_row_value_language(language, new_row_id)
             self.update_state_of_row(new_row_id, is_enabled_state)
-            if not is_there_different_track_setting and self.current_setting[track_id] != self.original_setting[
-                track_id]:
+            if (
+                not is_there_different_track_setting
+                and self.current_setting[track_id] != self.original_setting[track_id]
+            ):
                 is_there_different_track_setting = True
             if not self.current_setting[track_id].is_enabled:
                 is_there_deleted_tracks = True
-            if self.current_setting[track_id].order != self.original_setting[track_id].order:
+            if (
+                self.current_setting[track_id].order
+                != self.original_setting[track_id].order
+            ):
                 is_there_reorder_tracks = True
         self.update_widget()
         self.resize_track_name_column_to_fit_content()
         self.is_there_different_track_setting = is_there_different_track_setting
         self.is_there_deleted_tracks = is_there_deleted_tracks
         self.is_there_reorder_tracks = is_there_reorder_tracks
+        # Después de cargar los datos, ajustar anchos
+        self.adjust_column_widths()
 
     def check_if_job_queue_not_empty(self):
         if not GlobalSetting.JOB_QUEUE_EMPTY:
@@ -124,30 +169,43 @@ class OldTracksTable(TableWidget):
                 self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(False)
                 self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(False)
                 self.item(row_id, self.column_ids.Track_Name).setFlags(
-                    self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemFlag.ItemIsEditable)
+                    self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemFlag.ItemIsEditable
+                )
                 self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(False)
 
     def set_row_value_id(self, track_id, new_row_id):
-        item = QTableWidgetItem("Track " + convert_string_integer_to_two_digit_string(track_id))
+        item = QTableWidgetItem("Pista " + convert_string_integer_to_two_digit_string(track_id))
         item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         self.setItem(new_row_id, self.column_ids.ID, item)
 
     def set_row_value_is_enabled(self, is_enabled_state, new_row_id):
-        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Enable,
-                                         check_state=is_enabled_state, parent=self)
+        check_box = CenteredCheckBoxCell(
+            row_id=new_row_id,
+            column_id=self.column_ids.Enable,
+            check_state=is_enabled_state,
+            parent=self,
+        )
         self.setCellWidget(new_row_id, self.column_ids.Enable, check_box)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
 
     def set_row_value_is_default(self, is_default_state, new_row_id):
-        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Default,
-                                         check_state=is_default_state, parent=self)
+        check_box = CenteredCheckBoxCell(
+            row_id=new_row_id,
+            column_id=self.column_ids.Set_Default,
+            check_state=is_default_state,
+            parent=self,
+        )
         check_box.signal_state_changed.connect(self.check_box_state_changed)
         self.setCellWidget(new_row_id, self.column_ids.Set_Default, check_box)
 
     def set_row_value_is_forced(self, is_forced_state, new_row_id):
-        check_box = CenteredCheckBoxCell(row_id=new_row_id, column_id=self.column_ids.Set_Forced,
-                                         check_state=is_forced_state, parent=self)
+        check_box = CenteredCheckBoxCell(
+            row_id=new_row_id,
+            column_id=self.column_ids.Set_Forced,
+            check_state=is_forced_state,
+            parent=self,
+        )
         self.setCellWidget(new_row_id, self.column_ids.Set_Forced, check_box)
         check_box.signal_state_changed.connect(self.check_box_state_changed)
 
@@ -173,24 +231,17 @@ class OldTracksTable(TableWidget):
             self.horizontal_header.setMinimumSectionSize(header_width * 5 // 25)
             self.need_column_width_set = False
 
-        if self.columnWidth(0) > screen_size.width() // 7:
-            self.setColumnWidth(1, screen_size.width() // 14)
-        else:
-            self.setColumnWidth(
-                1, self.columnWidth(0) // 2
-            )
-
     def resize_track_name_column_to_fit_content(self):
-        # Resize track_name Column Only
         new_column_width = 0
         for i in range(self.rowCount()):
             column_font = self.item(i, self.column_ids.Track_Name).font()
             column_font_metrics = QFontMetrics(column_font)
-            new_column_width = max(new_column_width,
-                                   column_font_metrics.horizontalAdvance(
-                                       self.item(i, self.column_ids.Track_Name).text()))
-        new_column_width += 10
-        if new_column_width != 0:
+            new_column_width = max(
+                new_column_width,
+                column_font_metrics.horizontalAdvance(self.item(i, self.column_ids.Track_Name).text()),
+            )
+        new_column_width += 20
+        if new_column_width > self.columnWidth(self.column_ids.Track_Name):
             self.setColumnWidth(self.column_ids.Track_Name, new_column_width)
 
     def item_changed(self, item: QTableWidgetItem):
@@ -236,20 +287,25 @@ class OldTracksTable(TableWidget):
                     self.cellWidget(i, column_id).check_box.setCheckState(Qt.CheckState.Unchecked)
 
     def update_state_of_row(self, row_id, new_state):
-        self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(True if (
-                new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True) else False)
-        self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(True if (
-                new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True) else False)
+        self.cellWidget(row_id, self.column_ids.Set_Default).check_box.setEnabled(
+            True if (new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state) else False
+        )
+        self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.setEnabled(
+            True if (new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state) else False
+        )
         self.item(row_id, self.column_ids.Track_Name).setForeground(self.get_text_color(new_state))
         self.item(row_id, self.column_ids.ID).setForeground(self.get_text_color(new_state))
-        self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(True if (
-                new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True) else False)
-        if new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state == True:
+        self.cellWidget(row_id, self.column_ids.Track_Language).setEnabled(
+            True if (new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state) else False
+        )
+        if (new_state == Qt.CheckState.Checked.value or new_state == Qt.CheckState.Checked or new_state):
             self.item(row_id, self.column_ids.Track_Name).setFlags(
-                self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemFlag.ItemIsEditable)
+                self.item(row_id, self.column_ids.Track_Name).flags() | Qt.ItemFlag.ItemIsEditable
+            )
         else:
             self.item(row_id, self.column_ids.Track_Name).setFlags(
-                self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.item(row_id, self.column_ids.Track_Name).flags() & ~Qt.ItemFlag.ItemIsEditable
+            )
 
     def restore_defaults(self):
         if self.rowCount() == 0:
@@ -272,6 +328,7 @@ class OldTracksTable(TableWidget):
         self.resize_track_name_column_to_fit_content()
         self.selectRow(0)
         self.update_selected_track(0, 0, 0, 0)
+        self.adjust_column_widths()
 
     def save_settings(self):
         is_there_different_track_setting = False
@@ -279,18 +336,23 @@ class OldTracksTable(TableWidget):
         is_there_reorder_tracks = False
         for row_id in range(self.rowCount()):
             track_id = self.get_track_id_as_string_original_from_row(row_id=row_id)
-            self.current_setting[track_id].is_enabled = int(self.cellWidget(row_id,
-                                                                            self.column_ids.Enable).check_box.checkState().value)
-            self.current_setting[track_id].is_default = int(self.cellWidget(row_id,
-                                                                            self.column_ids.Set_Default).check_box.checkState().value)
-            self.current_setting[track_id].is_forced = int(self.cellWidget(row_id,
-                                                                           self.column_ids.Set_Forced).check_box.checkState().value)
+            self.current_setting[track_id].is_enabled = int(
+                self.cellWidget(row_id, self.column_ids.Enable).check_box.checkState().value
+            )
+            self.current_setting[track_id].is_default = int(
+                self.cellWidget(row_id, self.column_ids.Set_Default).check_box.checkState().value
+            )
+            self.current_setting[track_id].is_forced = int(
+                self.cellWidget(row_id, self.column_ids.Set_Forced).check_box.checkState().value
+            )
             self.current_setting[track_id].track_name = self.item(row_id, self.column_ids.Track_Name).text()
             temp_language = self.cellWidget(row_id, self.column_ids.Track_Language).currentText()
-            self.current_setting[track_id].language = ("[Old]" if temp_language == "" else temp_language)
+            self.current_setting[track_id].language = "[Antiguo]" if temp_language == "" else temp_language
             self.current_setting[track_id].order = row_id
-            if not is_there_different_track_setting and self.current_setting[track_id] != self.original_setting[
-                track_id]:
+            if (
+                not is_there_different_track_setting
+                and self.current_setting[track_id] != self.original_setting[track_id]
+            ):
                 is_there_different_track_setting = True
             if not self.current_setting[track_id].is_enabled:
                 is_there_deleted_tracks = True
@@ -308,14 +370,14 @@ class OldTracksTable(TableWidget):
 
     def move_row_up(self):
         row_id = self.currentRow()
-        if row_id == 0 or row_id == -1:  # -1 means no row is selected
+        if row_id == 0 or row_id == -1:
             return
         new_row_id = row_id - 1
         self.replace_rows(new_row_id, row_id)
 
     def move_row_down(self):
         row_id = self.currentRow()
-        if row_id + 1 == self.rowCount() or row_id == -1:  # -1 means no row is selected:
+        if row_id + 1 == self.rowCount() or row_id == -1:
             return
         new_row_id = row_id + 1
         self.replace_rows(new_row_id, row_id)
@@ -349,8 +411,7 @@ class OldTracksTable(TableWidget):
 
     def replace_rows_value_is_default(self, new_row_id, row_id):
         old_is_default_check_state = self.cellWidget(row_id, self.column_ids.Set_Default).check_box.checkState().value
-        new_is_default_check_state = self.cellWidget(new_row_id,
-                                                     self.column_ids.Set_Default).check_box.checkState().value
+        new_is_default_check_state = self.cellWidget(new_row_id, self.column_ids.Set_Default).check_box.checkState().value
         self.set_row_value_is_default(is_default_state=old_is_default_check_state, new_row_id=new_row_id)
         self.set_row_value_is_default(is_default_state=new_is_default_check_state, new_row_id=row_id)
 

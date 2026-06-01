@@ -2,7 +2,9 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QCheckBox
 
 from packages.Startup.Options import Options, save_options
-from packages.Tabs.AttachmentTab.Widgets.SwitchingToExpertModeDialog import SwitchingToExpertModeDialog
+from packages.Tabs.AttachmentTab.Widgets.SwitchingToExpertModeDialog import (
+    SwitchingToExpertModeDialog,
+)
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -11,13 +13,17 @@ class ExpertModeCheckBox(QCheckBox):
 
     def __init__(self):
         super().__init__()
-        self.hint_when_enabled = "<nobr>Activating Expert Mode<br>Enable The Ability To Select [File or " \
-                                 "Folder] For Each Video <b>Separately</b>"
-        self.setText("Expert Mode")
+        self.hint_when_enabled = (
+            "<nobr>Activar modo experto<br>Permite seleccionar [archivo o "
+            "carpeta] para cada video <b>por separado</b>"
+        )
+        self.setText("Modo experto")
         self.toggled.connect(self.change_global_expert_mode_attachments)
         self.setToolTip(self.hint_when_enabled)
         self.skip_state_changed = False
-        self.should_show_expert_mode_info_message = Options.Attachment_Expert_Mode_Info_Message_Show
+        self.should_show_expert_mode_info_message = (
+            Options.Attachment_Expert_Mode_Info_Message_Show
+        )
 
     # noinspection PyMethodMayBeStatic
     def change_global_expert_mode_attachments(self, new_state):
@@ -25,10 +31,16 @@ class ExpertModeCheckBox(QCheckBox):
             return
         if new_state:
             if self.should_show_expert_mode_info_message:
-                confirm_switching_to_expert_mode = SwitchingToExpertModeDialog(parent=self)
+                confirm_switching_to_expert_mode = SwitchingToExpertModeDialog(
+                    parent=self
+                )
                 confirm_switching_to_expert_mode.execute()
-                confirm_enter_expert_mode = confirm_switching_to_expert_mode.result == "Expert"
-                self.should_show_expert_mode_info_message = confirm_switching_to_expert_mode.show_message_result == "Yes"
+                confirm_enter_expert_mode = (
+                    confirm_switching_to_expert_mode.result == "Expert"
+                )
+                self.should_show_expert_mode_info_message = (
+                    confirm_switching_to_expert_mode.show_message_result == "Yes"
+                )
                 if confirm_enter_expert_mode:
                     GlobalSetting.ATTACHMENT_EXPERT_MODE = new_state
                     self.is_checked_signal.emit(new_state)
@@ -42,14 +54,21 @@ class ExpertModeCheckBox(QCheckBox):
         else:
             GlobalSetting.ATTACHMENT_EXPERT_MODE = new_state
             self.is_checked_signal.emit(new_state)
-        Options.Attachment_Expert_Mode_Info_Message_Show = self.should_show_expert_mode_info_message
+        Options.Attachment_Expert_Mode_Info_Message_Show = (
+            self.should_show_expert_mode_info_message
+        )
         save_options()
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -59,7 +78,12 @@ class ExpertModeCheckBox(QCheckBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

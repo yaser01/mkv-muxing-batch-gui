@@ -8,14 +8,23 @@ from PySide6.QtCore import QObject, QThread, Signal
 from packages.Startup import GlobalFiles
 from packages.Tabs.GlobalSetting import GlobalSetting, write_to_log_file
 from packages.Tabs.MuxSetting.Widgets.CRCData import CRCData
-from packages.Tabs.MuxSetting.Widgets.CalculateCRCProcessWorker import CalculateCRCProcessWorker
+from packages.Tabs.MuxSetting.Widgets.CalculateCRCProcessWorker import (
+    CalculateCRCProcessWorker,
+)
 from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvmergeJob import GetJsonForMkvmergeJob
-from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvpropeditJob import GetJsonForMkvpropeditJob
+from packages.Tabs.MuxSetting.Widgets.GetJsonForMkvpropeditJob import (
+    GetJsonForMkvpropeditJob,
+)
 from packages.Tabs.MuxSetting.Widgets.MuxingParams import MuxingParams
-from packages.Tabs.MuxSetting.Widgets.ReadFromMkvmergeLogWorker import ReadFromMkvmergeLogWorker
-from packages.Tabs.MuxSetting.Widgets.ReadFromMkvpropeditLogWorker import ReadFromMkvpropeditLogWorker
-from packages.Tabs.MuxSetting.Widgets.SingleJobData import SingleJobData
-from packages.Tabs.MuxSetting.Widgets.StartMuxingProcessWorker import StartMuxingProcessWorker
+from packages.Tabs.MuxSetting.Widgets.ReadFromMkvmergeLogWorker import (
+    ReadFromMkvmergeLogWorker,
+)
+from packages.Tabs.MuxSetting.Widgets.ReadFromMkvpropeditLogWorker import (
+    ReadFromMkvpropeditLogWorker,
+)
+from packages.Tabs.MuxSetting.Widgets.StartMuxingProcessWorker import (
+    StartMuxingProcessWorker,
+)
 
 
 def change_file_extension_to_mkv(file_name):
@@ -31,16 +40,18 @@ def check_if_mkvpropedit_good():
     for i in range(len(GlobalSetting.AUDIO_FILES_LIST)):
         if len(GlobalSetting.AUDIO_FILES_LIST[i]) > 0:
             return False
-    if GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED or \
-            GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED or \
-            (not GlobalSetting.VIDEO_SOURCE_MKV_ONLY) or \
-            GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"] or \
-            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED or \
-            GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED or \
-            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED or \
-            GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED or \
-            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED or \
-            GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED:
+    if (
+        GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_SUBTITLES_ENABLED
+        or GlobalSetting.MUX_SETTING_ONLY_KEEP_THOSE_AUDIOS_ENABLED
+        or (not GlobalSetting.VIDEO_SOURCE_MKV_ONLY)
+        or GlobalSetting.VIDEO_DEFAULT_DURATION_FPS not in ["", "Default"]
+        or GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_REORDER_ACTIVATED
+        or GlobalSetting.VIDEO_OLD_TRACKS_VIDEOS_DELETED_ACTIVATED
+        or GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_REORDER_ACTIVATED
+        or GlobalSetting.VIDEO_OLD_TRACKS_SUBTITLES_DELETED_ACTIVATED
+        or GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_REORDER_ACTIVATED
+        or GlobalSetting.VIDEO_OLD_TRACKS_AUDIOS_DELETED_ACTIVATED
+    ):
         return False
     else:
         return True
@@ -48,11 +59,11 @@ def check_if_mkvpropedit_good():
 
 def get_time():
     t = time.time()
-    return str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t)))
+    return str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t)))
 
 
 def add_double_quotation(string):
-    return "\"" + str(string) + "\""
+    return '"' + str(string) + '"'
 
 
 class StartMuxingWorker(QObject):
@@ -69,7 +80,7 @@ class StartMuxingWorker(QObject):
 
     def __init__(self, data):
         super().__init__()
-        self.data = data  # type:list[SingleJobData]
+        self.data = data  # type: ignore # type:list[SingleJobData]
         self.current_job = -1
         self.finished_read_log_and_muxing = 0
         self.waiting_for_mkvpropedit_confirm = False
@@ -94,7 +105,7 @@ class StartMuxingWorker(QObject):
                 self.stop_all_threads()
                 self.finished_all_jobs_signal.emit()
             self.next_job()
-        except Exception as e:
+        except Exception:
             write_to_log_file(traceback.format_exc())
 
     def stop_all_threads(self):
@@ -119,7 +130,10 @@ class StartMuxingWorker(QObject):
             return
 
         job = self.data[self.current_job]
-        if not job.done or (job.error_occurred and job.muxing_message.find("There is not enough space") != -1):
+        if not job.done or (
+            job.error_occurred
+            and job.muxing_message.find("There is not enough space") != -1
+        ):
             GetJsonForMkvmergeJob(job)
             if GlobalSetting.VIDEO_SOURCE_MKV_ONLY:
                 GetJsonForMkvpropeditJob(job)
@@ -146,8 +160,11 @@ class StartMuxingWorker(QObject):
     # noinspection PyAttributeOutsideInit
     def start_mkvpropedit_muxing(self):
         self.data[self.current_job].used_mkvpropedit = True
-        mux_command = add_double_quotation(GlobalFiles.MKVPROPEDIT_PATH) + " @" + add_double_quotation(
-            GlobalFiles.mkvpropeditJsonJobFilePath)
+        mux_command = (
+            add_double_quotation(GlobalFiles.MKVPROPEDIT_PATH)
+            + " @"
+            + add_double_quotation(GlobalFiles.mkvpropeditJsonJobFilePath)
+        )
         self.add_header_info_to_log_file()
         self.start_muxing_process_worker.command = mux_command
         GlobalSetting.MUXING_ON = True
@@ -156,8 +173,11 @@ class StartMuxingWorker(QObject):
         self.read_log_mkvpropedit_worker.wait = False
 
     def start_mkvmerge_muxing(self):
-        mux_command = add_double_quotation(GlobalFiles.MKVMERGE_PATH) + " @" + add_double_quotation(
-            GlobalFiles.mkvmergeJsonJobFilePath)
+        mux_command = (
+            add_double_quotation(GlobalFiles.MKVMERGE_PATH)
+            + " @"
+            + add_double_quotation(GlobalFiles.mkvmergeJsonJobFilePath)
+        )
         self.add_header_info_to_log_file()
         self.start_muxing_process_worker.command = mux_command
         GlobalSetting.MUXING_ON = True
@@ -167,11 +187,18 @@ class StartMuxingWorker(QObject):
 
     def check_if_crc_calculating_needed(self):
         if self.data[self.current_job].is_crc_calculating_required:
-            if self.data[self.current_job].used_mkvpropedit or GlobalSetting.OVERWRITE_SOURCE_FILES:
-                folder_path = os.path.dirname(self.data[self.current_job].video_name_absolute)
+            if (
+                self.data[self.current_job].used_mkvpropedit
+                or GlobalSetting.OVERWRITE_SOURCE_FILES
+            ):
+                folder_path = os.path.dirname(
+                    self.data[self.current_job].video_name_absolute
+                )
             else:
                 folder_path = Path(GlobalSetting.DESTINATION_FOLDER_PATH)
-            output_file_name = os.path.join(folder_path, self.data[self.current_job].video_name)
+            output_file_name = os.path.join(
+                folder_path, self.data[self.current_job].video_name
+            )
             self.start_crc_calculating_process_worker.file_name = output_file_name
             self.start_crc_calculating_process_worker.progress = 0
             self.start_crc_calculating_process_worker.wait = False
@@ -185,24 +212,44 @@ class StartMuxingWorker(QObject):
         self.start_muxing_process_worker = StartMuxingProcessWorker()
         self.start_muxing_process_thread = QThread()
         self.start_muxing_process_worker.moveToThread(self.start_muxing_process_thread)
-        self.start_muxing_process_thread.started.connect(self.start_muxing_process_worker.run)
-        self.start_muxing_process_worker.all_finished.connect(self.start_muxing_process_thread.quit)
-        self.start_muxing_process_worker.all_finished.connect(self.start_muxing_process_worker.deleteLater)
-        self.start_muxing_process_worker.finished_job_signal.connect(self.finished_muxing_process)
+        self.start_muxing_process_thread.started.connect(
+            self.start_muxing_process_worker.run
+        )
+        self.start_muxing_process_worker.all_finished.connect(
+            self.start_muxing_process_thread.quit
+        )
+        self.start_muxing_process_worker.all_finished.connect(
+            self.start_muxing_process_worker.deleteLater
+        )
+        self.start_muxing_process_worker.finished_job_signal.connect(
+            self.finished_muxing_process
+        )
 
     # noinspection PyAttributeOutsideInit
     def setup_calculate_crc_thread(self):
         self.start_crc_calculating_process_worker = CalculateCRCProcessWorker()
         self.start_crc_calculating_process_thread = QThread()
-        self.start_crc_calculating_process_worker.moveToThread(self.start_crc_calculating_process_thread)
-        self.start_crc_calculating_process_thread.started.connect(self.start_crc_calculating_process_worker.run)
-        self.start_crc_calculating_process_worker.all_finished.connect(self.start_crc_calculating_process_thread.quit)
+        self.start_crc_calculating_process_worker.moveToThread(
+            self.start_crc_calculating_process_thread
+        )
+        self.start_crc_calculating_process_thread.started.connect(
+            self.start_crc_calculating_process_worker.run
+        )
         self.start_crc_calculating_process_worker.all_finished.connect(
-            self.start_crc_calculating_process_worker.deleteLater)
+            self.start_crc_calculating_process_thread.quit
+        )
+        self.start_crc_calculating_process_worker.all_finished.connect(
+            self.start_crc_calculating_process_worker.deleteLater
+        )
         self.start_crc_calculating_process_thread.finished.connect(
-            self.start_crc_calculating_process_thread.deleteLater)
-        self.start_crc_calculating_process_worker.crc_progress_signal.connect(self.receive_crc_progress)
-        self.start_crc_calculating_process_worker.crc_result_signal.connect(self.receive_crc_result)
+            self.start_crc_calculating_process_thread.deleteLater
+        )
+        self.start_crc_calculating_process_worker.crc_progress_signal.connect(
+            self.receive_crc_progress
+        )
+        self.start_crc_calculating_process_worker.crc_result_signal.connect(
+            self.receive_crc_result
+        )
 
     # noinspection PyAttributeOutsideInit
     def setup_read_mkvmerge_log_thread(self):
@@ -210,23 +257,43 @@ class StartMuxingWorker(QObject):
         self.read_log_mkvmerge_thread = QThread()
         self.read_log_mkvmerge_worker.moveToThread(self.read_log_mkvmerge_thread)
         self.read_log_mkvmerge_thread.started.connect(self.read_log_mkvmerge_worker.run)
-        self.read_log_mkvmerge_worker.all_finished.connect(self.read_log_mkvmerge_thread.quit)
-        self.read_log_mkvmerge_worker.all_finished.connect(self.read_log_mkvmerge_worker.deleteLater)
+        self.read_log_mkvmerge_worker.all_finished.connect(
+            self.read_log_mkvmerge_thread.quit
+        )
+        self.read_log_mkvmerge_worker.all_finished.connect(
+            self.read_log_mkvmerge_worker.deleteLater
+        )
         self.read_log_mkvmerge_worker.finished_job_signal.connect(self.finished_read_log)
-        self.read_log_mkvmerge_thread.finished.connect(self.read_log_mkvmerge_thread.deleteLater)
-        self.read_log_mkvmerge_worker.send_muxing_progress_data_signal.connect(self.receive_muxing_progress_data)
+        self.read_log_mkvmerge_thread.finished.connect(
+            self.read_log_mkvmerge_thread.deleteLater
+        )
+        self.read_log_mkvmerge_worker.send_muxing_progress_data_signal.connect(
+            self.receive_muxing_progress_data
+        )
 
     # noinspection PyAttributeOutsideInit
     def setup_read_mkvpropedit_log_thread(self):
         self.read_log_mkvpropedit_worker = ReadFromMkvpropeditLogWorker(self.current_job)
         self.read_log_mkvpropedit_thread = QThread()
         self.read_log_mkvpropedit_worker.moveToThread(self.read_log_mkvpropedit_thread)
-        self.read_log_mkvpropedit_thread.started.connect(self.read_log_mkvpropedit_worker.run)
-        self.read_log_mkvpropedit_worker.all_finished.connect(self.read_log_mkvpropedit_thread.quit)
-        self.read_log_mkvpropedit_worker.all_finished.connect(self.read_log_mkvpropedit_worker.deleteLater)
-        self.read_log_mkvpropedit_worker.finished_job_signal.connect(self.finished_read_log)
-        self.read_log_mkvpropedit_thread.finished.connect(self.read_log_mkvpropedit_thread.deleteLater)
-        self.read_log_mkvpropedit_worker.send_muxing_progress_data_signal.connect(self.receive_muxing_progress_data)
+        self.read_log_mkvpropedit_thread.started.connect(
+            self.read_log_mkvpropedit_worker.run
+        )
+        self.read_log_mkvpropedit_worker.all_finished.connect(
+            self.read_log_mkvpropedit_thread.quit
+        )
+        self.read_log_mkvpropedit_worker.all_finished.connect(
+            self.read_log_mkvpropedit_worker.deleteLater
+        )
+        self.read_log_mkvpropedit_worker.finished_job_signal.connect(
+            self.finished_read_log
+        )
+        self.read_log_mkvpropedit_thread.finished.connect(
+            self.read_log_mkvpropedit_thread.deleteLater
+        )
+        self.read_log_mkvpropedit_worker.send_muxing_progress_data_signal.connect(
+            self.receive_muxing_progress_data
+        )
 
     def receive_muxing_progress_data(self, params: MuxingParams):
         if params.error:
@@ -286,11 +353,20 @@ class StartMuxingWorker(QObject):
         with open(GlobalFiles.MuxingLogFilePath, "a+", encoding="UTF-8") as log_file:
             t = get_time()
             log_file.write(
-                "\n[" + t + "] Start Muxing: ********* " + str(
-                    self.data[self.current_job].video_name) + " *********\n\n")
+                "\n["
+                + t
+                + "] Inicio de multiplexado: ********* "
+                + str(self.data[self.current_job].video_name)
+                + " *********\n\n"
+            )
 
     def add_footer_info_to_log_file(self):
         with open(GlobalFiles.MuxingLogFilePath, "a+", encoding="UTF-8") as log_file:
             t = get_time()
             log_file.write(
-                "\n[" + t + "] Finish Muxing: ********* " + self.data[self.current_job].video_name + " *********\n")
+                "\n["
+                + t
+                + "] Fin de multiplexado: ********* "
+                + self.data[self.current_job].video_name
+                + " *********\n"
+            )

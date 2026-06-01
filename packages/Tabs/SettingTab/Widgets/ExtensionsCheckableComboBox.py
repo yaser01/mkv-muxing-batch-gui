@@ -86,7 +86,7 @@ class ExtensionsCheckableComboBox(QComboBox):
                 return False
             else:
                 return False
-        except Exception as e:
+        except Exception:
             return False
 
     def showPopup(self):
@@ -114,17 +114,19 @@ class ExtensionsCheckableComboBox(QComboBox):
             if self.current_model.item(i).checkState() == Qt.CheckState.Checked:
                 extensions_text.append(self.current_model.item(i).text())
 
-        text = ', '.join(extensions_text)
+        text = ", ".join(extensions_text)
 
         # Compute elided text (with "...")
         metrics = QFontMetrics(self.lineEdit().font())
-        elided_text = metrics.elidedText(text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
+        elided_text = metrics.elidedText(
+            text, Qt.TextElideMode.ElideRight, self.lineEdit().width()
+        )
         if elided_text != "":
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
             self.lineEdit().setFont(non_italic_font)
             self.lineEdit().setText(elided_text)
-            self.hint = "<nobr>Extensions: [" + text + "]"
+            self.hint = "<nobr>Extensiones: [" + text + "]"
         self.setToolTip(self.hint)
 
     def addItem(self, text, data=None):

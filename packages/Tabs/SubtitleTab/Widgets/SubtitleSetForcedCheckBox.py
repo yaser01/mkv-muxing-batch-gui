@@ -9,11 +9,13 @@ class SubtitleSetForcedCheckBox(QCheckBox):
         super().__init__()
         self.tab_index = tab_index
         self.hint_when_enabled = ""
-        self.setText("Set Forced")
+        self.setText("Establecer como forzado")
         self.stateChanged.connect(self.change_global_subtitle_set_forced)
 
     def change_global_subtitle_set_forced(self):
-        GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = self.checkState() == Qt.CheckState.Checked
+        GlobalSetting.SUBTITLE_SET_FORCED[self.tab_index] = (
+            self.checkState() == Qt.CheckState.Checked
+        )
         if self.checkState() == Qt.CheckState.Checked:
             for i in GlobalSetting.SUBTITLE_SET_FORCED.keys():
 
@@ -25,21 +27,28 @@ class SubtitleSetForcedCheckBox(QCheckBox):
         self.setDisabled(bool(GlobalSetting.SUBTITLE_SET_FORCED_DISABLED))
 
         if self.isEnabled():
-            self.setToolTip("<nobr>set the new subtitle to be the forced subtitle track when "
-                            "play")
+            self.setToolTip(
+                "<nobr>establecer el nuevo subtítulo como pista de subtítulos forzada al reproducir"
+            )
             self.setToolTipDuration(12000)
         else:
             self.setToolTip(
-                "<nobr>set the new subtitle to be the forced subtitle track when play<br><b>Disabled</b> because "
-                "option "
-                "<b>make this subtitle default and forced</b> is enabled on mux setting tab ")
+                "<nobr>establecer el nuevo subtítulo como pista de subtítulos forzada al reproducir<br><b>Deshabilitado</b> porque "
+                "la opción "
+                "<b>hacer este subtítulo predeterminado y forzado</b> está activada en la pestaña de configuración de mux"
+            )
             self.setToolTipDuration(12000)
 
     def setEnabled(self, new_state: bool):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -49,7 +58,12 @@ class SubtitleSetForcedCheckBox(QCheckBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

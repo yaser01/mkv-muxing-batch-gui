@@ -9,11 +9,11 @@ class AudioTrackNameLineEdit(QLineEdit):
         super().__init__()
         self.tab_index = tab_index
         self.hint_when_enabled = ""
-        self.setPlaceholderText("Audio Track Name")
+        self.setPlaceholderText("Nombre de pista de audio")
         self.setMinimumWidth(screen_size.width() // 10)
         self.setMaximumWidth(screen_size.width() // 8)
         self.setClearButtonEnabled(True)
-        self.setToolTip("Audio Track Name")
+        self.setToolTip("Nombre de pista de audio")
         self.textEdited.connect(self.change_global_audio_track_name)
 
     def change_global_audio_track_name(self):
@@ -23,7 +23,12 @@ class AudioTrackNameLineEdit(QLineEdit):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -33,7 +38,12 @@ class AudioTrackNameLineEdit(QLineEdit):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

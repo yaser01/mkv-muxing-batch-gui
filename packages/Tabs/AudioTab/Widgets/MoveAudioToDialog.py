@@ -6,7 +6,7 @@ class MoveAudioToDialog(MoveToDialog):
     def __init__(self, max_index, current_index, parent=None):
         super().__init__(min=1, max=max_index + 1, parent=parent)
         self.spinBox.setValue(current_index + 1)
-        self.setWindowTitle("Move Audio")
+        self.setWindowTitle("Mover audio")
         self.setWindowIcon(GlobalIcons.SwitchIcon)
-        self.message.setText("Move this audio to :")
-        self.extra_message.setText("(this will replace audio in destination)")
+        self.message.setText("Mover este audio a:")
+        self.extra_message.setText("(esto reemplazará el audio en el destino)")

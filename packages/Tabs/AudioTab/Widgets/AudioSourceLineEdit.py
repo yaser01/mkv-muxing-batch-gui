@@ -15,7 +15,7 @@ class AudioSourceLineEdit(QLineEdit):
 
     def __init__(self):
         super().__init__()
-        self.setPlaceholderText("Enter Audio Folder Path")
+        self.setPlaceholderText("Ingresa la ruta de la carpeta de audio")
         self.setClearButtonEnabled(True)
         self.setText("")
         self.stop_check_path = False
@@ -83,7 +83,12 @@ class AudioSourceLineEdit(QLineEdit):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -93,7 +98,12 @@ class AudioSourceLineEdit(QLineEdit):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

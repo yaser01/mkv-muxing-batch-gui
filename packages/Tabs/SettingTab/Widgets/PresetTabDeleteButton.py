@@ -10,7 +10,7 @@ class PresetTabDeleteButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.TrashLightIcon)
-        self.hint_when_enabled = "Delete Preset"
+        self.hint_when_enabled = "Eliminar preajuste"
         self.setToolTip(self.hint_when_enabled)
         self.clicked.connect(self.remove_tab_signal.emit)
         self.dark_mode_applied = False

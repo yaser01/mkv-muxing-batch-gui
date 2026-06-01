@@ -1,21 +1,35 @@
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import (
     QGroupBox,
     QVBoxLayout,
+    QLabel,
+    QHBoxLayout,
+    QGridLayout,
+    QWidget,
 )
+
+from PySide6 import QtGui
+import os
 
 from packages.Startup.Options import Options
 from packages.Tabs.ChapterTab.Widgets.ChapterClearButton import ChapterClearButton
-from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import ChapterExtensionsCheckableComboBox
+from packages.Tabs.ChapterTab.Widgets.ChapterExtensionsCheckableComboBox import (
+    ChapterExtensionsCheckableComboBox,
+)
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceButton import ChapterSourceButton
 from packages.Tabs.ChapterTab.Widgets.ChapterSourceLineEdit import ChapterSourceLineEdit
-from packages.Tabs.ChapterTab.Widgets.DiscardOldChaptersCheckBox import DiscardOldChaptersCheckBox
+from packages.Tabs.ChapterTab.Widgets.DiscardOldChaptersCheckBox import (
+    DiscardOldChaptersCheckBox,
+)
 from packages.Tabs.ChapterTab.Widgets.MatchChapterLayout import MatchChapterLayout
 from packages.Widgets.RefreshFilesButton import RefreshFilesButton
-from packages.Tabs.GlobalSetting import *
-from packages.Widgets.InvalidPathDialog import *
+from packages.Tabs.GlobalSetting import (
+    GlobalSetting,
+    get_files_names_absolute_list,
+    sort_names_like_windows,
+)
+from packages.Widgets.InvalidPathDialog import InvalidPathDialog
 from packages.Widgets.WarningDialog import WarningDialog
-from packages.Widgets.YesNoDialog import *
 
 
 # noinspection PyAttributeOutsideInit
@@ -31,8 +45,8 @@ class ChapterSelectionSetting(GlobalSetting):
         self.connect_signals()
 
     def create_widgets(self):
-        self.chapter_source_label = QLabel("Chapter Source Folder:")
-        self.chapter_extension_label = QLabel("Chapter Extension:")
+        self.chapter_source_label = QLabel("Carpeta de origen de capítulos:")
+        self.chapter_extension_label = QLabel("Extensión de capítulo:")
         self.chapter_source_lineEdit = ChapterSourceLineEdit()
         self.chapter_source_button = ChapterSourceButton()
         self.chapter_clear_button = ChapterClearButton()
@@ -44,7 +58,7 @@ class ChapterSelectionSetting(GlobalSetting):
         self.MainLayout = QVBoxLayout()
         self.main_layout = QGridLayout()
         self.chapter_main_groupBox = QGroupBox()
-        self.chapter_match_groupBox = QGroupBox("Chapter Matching")
+        self.chapter_match_groupBox = QGroupBox("Emparejamiento de capítulos")
         self.chapter_match_groupBox.setLayout(self.chapter_match_layout)
 
     def setup_widgets(self):
@@ -57,18 +71,22 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_source_button.clicked_signal.connect(self.update_folder_path)
         self.chapter_source_lineEdit.edit_finished_signal.connect(self.update_folder_path)
         self.chapter_refresh_files_button.clicked_signal.connect(self.update_folder_path)
-        self.chapter_source_lineEdit.set_is_drag_and_drop_signal.connect(self.update_is_drag_and_drop)
+        self.chapter_source_lineEdit.set_is_drag_and_drop_signal.connect(
+            self.update_is_drag_and_drop
+        )
         self.chapter_extensions_comboBox.close_list.connect(self.check_extension_changes)
         self.chapter_match_layout.sync_chapter_files_with_global_files_after_swap_delete_signal.connect(
-            self.sync_chapter_files_with_global_files)
+            self.sync_chapter_files_with_global_files
+        )
         self.tab_clicked_signal.connect(self.tab_clicked)
         self.chapter_match_layout.chapter_table.drop_folder_and_files_signal.connect(
-            self.update_files_with_drag_and_drop)
+            self.update_files_with_drag_and_drop
+        )
         self.chapter_clear_button.clear_files_signal.connect(self.clear_files)
 
     def create_properties(self):
         self.folder_path = ""
-        self.drag_and_dropped_text = "[Drag & Drop Files]"
+        self.drag_and_dropped_text = "[Archivos arrastrados y soltados]"
         self.files_names_list = []
         self.files_names_absolute_list = []
         self.files_names_absolute_list_with_dropped_files = []
@@ -84,7 +102,9 @@ class ChapterSelectionSetting(GlobalSetting):
     def setup_chapter_options_layout(self):
         self.chapter_options_layout.addWidget(self.chapter_extensions_comboBox)
         self.chapter_options_layout.addStretch()
-        self.chapter_options_layout.addWidget(self.discard_old_chapters_checkBox, alignment=Qt.AlignmentFlag.AlignRight)
+        self.chapter_options_layout.addWidget(
+            self.discard_old_chapters_checkBox, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
     def setup_main_layout(self):
         self.main_layout.addWidget(self.chapter_source_label, 0, 0)
@@ -99,7 +119,7 @@ class ChapterSelectionSetting(GlobalSetting):
     def setup_chapter_main_groupBox(self):
         self.chapter_main_groupBox.setParent(self)
         self.chapter_main_groupBox.setLayout(self.main_layout)
-        self.chapter_main_groupBox.setTitle("Chapters")
+        self.chapter_main_groupBox.setTitle("Capítulos")
         self.chapter_main_groupBox.setCheckable(True)
         self.chapter_main_groupBox.setChecked(True)
 
@@ -112,7 +132,9 @@ class ChapterSelectionSetting(GlobalSetting):
             self.chapter_refresh_files_button.setEnabled(True)
         else:
             if self.is_drag_and_drop:
-                self.chapter_source_lineEdit.set_text_safe_change(self.drag_and_dropped_text)
+                self.chapter_source_lineEdit.set_text_safe_change(
+                    self.drag_and_dropped_text
+                )
 
     def update_files_lists(self, folder_path):
         if folder_path == "" or folder_path.isspace():
@@ -121,7 +143,9 @@ class ChapterSelectionSetting(GlobalSetting):
                 new_files_absolute_path_list = []
                 self.files_names_list = []
                 current_extensions = self.chapter_extensions_comboBox.currentData()
-                for file_absolute_path in self.files_names_absolute_list_with_dropped_files:
+                for (
+                    file_absolute_path
+                ) in self.files_names_absolute_list_with_dropped_files:
                     if os.path.isdir(file_absolute_path):
                         continue
                     if os.path.getsize(file_absolute_path) == 0:
@@ -131,17 +155,23 @@ class ChapterSelectionSetting(GlobalSetting):
                         temp_file_extension_start_index = temp_file_name.rfind(".")
                         if temp_file_extension_start_index == -1:
                             continue
-                        temp_file_extension = temp_file_name[temp_file_extension_start_index + 1:]
+                        temp_file_extension = temp_file_name[
+                            temp_file_extension_start_index + 1 :
+                        ]
                         if temp_file_extension.lower() == current_extensions[j].lower():
                             new_files_absolute_path_list.append(file_absolute_path)
-                            self.files_names_list.append(os.path.basename(file_absolute_path))
+                            self.files_names_list.append(
+                                os.path.basename(file_absolute_path)
+                            )
                             break
                 self.chapter_source_lineEdit.stop_check_path = True
                 self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
                 self.is_drag_and_drop = True
                 self.folder_path = ""
                 self.files_names_absolute_list = new_files_absolute_path_list.copy()
-                self.files_names_absolute_list_with_dropped_files = new_files_absolute_path_list.copy()
+                self.files_names_absolute_list_with_dropped_files = (
+                    new_files_absolute_path_list.copy()
+                )
                 self.chapter_source_lineEdit.stop_check_path = False
             else:
                 self.chapter_source_lineEdit.set_text_safe_change("")
@@ -150,9 +180,13 @@ class ChapterSelectionSetting(GlobalSetting):
             self.is_drag_and_drop = False
             self.folder_path = folder_path
             self.files_names_list = self.get_files_list(self.folder_path)
-            self.files_names_absolute_list = get_files_names_absolute_list(self.files_names_list, self.folder_path)
-            self.files_names_absolute_list_with_dropped_files = self.files_names_absolute_list.copy()
-        except Exception as e:
+            self.files_names_absolute_list = get_files_names_absolute_list(
+                self.files_names_list, self.folder_path
+            )
+            self.files_names_absolute_list_with_dropped_files = (
+                self.files_names_absolute_list.copy()
+            )
+        except Exception:
             invalid_path_dialog = InvalidPathDialog(parent=self)
             invalid_path_dialog.execute()
 
@@ -164,7 +198,9 @@ class ChapterSelectionSetting(GlobalSetting):
 
     def get_files_list(self, folder_path):
         temp_files_names = sort_names_like_windows(names_list=os.listdir(folder_path))
-        temp_files_names_absolute = get_files_names_absolute_list(temp_files_names, folder_path)
+        temp_files_names_absolute = get_files_names_absolute_list(
+            temp_files_names, folder_path
+        )
         current_extensions = self.chapter_extensions_comboBox.currentData()
         result = []
         for i in range(len(temp_files_names)):
@@ -176,7 +212,9 @@ class ChapterSelectionSetting(GlobalSetting):
                 temp_file_extension_start_index = temp_files_names[i].rfind(".")
                 if temp_file_extension_start_index == -1:
                     continue
-                temp_file_extension = temp_files_names[i][temp_file_extension_start_index + 1:]
+                temp_file_extension = temp_files_names[i][
+                    temp_file_extension_start_index + 1 :
+                ]
                 if temp_file_extension.lower() == current_extensions[j].lower():
                     result.append(temp_files_names[i])
                     break
@@ -191,7 +229,9 @@ class ChapterSelectionSetting(GlobalSetting):
         self.change_global_chapter_list()
         self.chapter_source_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.chapter_source_lineEdit.set_is_there_old_file(len(self.files_names_list) > 0)
-        self.chapter_extensions_comboBox.set_is_there_old_file(len(self.files_names_list) > 0)
+        self.chapter_extensions_comboBox.set_is_there_old_file(
+            len(self.files_names_list) > 0
+        )
         self.chapter_clear_button.set_is_there_old_file(len(self.files_names_list) > 0)
         self.chapter_source_lineEdit.set_current_folder_path(self.folder_path)
         self.chapter_source_lineEdit.set_is_drag_and_drop(self.is_drag_and_drop)
@@ -226,7 +266,9 @@ class ChapterSelectionSetting(GlobalSetting):
             self.folder_path = ""
             self.files_names_list = []
             self.files_names_absolute_list = []
-            self.current_chapter_extensions = Options.CurrentPreset.Default_Chapter_Extensions
+            self.current_chapter_extensions = (
+                Options.CurrentPreset.Default_Chapter_Extensions
+            )
             self.discard_old_chapters_checkBox.setChecked(False)
             self.chapter_extensions_comboBox.setData(self.current_chapter_extensions)
             self.is_drag_and_drop = False
@@ -244,8 +286,10 @@ class ChapterSelectionSetting(GlobalSetting):
     def mousePressEvent(self, QMouseEvent):
         if QMouseEvent.buttons() == Qt.RightButton:
             self.chapter_match_layout.clear_chapter_selection()
-        if (QMouseEvent.buttons() == Qt.RightButton or QMouseEvent.buttons() == Qt.LeftButton) and (
-                self.chapter_source_lineEdit.text() == ""):
+        if (
+            QMouseEvent.buttons() == Qt.RightButton
+            or QMouseEvent.buttons() == Qt.LeftButton
+        ) and (self.chapter_source_lineEdit.text() == ""):
             self.chapter_source_lineEdit.set_text_safe_change(self.folder_path)
         return QWidget.mousePressEvent(self, QMouseEvent)
 
@@ -255,7 +299,11 @@ class ChapterSelectionSetting(GlobalSetting):
             self.show_video_files_list()
 
     def change_global_last_path_directory(self):
-        if self.folder_path != "" and not self.folder_path.isspace() and not self.is_drag_and_drop:
+        if (
+            self.folder_path != ""
+            and not self.folder_path.isspace()
+            and not self.is_drag_and_drop
+        ):
             GlobalSetting.LAST_DIRECTORY_PATH = self.folder_path
 
     def tab_clicked(self):
@@ -317,16 +365,23 @@ class ChapterSelectionSetting(GlobalSetting):
                     temp_file_extension_start_index = temp_file_name.rfind(".")
                     if temp_file_extension_start_index == -1:
                         continue
-                    temp_file_extension = temp_file_name[temp_file_extension_start_index + 1:]
+                    temp_file_extension = temp_file_name[
+                        temp_file_extension_start_index + 1 :
+                    ]
                     if temp_file_extension.lower() == current_extensions[j].lower():
                         new_files_absolute_path_list.append(path)
                         break
             else:
                 new_files_absolute_path_list.extend(
-                    sort_names_like_windows(get_files_names_absolute_list(self.get_files_list(path), path)))
+                    sort_names_like_windows(
+                        get_files_names_absolute_list(self.get_files_list(path), path)
+                    )
+                )
 
         for new_file_name in new_files_absolute_path_list:
-            if os.path.basename(new_file_name).lower() in map(str.lower, self.files_names_list):
+            if os.path.basename(new_file_name).lower() in map(
+                str.lower, self.files_names_list
+            ):
                 duplicate_flag = True
                 duplicate_files_list.append(os.path.basename(new_file_name))
             else:
@@ -337,23 +392,29 @@ class ChapterSelectionSetting(GlobalSetting):
         self.chapter_source_lineEdit.setText(self.drag_and_dropped_text)
         self.is_drag_and_drop = True
         self.folder_path = ""
-        self.files_names_absolute_list_with_dropped_files.extend(not_duplicate_files_absolute_path_list)
+        self.files_names_absolute_list_with_dropped_files.extend(
+            not_duplicate_files_absolute_path_list
+        )
         self.files_names_absolute_list.extend(not_duplicate_files_absolute_path_list)
         self.show_chapter_files_list()
         self.chapter_source_lineEdit.stop_check_path = False
         if duplicate_flag:
-            info_message = "One or more files have the same name with the old files will be " \
-                           "skipped:"
+            info_message = (
+                "Uno o más archivos tienen el mismo nombre que los archivos antiguos y serán omitidos:"
+            )
             for file_name in duplicate_files_list:
                 info_message += "\n" + file_name
-            warning_dialog = WarningDialog(window_title="Duplicate files names", info_message=info_message,
-                                           parent=self.window())
+            warning_dialog = WarningDialog(
+                window_title="Nombres de archivo duplicados",
+                info_message=info_message,
+                parent=self.window(),
+            )
             warning_dialog.execute_wth_no_block()
         self.disable_chapter_refresh_button_cause_drag_and_drop()
 
     def disable_chapter_refresh_button_cause_drag_and_drop(self):
         self.chapter_refresh_files_button.setEnabled(False)
-        self.chapter_refresh_files_button.setToolTip("Disabled due to Drag/Drop mode")
+        self.chapter_refresh_files_button.setToolTip("Deshabilitado debido al modo arrastrar y soltar")
 
     def update_is_drag_and_drop(self, new_state):
         self.is_drag_and_drop = new_state
@@ -362,7 +423,9 @@ class ChapterSelectionSetting(GlobalSetting):
         if Options.CurrentPreset.Default_Chapter_Directory == "":
             return
         self.activate_tab(on=True)
-        self.chapter_source_lineEdit.set_text_safe_change(Options.CurrentPreset.Default_Chapter_Directory)
+        self.chapter_source_lineEdit.set_text_safe_change(
+            Options.CurrentPreset.Default_Chapter_Directory
+        )
         self.update_folder_path(Options.CurrentPreset.Default_Chapter_Directory)
         self.chapter_source_lineEdit.check_new_path()
 

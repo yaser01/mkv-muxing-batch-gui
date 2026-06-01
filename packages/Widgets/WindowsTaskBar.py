@@ -1,17 +1,17 @@
+from packages.Widgets.WindowsTaskBarLib import ITaskbarList3
 import ctypes
-from ctypes import wintypes
 import comtypes
 import comtypes.client as cc
+
 TaskBarGUID = "{56FDF344-FD6D-11d0-958A-006097C9A090}"
 comtypes.CoInitializeEx()
-from packages.Widgets.WindowsTaskBarLib import ITaskbarList3
 
 
 def create_icon(icon_path):
     CreateIconFromResourceEx = ctypes.windll.user32.CreateIconFromResourceEx
     CreateIconFromResourceEx.restype = ctypes.wintypes.HICON
     size_x, size_y = 32, 32
-    LR_DEFAULTCOLOR = 0
+    # LR_DEFAULTCOLOR = 0
     LR_SHARED = 32768
     with open(icon_path, "rb") as f:
         png = f.read()
@@ -24,24 +24,24 @@ class WindowsTaskBar:
         super().__init__()
         self.window_id = hwnd
         self.taskbar = cc.CreateObject(
-            TaskBarGUID,
-            interface=ITaskbarList3, clsctx=comtypes.CLSCTX_ALL)
+            TaskBarGUID, interface=ITaskbarList3, clsctx=comtypes.CLSCTX_ALL
+        )
         self.taskbar.HrInit()
 
     def setState(self, value):
-        if value == 'normal':
+        if value == "normal":
             self.taskbar.SetProgressState(self.window_id, 0)
 
-        elif value == 'warning':
+        elif value == "warning":
             self.taskbar.SetProgressState(self.window_id, 10)
 
-        elif value == 'error':
+        elif value == "error":
             self.taskbar.SetProgressState(self.window_id, 15)
 
-        elif value == 'loading':
+        elif value == "loading":
             self.taskbar.SetProgressState(self.window_id, -15)
 
-        elif value == 'done':
+        elif value == "done":
             ctypes.windll.user32.FlashWindow(self.window_id, True)
 
     def setProgress(self, value: int):

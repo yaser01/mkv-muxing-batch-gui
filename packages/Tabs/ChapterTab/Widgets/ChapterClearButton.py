@@ -2,7 +2,9 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QPushButton
 
 from packages.Startup import GlobalIcons
-from packages.Tabs.ChapterTab.Widgets.ClearChapterFilesDialog import ClearChapterFilesDialog
+from packages.Tabs.ChapterTab.Widgets.ClearChapterFilesDialog import (
+    ClearChapterFilesDialog,
+)
 from packages.Tabs.GlobalSetting import GlobalSetting
 
 
@@ -12,7 +14,7 @@ class ChapterClearButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.NoMarkIcon)
-        self.hint_when_enabled = "Clear Files"
+        self.hint_when_enabled = "Limpiar archivos"
         self.setToolTip(self.hint_when_enabled)
         self.is_there_old_files = False
         self.clicked.connect(self.open_clear_files_dialog)
@@ -31,7 +33,12 @@ class ChapterClearButton(QPushButton):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -41,7 +48,12 @@ class ChapterClearButton(QPushButton):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

@@ -1,6 +1,12 @@
 from PySide6 import QtGui
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import QVBoxLayout, QPushButton, QHBoxLayout, QLabel, QAbstractItemView
+from PySide6.QtWidgets import (
+    QVBoxLayout,
+    QPushButton,
+    QHBoxLayout,
+    QLabel,
+    QAbstractItemView,
+)
 
 from packages.Startup.GlobalIcons import LeftArrowIcon, RightArrowIcon
 from packages.Startup.PreDefined import AllSubtitlesLanguages
@@ -18,12 +24,12 @@ class LanguagePreferenceDialog(MyDialog):
         self.available_language_layout = QVBoxLayout()
         self.selected_language_list = ListWidget()
         self.available_language_list = ListWidget()
-        self.selected_language_label = QLabel("Favorite Languages:")
-        self.available_language_label = QLabel("Available Languages:")
+        self.selected_language_label = QLabel("Idiomas favoritos:")
+        self.available_language_label = QLabel("Idiomas disponibles:")
         self.selected_language_list.addItems(self.old_favorite)
         self.available_language_list.addItems(AllSubtitlesLanguages)
-        self.ok_button = QPushButton("OK")
-        self.cancel_button = QPushButton("Cancel")
+        self.ok_button = QPushButton("Aceptar")
+        self.cancel_button = QPushButton("Cancelar")
         self.selected_items_from_selected_language = []
         self.selected_items_from_available_language = []
         self.tools_layout = QVBoxLayout()
@@ -54,12 +60,16 @@ class LanguagePreferenceDialog(MyDialog):
     def setup_selected_language_layout(self):
         self.selected_language_layout.addWidget(self.selected_language_label)
         self.selected_language_layout.addWidget(self.selected_language_list)
-        self.selected_language_list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.selected_language_list.setSelectionMode(
+            QAbstractItemView.SelectionMode.ExtendedSelection
+        )
 
     def setup_available_language_layout(self):
         self.available_language_layout.addWidget(self.available_language_label)
         self.available_language_layout.addWidget(self.available_language_list)
-        self.available_language_list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.available_language_list.setSelectionMode(
+            QAbstractItemView.SelectionMode.ExtendedSelection
+        )
 
     def setup_language_preference_layout(self):
         self.language_preference_layout.addLayout(self.selected_language_layout)
@@ -82,15 +92,20 @@ class LanguagePreferenceDialog(MyDialog):
     def signal_connect(self):
         self.ok_button.clicked.connect(self.click_yes)
         self.cancel_button.clicked.connect(self.click_no)
-        self.selected_language_list.itemSelectionChanged.connect(self.update_selected_languages_selected)
-        self.available_language_list.itemSelectionChanged.connect(self.update_available_languages_selected)
+        self.selected_language_list.itemSelectionChanged.connect(
+            self.update_selected_languages_selected
+        )
+        self.available_language_list.itemSelectionChanged.connect(
+            self.update_available_languages_selected
+        )
         self.add_language_button.clicked.connect(self.add_language_button_clicked)
         self.remove_language_button.clicked.connect(self.remove_language_button_clicked)
 
     def update_selected_languages_selected(self):
         self.available_language_list.clearSelection()
-        self.selected_items_from_selected_language = [item.text() for item in
-                                                      self.selected_language_list.selectedItems()]
+        self.selected_items_from_selected_language = [
+            item.text() for item in self.selected_language_list.selectedItems()
+        ]
         if len(self.selected_items_from_selected_language) > 0:
             self.remove_language_button.setEnabled(True)
         else:
@@ -98,8 +113,9 @@ class LanguagePreferenceDialog(MyDialog):
 
     def update_available_languages_selected(self):
         self.selected_language_list.clearSelection()
-        self.selected_items_from_available_language = [item.text() for item in
-                                                       self.available_language_list.selectedItems()]
+        self.selected_items_from_available_language = [
+            item.text() for item in self.available_language_list.selectedItems()
+        ]
         if len(self.selected_items_from_available_language) > 0:
             self.add_language_button.setEnabled(True)
         else:
@@ -108,7 +124,9 @@ class LanguagePreferenceDialog(MyDialog):
     def add_language_button_clicked(self):
         current_selected_language_list = []
         for i in range(self.selected_language_list.count()):
-            current_selected_language_list.append(self.selected_language_list.item(i).text())
+            current_selected_language_list.append(
+                self.selected_language_list.item(i).text()
+            )
         for language in self.selected_items_from_available_language:
             if language not in current_selected_language_list:
                 self.selected_language_list.addItem(language)
@@ -118,8 +136,13 @@ class LanguagePreferenceDialog(MyDialog):
     def remove_language_button_clicked(self):
         new_selected_language_list = []
         for i in range(self.selected_language_list.count()):
-            if self.selected_language_list.item(i).text() not in self.selected_items_from_selected_language:
-                new_selected_language_list.append(self.selected_language_list.item(i).text())
+            if (
+                self.selected_language_list.item(i).text()
+                not in self.selected_items_from_selected_language
+            ):
+                new_selected_language_list.append(
+                    self.selected_language_list.item(i).text()
+                )
         self.selected_language_list.clear()
         self.selected_language_list.addItems(new_selected_language_list)
         self.selected_items_from_selected_language = []
@@ -130,7 +153,7 @@ class LanguagePreferenceDialog(MyDialog):
         for i in range(self.selected_language_list.count()):
             self.current_favorite.append(self.selected_language_list.item(i).text())
         if len(self.current_favorite) == 0:
-            self.current_favorite.append("English")
+            self.current_favorite.append("Inglés")
         self.close()
 
     def click_no(self):

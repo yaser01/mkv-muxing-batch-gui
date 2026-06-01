@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from PySide6.QtCore import Signal
@@ -15,7 +14,7 @@ class VideoSourceLineEdit(QLineEdit):
 
     def __init__(self):
         super().__init__()
-        self.setPlaceholderText("Enter Video Folder Path")
+        self.setPlaceholderText("Ingresa la ruta de la carpeta de videos")
         self.setText("")
         self.setClearButtonEnabled(True)
         self.stop_check_path = False
@@ -31,7 +30,7 @@ class VideoSourceLineEdit(QLineEdit):
     def set_is_there_old_file(self, new_state):
         self.is_there_old_files = new_state
 
-    def set_current_folder_path(self, new_path):
+    def set_current_folder_path(self, new_path: Path):
         self.current_folder_path = new_path
 
     def set_text_safe_change(self, new_text):
@@ -41,11 +40,12 @@ class VideoSourceLineEdit(QLineEdit):
 
     def check_new_path(self):
         new_path = self.text()
+        nw_path = Path(new_path)
         if self.isModified() and not self.stop_check_path:
             self.stop_check_path = True
-            if os.path.isdir(new_path):
-                if Path(new_path) != Path(self.current_folder_path):
-                    new_path = str(Path(new_path))
+            if nw_path.is_dir():
+                if nw_path != Path(self.current_folder_path):
+                    new_path = str(nw_path)
                     if self.is_there_old_files:
                         reload_dialog = ReloadVideoFilesDialog(parent=self)
                         reload_dialog.execute()
@@ -57,7 +57,7 @@ class VideoSourceLineEdit(QLineEdit):
                         else:
                             new_path = self.current_folder_path
                             self.stop_check_path = True
-                            self.setText(self.current_folder_path)
+                            self.setText(str(self.current_folder_path))
                     else:
                         self.is_drag_and_drop = False
                         self.set_is_drag_and_drop_signal.emit(False)
@@ -65,7 +65,7 @@ class VideoSourceLineEdit(QLineEdit):
                         self.setText(new_path)
                 else:
                     self.stop_check_path = True
-                    self.setText(self.current_folder_path)
+                    self.setText(str(self.current_folder_path))
             else:
                 if new_path == "" or new_path.isspace() or self.is_drag_and_drop:
                     self.stop_check_path = True
@@ -74,7 +74,7 @@ class VideoSourceLineEdit(QLineEdit):
                     invalid_path_dialog = InvalidPathDialog(parent=self)
                     invalid_path_dialog.execute()
                     self.stop_check_path = True
-                    self.setText(self.current_folder_path)
+                    self.setText(str(self.current_folder_path))
                 new_path = ""
             self.edit_finished_signal.emit(new_path)
         self.stop_check_path = False
@@ -83,7 +83,12 @@ class VideoSourceLineEdit(QLineEdit):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -93,7 +98,12 @@ class VideoSourceLineEdit(QLineEdit):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:

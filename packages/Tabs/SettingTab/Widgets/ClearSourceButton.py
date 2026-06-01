@@ -10,7 +10,7 @@ class ClearSourceButton(QPushButton):
     def __init__(self):
         super().__init__()
         self.setIcon(GlobalIcons.NoMarkIcon)
-        self.hint_when_enabled = "Clear"
+        self.hint_when_enabled = "Limpiar"
         self.setToolTip(self.hint_when_enabled)
         self.clicked.connect(self.emit_clear_signal)
 

@@ -9,4 +9,14 @@
 /Testing/test.py
 /Testing/
 *.pyc
-test.py
+test*.*
+.venv
+build
+dist
+Resources/Tools/Windows64/mkvmerge.exe
+Resources/Tools/Windows64/mkvpropedit.exe
+Resources/Tools/Linux/mkvmerge
+Resources/Tools/Linux/mkvpropedit
+Resources/Tools/Linux/lib
+Resources/Tools/Other Systems/mkvmerge
+Resources/Tools/Other Systems/mkvpropedit

@@ -2,7 +2,9 @@ from PySide6.QtCore import QSize, Signal
 from PySide6.QtWidgets import QPushButton
 
 from packages.Startup.GlobalIcons import SettingIcon
-from packages.Tabs.SettingTab.Widgets.LanguagePreferenceDialog import LanguagePreferenceDialog
+from packages.Tabs.SettingTab.Widgets.LanguagePreferenceDialog import (
+    LanguagePreferenceDialog,
+)
 
 
 class SubtitleLanguageOrderButton(QPushButton):
@@ -17,8 +19,11 @@ class SubtitleLanguageOrderButton(QPushButton):
         self.current_language_list = current_language_list
 
     def open_setting_dialog(self):
-        language_preference_dialog = LanguagePreferenceDialog(old_favorite=self.current_language_list,
-                                                              window_title="Subtitle Language Preference", parent=self)
+        language_preference_dialog = LanguagePreferenceDialog(
+            old_favorite=self.current_language_list,
+            window_title="Preferencia de idioma de subtítulos",
+            parent=self,
+        )
         language_preference_dialog.execute()
         self.current_language_list = language_preference_dialog.current_favorite.copy()
         self.new_language_list_signal.emit(self.current_language_list.copy())

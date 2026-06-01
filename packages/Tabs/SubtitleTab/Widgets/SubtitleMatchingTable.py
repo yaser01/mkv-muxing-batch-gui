@@ -12,7 +12,7 @@ class SubtitleMatchingTable(TableFixedHeaderWidget):
     drop_folder_and_files_signal = Signal(list)
 
     def __init__(self, tab_index):
-        super().__init__(primarytable=TableWidget(), headername="Subtitle Name")
+        super().__init__(primarytable=TableWidget(), headername="Nombre del subtítulo")
         self.tab_index = tab_index
         self.current_files_list = []
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -35,7 +35,9 @@ class SubtitleMatchingTable(TableFixedHeaderWidget):
     def show_files(self):
         files_list = GlobalSetting.SUBTITLE_FILES_LIST[self.tab_index]
         self.table.setRowCount(len(files_list))
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.ResizeToContents
+        )
         for i in range(len(files_list)):
             item = QTableWidgetItem(" " + files_list[i])
             item.setToolTip(files_list[i])

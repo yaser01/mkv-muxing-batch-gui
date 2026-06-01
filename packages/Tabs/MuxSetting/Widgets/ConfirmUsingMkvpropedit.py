@@ -1,6 +1,12 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-     QApplication, QStyle, QPushButton, QHBoxLayout
+from PySide6.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QApplication,
+    QStyle,
+    QPushButton,
+    QHBoxLayout,
+)
 
 from packages.Widgets.MyDialog import MyDialog
 
@@ -29,12 +35,14 @@ def get_pixmap_from_critical_icon():
 class ConfirmUsingMkvpropedit(MyDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.fast_muxing_button = QPushButton("Fast Muxing")
-        self.cancel_button = QPushButton("Cancel")
-        self.usual_muxing_button = QPushButton("Usual Muxing")
-        self.setWindowTitle("We can make it faster")
-        self.message = QLabel("<nobr>We can fast your muxing by editing the source files directly <br>This will "
-                              "<b>overwrite</b> your video files and can't be undone")
+        self.fast_muxing_button = QPushButton("Multiplexado rápido")
+        self.cancel_button = QPushButton("Cancelar")
+        self.usual_muxing_button = QPushButton("Multiplexado normal")
+        self.setWindowTitle("Podemos hacerlo más rápido")
+        self.message = QLabel(
+            "<nobr>Podemos acelerar tu multiplexado editando los archivos de origen directamente <br>Esto "
+            "<b>sobrescribirá</b> tus archivos de video y no se puede deshacer"
+        )
         self.messageIcon = QLabel()
 
         self.buttons_layout = QHBoxLayout()

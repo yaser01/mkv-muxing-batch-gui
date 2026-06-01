@@ -15,9 +15,10 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         super().__init__()
         self.current_list = []
         self.current_text = ""
-        self.empty_selection_string = "None"
-        self.empty_selection_hint_string = "The selected flag [default/forced/both] will be removed from all " \
-                                           "corresponding tracks"
+        self.empty_selection_string = "Ninguno"
+        self.empty_selection_hint_string = (
+            "La bandera seleccionada [predeterminado/forzado/ambas] se eliminará de todas las pistas correspondientes"
+        )
         self.addItems(AllAudiosTracks)
         self.setMinimumWidth(screen_size.width() // 12)
         self.setMaximumWidth(screen_size.width() // 4)
@@ -56,7 +57,7 @@ class MakeThisTrackDefaultComboBox(QComboBox):
                         return True
                     return False
             return False
-        except Exception as e:
+        except Exception:
             return False
 
     def showPopup(self):
@@ -80,21 +81,21 @@ class MakeThisTrackDefaultComboBox(QComboBox):
 
     def disable_track_id_text_from_being_selected(self):
         for i in range(self.count()):
-            if self.itemText(i) == "---Track Id---":
+            if self.itemText(i) == "---ID de pista---":
                 self.model().item(i).setEnabled(False)
                 self.model().item(i).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 break
 
     def disable_track_language_text_from_being_selected(self):
         for i in range(self.count()):
-            if self.itemText(i) == "---Language---":
+            if self.itemText(i) == "---Idioma---":
                 self.model().item(i).setEnabled(False)
                 self.model().item(i).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 break
 
     def disable_track_name_text_from_being_selected(self):
         for i in range(self.count()):
-            if self.itemText(i) == "---Track Name---":
+            if self.itemText(i) == "---Nombre de pista---":
                 self.model().item(i).setEnabled(False)
                 self.model().item(i).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 break
@@ -103,7 +104,12 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         super().setEnabled(new_state)
         if not new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -113,7 +119,12 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         super().setDisabled(new_state)
         if new_state and not GlobalSetting.JOB_QUEUE_EMPTY:
             if self.hint_when_enabled != "":
-                self.setToolTip("<nobr>" + self.hint_when_enabled + "<br>" + GlobalSetting.DISABLE_TOOLTIP)
+                self.setToolTip(
+                    "<nobr>"
+                    + self.hint_when_enabled
+                    + "<br>"
+                    + GlobalSetting.DISABLE_TOOLTIP
+                )
             else:
                 self.setToolTip("<nobr>" + GlobalSetting.DISABLE_TOOLTIP)
         else:
@@ -128,7 +139,11 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.clear()
         super().addItems(texts)
         for i in range(len(texts)):
-            if texts[i] != "---Track Id---" and texts[i] != "---Language---" and texts[i] != "---Track Name---":
+            if (
+                texts[i] != "---ID de pista---"
+                and texts[i] != "---Idioma---"
+                and texts[i] != "---Nombre de pista---"
+            ):
                 self.setItemData(i, texts[i], Qt.ItemDataRole.ToolTipRole)
         self.current_list = texts.copy()
         self.setCurrentIndex(-1)
@@ -152,13 +167,13 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         text = ""
         current_tracks = "None"
         for i in range(self.model().rowCount()):
-            if self.model().item(i).text() == "---Track Id---":
+            if self.model().item(i).text() == "---ID de pista---":
                 current_tracks = "id"
                 continue
-            elif self.model().item(i).text() == "---Language---":
+            elif self.model().item(i).text() == "---Idioma---":
                 current_tracks = "lang"
                 continue
-            elif self.model().item(i).text() == "---Track Name---":
+            elif self.model().item(i).text() == "---Nombre de pista---":
                 current_tracks = "name"
                 continue
             if self.currentIndex() == i:
@@ -176,16 +191,16 @@ class MakeThisTrackDefaultComboBox(QComboBox):
         self.tracks_language = tracks_languages_text
         self.tracks_name = tracks_name_text
         if count_tracks_id > 0:
-            tracks_id_text = "Track Id: [" + ", ".join(tracks_id_text) + "]"
+            tracks_id_text = "ID de pista: [" + ", ".join(tracks_id_text) + "]"
             text = tracks_id_text
         if count_tracks_languages > 0:
-            tracks_languages_text = "Language: [" + ", ".join(tracks_languages_text) + "]"
+            tracks_languages_text = "Idioma: [" + ", ".join(tracks_languages_text) + "]"
             if text != "":
                 text = text + "," + tracks_languages_text
             else:
                 text = tracks_languages_text
         if count_tracks_names > 0:
-            tracks_name_text = "Track Name: [" + ", ".join(tracks_name_text) + "]"
+            tracks_name_text = "Nombre de pista: [" + ", ".join(tracks_name_text) + "]"
             if text != "":
                 text = text + "," + tracks_name_text
             else:
@@ -220,7 +235,9 @@ class MakeThisTrackDefaultComboBox(QComboBox):
             non_italic_font = self.lineEdit().font()
             non_italic_font.setItalic(False)
             self.lineEdit().setFont(non_italic_font)
-            elided_text = metrics.elidedText(self.current_text, Qt.TextElideMode.ElideRight, self.lineEdit().width())
+            elided_text = metrics.elidedText(
+                self.current_text, Qt.TextElideMode.ElideRight, self.lineEdit().width()
+            )
             self.lineEdit().setText(elided_text)
         else:
             italic_font = self.lineEdit().font()

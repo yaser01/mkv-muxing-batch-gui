@@ -5,8 +5,9 @@ class ReloadChapterFilesDialog(YesNoDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.message.setText(
-            "Are you sure ?\nThis will reload all chapter files and will affect current matching")
-        self.setWindowTitle("Change Chapter Files")
+            "¿Estás seguro?\nEsto recargará todos los archivos de capítulos y afectará el emparejamiento actual"
+        )
+        self.setWindowTitle("Cambiar archivos de capítulos")
 
     def execute(self):
         self.exec()

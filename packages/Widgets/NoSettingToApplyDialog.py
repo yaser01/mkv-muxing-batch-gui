@@ -1,6 +1,5 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-     QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
@@ -16,13 +15,13 @@ class NoSettingToApplyDialog(MyDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.info_message = "You haven't select any setting to apply"
-        self.window_title = "No Setting Selected"
+        self.info_message = "No has seleccionado ninguna configuración para aplicar"
+        self.window_title = "Ninguna configuración seleccionada"
         self.result = "Cancel"
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.yes_button = QPushButton("Confirm Muxing")
-        self.no_button = QPushButton("Cancel")
+        self.yes_button = QPushButton("Confirmar multiplexado")
+        self.no_button = QPushButton("Cancelar")
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yes_button)
         self.buttons_layout.addWidget(self.no_button)

@@ -1,0 +1,5 @@
+Known BUG to be fix
+1. If you mux with fast or normal mux mode on that session, you cannot switch between mode without close and lauch again.
+
+New Feature
+1. Metadata tab for remove title and etc.

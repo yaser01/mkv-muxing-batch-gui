@@ -1,9 +1,7 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-    QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 
 from packages.Startup import GlobalFiles
-from packages.Startup import GlobalIcons
 from packages.Widgets.MyDialog import MyDialog
 
 
@@ -12,7 +10,7 @@ class YesNoDialog(MyDialog):
         super().__init__(parent)
         self.message = QLabel()
         self.messageIcon = QLabel()
-        self.yesButton = QPushButton("Yes")
+        self.yesButton = QPushButton("Sí")
         self.noButton = QPushButton("No")
 
         self.buttons_layout = QHBoxLayout()

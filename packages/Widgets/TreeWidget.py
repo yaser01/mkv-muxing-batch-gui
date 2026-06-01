@@ -15,13 +15,19 @@ class TreeWidget(QTreeWidget):
 
             def paint(self, painter, option, index):
                 if option.state & QStyle.StateFlag.State_Selected:
-                    item_color = index.data(role=Qt.ItemDataRole.DecorationRole.ForegroundRole)
+                    item_color = index.data(
+                        role=Qt.ItemDataRole.DecorationRole.ForegroundRole
+                    )
                     if item_color is None:
                         item_color = Qt.GlobalColor.black
                     else:
                         item_color = item_color.color()
-                    option.palette.setColor(QPalette.ColorRole.HighlightedText, item_color)
-                    color = self.combineColors(self.color_default, self.background(option, index))
+                    option.palette.setColor(
+                        QPalette.ColorRole.HighlightedText, item_color
+                    )
+                    color = self.combineColors(
+                        self.color_default, self.background(option, index)
+                    )
                     option.palette.setColor(QPalette.ColorRole.Highlight, color)
                 QStyledItemDelegate.paint(self, painter, option, index)
 

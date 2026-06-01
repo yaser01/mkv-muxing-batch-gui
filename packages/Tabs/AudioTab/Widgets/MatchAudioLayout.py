@@ -15,7 +15,9 @@ class MatchAudioLayout(QHBoxLayout):
         self.tab_index = tab_index
         self.video_table = VideoMatchingTable()
         self.audio_table = AudioMatchingTable(self.tab_index)
-        self.match_tools_layout = MatchAudioToolsLayout(parent=parent, tab_index=self.tab_index)
+        self.match_tools_layout = MatchAudioToolsLayout(
+            parent=parent, tab_index=self.tab_index
+        )
         self.setup_layout()
         self.sync_slideBar_check = False
         self.connect_signals()
@@ -27,8 +29,12 @@ class MatchAudioLayout(QHBoxLayout):
         self.audio_table.table.selectionModel().selectionChanged.connect(
             self.send_selection_to_tools_layout
         )
-        self.match_tools_layout.refresh_audio_table_signal.connect(self.show_audio_files_after_swapping_deleting)
-        self.match_tools_layout.selected_audio_row_signal.connect(self.change_selected_audio_row)
+        self.match_tools_layout.refresh_audio_table_signal.connect(
+            self.show_audio_files_after_swapping_deleting
+        )
+        self.match_tools_layout.selected_audio_row_signal.connect(
+            self.change_selected_audio_row
+        )
 
     def setup_layout(self):
         self.addWidget(self.video_table, 50)
@@ -38,7 +44,10 @@ class MatchAudioLayout(QHBoxLayout):
         self.addWidget(self.audio_table, 50)
 
     def sync_slideBar(self):
-        if self.sync_slideBar_check == True or self.audio_table.table.verticalScrollBar().isSliderDown():
+        if (
+            self.sync_slideBar_check
+            or self.audio_table.table.verticalScrollBar().isSliderDown()
+        ):
             self.video_table.table.verticalScrollBar().setValue(
                 self.audio_table.table.verticalScrollBar().value()
             )
@@ -73,7 +82,9 @@ class MatchAudioLayout(QHBoxLayout):
         list_of_selected_rows = self.audio_table.table.selectionModel().selectedRows()
         if len(list_of_selected_rows) > 0:
             selected_row = list_of_selected_rows[0].row()
-        self.match_tools_layout.set_selected_row(selected_row=selected_row, max_index=max_index)
+        self.match_tools_layout.set_selected_row(
+            selected_row=selected_row, max_index=max_index
+        )
 
     def show_video_files(self):
         self.video_table.show_files()

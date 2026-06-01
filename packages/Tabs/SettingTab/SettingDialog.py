@@ -2,18 +2,18 @@
 from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QHBoxLayout, \
-    QGridLayout, QLabel, QPushButton, QCheckBox
+from PySide6.QtWidgets import QHBoxLayout, QGridLayout, QLabel, QPushButton, QCheckBox
 from packages.Startup.Options import Options, save_options, get_names_list_of_presets
 from packages.Startup.GlobalFiles import InfoIconPath
 from packages.Startup.GlobalIcons import SettingIcon
 from packages.Startup.InitializeScreenResolution import screen_size
 from packages.Tabs.SettingTab.Widgets.AboutButton import AboutButton
-from packages.Tabs.SettingTab.Widgets.DonateButton import DonateButton
 from packages.Tabs.SettingTab.Widgets.PresetTabComboBox import PresetTabComboBox
 from packages.Tabs.SettingTab.Widgets.PresetTabDeleteButton import PresetTabDeleteButton
 from packages.Tabs.SettingTab.Widgets.PresetTabRenameButton import PresetTabRenameButton
-from packages.Tabs.SettingTab.Widgets.PresetTabSetDeafultButton import PresetTabSetDefaultButton
+from packages.Tabs.SettingTab.Widgets.PresetTabSetDeafultButton import (
+    PresetTabSetDefaultButton,
+)
 from packages.Tabs.SettingTab.Widgets.PresetTabWidget import PresetTabWidget
 from packages.Widgets.MyDialog import MyDialog
 from packages.Widgets.SingleDefaultPresetsData import SingleDefaultPresetsData
@@ -26,28 +26,29 @@ class SettingDialog(MyDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowIcon(SettingIcon)
-        self.setWindowTitle("Options")
+        self.setWindowTitle("Opciones")
         self.setMinimumWidth(screen_size.width() // 1.9)
         self.message = QLabel()
         self.extra_message = QLabel()
-        self.yes_button = QPushButton("OK")
-        self.no_button = QPushButton("Cancel")
+        self.yes_button = QPushButton("Aceptar")
+        self.no_button = QPushButton("Cancelar")
         self.setting_info_text_icon_label = QLabel()
         self.setting_info_text_icon_pixmap = QPixmap(InfoIconPath)
         self.setting_info_text_icon_label.setPixmap(self.setting_info_text_icon_pixmap)
-        self.setting_info_text_label = QLabel("Changes will take effect on next launch")
+        self.setting_info_text_label = QLabel("Los cambios tendrán efecto en el próximo inicio")
         self.setting_about_button = AboutButton()
-        self.setting_donate_button = DonateButton()
 
         self.preset_tabs = []
         self.preset_counter = 0
-        self.preset_tab_label = QLabel("Presets: ")
-        self.preset_tab_comboBox = PresetTabComboBox(items=get_names_list_of_presets(),
-                                                     activated_preset_id=Options.FavoritePresetId)
+        self.preset_tab_label = QLabel("Preajustes: ")
+        self.preset_tab_comboBox = PresetTabComboBox(
+            items=get_names_list_of_presets(),
+            activated_preset_id=Options.FavoritePresetId,
+        )
         self.preset_tab_delete_button = PresetTabDeleteButton()
         self.preset_tab_rename_button = PresetTabRenameButton()
         self.preset_tab_set_default_button = PresetTabSetDefaultButton()
-        self.preset_tab_ask_on_start_check_box = QCheckBox("Ask for preset on startup")
+        self.preset_tab_ask_on_start_check_box = QCheckBox("Preguntar por preajuste al iniciar")
         self.preset_tab_setting_layout = QHBoxLayout()
         self.current_tab_index = 0
         self.current_preset_tab = None
@@ -69,8 +70,9 @@ class SettingDialog(MyDialog):
         self.setting_info_layout = QHBoxLayout()
         self.setting_info_layout.addWidget(self.setting_info_text_icon_label, stretch=0)
         self.setting_info_layout.addWidget(self.setting_info_text_label, stretch=1)
-        self.setting_info_layout.addWidget(self.setting_donate_button, stretch=0, alignment=Qt.AlignmentFlag.AlignRight)
-        self.setting_info_layout.addWidget(self.setting_about_button, stretch=0, alignment=Qt.AlignmentFlag.AlignRight)
+        self.setting_info_layout.addWidget(
+            self.setting_about_button, stretch=0, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
         self.main_layout = QGridLayout()
         self.main_layout.addLayout(self.preset_tab_setting_layout, 0, 0, 1, 1)
@@ -96,7 +98,9 @@ class SettingDialog(MyDialog):
             self.preset_counter += 1
         self.current_tab_index = Options.FavoritePresetId
         self.current_preset_tab = self.preset_tabs[self.current_tab_index]
-        self.preset_tab_ask_on_start_check_box.setChecked(Options.Choose_Preset_On_Startup)
+        self.preset_tab_ask_on_start_check_box.setChecked(
+            Options.Choose_Preset_On_Startup
+        )
         self.update_rename_button_current_tab_name()
 
     def setup_ui(self):
@@ -105,11 +109,17 @@ class SettingDialog(MyDialog):
     def signal_connect(self):
         self.yes_button.clicked.connect(self.click_yes)
         self.no_button.clicked.connect(self.click_no)
-        self.preset_tab_comboBox.current_tab_changed_signal.connect(self.change_current_preset_tab)
+        self.preset_tab_comboBox.current_tab_changed_signal.connect(
+            self.change_current_preset_tab
+        )
         self.preset_tab_comboBox.create_new_tab_signal.connect(self.create_new_preset_tab)
         self.preset_tab_delete_button.remove_tab_signal.connect(self.delete_current_tab)
-        self.preset_tab_rename_button.rename_tab_signal.connect(self.update_current_preset_name)
-        self.preset_tab_set_default_button.set_active_preset_signal.connect(self.update_default_preset)
+        self.preset_tab_rename_button.rename_tab_signal.connect(
+            self.update_current_preset_name
+        )
+        self.preset_tab_set_default_button.set_active_preset_signal.connect(
+            self.update_default_preset
+        )
 
     def click_yes(self):
         self.result = "Yes"
@@ -123,16 +133,24 @@ class SettingDialog(MyDialog):
     def save_new_settings(self):
         default_options = []
         for preset_id in range(self.preset_counter):
-            temp_default_options = self.preset_tabs[preset_id].get_current_options_as_option_data()
-            temp_default_options.Preset_Name = self.preset_tab_comboBox.itemText(preset_id)
+            temp_default_options = self.preset_tabs[
+                preset_id
+            ].get_current_options_as_option_data()
+            temp_default_options.Preset_Name = self.preset_tab_comboBox.itemText(
+                preset_id
+            )
             default_options.append(temp_default_options)
         Options.DefaultPresets = default_options.copy()
-        Options.Choose_Preset_On_Startup = self.preset_tab_ask_on_start_check_box.isChecked()
+        Options.Choose_Preset_On_Startup = (
+            self.preset_tab_ask_on_start_check_box.isChecked()
+        )
         Options.FavoritePresetId = self.preset_tab_comboBox.activated_preset_id
         save_options()
 
     def change_current_preset_tab(self, tab_index):
-        self.main_layout.replaceWidget(self.current_preset_tab, self.preset_tabs[tab_index])
+        self.main_layout.replaceWidget(
+            self.current_preset_tab, self.preset_tabs[tab_index]
+        )
         self.current_preset_tab.hide()
         self.preset_tabs[tab_index].show()
         self.current_preset_tab = self.preset_tabs[tab_index]
@@ -148,7 +166,9 @@ class SettingDialog(MyDialog):
             self.preset_tab_set_default_button.set_disabled()
 
     def update_rename_button_current_tab_name(self):
-        self.preset_tab_rename_button.current_preset_name = self.preset_tab_comboBox.currentText()
+        self.preset_tab_rename_button.current_preset_name = (
+            self.preset_tab_comboBox.currentText()
+        )
 
     def create_new_preset_tab(self):
         self.preset_tabs.append(PresetTabWidget(SingleDefaultPresetsData()))
@@ -172,8 +192,12 @@ class SettingDialog(MyDialog):
         else:
             to_switch_tab_index = index_to_delete + 1
             self.current_tab_index = index_to_delete
-        self.main_layout.replaceWidget(self.preset_tabs[index_to_delete], self.preset_tabs[to_switch_tab_index])
-        self.preset_tab_comboBox.delete_tab(index_to_remove=index_to_delete, new_selected_index=self.current_tab_index)
+        self.main_layout.replaceWidget(
+            self.preset_tabs[index_to_delete], self.preset_tabs[to_switch_tab_index]
+        )
+        self.preset_tab_comboBox.delete_tab(
+            index_to_remove=index_to_delete, new_selected_index=self.current_tab_index
+        )
         self.preset_tabs[index_to_delete].hide()
         self.preset_tabs[index_to_delete].deleteLater()
         del self.preset_tabs[index_to_delete]

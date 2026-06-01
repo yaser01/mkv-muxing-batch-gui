@@ -3,22 +3,21 @@ import webbrowser
 import logging
 import sys
 from PySide6 import QtGui, QtCore
-from PySide6.QtWidgets import QGridLayout, QLabel, \
-     QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QHBoxLayout
 from packages.Startup import GlobalFiles
 from packages.Startup import GlobalIcons
 from packages.Widgets.MyDialog import MyDialog
 
 
 def click_show_log_file():
-    if sys.platform not in ['linux', 'linux2']:
-        webbrowser.open(GlobalFiles.MuxingLogFilePath)
+    if sys.platform not in ["linux", "linux2"]:
+        webbrowser.open(str(GlobalFiles.MuxingLogFilePath))
     else:
         try:
-            subprocess.Popen(["gedit", GlobalFiles.MuxingLogFilePath])
+            subprocess.Popen(["gedit", str(GlobalFiles.MuxingLogFilePath)])
         except Exception as e:
             logging.error(e)
-            webbrowser.open(GlobalFiles.MuxingLogFilePath)
+            webbrowser.open(str(GlobalFiles.MuxingLogFilePath))
 
 
 class ErrorMuxingDialog(MyDialog):
@@ -29,8 +28,8 @@ class ErrorMuxingDialog(MyDialog):
         self.message = QLabel()
         self.message.setWordWrap(True)
         self.messageIcon = QLabel()
-        self.yes_button = QPushButton("OK")
-        self.show_log_file_button = QPushButton("Open log file")
+        self.yes_button = QPushButton("Aceptar")
+        self.show_log_file_button = QPushButton("Abrir archivo de registro")
 
         self.buttons_layout = QHBoxLayout()
         self.buttons_layout.addWidget(self.yes_button)

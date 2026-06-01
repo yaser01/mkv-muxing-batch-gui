@@ -42,4 +42,3 @@ Dark_AlternateBase_Color_Disabled = 8, 8, 8, 255
 Dark_WindowText_Color_Disabled = 128, 128, 128, 255
 Dark_Light_Color_Disabled = 53, 53, 53, 255
 Dark_PlaceholderText_Color_Disabled = 127, 127, 127, 128
-
